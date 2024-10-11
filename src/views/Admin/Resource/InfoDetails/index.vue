@@ -1,5 +1,6 @@
 <template>
-    <Whiteboard title="" class="-translate-y-10" :isSidebarMinimized="isSidebarMinimized">
+    <Whiteboard title="" class="-translate-y-20" :isSidebarMinimized="isSidebarMinimized" :hideBreadcrumbs="true">
+
   
       <div class="flex flex-row w-full items-center justify-between border-b-2 py-2 rounded-t-md shadow-md" :class="resourceBgColor">
         <p class="text-white font-medium text-xl mx-2">Recurso</p>
