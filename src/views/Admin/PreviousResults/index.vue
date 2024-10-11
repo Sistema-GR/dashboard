@@ -1,5 +1,4 @@
 <template>
-
     <Whiteboard title="Cálculo Anteriores" :isSidebarMinimized="isSidebarMinimized">
 
         <div class="absolute right-0 top-0 px-8 pt-5">
