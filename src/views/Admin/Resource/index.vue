@@ -1,24 +1,24 @@
 <template>
-    <Sidebar :route="'admin'" @update:isSidebarMinimized="handleSidebarMinimized"/>
-
-        <Whiteboard title="Recurso" :isSidebarMinimized="isSidebarMinimized">
-            
-            <div class="flex flex-row items-center w-full justify-start border border-gray-200 rounded-lg shadow-md overflow-auto">
-                <Block title="Novo" number="100" customClass="bg-blue-500 hover:bg-blue-600" @click="navigateTo('/resource/new')" />
-                <Block title="Em Progresso" number="20" customClass="bg-orange-500 hover:bg-orange-600" @click="navigateTo('/resource/inprogress')" />
-                <Block title="Pendente" number="36" customClass="bg-yellow-500 hover:bg-yellow-600" @click="navigateTo('/resource/awaiting')" />
-                <Block title="Reaberto" number="7" customClass="bg-red-500 hover:bg-red-600" @click="navigateTo('/resource/reopened')" />
-                <Block title="Finalizado" number="76" customClass="bg-green-500 hover:bg-green-600" @click="navigateTo('/resource/completed')" />
-                <Block title="Cancelado" number="20" customClass="bg-gray-500 hover:bg-gray-600" @click="navigateTo('/resource/canceled')" />
-            </div>
+    <Sidebar :route="'admin'" @update:isSidebarMinimized="handleSidebarMinimized" class="z-50"/>
+  
+    <Whiteboard title="Recurso" class="overflow-auto z-40 relative" :isSidebarMinimized="isSidebarMinimized">
         
-        </Whiteboard>
-
-        <router-view></router-view>
-</template>
-
+        <div class="flex flex-row items-center w-full justify-start border border-gray-200 rounded-lg shadow-md">
+            <Block title="Novo" number="100" customClass="bg-blue-500 hover:bg-blue-600" @click="navigateTo('/resource/new')" />
+            <Block title="Em Progresso" number="20" customClass="bg-orange-500 hover:bg-orange-600" @click="navigateTo('/resource/inprogress')" />
+            <Block title="Pendente" number="36" customClass="bg-yellow-500 hover:bg-yellow-600" @click="navigateTo('/resource/awaiting')" />
+            <Block title="Reaberto" number="7" customClass="bg-red-500 hover:bg-red-600" @click="navigateTo('/resource/reopened')" />
+            <Block title="Finalizado" number="76" customClass="bg-green-500 hover:bg-green-600" @click="navigateTo('/resource/completed')" />
+            <Block title="Cancelado" number="20" customClass="bg-gray-500 hover:bg-gray-600" @click="navigateTo('/resource/canceled')" />
+        </div>
+    
+    </Whiteboard>
+  
+    <router-view class="z-30 -translate-y-20"></router-view>
+  </template>
+  
 <script>
-import { inject, provide, ref } from 'vue'
+import { provide, ref } from 'vue'
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import Block from '@/views/Admin/Resource/components/Block/index.vue'
 import infoCard from '@/views/Admin/Resource/components/infoCard/index.vue'
