@@ -1,11 +1,11 @@
 <template>
-  <main :class="['flex flex-col overflow-hidden transition-all', sidebarClass]">
+  <main :class="['flex flex-col overflow-hidden transition-all bg-[#edf8f9]', sidebarClass]">
     <Breadcrumbs 
       class="flex w-full" 
       v-if="showBreadcrumbs && !hideBreadcrumbs" 
       :pages="breadcrumbPages" 
     />
-    <div class="px-4 mb-5 sm:px-6 lg:px-8 lg:pt-10">
+    <div class="px-4 mb-5 sm:px-6 lg:px-8 lg:pt-12">
       <div class="flex flex-row gap-8 pt-6 items-center">
         <h3 class="text-lg leading-6 text-black font-semibold">{{ title }}</h3>
       </div>
