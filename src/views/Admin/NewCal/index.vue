@@ -1,7 +1,7 @@
 <template>
     <Whiteboard title="Novo Cálculo" :isSidebarMinimized="isSidebarMinimized">
         <div class="flex flex-col w-full lg:flex-row">
-            <div class="flex-1 flex items-center justify-center my-36">
+            <div class="flex-1 flex items-center justify-center py-12">
                 <div class="text-start space-y-5 w-4/6">
 
                     <div class="space-y-2">
@@ -50,7 +50,7 @@
 
           <div class="border lg:py-5 my-5"></div>
           
-          <div class="flex-1 flex items-center justify-center my-36">
+          <div class="flex-1 flex items-center justify-center py-12">
               <div class="text-start space-y-5 w-4/6">
                   <div class="space-y-2">
                     <p>Nome Da Versão</p>
@@ -85,8 +85,8 @@
         </div>
 
         <div class="flex w-full items-end justify-end">
-            <div>
-                <RouterLink to="/home/inports">
+            <div class="w-4/12 lg:w-2/12">
+                <RouterLink to="/home/imports">
                   <PrimaryButton
                     class="bg-blue-500 py-2 px-3 text-sm"
                     value="Continuar"

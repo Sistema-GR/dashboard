@@ -74,7 +74,7 @@ export default {
     });
 
     const showBreadcrumbs = computed(() => {
-      const hiddenRoutes = ['/user/rewards', '/admin/rewards'];
+      const hiddenRoutes = ['/user/rewards', '/admin/rewards', '/user/faqs'];
       return !hiddenRoutes.includes(route.path);
     });
 

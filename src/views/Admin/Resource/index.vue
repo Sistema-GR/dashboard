@@ -3,7 +3,7 @@
   
     <Whiteboard title="Recurso" class="overflow-auto z-40 relative" :isSidebarMinimized="isSidebarMinimized">
         
-        <div class="flex flex-row items-center w-full justify-start border border-gray-200 rounded-lg shadow-md">
+        <div class="flex flex-row items-center w-full justify-start overflow-x-auto border border-gray-200 rounded-lg shadow-md">
             <Block title="Novo" number="100" customClass="bg-blue-500 hover:bg-blue-600" @click="navigateTo('/resource/new')" />
             <Block title="Em Progresso" number="20" customClass="bg-orange-500 hover:bg-orange-600" @click="navigateTo('/resource/inprogress')" />
             <Block title="Pendente" number="36" customClass="bg-yellow-500 hover:bg-yellow-600" @click="navigateTo('/resource/awaiting')" />

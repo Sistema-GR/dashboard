@@ -10,7 +10,7 @@ import admin from '../views/Admin/index.vue'
 import home from "@/views/Admin/Home/index.vue"
 import newcal from '../views/Admin/NewCal/index.vue'
 import previousresults from '@/views/Admin/PreviousResults/index.vue'
-import inports from "@/views/Admin/Inports/index.vue"
+import imports from "@/views/Admin/Imports/index.vue"
 //Resource
 import resource from '@/views/Admin/Resource/index.vue'
 import newResource from '@/views/Admin/Resource/NewResource/index.vue'
@@ -46,6 +46,7 @@ import status from '@/views/User/Status/index.vue'
 import edit from '@/views/User/Edit/index.vue'
 import sucess from '@/views/User/Sucess/index.vue'
 import config from '@/views/User/Config/index.vue'
+import view from '@/views/User/ViewResource/index.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -63,7 +64,7 @@ const router = createRouter({
         { path: 'overview', name: 'overview', component: home },
         { path: 'newcal', name: 'newcal', component: newcal },
         { path: 'previousresults', name: 'previousresults', component: previousresults },
-        { path: 'inports', name: 'inports', component: inports },
+        { path: 'imports', name: 'inports', component: imports },
         { path: 'config', name: 'configs', component: config }
       ]
     },
@@ -98,9 +99,10 @@ const router = createRouter({
         { path: 'faqs', name: 'faqs', component: faqs },
         { path: 'criteria', name: 'criteria', component: criteria },
         { path: 'status', name: 'status', component: status },
+        { path: 'view', name: 'view', component: view }, 
         { path: 'edit', name: 'edit', component: edit },
         { path: 'sucess', name: 'sucess', component: sucess },
-        { path: 'config', name: 'configss', component: config },
+        { path: 'config', name: 'config', component: config },
       ]
     },
     { path: '/resource', 

@@ -1,9 +1,7 @@
 <template>
     <Whiteboard title="Cálculo Anteriores" :isSidebarMinimized="isSidebarMinimized">
 
-        <div class="absolute right-0 top-0 px-8 pt-5">
-            <PrimaryButton value="Incluir" @click="openModal" class="bg-blue-500 px-3" />
-        </div>
+
 
         <div class="flex flex-row w-full items-center justify-between p-4 rounded-md cursor-pointer" @click="toggleDropdown">
             <p class="text-3xl font-semibold">{{ year }}</p>
@@ -70,6 +68,12 @@
                 
             </div>
 
+        </div>
+
+        <div class="flex w-full items-center justify-end py-3  border-t-2">
+          <div class="flex items-center mt-2">
+            <PrimaryButton value="Incluir" @click="openModal" class="bg-blue-500 px-5 py-3" />
+          </div>
         </div>
 
         <Modal :open="open" @close="closeModal" :categories="categories" />

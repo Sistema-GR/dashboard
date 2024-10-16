@@ -17,7 +17,7 @@
                     <p class="text-sm text-gray-600">Coordenador de Projetos</p>
                 </div>
     
-                <SecondaryButton label="Change" class="mt-2 w-full lg:w-1/12"/>
+                <SecondaryButton label="Editar" class="mt-2 w-full lg:w-1/12"/>
 
             </div>
 

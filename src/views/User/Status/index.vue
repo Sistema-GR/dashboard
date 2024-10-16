@@ -1,7 +1,8 @@
 <template>
     <Whiteboard title="Status do Recurso" :isSidebarMinimized="isSidebarMinimized">
+        
         <div class="flex flex-col items-center justify-start w-full bg-white border border-gray-200 rounded-lg p-4 shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer">
-           
+           <router-link class="w-full" to="/user/view">
                 <div class="flex items-center justify-between w-full pb-3 border-b mb-4">
                     <p class="text-lg font-semibold text-gray-700">Aberto</p>
                     <router-link class="flex items-center gap-1 justify-end p-2 hover:bg-slate-300 rounded-lg group duration-100 ease-in-out" to="edit">
@@ -32,7 +33,7 @@
                     </div>
 
                 </div>
-            
+            </router-link>
         </div>
     </Whiteboard>
 </template>

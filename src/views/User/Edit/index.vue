@@ -13,7 +13,7 @@
 
            
             <div class="flex flex-col w-full border-t-2 py-4 bg-white">
-                <p class="text-lg font-semibold mb-2">Dados do Servidor</p>
+                <p class="text-lg font-bold mb-4">Dados do Servidor</p>
                     <div class="space-y-2">
 
                         <div class="flex flex-col md:flex-row md:items-center md:justify-between">
@@ -42,12 +42,12 @@
             <div class="flex flex-col border-t-2 py-1">
 
                 <div class="flex flex-col border-b-2 py-5">
-                    <label class="font-semibold text-sm mb-1">Descrição do Recurso</label>
+                    <label class="text-lg font-bold mb-2">Descrição do Recurso</label>
                     <textarea v-model="description"class="w-full border rounded-md p-2 text-sm" rows="4" placeholder="Descreva o motivo do recurso aqui..." :class="{ 'border-red-500': descriptionError }" @input="validateDescription" />
                     <p v-if="descriptionError" class="text-red-500 text-xs mt-1">A descrição é obrigatória.</p>
                 </div>
 
-                <div class="flex flex-col border-b-2 py-2">
+                <div class="flex flex-col border-b-2 py-4 gap-1">
                     <label class="font-semibold text-sm mb-1">Documentos Anexados</label>
                     <input type="file" @change="handleFileUpload" multiple  class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border file:border-gray-300 file:rounded-lg file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/>
 
