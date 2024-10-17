@@ -27,7 +27,7 @@
             <Loading v-if="isUploading" />
           </div>
       </div>
-      
+
     </div>
 
   </Whiteboard>
@@ -121,7 +121,7 @@ export default {
       }
 
       // Após o upload de todos os arquivos, chama a rota para processar todos eles
-      await axios.post(`${this.BASE_URL}/process/all-files/`);
+      await axios.get(`${this.BASE_URL}/process/all-files/`);
       console.log("Todos os arquivos processados com sucesso!");
 
       alert('Arquivos enviados e processados com sucesso!');

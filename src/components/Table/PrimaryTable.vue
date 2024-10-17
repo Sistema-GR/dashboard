@@ -175,23 +175,28 @@ function handleDrawerClosed() {
 
 async function saveRowData(person) {
   try {
+    const { routeJsonMapping } = usePersonService();  // agora acessamos o routeJsonMapping
     const matricula = person.matricula;
-    const nome = person.Nome;
+    const nome = person.nome;
 
     let dadosProfissional = [];
     let dadosFrequencia = [];
     let dadosCriterios = [];
     const dadosUser = {}; 
 
+    // Fetch dos dados de Profissionais
     const responseProfissional = await fetch(routeJsonMapping['Profissional']);
-    dadosProfissional = (await responseProfissional.json()).filter(prof => prof.matricula === matricula && prof.Nome === nome);
+    dadosProfissional = (await responseProfissional.json()).filter(prof => prof.matricula === matricula && prof.nome === nome);
 
+    // Fetch dos dados de Frequência
     const responseFrequencia = await fetch(routeJsonMapping['Frequency']);
-    dadosFrequencia = (await responseFrequencia.json()).filter(frequencia => frequencia.Nome === nome);
+    dadosFrequencia = (await responseFrequencia.json()).filter(frequencia => frequencia.nome === nome);
 
+    // Fetch dos dados de Critérios
     const responseCriterios = await fetch(routeJsonMapping['Report']);
-    dadosCriterios = (await responseCriterios.json()).filter(criterio => criterio.matricula === matricula && criterio.Nome === nome);
+    dadosCriterios = (await responseCriterios.json()).filter(criterio => criterio.matricula === matricula && criterio.nome === nome);
 
+    // Processamento dos dados
     for (let i = 0; i < dadosCriterios.length; i++) {
       const criterio = dadosCriterios[i];
       const id = `id${i + 1}`;
@@ -218,9 +223,11 @@ async function saveRowData(person) {
 
     alert('Dados salvos com sucesso!');
   } catch (error) {
-    alert('Erro ao salvar dados. Tente novamente mais tarde.');
+    console.error('Erro ao salvar os dados:', error);
+    alert(`Erro ao salvar dados: ${error.message}`);
   }
 }
+
 
 function loadSavedData() {
   const savedData = localStorage.getItem('rowSave');

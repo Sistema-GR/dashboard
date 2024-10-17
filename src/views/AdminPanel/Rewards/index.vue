@@ -12,7 +12,7 @@
                         <p class="text-white text-lg font-medium">Nome Do Servidor</p>
                     </div>
                     <div class="flex w-full items-center justify-center py-2.5 rounded-b-lg -translate-y-1 bg-solitude-100 shadow-lg shadow-slate-200">
-                        <p class="font-medium whitespace-nowrap">{{ item?.dados?.Nome || 'Nome não disponível' }}</p>
+                        <p class="font-medium whitespace-nowrap">{{ item?.dados?.nome || 'Nome não disponível' }}</p>
                     </div>  
                 </div>
             </div>
@@ -23,7 +23,7 @@
                         <p class="text-white text-lg font-medium">Valor</p>
                     </div>
                     <div class="flex w-full items-center justify-center py-2.5 rounded-b-lg -translate-y-1 bg-solitude-100 shadow-lg shadow-slate-200">
-                        <p class="font-medium">R$ {{ item?.dados?.['Valor Total (bruto)'] || 'Valor não disponível' }}</p>
+                        <p class="font-medium">R$ {{ item?.dados?.valor_total || 'Valor não disponível' }}</p>
                     </div>  
                 </div>
             </div>
@@ -59,7 +59,7 @@
                     <Disclosure v-for="(item, index) in savedData" :key="index">
                         <template #default="{open}">
                             <DisclosureButton class="flex flex-row w-full items-center justify-between mt-0.5 py-4 px-5 bg-solitude-200 hover:bg-gray-400 ease-in-out duration-200 cursor-pointer">
-                                <p class="text-lg font-medium">Matrícula {{ item?.dados?.Matricula }}</p>
+                                <p class="text-lg font-medium">Matrícula {{ item?.dados?.matricula }}</p>
                                 <ChevronDownIcon class="w-6 h-auto transform transition-transform ${open ? 'rotate-180' : 'rotate-0'}" />
                             </DisclosureButton>
                             <DisclosurePanel class="w-full">
@@ -82,9 +82,9 @@
                                                     <p>Cargo:</p>
                                                 </td>
                                                 <td class="border p-3">
-                                                    <p class="whitespace-nowrap">{{ item?.dados?.Nome }}</p>
-                                                    <p class="whitespace-nowrap">{{ item?.dados?.Matricula }}</p>
-                                                    <p class="whitespace-nowrap">{{ prof['Cargo'] }}</p>
+                                                    <p class="whitespace-nowrap">{{ item?.dados?.nome }}</p>
+                                                    <p class="whitespace-nowrap">{{ item?.dados?.matricula }}</p>
+                                                    <p class="whitespace-nowrap">{{ prof.cargo }}</p>
                                                 </td>
                                                 <td class="border p-3">
                                                     <p>Rede:</p>
@@ -92,9 +92,9 @@
                                                     <p>Total:</p>
                                                 </td>
                                                 <td class="border p-3">
-                                                    <p class="whitespace-nowrap">R$ {{ prof['Valor GR R']}}</p>
-                                                    <p class="whitespace-nowrap">R$ {{ prof['Valor GR Un']}}</p>
-                                                    <p class="whitespace-nowrap">R$ {{ item?.dados?.['Valor Total (bruto)']}}</p>
+                                                    <p class="whitespace-nowrap">R$ {{ prof.valor_gr_rede}}</p>
+                                                    <p class="whitespace-nowrap">R$ {{ prof.valor_gr_unidade}}</p>
+                                                    <p class="whitespace-nowrap">R$ {{ item?.dados?.valor_total}}</p>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -109,7 +109,7 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td class="border p-2 text-center">{{ item?.dados?.['Atua a mais de 6 meses?']}}</td>
+                                            <td class="border p-2 text-center">{{ item?.dados?.tempo_atuacao}}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -122,7 +122,7 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td class="border p-2 text-center">{{ item?.dados?.Formações }}</td>
+                                            <td class="border p-2 text-center">{{ item?.dados?.formacoes }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -135,7 +135,7 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td class="border p-2 text-center">{{ item?.dados?.Atividades }}</td>
+                                            <td class="border p-2 text-center">{{ item?.dados?.percentual_atividade }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -171,12 +171,12 @@
                                                     </thead>
                                                     <tbody>
                                                         <tr class="text-center">
-                                                            <td class="border border-gray-200 px-4 py-2">{{ item?.dados?.['Data de Início Ajustada'] || 'N/A' }}</td>
-                                                            <td class="border border-gray-200 px-4 py-2">{{ item?.dados?.['Data fim alocações FINAL'] || 'N/A' }}</td>
-                                                            <td class="border border-gray-200 px-4 py-2">{{ prof['NM_Disciplina'] || 'N/A' }}</td>
-                                                            <td class="border border-gray-200 px-4 py-2">{{ prof['Real'] || 'N/A' }}</td>
+                                                            <td class="border border-gray-200 px-4 py-2 whitespace-nowrap">{{ item?.dados?.data_inicio || 'N/A' }}</td>
+                                                            <td class="border border-gray-200 px-4 py-2 whitespace-nowrap">{{ item?.dados?.data_fim|| 'N/A' }}</td>
+                                                            <td class="border border-gray-200 px-4 py-2">{{ prof.nome_disciplina || 'N/A' }}</td>
+                                                            <td class="border border-gray-200 px-4 py-2">{{ prof.percentual_carga_horaria_ue || 'N/A' }}</td>
                                                             <td class="border border-gray-200 px-4 py-2"></td>
-                                                            <td class="border border-gray-200 px-4 py-2">{{ prof['Grupos GR'] || 'N/A' }}</td>
+                                                            <td class="border border-gray-200 px-4 py-2">{{ prof.grupo_gr || 'N/A' }}</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -204,11 +204,11 @@
                                             </thead>
                                             <tbody>
                                                 <tr v-for="(freq, freqIndex) in item.frequencia" :key="freqIndex" class="text-center">
-                                                    <td class="border border-gray-200 px-4 py-2">{{ freq['Início Afas.'] }}</td>
-                                                    <td class="border border-gray-200 px-4 py-2">{{ freq['Fim Afas.'] }}</td>
-                                                    <td class="border border-gray-200 px-4 py-2">{{ freq.Motivo }}</td>
-                                                    <td class="border border-gray-200 px-4 py-2">{{ freq['Qtde Dias Afast'] }}</td>
-                                                    <td class="border border-gray-200 px-4 py-2">{{ freq['Contabiliza?'] }}</td>
+                                                    <td class="border border-gray-200 px-4 py-2">{{ freq.inicio_afastamento }}</td>
+                                                    <td class="border border-gray-200 px-4 py-2">{{ freq.fim_afastamento }}</td>
+                                                    <td class="border border-gray-200 px-4 py-2">{{ freq.motivo }}</td>
+                                                    <td class="border border-gray-200 px-4 py-2">{{ freq.qtd_dias_afastados }}</td>
+                                                    <td class="border border-gray-200 px-4 py-2">{{ freq.contabiliza }}</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -232,7 +232,7 @@
                                         <tbody>
                                             <tr v-for="(freq, freqIndex) in item.frequencia" :key="freqIndex" class="hover:bg-gray-50">
                                                 <td class="border border-gray-200 px-4 py-2" v-if="freqIndex === 0">Frequência</td>
-                                                <td class="border border-gray-200 px-4 py-2" v-if="freqIndex === 0" :class="{ 'text-red-500': freq['% frequencia para GR / profissional'] < 0.96, 'text-black': freq['% frequencia para GR / profissional'] >= 0.96 }">
+                                                <td class="border border-gray-200 px-4 py-2" v-if="freqIndex === 0" :class="{ 'text-red-500': freq.percentual_frequencia_ajustado < 0.96, 'text-black': freq.percentual_frequencia_ajustado >= 0.96 }">
                                                     {{ (freq['% frequencia para GR / profissional'] * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}%
                                                 </td>
                                                 <td class="border border-gray-200 px-4 py-2" v-if="freqIndex === 0">
@@ -241,7 +241,7 @@
                                             </tr>
                                             <tr class="hover:bg-gray-50">
                                                 <td class="border border-gray-200 px-4 py-2">Tempo de Atuação</td>
-                                                <td class="border border-gray-200 px-4 py-2" :class="{ 'text-red-500': item?.dados?.['Atua a mais de 6 meses?'] === 'Não atua há mais de 6 meses na rede', 'text-black': item?.dados?.['Atua a mais de 6 meses?'] === 'Atua há mais de 6 meses na rede' }">
+                                                <td class="border border-gray-200 px-4 py-2" :class="{ 'text-red-500': item?.dados?.tempo_atuacao === 'Não atua há mais de 6 meses na rede', 'text-black': item?.dados?.tempo_atuacao === 'Atua há mais de 6 meses na rede' }">
                                                     {{ item?.dados?.['Atua a mais de 6 meses?'] }}
                                                 </td>
                                                 <td class="border border-gray-200 px-4 py-2">
@@ -250,12 +250,12 @@
                                             </tr>
                                             <tr class="hover:bg-gray-50">
                                                 <td class="border border-gray-200 px-4 py-2">Formação</td>
-                                                <td class="border border-gray-200 px-4 py-2">{{ item?.dados?.['Formações']}}</td>
+                                                <td class="border border-gray-200 px-4 py-2">{{ item?.dados?.formacoes}}</td>
                                                 <td class="border border-gray-200 px-4 py-2">Apto a Receber Gratificação</td>
                                             </tr>
                                             <tr class="hover:bg-gray-50">
                                                 <td class="border border-gray-200 px-4 py-2">Atividades</td>
-                                                <td class="border border-gray-200 px-4 py-2">{{ item?.dados?.['Atividades']}}</td>
+                                                <td class="border border-gray-200 px-4 py-2">{{ item?.dados?.percentual_atividade}}</td>
                                                 <td class="border border-gray-200 px-4 py-2">Apto a Receber Gratificação</td>
                                             </tr>
                                         </tbody>
