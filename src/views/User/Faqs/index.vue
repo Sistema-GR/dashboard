@@ -1,6 +1,6 @@
 <template>
     <Whiteboard title="" :isSidebarMinimized="isSidebarMinimized" class="-translate-y-12">
-        <div class="flex items-center justify-center w-full px-6 py-24 sm:py-32 lg:px-8 lg:py-12">
+        <div class="flex items-center justify-center w-full py-24 sm:py-32 lg:px-8 lg:py-12">
           <div class="w-full px-10 divide-y divide-gray-900/10">
             <h2 class="text-2xl font-bold leading-10 tracking-tight text-gray-900 whitespace-nowrap">
               Perguntas Frequentes

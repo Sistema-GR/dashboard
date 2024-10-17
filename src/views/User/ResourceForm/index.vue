@@ -39,19 +39,19 @@
                     <label class="font-semibold w-1/4 text-sm">Descrição</label>
                     <div class="w-3/4 ml-4">
                         <textarea v-model="description" class="w-full border rounded-md p-2 text-sm" rows="4" placeholder="Descreva o motivo do recurso aqui..."></textarea>
+                        <p v-if="errors.description" class="text-red-500 text-sm mt-1">{{ errors.description }}</p>
                     </div>
                 </div>
                 
-
                 <div class="flex items-center border-b-2 py-0 pb-6">
                     <label class="font-semibold w-1/4 text-sm">Documentos</label>
-                    <div class="w-3/4 ml-4 ">
+                    <div class="w-3/4 ml-4">
                         <input type="file" @change="handleFileUpload" multiple class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border file:border-gray-300 file:rounded-lg file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/>
+                        <p v-if="errors.files" class="text-red-500 text-sm mt-1">{{ errors.files }}</p>
                     </div>
                 </div>
 
                 <div v-if="files.length > 0" class="mt-4">
-
                     <div class="mb-2">
                         <h3 class="font-semibold text-sm sm:text-base">Arquivos Anexados:</h3>
                     </div>
@@ -70,12 +70,10 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
 
                 <div class="flex flex-col items-start mt-6 space-y-4 md:space-x-3">
                     <div class="space-y-4 px-4 md:px-0">
-
                         <p class="font-medium text-sm text-start">
                             Este formulário é destinado à interposição de recursos por parte dos profissionais vinculados à Secretaria de Educação de Joinville, referente à Gratificação por Resultados, conforme estabelecido pela Lei nº 9.214/2022 e pelo Decreto Municipal nº 49.309/2022.
                             <br><br>
@@ -86,29 +84,30 @@
                             Atenção: Para a validação do recurso, é imprescindível anexar documentos que justifiquem e comprovem as alegações, incluindo eventuais divergências nos dados utilizados no cálculo da Gratificação por Resultados. O envio de documentos falsos ou informações inverídicas está sujeito à responsabilização administrativa, civil e criminal, conforme legislação vigente.
                         </p>
 
-
-                        <div class="flex items-center gap-2">
-                            <input 
-                                type="checkbox" 
-                                id="terms" 
-                                v-model="termsAccepted" 
-                                class="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out" 
-                            >
-                            <label for="terms" class="text-sm">
-                                Declaro que li e aceito os termos acima.
-                            </label>
+                        <div class="flex flex-col items-start gap-2">
+                            <div class="flex flex-row items-center gap-2">
+                                <input 
+                                    type="checkbox" 
+                                    id="terms" 
+                                    v-model="termsAccepted" 
+                                    class="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out" 
+                                />
+                                <label for="terms" class="text-sm">
+                                    Declaro que li e aceito os termos acima.
+                                </label>
+                            </div>
+                            <p v-if="errors.termsAccepted" class="text-red-500 text-sm">{{ errors.termsAccepted }}</p>
                         </div>
-
+                        
                     </div>
                 </div>
 
                 <div class="flex w-full justify-end">
-
                     <PrimaryButton
+                        @click="submitForm"
                         customColor="bg-blue-500 text-sm w-6/12 md:w-3/12"
                         value="Enviar"
                     />
-
                 </div>
 
             </div>
@@ -118,25 +117,22 @@
 
 <script>
 import { inject, ref } from 'vue';
-import TextInput from '@/components/Inputs/TextInput.vue';
-import Sidebar from '@/components/Sidebar/Sidebar.vue';
+import { ArrowDownTrayIcon, PaperClipIcon, XMarkIcon } from "@heroicons/vue/24/outline";
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
-import FileInput from '@/components/Inputs/FileInput.vue';
 import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
-import Badges from '@/components/Badges/Badges.vue';
-import { ArrowDownTrayIcon, PaperClipIcon, ChevronDownIcon, XMarkIcon } from "@heroicons/vue/24/outline";
-import { TransitionRoot, TransitionChild } from '@headlessui/vue';
+import { useRouter } from 'vue-router';
 
 export default {
     name: "ResourceForm",
-    components: { Sidebar, Whiteboard, TextInput, FileInput, PrimaryButton, ArrowDownTrayIcon, PaperClipIcon, TransitionRoot, TransitionChild, ChevronDownIcon, Badges, XMarkIcon },
+    components: { Whiteboard, PrimaryButton, ArrowDownTrayIcon, PaperClipIcon, XMarkIcon },
 
     setup() {
         const isSidebarMinimized = inject('isSidebarMinimized');
         const files = ref([]);
         const description = ref('');
-        const selectedMatricula = ref('');
-        const selectedUnidade = ref('');
+        const termsAccepted = ref(false);
+        const errors = ref({});
+        const router = useRouter();
 
         const handleFileUpload = (event) => {
             files.value = Array.from(event.target.files);
@@ -146,28 +142,31 @@ export default {
             files.value.splice(index, 1);
         };
 
-        return {
-            isSidebarMinimized, files, description, selectedMatricula, selectedUnidade, handleFileUpload, removeFile
+        const validateForm = () => {
+            errors.value = {};
+
+            if (!description.value) {
+                errors.value.description = 'A descrição é obrigatória.';
+            }
+            if (!files.value.length) {
+                errors.value.files = 'É necessário anexar pelo menos um documento.';
+            }
+            if (!termsAccepted.value) {
+                errors.value.termsAccepted = 'Você deve aceitar os termos.';
+            }
+
+            return Object.keys(errors.value).length === 0;
         };
-    },
-    data() {
-      return {
-        selectedStatus: 'bg-blue-500', 
-        selectedBadge: 'Grupo', 
-        isBadgeDropdownOpen: false, 
-        matriculas: ['u00000', 'u00001', 'u00002'],
-        unidades: ['Abdon Baptista', 'Aventureiro', 'Boemmewald']
-      };
-    },
-    methods: {
-      toggleBadgeDropdown() {
-        this.isBadgeDropdownOpen = !this.isBadgeDropdownOpen;
-      },
-      selectBadge(badge) {
-        this.selectedBadge = badge;
-        this.isBadgeDropdownOpen = false;
-      },
-    },
+
+        const submitForm = () => {
+            if (validateForm()) {
+                router.push('/user/sucess');
+            }
+        };
+
+        return {
+            isSidebarMinimized, files, description, termsAccepted, errors, handleFileUpload, removeFile, submitForm,
+        };
+    }
 };
 </script>
-
