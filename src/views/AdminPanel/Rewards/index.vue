@@ -3,8 +3,8 @@
         <div class="flex w-full items-center justify-center bg-gradient-to-r from-azure-800 to-primary-900 -translate-y-3">
             <p class="text-white text-3xl py-5 uppercase font-bold w-full text-center">Painel da Gratificação</p>
         </div>
-        <!-- ######################################################################################################### -->
-        <div class="flex flex-row items-center w-full px-10 gap-10 pt-8 pb-4">
+       
+        <div class="flex flex-row items-center justify-center w-full gap-5 pt-8 pb-4 lg:px-10 lg:gap-10">
 
             <div class="w-full" v-for="(item, index) in savedData" :key="index">
                 <div :class="`flex flex-col items-center justify-center bg-transparent rounded-lg`">
@@ -23,7 +23,7 @@
                         <p class="text-white text-lg font-medium">Valor</p>
                     </div>
                     <div class="flex w-full items-center justify-center py-2.5 rounded-b-lg -translate-y-1 bg-solitude-100 shadow-lg shadow-slate-200">
-                        <p class="font-medium">R$ {{ item?.dados?.valor_total || 'Valor não disponível' }}</p>
+                        <p class="font-medium">R$ {{ item?.dados?.valor_total || '0,00' }}</p>
                     </div>  
                 </div>
             </div>
@@ -78,63 +78,51 @@
                                             <tr>
                                                 <td class="border p-3">
                                                     <p>Nome:</p>
+                                                    <p>CPF:</p>
                                                     <p>Matrícula:</p>
                                                     <p>Cargo:</p>
                                                 </td>
                                                 <td class="border p-3">
                                                     <p class="whitespace-nowrap">{{ item?.dados?.nome }}</p>
+                                                    <p class="whitespace-nowrap">{{ prof.cpf }}</p>
                                                     <p class="whitespace-nowrap">{{ item?.dados?.matricula }}</p>
                                                     <p class="whitespace-nowrap">{{ prof.cargo }}</p>
                                                 </td>
                                                 <td class="border p-3">
-                                                    <p>Rede:</p>
-                                                    <p>Unidades:</p>
-                                                    <p>Total:</p>
+                                                    <p>Valor Máximo Rede:</p>
+                                                    <p>Valor Máximo Unidades:</p>
+                                                    <p>Desconto:</p>
+                                                    <p>Valor Total:</p>
                                                 </td>
                                                 <td class="border p-3">
-                                                    <p class="whitespace-nowrap">R$ {{ prof.valor_gr_rede}}</p>
-                                                    <p class="whitespace-nowrap">R$ {{ prof.valor_gr_unidade}}</p>
-                                                    <p class="whitespace-nowrap">R$ {{ item?.dados?.valor_total}}</p>
+                                                    <p class="whitespace-nowrap">{{ parseFloat(prof.valor_gr_rede).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}</p>
+                                                    <p class="whitespace-nowrap">{{ parseFloat(prof.valor_gr_unidade).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}</p>
+                                                    <p class="whitespace-nowrap">{{ calcularDesconto(prof, item) }}</p>
+                                                    <p class="whitespace-nowrap">{{ parseFloat(item?.dados?.valor_total).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) }}</p>
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </table>
                                 </div>
 
-                                <table class="w-full border-collapse border mt-8">
+                                <table class="w-full border-collapse border mt-8 mb-8">
                                     <thead>
                                         <tr class="bg-azure-800">
-                                            <th class="border-b p-2 text-center text-white">Tempo de Atuação</th>
+                                            <th class="border-b p-2 text-center text-white">Criterio</th>
+                                            <th class="border-b p-2 text-center text-white">Dados</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td class="border p-2 text-center">{{ item?.dados?.tempo_atuacao}}</td>
+                                            <td class="border p-2 text-center">Tempo de Atuação</td>
+                                            <td class="border p-2 text-center">{{ item?.dados?.tempo_atuacao }}</td>
                                         </tr>
-                                    </tbody>
-                                </table>
-
-                                <table class="w-full border-collapse border ">
-                                    <thead>
-                                        <tr class="bg-azure-800">
-                                            <th class="border-b p-2 text-center text-white">Formação (Frequência)</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
                                         <tr>
+                                            <td class="border p-2 text-center">Formação (Frequência)</td>
                                             <td class="border p-2 text-center">{{ item?.dados?.formacoes }}</td>
                                         </tr>
-                                    </tbody>
-                                </table>
-
-                                <table class="w-full border-collapse border mb-8">
-                                    <thead>
-                                        <tr class="bg-azure-800">
-                                            <th class="border-b p-2 text-center text-white">Atividades</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
                                         <tr>
+                                            <td class="border p-2 text-center">Atividades</td>
                                             <td class="border p-2 text-center">{{ item?.dados?.percentual_atividade }}</td>
                                         </tr>
                                     </tbody>
@@ -154,7 +142,7 @@
                                                     <thead>
                                                         <tr>
                                                             <th class="border border-gray-200 px-4 py-2 w-6/12 text-lg" colspan="3">
-                                                            {{ prof?.['NM_Local de alocação'] || 'Sem Local de Alocação' }}
+                                                            {{ prof?.nome_local_alocacao }}
                                                             </th>
                                                             <th class="border border-gray-200 px-4 py-2">Etapa 1<br>80%</th>
                                                             <th class="border border-gray-200 px-4 py-2">Etapa 2<br>0%</th>
@@ -171,8 +159,8 @@
                                                     </thead>
                                                     <tbody>
                                                         <tr class="text-center">
-                                                            <td class="border border-gray-200 px-4 py-2 whitespace-nowrap">{{ item?.dados?.data_inicio || 'N/A' }}</td>
-                                                            <td class="border border-gray-200 px-4 py-2 whitespace-nowrap">{{ item?.dados?.data_fim|| 'N/A' }}</td>
+                                                            <td class="border border-gray-200 px-4 py-2 whitespace-nowrap">{{ prof.data_inicial_trabalho }}</td>
+                                                            <td class="border border-gray-200 px-4 py-2 whitespace-nowrap">{{ prof.data_final_trabalho }}</td>
                                                             <td class="border border-gray-200 px-4 py-2">{{ prof.nome_disciplina || 'N/A' }}</td>
                                                             <td class="border border-gray-200 px-4 py-2">{{ prof.percentual_carga_horaria_ue || 'N/A' }}</td>
                                                             <td class="border border-gray-200 px-4 py-2"></td>
@@ -288,9 +276,8 @@ import { ChevronDownIcon, ExclamationCircleIcon, ArrowDownIcon } from "@heroicon
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 
-  
-const isSidebarMinimized = inject('isSidebarMinimized');; 
-const savedData = ref([]); 
+const isSidebarMinimized = inject('isSidebarMinimized');
+const savedData = ref([]);
 const groupedProfessionals = ref([]); // Profissionais agrupados
 
 const groupProfessionals = () => {
@@ -301,16 +288,71 @@ const groupProfessionals = () => {
   });
 };
 
+// Função de cálculo do desconto
+const calcularDesconto = (prof, item) => {
+  const valorRede = parseFloat(prof.valor_gr_rede) || 0;
+  const valorUnidade = parseFloat(prof.valor_gr_unidade) || 0;
+  const valorTotal = parseFloat(item?.dados?.valor_total) || 0;
+
+  // Cálculo do desconto
+  const desconto = (valorRede + valorUnidade) - valorTotal;
+
+  // Retorna o resultado formatado como moeda
+  return desconto.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+};
+
 onMounted(() => {
-  const savedRowData = JSON.parse(localStorage.getItem('rowSave')) || {};
-  savedData.value = Object.values(savedRowData).flatMap(item => Object.values(item));
-  console.log('Dados recuperados do localStorage:', savedData.value);
+  try {
+    const savedRowData = JSON.parse(localStorage.getItem('rowSave')) || {};
+    let rawData = Object.values(savedRowData).flatMap(item => Object.values(item));
+
+    // Novo array para armazenar os dados agrupados corretamente
+    const groupedData = [];
+
+    // Iterar sobre cada item e processar com base na matrícula
+    rawData.forEach(item => {
+      if (item.dados && item.dados.matricula) {
+        const matricula = item.dados.matricula;
+
+        // Verifique se já existe uma entrada para essa matrícula específica
+        const existingItemIndex = groupedData.findIndex(data => data.dados.matricula === matricula);
+
+        if (existingItemIndex !== -1) {
+          // Se já existir, combine os dados de `frequencia` e `profissionais` ao item existente
+          groupedData[existingItemIndex].frequencia = [
+            ...groupedData[existingItemIndex].frequencia,
+            ...(item.frequencia || [])
+          ];
+          groupedData[existingItemIndex].profissionais = [
+            ...groupedData[existingItemIndex].profissionais,
+            ...(item.profissionais || [])
+          ];
+        } else {
+          // Se não existir, crie uma nova entrada com base na matrícula
+          groupedData.push({
+            dados: item.dados,
+            frequencia: item.frequencia || [],
+            profissionais: item.profissionais || []
+          });
+        }
+      }
+    });
+
+    // Atribuir o array resultante a `savedData`
+    savedData.value = groupedData;
+    console.log('Dados agrupados por matrícula:', savedData.value);
+  } catch (error) {
+    console.error('Erro ao recuperar dados do localStorage:', error);
+  }
 });
+
+
+
 
 onBeforeUnmount(() => {
   localStorage.removeItem('rowSave');
   console.log('Dados do localStorage limpos.');
 });
-
 </script>
+
   
