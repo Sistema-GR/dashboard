@@ -13,7 +13,7 @@ export default function usePersonService() {
     'Resignation': `${BASE_URL}/process/demissoes/`,                  
     'Activities': `${BASE_URL}/process/atividades/`,                  
     'Service': `${BASE_URL}/process/formacoes/`, 
-    'Training': `${BASE_URL}/process/formacoes/`,                     
+    'Training': `${BASE_URL}/process/atividades/`,                     
     'General': `${BASE_URL}/process/dados-gerais/`,
     'Local': `${BASE_URL}/process/tipo-local/`,
     'Report': `${BASE_URL}/process/criterios/`

@@ -18,7 +18,8 @@
             <tbody class="bg-white">
               <tr v-for="person in visiblePeople" :key="person.matricula" class="even:bg-gray-50">
                 <td v-for="column in filteredColumns" :key="column.key" class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
-                  {{ person[column.key] }}
+                  <!-- Aplica a formatação se existir, senão exibe o valor normal -->
+                  {{ column.format ? column.format(person[column.key]) : person[column.key] }}
                 </td>
 
                 <td v-if="showEdit" class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
@@ -60,6 +61,7 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import { EyeIcon } from "@heroicons/vue/24/outline";
 import { debounce } from 'lodash';
+import { renameColumns } from '@/service/columnRenaming';
 import Drawer from '../Drawer/Drawer.vue';
 import Pagination from '../Pagination/Pagination.vue';
 import Loading from '../Loading/Loading.vue';
@@ -85,9 +87,7 @@ const visiblePeople = ref([]);
 const selectedRowData = ref({});
 const isLoading = ref(false); 
 const savedRowData = ref({}); 
-
 const drawerRef = ref(null); 
-
 const { loadPeopleData, saveRowDataToStorage } = usePersonService(); 
 
 const drawerTitle = computed(() => {
@@ -137,7 +137,7 @@ async function fetchPeople() {
   try {
     const { people, columns } = await loadPeopleData(props.route);
     filteredPeople.value = people;
-    filteredColumns.value = columns;
+    filteredColumns.value = renameColumns(columns, props.route);
     loadMore(); 
   } catch (error) {
     alert('Erro ao carregar dados. Tente novamente mais tarde.');
