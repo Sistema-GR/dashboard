@@ -124,10 +124,8 @@ export default {
       await axios.get(`${this.BASE_URL}/process/all-files/`);
       console.log("Todos os arquivos processados com sucesso!");
 
-      alert('Arquivos enviados e processados com sucesso!');
-
       // Redirecionar para a página de administração
-      this.$router.push({ path: '/admin' });
+      this.$router.push({ path: '/admin/dashboard' });
     } catch (error) {
       console.error('Erro ao carregar ou processar os arquivos:', error);
       alert(
