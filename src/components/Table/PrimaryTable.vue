@@ -18,7 +18,6 @@
             <tbody class="bg-white">
               <tr v-for="person in visiblePeople" :key="person.matricula" class="even:bg-gray-50">
                 <td v-for="column in filteredColumns" :key="column.key" class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
-                  <!-- Aplica a formatação se existir, senão exibe o valor normal -->
                   {{ column.format ? column.format(person[column.key]) : person[column.key] }}
                 </td>
 
@@ -29,10 +28,10 @@
                 </td>
 
                 <td v-if="showGr" class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
-                  <RouterLink to="/admin/rewards" class="text-indigo-600 hover:text-indigo-900" @click.prevent="saveRowData(person)">
+                  <div class="text-indigo-600 hover:text-indigo-900" @click.prevent="saveRowData(person)">
                     <EyeIcon class="w-5 h-5" />
                     <span class="sr-only">Visualização da Gratificação</span>
-                  </RouterLink>
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -62,11 +61,11 @@ import { ref, computed, watch, onMounted } from 'vue';
 import { EyeIcon } from "@heroicons/vue/24/outline";
 import { debounce } from 'lodash';
 import { renameColumns } from '@/service/columnRenaming';
+import { useRouter, onBeforeRouteLeave  } from 'vue-router';
 import Drawer from '../Drawer/Drawer.vue';
 import Pagination from '../Pagination/Pagination.vue';
 import Loading from '../Loading/Loading.vue';
 import usePersonService from '@/service/personService.js';
-
 
 const props = defineProps({
   route: {
@@ -79,6 +78,7 @@ const props = defineProps({
   }
 });
 
+const router = useRouter();
 const itemsPerPage = 10;
 const currentPage = ref(1);
 const filteredColumns = ref([]);
@@ -106,7 +106,7 @@ const drawerTitle = computed(() => {
   return titles[props.route] || '';
 });
 
-const showEdit = computed(() => ['Results', 'Profissional', 'Calendar', 'Groups', 'Steps', 'Frequency', 'Activities', 'Service', 'Training', 'Report'].includes(props.route));
+const showEdit = computed(() => ['Results', 'Profissional', 'Calendar', 'Groups', 'Steps', 'Frequency', 'Activities', 'Service', 'Training',].includes(props.route));
 const showGr = computed(() => props.route === 'Report');
 
 const filteredPeopleByQuery = computed(() => {
@@ -175,34 +175,37 @@ function handleDrawerClosed() {
 
 async function saveRowData(person) {
   try {
-    const { routeJsonMapping } = usePersonService();  // agora acessamos o routeJsonMapping
-    const matricula = person.matricula;
-    const nome = person.nome;
+    isLoading.value = true;  // Exibe o loading
+
+    const { routeJsonMapping } = usePersonService();  
+    const cpf = person.cpf; // Usando CPF como identificador único
 
     let dadosProfissional = [];
     let dadosFrequencia = [];
     let dadosCriterios = [];
     const dadosUser = {}; 
 
-    // Fetch dos dados de Profissionais
+    // Carrega os dados de Profissionais filtrados pelo CPF
     const responseProfissional = await fetch(routeJsonMapping['Profissional']);
-    dadosProfissional = (await responseProfissional.json()).filter(prof => prof.matricula === matricula && prof.nome === nome);
+    dadosProfissional = (await responseProfissional.json()).filter(prof => prof.cpf === cpf);
 
-    // Fetch dos dados de Frequência
+    // Carrega os dados de Frequência filtrados pelo CPF
     const responseFrequencia = await fetch(routeJsonMapping['Frequency']);
-    dadosFrequencia = (await responseFrequencia.json()).filter(frequencia => frequencia.nome === nome);
+    dadosFrequencia = (await responseFrequencia.json()).filter(frequencia => frequencia.cpf === cpf);
 
-    // Fetch dos dados de Critérios
+    // Carrega os dados de Critérios filtrados pelo CPF
     const responseCriterios = await fetch(routeJsonMapping['Report']);
-    dadosCriterios = (await responseCriterios.json()).filter(criterio => criterio.matricula === matricula && criterio.nome === nome);
+    dadosCriterios = (await responseCriterios.json()).filter(criterio => criterio.cpf === cpf);
 
-    // Processamento dos dados
+    // Processa os critérios e organiza os dados para salvar
     for (let i = 0; i < dadosCriterios.length; i++) {
       const criterio = dadosCriterios[i];
       const id = `id${i + 1}`;
 
-      const frequenciasFiltradas = dadosFrequencia.filter(frequencia => frequencia.matricula === criterio.matricula);
+      // Filtra as frequências associadas ao CPF
+      const frequenciasFiltradas = dadosFrequencia.filter(frequencia => frequencia.cpf === criterio.cpf);
 
+      // Monta o objeto com as informações de critérios, frequências e profissionais
       dadosUser[id] = {
         dados: criterio,
         frequencia: frequenciasFiltradas,
@@ -210,24 +213,43 @@ async function saveRowData(person) {
       };
     }
 
+    // Carrega dados já salvos no localStorage ou inicia um objeto vazio
     const savedRowData = JSON.parse(localStorage.getItem('rowSave')) || {};
-    
-    if (savedRowData[matricula]) {
-      savedRowData[matricula] = { ...savedRowData[matricula], ...dadosUser };
+
+    // Se já existir uma entrada para o CPF, faz um merge dos dados
+    if (savedRowData[cpf]) {
+      savedRowData[cpf] = { ...savedRowData[cpf], ...dadosUser };
     } else {
-      savedRowData[matricula] = dadosUser;
+      savedRowData[cpf] = dadosUser;
     }
 
+    // Salva os dados no localStorage usando o CPF como chave
     localStorage.setItem('rowSave', JSON.stringify(savedRowData));
-    console.log('Dados salvos:', savedRowData[matricula]);
+    console.log('Dados salvos:', savedRowData[cpf]);
 
-    alert('Dados salvos com sucesso!');
+    // Esconde o loading após salvar os dados
+    isLoading.value = false;
+
+    // Redireciona para a página de "Rewards" após o carregamento dos dados
+    router.push({ path: '/admin/rewards' });
+
   } catch (error) {
+    // Esconde o loading em caso de erro
+    isLoading.value = false;
     console.error('Erro ao salvar os dados:', error);
     alert(`Erro ao salvar dados: ${error.message}`);
   }
 }
 
+onBeforeRouteLeave((to, from, next) => {
+  // Verifica se a rota atual é a de Rewards
+  if (from.path === '/admin/rewards') {
+    // Limpa os dados salvos no localStorage ao sair da rota
+    localStorage.removeItem('rowSave');
+    console.log('Dados salvos descartados ao sair da página de Rewards.');
+  }
+  next(); // Continue a navegação
+});
 
 function loadSavedData() {
   const savedData = localStorage.getItem('rowSave');

@@ -104,8 +104,13 @@ const columnRenamingMap = {
       contabiliza: 'Contabiliza',
       total_dias_afastados_por_profissional_ano: 'Total Dias Afastados por Profissional no Ano',
       percentual_frequencia: 'Percentual de Frequência',
-      percentual_frequencia_ajustado: 'Percentual de Frequência Ajustado'
+      percentual_frequencia_ajustado: 'Percentual de Frequência Ajustado',
+      cpf: 'CPF'
   },
+  Infrequency: {
+    motivo: 'Motivo',
+    contabiliza: 'Conabiliza?',
+},
   Resignation: {
       matricula: 'Matrícula',
       nome: 'Nome',
@@ -147,6 +152,7 @@ const columnRenamingMap = {
   },
   Report: {
       matricula: 'Matrícula',
+      cpf: 'CPF',
       nome: 'Nome',
       cargo: 'Cargo',
       vinculo: 'Vínculo',
@@ -169,6 +175,7 @@ const columnRenamingMap = {
 
 const currencyKeys = ['valor_total', 'valor_bruto', 'gr_unidade_max', 'gr_rede_max', 'valor_gr_unidade', 'valor_gr_rede'];
 const dateKeys = ['data_inicio', 'data_fim', 'admissao', 'demissao', 'inicio_afastamento', 'fim_afastamento', 'dias_nao_contabilizados', 'inicio_atividade_local', 'fim_atividade_local', 'data_inicial_trabalho', 'data_final_trabalho'];
+const boleanKeys = ['contabiliza', 'tem_gratificacao_unidade', 'atua_na_etapa_1', 'atua_na_etapa_2', 'atua_na_etapa_3', 'tem_anos_iniciais_1', 'tem_anos_iniciais_2', 'tem_anos_finais', 'sim', 'nao', 'exerceu_suas_atividades_na_unidade', 'recebe_atividade', 'recebe_formacao', 'percentual_atividade'  ];  
 
 function formatCurrency(value) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
@@ -180,6 +187,11 @@ function formatDate(value) {
   return `${day}/${month}/${year}`;
 }
 
+// Função para formatar booleanos como "Sim" ou "Não"
+function formatBoolean(value) {
+  return value ? 'Sim' : 'Não';
+}
+
 export function renameColumns(columns, route) {
   const renamingMap = columnRenamingMap[route] || {};
   return columns.map(column => {
@@ -188,14 +200,19 @@ export function renameColumns(columns, route) {
       label: renamingMap[column.key] || column.label,
     };
 
-    // Formatação para moeda
+    // Aplica formatação de moeda
     if (currencyKeys.includes(newColumn.key)) {
       newColumn.format = (value) => formatCurrency(value);
     }
 
-    // Formatação para data
+    // Aplica formatação de data
     if (dateKeys.includes(newColumn.key)) {
       newColumn.format = (value) => formatDate(value);
+    }
+
+    // Aplica formatação de booleano para "Sim" ou "Não"
+    if (boleanKeys.includes(newColumn.key)) {
+      newColumn.format = (value) => formatBoolean(value);
     }
 
     return newColumn;
