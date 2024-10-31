@@ -124,22 +124,23 @@
                                                 <tr class="hover:bg-gray-50 transition-shadow hover:shadow-md">
                                                     <td class="border border-gray-200 px-4 py-3 text-gray-700">Frequência</td>
                                                     <td class="border border-gray-200 px-4 py-3 text-gray-700">
-                                                        {{ item?.frequencia[1]?.percentual_frequencia ? Number(item.frequencia[1].percentual_frequencia).toFixed(2) + '%' : 'N/A' }}
+                                                        {{ item?.frequencia[0]?.percentual_frequencia ? Number(item.frequencia[0].percentual_frequencia).toFixed(2) + '%' : '100%' }}
                                                     </td>
                                                     <td 
                                                         :class="{
-                                                            'text-red-600 font-semibold': item?.frequencia[1]?.percentual_frequencia && Number(item.frequencia[1].percentual_frequencia) < 96,
-                                                            'text-green-600 font-semibold': item?.frequencia[1]?.percentual_frequencia && Number(item.frequencia[1].percentual_frequencia) >= 96
+                                                            'text-red-600 font-semibold': !item?.frequencia[0]?.percentual_frequencia || (Number(item.frequencia[0].percentual_frequencia) < 96),
+                                                            'text-green-600 font-semibold': item?.frequencia[0]?.percentual_frequencia && Number(item.frequencia[0].percentual_frequencia) >= 96
                                                         }"
                                                         class="border border-gray-200 px-4 py-3"
                                                     >
-                                                        {{ item?.frequencia[1]?.percentual_frequencia && Number(item.frequencia[1].percentual_frequencia) >= 96 ? 'Apto' : 'Não Apto' }}
+                                                        {{ item?.frequencia[0]?.percentual_frequencia ? (Number(item.frequencia[0].percentual_frequencia) >= 96 ? 'Apto' : 'Não Apto') : 'Apto' }}
                                                     </td>
                                                 </tr>
 
+
                                                 <tr class="hover:bg-gray-50 transition-shadow hover:shadow-md">
                                                     <td class="border border-gray-200 px-4 py-3 text-gray-700">Tempo de Atuação</td>
-                                                    <td class="border border-gray-200 px-4 py-3 text-gray-700">{{ item?.dados?.tempo_atuacao }}</td>
+                                                    <td class="border border-gray-200 px-4 py-3 text-gray-700">{{ (item?.dados?.tempo_atuacao) }}</td>
                                                     <td 
                                                         :class="{
                                                             'text-red-600 font-semibold': item?.dados?.tempo_atuacao === 'Não atua há mais de 6 meses na rede',
@@ -151,27 +152,21 @@
                                                     </td>
                                                 </tr>
 
+
                                                 <tr class="hover:bg-gray-50 transition-shadow hover:shadow-md">
                                                     <td class="border border-gray-200 px-4 py-3 text-gray-700">Formação</td>
                                                     <td class="border border-gray-200 px-4 py-3 text-gray-700">
-                                                        {{ props.item?.dados?.formacoes || 'Sem dados' }}
-                                                    </td>
-                                                    <td 
-                                                        :class="{
-                                                            'text-red-600 font-semibold': props.item?.dados?.formacoes === 'false',
-                                                            'text-green-600 font-semibold': props.item?.dados?.formacoes === 'true' || props.item?.dados?.formacoes === '' || props.item?.dados?.formacoes === 'Sem dados'
-                                                        }"
-                                                        class="border border-gray-200 px-4 py-3"
-                                                    >
-                                                        {{
-                                                            props.item?.dados?.formacoes === 'true' || 
-                                                            props.item?.dados?.formacoes === '' || 
-                                                            props.item?.dados?.formacoes === 'Sem dados'
-                                                                ? 'Não Apto'
-                                                                : 'Apto'
-                                                        }}
+                                                        {{ item?.dados?.formacoes === 'True' ? 'Sim' : item?.dados?.formacoes === 'False' ? 'Não' : item?.dados?.formacoes === 'Sem Dados' ? 'Sim' : 'Indefinido' }}
+                                                    </td>                                                                                   
+                                                    <td class="border border-gray-200 px-4 py-3">
+                                                        <span :class="item?.dados?.formacoes === 'True' || item?.dados?.formacoes === 'Sem Dados' ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'">
+                                                            {{ item?.dados?.formacoes === 'True' || item?.dados?.formacoes === 'Sem Dados' ? 'Apto' : 'Não Apto' }}
+                                                        </span>
                                                     </td>
                                                 </tr>
+
+
+
 
                                                 <tr class="hover:bg-gray-50 transition-shadow hover:shadow-md">
                                                     <td class="border border-gray-200 px-4 py-3 text-gray-700">Atividades</td>
@@ -204,7 +199,7 @@
                                                 class="flex-col w-full overflow-x-auto shadow-md rounded-lg mb-4"
                                             >
                                                 <div class="flex w-full justify-between items-center bg-azure-800 px-4 py-2 rounded-t-lg">
-                                                    <span class="text-lg font-medium text-white capitalize">{{ prof?.nome_unidade }}</span>
+                                                    <span class="text-lg font-medium text-white capitalize whitespace-nowrap mr-10 lg:mr-0">{{ prof?.nome_unidade }}</span>
                                                     <div class="flex space-x-4">
                                                         <span class="text-lg font-medium text-white">
                                                             Etapa 1: <span class="font-semibold text-white">{{ prof?.percentual_idem_etapa_1 }}%</span>
@@ -250,7 +245,7 @@
                                 <div class="flex flex-col w-full items-center overflow-hidden py-5 mt-5 shadow-lg rounded-lg bg-gray-50">
 
                                     <div class="flex w-full border-b items-center justify-center bg-azure-800 py-3 rounded-t-lg">
-                                        <p class="text-xl text-center font-semibold text-white">Critério de Frequência (Afastamentos)</p>
+                                        <p class="text-xl text-center font-semibold text-white">Frequência (Afastamentos)</p>
                                     </div>
 
                                     <div class="w-full overflow-x-auto">
@@ -265,7 +260,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr v-for="(freq, freqIndex) in item.frequencia.filter(freq => !['Férias', 'Férias Coletivas', 'Demissão'].includes(freq.motivo))" :key="freqIndex" class="text-center hover:bg-gray-50 hover:shadow-md transition-all duration-200 whitespace-nowrap capitalize">
+                                                <tr v-for="(freq, freqIndex) in item.frequencia.filter(freq => ![false].includes(freq.contabiliza))" :key="freqIndex" class="text-center hover:bg-gray-50 hover:shadow-md transition-all duration-200 whitespace-nowrap capitalize">
                                                     <td class="border border-gray-200 px-4 py-3">{{ new Date(freq.inicio_afastamento).toLocaleDateString('pt-BR') }}</td>
                                                     <td class="border border-gray-200 px-4 py-3">{{ new Date(freq.fim_afastamento).toLocaleDateString('pt-BR') }}</td>
                                                     <td class="border border-gray-200 px-4 py-3">{{ freq.motivo || 'N/A' }}</td>
@@ -338,23 +333,12 @@ const processarDados = (rawData) => {
 };
 
 const props = defineProps({
-    item: {
-        type: Object,
-        required: true
-    }
+  item: {
+    type: Object,
+    required: true
+  },
 });
 
-const formacaoLabel = computed(() => {
-    const formacao = props.item?.dados?.formacoes;
-
-    if (formacao === 'true' || formacao === '') {
-        return 'Apto';
-    } if (formacao === 'false') {
-        return 'Não Apto';
-    } else if (formacao === 'Sem dados') {
-        return 'Apto'; 
-    }
-});
 
 const removerDuplicatas = (dados) => {
   const seen = new Set();
