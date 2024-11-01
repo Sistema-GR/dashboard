@@ -14,15 +14,31 @@
               :aria-label="'Campo de matrícula'" 
               :error="errors.matricula"
             />
-            <!-- Senha Input -->
-            <TextInput 
-              type="password" 
-              label="Senha" 
-              placeholder="Senha" 
-              v-model="senha" 
-              :aria-label="'Campo de senha'" 
-              :error="errors.senha"
-            />
+            
+            <!-- Senha Input com Olhinho -->
+            <div class="relative">
+              <TextInput 
+                :type="showPassword ? 'text' : 'password'" 
+                label="Senha" 
+                placeholder="Senha" 
+                v-model="senha" 
+                :aria-label="'Campo de senha'" 
+                :error="errors.senha"
+              />
+              <button
+                type="button"
+                class="absolute right-3 top-14 transform -translate-y-1/2 text-gray-500"
+                @click="togglePasswordVisibility"
+                aria-label="Mostrar ou ocultar senha"
+              >
+                <span v-if="showPassword">
+                  <EyeSlashIcon class="w-5 h-5" />
+                </span>
+                <span v-else>
+                  <EyeIcon class="w-5 h-5" />
+                </span>
+              </button>
+            </div>
 
             <!-- Esqueci a Senha -->
             <div class="w-full flex justify-end mt-2">
@@ -61,16 +77,18 @@
 <script>
 import TextInput from "@/components/Inputs/TextInput.vue";
 import PrimaryButton from "@/components/Buttons/PrimaryButton.vue";
+import { EyeSlashIcon, EyeIcon } from "@heroicons/vue/24/outline";
 
 export default {
   name: 'Login',
-  components: { PrimaryButton, TextInput },
+  components: { PrimaryButton, TextInput, EyeIcon, EyeSlashIcon },
   
   data() {
     return {
       matricula: '',
       senha: '',
       loading: false,
+      showPassword: false,  // Estado para controlar a visibilidade da senha
       errors: {
         matricula: null,
         senha: null,
@@ -80,6 +98,10 @@ export default {
   },
 
   methods: {
+    togglePasswordVisibility() {
+      this.showPassword = !this.showPassword;
+    },
+
     validateForm() {
       this.errors.matricula = null;
       this.errors.senha = null;
@@ -113,7 +135,7 @@ export default {
         await new Promise((resolve, reject) => {
           setTimeout(() => {
             // Simulando falha de login para demonstrar mensagens de erro
-            if (this.matricula !== '00000' || this.senha !== '123456') {
+            if (this.matricula !== 'admin' || this.senha !== '123') {
               reject(new Error('Matrícula ou senha incorretos.'));
             } else {
               resolve();
