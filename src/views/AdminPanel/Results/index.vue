@@ -5,56 +5,11 @@
             <p class="font-semibold text-sm lg:text-lg">Resultado da Rede</p>
         </div>
             
-            <div class="flex flex-col items-center justify-between text-start mt-5 gap-x-10 w-full lg:flex-row sm:gap-y-5 px-4 gap-y-5">
-                <div class="flex flex-col w-full gap-y-2"> 
-                    <p>Etapa 1</p>
-                        <TextInput
-                        placeholder="%:"
-                        v-model="textValue"
-                        :error="errorMessage"
-                        :success="isSuccess"
-                        :info="isInfo"
-                        :warning="isWarning"
-                        :disabled="true"
-                        type="text"
-                        />
-                </div> 
-
-                <div class="flex flex-col w-full gap-y-2"> 
-                    <p>Etapa 1</p>
-                        <TextInput
-                        placeholder="%:"
-                        v-model="textValue"
-                        :error="errorMessage"
-                        :success="isSuccess"
-                        :info="isInfo"
-                        :warning="isWarning"
-                        :disabled="true"
-                        type="text"
-                        />
-                </div> 
-
-                <div class="flex flex-col w-full gap-y-2"> 
-                    <p>Etapa 1</p>
-                        <TextInput
-                        placeholder="%:"
-                        v-model="textValue"
-                        :error="errorMessage"
-                        :success="isSuccess"
-                        :info="isInfo"
-                        :warning="isWarning"
-                        :disabled="true"
-                        type="text"
-                        />
-                </div> 
-                
-            </div>
-            
             <div class="flex w-full items-center justify-start px-4 mt-8">
                 <Search @search="handleSearch" />
             </div>
             
-            <div class="w-full pb-5">
+            <div class="w-full pb-5 capitalize">
                 <PrimaryTable :route="'Results'" :searchQuery="searchQuery" />
             </div> 
            

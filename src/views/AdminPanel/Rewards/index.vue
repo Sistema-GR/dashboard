@@ -128,14 +128,15 @@
                                                     </td>
                                                     <td 
                                                         :class="{
-                                                            'text-red-600 font-semibold': !item?.frequencia[0]?.percentual_frequencia || (Number(item.frequencia[0].percentual_frequencia) < 96),
-                                                            'text-green-600 font-semibold': item?.frequencia[0]?.percentual_frequencia && Number(item.frequencia[0].percentual_frequencia) >= 96
+                                                            'text-red-600 font-semibold': item?.frequencia[0]?.percentual_frequencia !== undefined && Number(item.frequencia[0].percentual_frequencia) < 96,
+                                                            'text-green-600 font-semibold': !item?.frequencia[0]?.percentual_frequencia || Number(item.frequencia[0].percentual_frequencia) >= 96
                                                         }"
                                                         class="border border-gray-200 px-4 py-3"
                                                     >
                                                         {{ item?.frequencia[0]?.percentual_frequencia ? (Number(item.frequencia[0].percentual_frequencia) >= 96 ? 'Apto' : 'Não Apto') : 'Apto' }}
                                                     </td>
                                                 </tr>
+
 
 
                                                 <tr class="hover:bg-gray-50 transition-shadow hover:shadow-md">
@@ -196,42 +197,42 @@
                                             <div 
                                                 v-for="(prof, profIndex) in item.profissionais" 
                                                 :key="profIndex" 
-                                                class="flex-col w-full overflow-x-auto shadow-md rounded-lg mb-4"
+                                                class="flex-col w-full shadow-md rounded-lg mb-4"
                                             >
-                                                <div class="flex w-full justify-between items-center bg-azure-800 px-4 py-2 rounded-t-lg">
+                                                <div class="flex overflow-x-auto flex-row w-full justify-between items-center bg-azure-800 px-4 py-2 rounded-t-lg">
                                                     <span class="text-lg font-medium text-white capitalize whitespace-nowrap mr-10 lg:mr-0">{{ prof?.nome_unidade }}</span>
-                                                    <div class="flex space-x-4">
-                                                        <span class="text-lg font-medium text-white">
+                                                    <div class="flex flex-row w-full lg:w-auto items-center justify-end space-x-4">
+                                                        <span class="text-sm lg:text-lg font-medium text-white">
                                                             Etapa 1: <span class="font-semibold text-white">{{ prof?.percentual_idem_etapa_1 }}%</span>
                                                         </span>
-                                                        <span class="text-lg font-medium text-white">
+                                                        <span class="text-sm lg:text-lg font-medium text-white">
                                                             Etapa 2: <span class="font-semibold text-white">{{ prof?.percentual_idem_etapa_2 }}%</span>
                                                         </span>
-                                                        <span class="text-lg font-medium text-white">
+                                                        <span class="text-sm lg:text-lg font-medium text-white">
                                                             Etapa 3: <span class="font-semibold text-white">{{ prof?.percentual_idem_etapa_3 }}%</span>
                                                         </span>
                                                     </div>
                                                 </div>
 
-                                                <div class="overflow-x-auto w-full"> 
+                                                <div class="w-full overflow-x-auto"> 
                                                     <table class="min-w-full border-collapse text-gray-700"> 
                                                         <thead>
                                                             <tr class="bg-gray-200 text-gray-800 uppercase text-sm border-b">
                                                                 <th v-for="header in ['Ínicio', 'Fim', 'Função', 'Carga Horária', 'Grupo']" 
                                                                     :key="header" 
-                                                                    class="px-6 py-3 font-semibold text-sm uppercase tracking-wide text-center text-gray-800 border-b border-gray-300">
+                                                                    class="px-4 lg:px-6 py-3 font-semibold text-xs lg:text-sm uppercase tracking-wide text-center text-gray-800 border-b border-gray-300">
                                                                     {{ header }}
                                                                 </th>
                                                             </tr>
                                                         </thead>
 
                                                         <tbody>
-                                                            <tr class="hover:bg-gray-50 transition-shadow hover:shadow-md text-center capitalize">
-                                                                <td class="px-6 py-4 border-b border-gray-300">{{ new Date(prof.data_inicial_trabalho).toLocaleDateString('pt-BR') }}</td>
-                                                                <td class="px-6 py-4 border-b border-gray-300">{{ new Date(prof.data_final_trabalho).toLocaleDateString('pt-BR') }}</td>
-                                                                <td class="px-6 py-4 border-b border-gray-300">{{ prof.nome_disciplina || 'N/A' }}</td>
-                                                                <td class="px-6 py-4 border-b border-gray-300">{{ prof.percentual_carga_horaria_ue || 'N/A' }}h</td>
-                                                                <td class="px-6 py-4 border-b border-gray-300">{{ prof.grupo_gr || 'N/A' }}</td>
+                                                            <tr class="hover:bg-gray-50 transition-shadow hover:shadow-md text-center capitalize whitespace-nowrap">
+                                                                <td class="px-4 lg:px-6 py-4 border-b border-gray-300">{{ new Date(prof.data_inicial_trabalho).toLocaleDateString('pt-BR') }}</td>
+                                                                <td class="px-4 lg:px-6 py-4 border-b border-gray-300">{{ new Date(prof.data_final_trabalho).toLocaleDateString('pt-BR') }}</td>
+                                                                <td class="px-4 lg:px-6 py-4 border-b border-gray-300">{{ prof.nome_disciplina || 'N/A' }}</td>
+                                                                <td class="px-4 lg:px-6 py-4 border-b border-gray-300">{{ prof.percentual_carga_horaria_ue || 'N/A' }}h</td>
+                                                                <td class="px-4 lg:px-6 py-4 border-b border-gray-300">{{ prof.grupo_gr || 'N/A' }}</td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -240,7 +241,6 @@
                                         </div>
                                     </div>
                                 </div>
-
 
                                 <div class="flex flex-col w-full items-center overflow-hidden py-5 mt-5 shadow-lg rounded-lg bg-gray-50">
 
@@ -271,7 +271,6 @@
                                         </table>
                                     </div>
                                 </div>
-
 
                             </DisclosurePanel>
                         </template>
