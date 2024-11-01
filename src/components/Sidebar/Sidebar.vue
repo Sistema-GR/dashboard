@@ -133,7 +133,7 @@ import { ref, computed } from 'vue'
 import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { Bars3Icon, CalculatorIcon, BriefcaseIcon, RectangleGroupIcon , XMarkIcon, ChartBarIcon, UserGroupIcon, 
 UsersIcon, AcademicCapIcon, DocumentTextIcon, CalendarDaysIcon, CalendarIcon, DocumentCheckIcon, ChartBarSquareIcon, 
-Square3Stack3DIcon, ExclamationCircleIcon, InboxIcon , QuestionMarkCircleIcon, Squares2X2Icon   } from '@heroicons/vue/24/outline'
+Square3Stack3DIcon, ExclamationCircleIcon, InboxIcon , QuestionMarkCircleIcon, Squares2X2Icon, CircleStackIcon} from '@heroicons/vue/24/outline'
 import { useRoute } from 'vue-router';
 
 const routes = {
@@ -141,6 +141,7 @@ const routes = {
     { name: 'Novo Cálculo', route: '/home/newcal', icon: CalculatorIcon, current: false },
     { name: 'Cálculo Anteriores', route: '/home/previousresults', icon: ChartBarIcon, current: false },
     { name: 'Recurso', route: '/resource/new', icon: ExclamationCircleIcon, current: false },
+    { name: 'Ativo', route: '/resource/new', icon: CircleStackIcon , current: false },
   ],
   'admin-panel': [
     { name: 'Dashboard', route: '/admin/dashboard', icon: Squares2X2Icon, current: false },
