@@ -141,7 +141,7 @@ const routes = {
     { name: 'Novo Cálculo', route: '/home/newcal', icon: CalculatorIcon, current: false },
     { name: 'Cálculo Anteriores', route: '/home/previousresults', icon: ChartBarIcon, current: false },
     { name: 'Recurso', route: '/resource/new', icon: ExclamationCircleIcon, current: false },
-    { name: 'Ativo', route: '/resource/new', icon: CircleStackIcon , current: false },
+    { name: 'Painel do Usuário', route: '/home/dataversions', icon: CircleStackIcon , current: false },
   ],
   'admin-panel': [
     { name: 'Dashboard', route: '/admin/dashboard', icon: Squares2X2Icon, current: false },
@@ -156,7 +156,6 @@ const routes = {
     { name: 'Atividades', route: '/admin/activities', icon: DocumentCheckIcon , current: false },
     { name: 'Tempo de Atuação', route: '/admin/service', icon: CalendarDaysIcon , current: false },
     { name: 'Formação', route: '/admin/training', icon: AcademicCapIcon , current: false },
-  
     { name: 'Relatórios Finais', route: '/admin/report', icon: DocumentTextIcon , current: false },
   ],
   'user': [
