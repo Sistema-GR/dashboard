@@ -81,124 +81,129 @@
     </div>
   </template>
   
-  <script>
-  import TextInput from "@/components/Inputs/TextInput.vue";
-  import PrimaryButton from "@/components/Buttons/PrimaryButton.vue";
-  
-  export default {
-    name: 'Register',
-    components: { PrimaryButton, TextInput },
-  
-    data() {
-      return {
-        matricula: '',
-        email: '',
-        cpf: '',
-        senha: '',
-        confirmarSenha: '',
-        loading: false,
-        errors: {
-          matricula: null,
-          email: null,
-          cpf: null,
-          senha: null,
-          confirmarSenha: null,
-          global: null,
-        },
+<script>
+import axios from 'axios';
+import TextInput from "@/components/Inputs/TextInput.vue";
+import PrimaryButton from "@/components/Buttons/PrimaryButton.vue";
+
+export default {
+  name: 'Register',
+  components: { PrimaryButton, TextInput },
+
+  data() {
+    return {
+      matricula: '',
+      email: '',
+      cpf: '',
+      senha: '',
+      confirmarSenha: '',
+      loading: false,
+      errors: {
+        matricula: null,
+        email: null,
+        cpf: null,
+        senha: null,
+        confirmarSenha: null,
+        global: null,
+      },
+    };
+  },
+
+  methods: {
+    validateForm() {
+      this.errors = {
+        matricula: null,
+        email: null,
+        cpf: null,
+        senha: null,
+        confirmarSenha: null,
+        global: null,
       };
+
+      let valid = true;
+
+      // Validação da matrícula
+      if (!this.matricula) {
+        this.errors.matricula = 'Matrícula é obrigatória.';
+        valid = false;
+      }
+
+      // Validação do email
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!this.email) {
+        this.errors.email = 'O e-mail é obrigatório.';
+        valid = false;
+      } else if (!emailPattern.test(this.email)) {
+        this.errors.email = 'Formato de e-mail inválido.';
+        valid = false;
+      }
+
+      // Validação do CPF
+      const cpfPattern = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
+      if (!this.cpf) {
+        this.errors.cpf = 'O CPF é obrigatório.';
+        valid = false;
+      } else if (!cpfPattern.test(this.cpf)) {
+        this.errors.cpf = 'Formato de CPF inválido.';
+        valid = false;
+      }
+
+      // Validação da senha
+      if (!this.senha) {
+        this.errors.senha = 'A senha é obrigatória.';
+        valid = false;
+      }
+
+      // Validação da confirmação de senha
+      if (!this.confirmarSenha) {
+        this.errors.confirmarSenha = 'A confirmação de senha é obrigatória.';
+        valid = false;
+      } else if (this.senha !== this.confirmarSenha) {
+        this.errors.confirmarSenha = 'As senhas não coincidem.';
+        valid = false;
+      }
+
+      return valid;
     },
-  
-    methods: {
-      validateForm() {
-        this.errors = {
-          matricula: null,
-          email: null,
-          cpf: null,
-          senha: null,
-          confirmarSenha: null,
-          global: null,
-        };
-  
-        let valid = true;
-  
-        // Validação da matrícula
-        if (!this.matricula) {
-          this.errors.matricula = 'Matrícula é obrigatória.';
-          valid = false;
-        }
-  
-        // Validação do email
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!this.email) {
-          this.errors.email = 'O e-mail é obrigatório.';
-          valid = false;
-        } else if (!emailPattern.test(this.email)) {
-          this.errors.email = 'Formato de e-mail inválido.';
-          valid = false;
-        }
-  
-        // Validação do CPF
-        const cpfPattern = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
-        if (!this.cpf) {
-          this.errors.cpf = 'O CPF é obrigatório.';
-          valid = false;
-        } else if (!cpfPattern.test(this.cpf)) {
-          this.errors.cpf = 'Formato de CPF inválido.';
-          valid = false;
-        }
-  
-        // Validação da senha
-        if (!this.senha) {
-          this.errors.senha = 'A senha é obrigatória.';
-          valid = false;
-        }
-  
-        // Validação da confirmação de senha
-        if (!this.confirmarSenha) {
-          this.errors.confirmarSenha = 'A confirmação de senha é obrigatória.';
-          valid = false;
-        } else if (this.senha !== this.confirmarSenha) {
-          this.errors.confirmarSenha = 'As senhas não coincidem.';
-          valid = false;
-        }
-  
-        return valid;
-      },
-  
-      async handleSubmit() {
-        if (!this.validateForm()) {
-          return;
-        }
-  
-        this.loading = true;
-  
-        try {
-          // Simulação de registro
-          await new Promise((resolve, reject) => {
-            setTimeout(() => {
-              // Simulando erro de registro
-              if (this.email === 'exemplo@invalido.com') {
-                reject(new Error('Este e-mail já está cadastrado.'));
-              } else {
-                resolve();
-              }
-            }, 2000);
-          });
-  
-          // Redirecionar para a página de overview após o sucesso
-          this.$router.push('/home/overview');
-        } catch (error) {
-          // Mensagem de erro global
-          this.errors.global = error.message;
-        } finally {
-          this.loading = false;
-        }
-      },
-    },
-  };
-  </script>
-  
-  <style scoped>
-  /* Adicione estilos customizados se necessário */
-  </style>
-  
+
+    async handleSubmit() {
+  if (!this.validateForm()) {
+    return;
+  }
+
+  this.loading = true;
+
+  try {
+    // Ajuste no payload: removendo o campo "cpf"
+    const response = await axios.post('http://localhost:8000/auth/register/', {
+      username: this.matricula, // Enviar como "username" em vez de "employeeCode"
+      email: this.email,
+      employeeCode: this.matricula, // Mantenha o employeeCode
+      password: this.senha,
+    });
+
+    // Se o registro for bem-sucedido, redireciona para a página inicial
+    this.$router.push('/home/overview');
+  } catch (error) {
+    // Tratamento de erros do backend
+    if (error.response && error.response.data) {
+      const data = error.response.data;
+
+      // Exibir a mensagem global, se houver
+      this.errors.global = data.message || 'Erro ao registrar.';
+
+      // Exibir erros específicos, se existirem
+      if (data.user) {
+        this.errors.email = data.user.email || null;
+        this.errors.matricula = data.user.employeeCode || null;
+      }
+    } else {
+      this.errors.global = 'Erro de conexão. Tente novamente mais tarde.';
+    }
+  } finally {
+    this.loading = false;
+  }
+}
+  },
+};
+</script>

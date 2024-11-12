@@ -5,7 +5,6 @@
         <div class="flex flex-col h-screen items-center justify-center">
           <img src="@/assets/images/logo.png" alt="Logo" class="w-3/12 scale-90 drop-shadow-lg py-0" />
           <div class="w-full max-w-md space-y-3 px-5">
-            <!-- Matrícula Input -->
             <TextInput 
               type="text" 
               label="Matrícula" 
@@ -15,7 +14,6 @@
               :error="errors.matricula"
             />
             
-            <!-- Senha Input com Olhinho -->
             <div class="relative">
               <TextInput 
                 :type="showPassword ? 'text' : 'password'" 
@@ -40,12 +38,10 @@
               </button>
             </div>
 
-            <!-- Esqueci a Senha -->
             <div class="w-full flex justify-end mt-2">
               <router-link to="/forgotpassword" class="text-sm text-amber-50 hover:underline mt-0">Esqueceu sua senha?</router-link>
             </div>
 
-            <!-- Botão de Login -->
             <PrimaryButton
               class="mt-8 bg-azure-500"
               :value="loading ? 'Carregando...' : 'Login'"
@@ -55,10 +51,8 @@
               aria-label="Botão de login"
             />
 
-            <!-- Mensagem de erro -->
             <p v-if="errors.global" class="text-red-500 text-sm mt-1">{{ errors.global }}</p>
 
-            <!-- Cadastro -->
             <div class="w-full flex justify-center pt-3">
               <router-link to="/register" class="text-sm text-amber-50 hover:underline mt-0 -translate-y-5">Não possui cadastro? Clique aqui</router-link>
             </div>
@@ -66,7 +60,6 @@
         </div>
       </div>
 
-      <!-- Imagem de fundo para telas grandes -->
       <div class="flex-1 relative hidden lg:block">
         <img src="@/assets/images/prefeitura.png" alt="Imagem prefeitura" class="w-full h-screen" />
       </div>
@@ -82,13 +75,13 @@ import { EyeSlashIcon, EyeIcon } from "@heroicons/vue/24/outline";
 export default {
   name: 'Login',
   components: { PrimaryButton, TextInput, EyeIcon, EyeSlashIcon },
-  
+
   data() {
     return {
       matricula: '',
       senha: '',
       loading: false,
-      showPassword: false,  // Estado para controlar a visibilidade da senha
+      showPassword: false,
       errors: {
         matricula: null,
         senha: null,
@@ -123,35 +116,134 @@ export default {
     },
 
     async login() {
-      // Limpar erros antes de iniciar
       if (!this.validateForm()) {
         return;
       }
 
       this.loading = true;
+      this.errors.global = null;
 
       try {
-        // Simulação de autenticação
-        await new Promise((resolve, reject) => {
-          setTimeout(() => {
-            // Simulando falha de login para demonstrar mensagens de erro
-            if (this.matricula !== 'admin' || this.senha !== '123') {
-              reject(new Error('Matrícula ou senha incorretos.'));
-            } else {
-              resolve();
-            }
-          }, 2000);
+        console.log('Enviando dados de login:', { username: this.matricula, password: this.senha });
+        const response = await fetch('http://localhost:8000/auth/login/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            username: this.matricula,
+            password: this.senha,
+          }),
         });
 
-        // Se o login for bem-sucedido
-        this.$router.push('/home/overview');
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.log('Erro ao autenticar:', errorData);
+          throw new Error(errorData.detail || 'Erro ao autenticar.');
+        }
+
+        const data = await response.json();
+        console.log('Resposta de login:', data);
+
+        // Armazenar os tokens no localStorage e marcar como autenticado
+        localStorage.setItem('accessToken', data.access);
+        localStorage.setItem('refreshToken', data.refresh);
+        localStorage.setItem('isAuthenticated', 'true'); // Adicionando este item no localStorage
+        console.log('Tokens armazenados:', {
+          accessToken: localStorage.getItem('accessToken'),
+          refreshToken: localStorage.getItem('refreshToken'),
+        });
+
+        // Redirecionar após login bem-sucedido
+        const redirectTo = this.$route.query.redirect || '/home/overview';  // Certifique-se de que o redirect é válido
+        console.log('Redirecionando para:', redirectTo);
+        this.$router.push(redirectTo); // Alterar para this.$router.push
       } catch (error) {
-        // Exibir mensagem de erro global
-        this.errors.global = error.message;
+        console.log('Erro no login:', error);
+        this.errors.global = error.message || 'Erro desconhecido. Tente novamente.';
       } finally {
         this.loading = false;
       }
     },
+
+    isAuthenticated() {
+      const token = localStorage.getItem('accessToken');
+      console.log('Verificando se o usuário está autenticado. Token:', token);
+      if (!token) {
+        this.$router.push('/');
+        return false;
+      }
+      return true;
+    },
+
+    // Método para obter o token
+    getAuthToken() {
+      const token = localStorage.getItem('accessToken');
+      console.log('Obtendo token:', token);
+      return token;
+    },
+
+    // Método para fazer requisições autenticadas
+    async fetchWithAuth(url, options = {}) {
+      const token = this.getAuthToken();
+      if (!token) {
+        this.$router.push('/login');
+        return;
+      }
+
+      console.log('Fazendo requisição autenticada para:', url);
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          ...options.headers,
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 401) {
+        console.log('Token expirado. Tentando renovar...');
+        const newToken = await this.refreshAccessToken();
+        if (newToken) {
+          return this.fetchWithAuth(url, options); // Reenvia a requisição com o novo token
+        }
+      }
+
+      return response;
+    },
+
+    async refreshAccessToken() {
+      const refreshToken = localStorage.getItem('refreshToken');
+      console.log('Tentando renovar o token com refreshToken:', refreshToken);
+      if (!refreshToken) {
+        this.$router.push('/login');
+        return;
+      }
+
+      const response = await fetch('http://localhost:8000/auth/refresh/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ refresh: refreshToken }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('accessToken', data.access);
+        console.log('Novo token de acesso recebido:', data.access);
+        return data.access;
+      } else {
+        this.$router.push('/login');
+      }
+    },
+  },
+
+  created() {
+    console.log('Verificando autenticação...');
+    if (this.isAuthenticated()) {
+      console.log('Usuário autenticado, redirecionando...');
+      this.$router.push('/home/overview');  // Redireciona para a home
+    }
   },
 };
 </script>

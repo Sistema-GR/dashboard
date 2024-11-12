@@ -176,65 +176,72 @@ export default {
     const isDisabled = ref(false);
 
     const submitData = async () => {
-  try {
-    const payload = {
-      name: textValue.value,
-      year: parseInt(yearValue.value),
-      start_date: startDate.value,
-      end_date: endDate.value,
-      max_value: parseFloat(globalValue.value),
-      max_workload: parseInt(workloadValue.value),
-      idem_rede_etapa_1: parseFloat(stage1Value.value),
-      idem_rede_etapa_2: parseFloat(stage2Value.value),
-      idem_rede_etapa_3: parseFloat(stage3Value.value)
+      try {
+        const payload = {
+          name: textValue.value,
+          year: parseInt(yearValue.value),
+          start_date: startDate.value,
+          end_date: endDate.value,
+          max_value: parseFloat(globalValue.value),
+          max_workload: parseInt(workloadValue.value),
+          idem_rede_etapa_1: parseFloat(stage1Value.value),
+          idem_rede_etapa_2: parseFloat(stage2Value.value),
+          idem_rede_etapa_3: parseFloat(stage3Value.value)
+        };
+
+        // Obtendo o token de autenticação
+        const token = localStorage.getItem('acessToken');
+        if (!token) {
+          throw new Error("Usuário não autenticado.");
+        }
+
+        // Primeira requisição para enviar os dados para general-data
+        const response = await fetch("http://localhost:8000/csv/api/general-data/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`, // Incluindo o token de autenticação
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error("Erro ao enviar os dados para general-data");
+        }
+
+        const data = await response.json();
+        console.log("Dados recebidos da API general-data:", data);
+
+        if (!data.general_data_id) {
+          throw new Error("Erro: general_data_id inválido.");
+        }
+
+        console.log("general_data_id obtido:", data.general_data_id);
+
+        // Segunda requisição - Create Dataset
+        const datasetResponse = await fetch("http://localhost:8000/csv/api/create-dataset/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`, // Incluindo o token de autenticação
+          },
+          body: JSON.stringify({ general_data_id: data.general_data_id })
+        });
+
+        if (!datasetResponse.ok) {
+          const errorData = await datasetResponse.json();
+          throw new Error(`Erro ao criar o dataset: ${errorData.error || 'Erro desconhecido'}`);
+        }
+
+        console.log("Dataset criado com sucesso.");
+
+        // Redirecionar após sucesso
+        router.push('/home/imports');
+      } catch (error) {
+        console.error("Erro ao enviar os dados:", error);
+        errorMessage.value = error.message;
+      }
     };
-
-    // Primeira requisição
-    const response = await fetch("http://localhost:8000/csv/api/general-data/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
-    });
-
-    if (!response.ok) {
-      throw new Error("Erro ao enviar os dados para general-data");
-    }
-
-    const data = await response.json();
-    console.log("Dados recebidos da API general-data:", data);
-
-    if (!data.general_data_id) {
-      throw new Error("Erro: general_data_id inválido.");
-    }
-
-    console.log("general_data_id obtido:", data.general_data_id);
-
-    // Segunda requisição - Create Dataset
-    const datasetResponse = await fetch("http://localhost:8000/csv/api/create-dataset/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ general_data_id: data.general_data_id })
-    });
-
-    if (!datasetResponse.ok) {
-      const errorData = await datasetResponse.json();
-      throw new Error(`Erro ao criar o dataset: ${errorData.error || 'Erro desconhecido'}`);
-    }
-
-    console.log("Dataset criado com sucesso.");
-
-    // Redirecionar após sucesso
-    router.push('/home/imports');
-  } catch (error) {
-    console.error("Erro ao enviar os dados:", error);
-    errorMessage.value = error.message;
-  }
-};
-
 
     return {
       isSidebarMinimized,

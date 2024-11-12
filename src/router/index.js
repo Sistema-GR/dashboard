@@ -123,4 +123,20 @@ const router = createRouter({
   ]
 })
 
-export default router
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true'; // Verifica se o usuário está autenticado
+
+  // Se a rota não for de login ou registro e o usuário não estiver autenticado
+  if ((to.name !== 'login' && to.name !== 'register') && !isAuthenticated) {
+    return next({ name: '' }); // Redireciona para login
+  }
+
+  // Se o usuário estiver autenticado e tentar acessar login ou registro, redireciona para a página principal
+  if (isAuthenticated && (to.name === 'login' || to.name === 'register')) {
+    return next({ name: 'home' }); // Ou para a página que você deseja
+  }
+
+  next(); // Permite navegação
+});
+
+export default router;
