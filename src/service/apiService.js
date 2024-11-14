@@ -1,11 +1,16 @@
 import axios from 'axios';
+import { setupAxiosInterceptors } from './services/token';  // Certifique-se de importar corretamente
 
+// Criação da instância do Axios
 const apiClient = axios.create({
   baseURL: 'http://localhost:8000/api', 
   headers: {
     'Content-Type': 'application/json',
   },
 });
+
+// Configura os interceptores do Axios
+setupAxiosInterceptors(apiClient);
 
 export const uploadCsv = async (file, endpoint) => {
   const formData = new FormData();
@@ -19,6 +24,6 @@ export const uploadCsv = async (file, endpoint) => {
     });
     return response.data;
   } catch (error) {
-    throw error.response.data; 
+    throw error.response.data;
   }
 };

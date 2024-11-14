@@ -1,3 +1,6 @@
+// Importa a função para obter o token de acesso
+import { getAccessToken } from './token';
+
 export default function usePersonService() {
   const BASE_URL = "http://localhost:8000/csv";
 
@@ -5,7 +8,7 @@ export default function usePersonService() {
     'Results': `${BASE_URL}/process/percentual-gratificacao/`,
     'Calendar': `${BASE_URL}/process/dias-nao-contabilizados/`,       
     'Profissional': `${BASE_URL}/process/funcionarios/`,              
-    'Groups': `${BASE_URL}/process/valores-grupo/`,
+    'Groups': `${BASE_URL}/process/aprender-mais/`,
     'Steps': `${BASE_URL}/process/etapas-metas/`,
     'StageGroup': `${BASE_URL}/process/funcoes-grupo/`,
     'Frequency': `${BASE_URL}/process/frequencia/`,                   
@@ -25,7 +28,20 @@ export default function usePersonService() {
       if (!jsonUrl) {
         throw new Error('URL não encontrada para a rota');
       }
-      const response = await fetch(jsonUrl);
+
+      // Obtém o token de acesso
+      const accessToken = await getAccessToken();
+      if (!accessToken) {
+        throw new Error('Token de acesso não encontrado ou expirado');
+      }
+
+      // Adiciona o token de acesso nos headers da requisição
+      const response = await fetch(jsonUrl, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      });
 
       if (!response.ok) {
         console.error(`Erro HTTP: ${response.status} ao tentar acessar ${jsonUrl}`);
@@ -45,7 +61,7 @@ export default function usePersonService() {
       return { people, columns };
     } catch (error) {
       console.error('Erro ao carregar os dados:', error);
-      throw error; 
+      throw error;
     }
   };
 
@@ -54,17 +70,17 @@ export default function usePersonService() {
       if (!person.cpf) {
         throw new Error('CPF não encontrado nos dados da pessoa');
       }
-  
+
       console.log(`Salvando dados do usuário com CPF: ${person.cpf} no localStorage`);
-      
+
       const savedRowData = JSON.parse(localStorage.getItem('rowSave')) || {};
-      
+
       // Usa o CPF como chave para armazenar os dados da pessoa
       savedRowData[person.cpf] = person;
-      
+
       // Salva os dados atualizados de volta no localStorage
       localStorage.setItem('rowSave', JSON.stringify(savedRowData));
-      
+
       console.log('Dados salvos com sucesso no localStorage:', person);
     } catch (error) {
       console.error('Erro ao salvar os dados no localStorage:', error);
