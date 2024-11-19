@@ -1,10 +1,25 @@
-// src/services/token.js
-
 // URLs da API
-const REFRESH_TOKEN_URL = "http://localhost:8000/auth/token/refresh/";
+const API_BASE_URL = "http://localhost:8000";  // Defina o valor diretamente
+const REFRESH_TOKEN_URL = `${API_BASE_URL}/auth/token/refresh/`;
+
 
 /**
- * Obtém o token de acesso do localStorage e verifica se ele está expirado.
+ * Decodifica o payload de um token JWT.
+ * @param {string} token - O token JWT.
+ * @returns {object|null} O payload decodificado ou null se inválido.
+ */
+const decodeTokenPayload = (token) => {
+  try {
+    const payload = atob(token.split('.')[1]);
+    return JSON.parse(payload);
+  } catch {
+    console.error("decodeTokenPayload: Token inválido ou malformado.");
+    return null;
+  }
+};
+
+/**
+ * Obtém o token de acesso do localStorage e verifica se está expirado.
  * Se estiver expirado, tenta renovar utilizando o refreshToken.
  * @returns {Promise<string|null>} O token de acesso ou null se falhar.
  */
@@ -12,20 +27,15 @@ export const getAccessToken = async () => {
   const token = localStorage.getItem('accessToken');
   if (!token) return null;
 
-  try {
-    const tokenPayload = JSON.parse(atob(token.split('.')[1]));
-    const isExpired = tokenPayload.exp < Math.floor(Date.now() / 1000);
-    
-    if (isExpired) {
-      const refreshToken = localStorage.getItem('refreshToken');
-      return await renewAccessToken(refreshToken);
-    }
+  const tokenPayload = decodeTokenPayload(token);
+  const isExpired = tokenPayload?.exp && tokenPayload.exp < Math.floor(Date.now() / 1000);
 
-    return token;
-  } catch (error) {
-    console.error("getAccessToken: error decoding token:", error);
-    return null;
+  if (isExpired) {
+    const refreshToken = localStorage.getItem('refreshToken');
+    return await renewAccessToken(refreshToken);
   }
+
+  return token;
 };
 
 /**
@@ -45,18 +55,29 @@ export const renewAccessToken = async (refreshToken) => {
 
     if (response.ok) {
       const data = await response.json();
-      localStorage.setItem('accessToken', data.access);
-      return data.access;
+      if (data.access) {
+        localStorage.setItem('accessToken', data.access);
+        return data.access;
+      } else {
+        console.error("renewAccessToken: Token de acesso ausente na resposta.");
+      }
+    } else if (response.status === 401) {
+      // Se o token for blacklisted ou inválido, limpar os tokens e redirecionar o usuário
+      console.error("renewAccessToken: Token blacklisted ou inválido.");
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('isAuthenticated');
+      // Redirecionar para a página de login ou exibir uma mensagem
+      window.location.href = '/'; // ou o caminho da sua página de login
+    } else {
+      console.error("renewAccessToken: Erro ao renovar o token:", response.status, await response.text());
     }
-
-    console.error("renewAccessToken: error renewing token:", response.status);
   } catch (error) {
-    console.error("renewAccessToken: error:", error);
+    console.error("renewAccessToken: Erro:", error);
   }
 
   return null;
 };
-
 /**
  * Configura o Axios para usar o token de acesso e renovar o token se necessário.
  * @param {import('axios').AxiosInstance} axiosInstance - A instância do Axios.
@@ -78,13 +99,13 @@ export const setupAxiosInterceptors = (axiosInstance) => {
     async (error) => {
       const originalRequest = error.config;
 
-      // Verifica se o erro é por token expirado (status 401)
-      if (error.response && error.response.status === 401 && !originalRequest._retry) {
+      if (error.response?.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
         const refreshToken = localStorage.getItem('refreshToken');
         const newAccessToken = await renewAccessToken(refreshToken);
-        
+
         if (newAccessToken) {
+          axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
           originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
           return axiosInstance(originalRequest);
         }
@@ -94,3 +115,17 @@ export const setupAxiosInterceptors = (axiosInstance) => {
     }
   );
 };
+
+/**
+ * Sincroniza tokens entre abas usando eventos de localStorage.
+ */
+const synchronizeTokensAcrossTabs = () => {
+  window.addEventListener('storage', (event) => {
+    if (event.key === 'accessToken' || event.key === 'refreshToken') {
+      console.log("Tokens sincronizados entre abas.");
+    }
+  });
+};
+
+// Inicializa a sincronização de tokens.
+synchronizeTokensAcrossTabs();

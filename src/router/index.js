@@ -12,6 +12,7 @@ import newcal from '../views/Admin/NewCal/index.vue'
 import previousresults from '@/views/Admin/PreviousResults/index.vue'
 import imports from "@/views/Admin/Imports/index.vue"
 import dataversions from '@/views/Admin/DataDversions/index.vue'
+import versionmanager from '@/views/Admin/VersionManager/index.vue'
 //Resource
 import resource from '@/views/Admin/Resource/index.vue'
 import newResource from '@/views/Admin/Resource/NewResource/index.vue'
@@ -67,7 +68,8 @@ const router = createRouter({
         { path: 'previousresults', name: 'previousresults', component: previousresults },
         { path: 'imports', name: 'inports', component: imports },
         { path: 'config', name: 'configs', component: config },
-        { path: 'dataversions', name: 'dataversions', component: dataversions }
+        { path: 'dataversions', name: 'dataversions', component: dataversions },
+        { path: 'versionmanager', name: 'versionmanager', component: versionmanager }
       ]
     },
     {
