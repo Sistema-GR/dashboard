@@ -39,6 +39,7 @@ import groups from '@/views/AdminPanel/Groups/index.vue'
 import stagegroup from '@/views/AdminPanel/StageGroup/index.vue'
 import rewards from '@/views/AdminPanel/Rewards/index.vue'
 import calendar from "@/views/AdminPanel/Calendar/index.vue"
+import FileManager from '@/views/AdminPanel/FileManager/index.vue'
 //user
 import user from '@/views/User/index.vue'
 import form from '@/views/User/ResourceForm/index.vue'
@@ -92,6 +93,7 @@ const router = createRouter({
         { path: 'report', name: 'report', component: report },
         { path: 'rewards', name: 'reward', component: rewards },
         { path: 'calendar', name: 'calendar', component: calendar },
+        { path: 'files-manager', name: 'files-manager', component: FileManager },
       ]
     },
     { path: '/user', 
