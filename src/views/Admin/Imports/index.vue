@@ -155,7 +155,6 @@ export default {
           console.log(`${key} arquivo carregado com sucesso`, response.data);
         }
 
-        // Após o upload de todos os arquivos, chama a rota para processar todos eles
         await axios.get(`${this.BASE_URL}/process/all-files/`, {
           headers: { 'Authorization': `Bearer ${token}` },
         });

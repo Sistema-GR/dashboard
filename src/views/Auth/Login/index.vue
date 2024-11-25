@@ -8,7 +8,7 @@
             <TextInput 
               type="text" 
               label="Matrícula" 
-              placeholder="00000" 
+              placeholder="000.000.00-00" 
               v-model="matricula" 
               :aria-label="'Campo de matrícula'" 
               :error="errors.matricula"

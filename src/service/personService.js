@@ -50,6 +50,8 @@ export default function usePersonService() {
 
       const data = await response.json();
 
+      console.log(`Dados carregados da rota ${route}:`, data);
+
       if (!Array.isArray(data)) {
         console.error('Erro: Formato inesperado de dados. Esperado um array de objetos.', data);
         throw new Error('Formato inesperado de dados');
