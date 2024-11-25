@@ -1,7 +1,7 @@
 const columnRenamingMap = {
     Results: {
-      nome_unidade: 'Nome Unidade',
-      gr_bruto_etapa_1: 'Esperada Etapa 1',
+      nome_local: 'Nome Unidade',
+      gratificacao_bruto_etapa_1: 'Esperada Etapa 1',
       gr_final_etapa_1: 'Atingido',
       gr_bruto_etapa_2: 'Esperada Etapa 2',
       gr_final_etapa_2: 'Atingido',

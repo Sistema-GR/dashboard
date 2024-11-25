@@ -13,6 +13,7 @@ import previousresults from '@/views/Admin/PreviousResults/index.vue'
 import imports from "@/views/Admin/Imports/index.vue"
 import dataversions from '@/views/Admin/DataDversions/index.vue'
 import versionmanager from '@/views/Admin/VersionManager/index.vue'
+import roles from '@/views/Admin/Roles/index.vue'
 //Resource
 import resource from '@/views/Admin/Resource/index.vue'
 import newResource from '@/views/Admin/Resource/NewResource/index.vue'
@@ -94,6 +95,7 @@ const router = createRouter({
         { path: 'rewards', name: 'reward', component: rewards },
         { path: 'calendar', name: 'calendar', component: calendar },
         { path: 'files-manager', name: 'files-manager', component: FileManager },
+        { path: 'roles', name: 'roles', component: roles },
       ]
     },
     { path: '/user', 
