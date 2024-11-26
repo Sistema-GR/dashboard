@@ -1,8 +1,8 @@
 <template>
-    <Whiteboard title="Grupos" :isSidebarMinimized="isSidebarMinimized">
+    <Whiteboard title="Turmas" :isSidebarMinimized="isSidebarMinimized">
 
-        <div class="flex flex-col w-full items-center justify-center mt-5 pb-5">
-            <p class="text-xl font-semibold mt-5">Valores</p>
+        <div class="flex flex-col w-full items-center justify-center mt-5 pb-5 capitalize">
+        
             <PrimaryTable :route="'Groups'" />
         </div>
 
