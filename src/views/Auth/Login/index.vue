@@ -1,17 +1,17 @@
 <template>
-  <div class="flex-1 h-screen bg-gradient-to-r from-[#003965] to-95%0% to-[#0073CB]">
+  <div class="flex-1 h-screen bg-gradient-to-r from-[#003965] to-[#0073CB]">
     <div class="flex flex-row">
       <div class="flex-1">
         <div class="flex flex-col h-screen items-center justify-center">
           <img src="@/assets/images/logo.png" alt="Logo" class="w-3/12 scale-90 drop-shadow-lg py-0" />
           <div class="w-full max-w-md space-y-3 px-5">
             <TextInput 
-              type="text" 
-              label="Matrícula" 
-              placeholder="000.000.00-00" 
-              v-model="matricula" 
-              :aria-label="'Campo de matrícula'" 
-              :error="errors.matricula"
+              type="email" 
+              label="E-mail" 
+              placeholder="Digite seu e-mail" 
+              v-model="email" 
+              :aria-label="'Campo de e-mail'" 
+              :error="errors.email"
             />
             
             <div class="relative">
@@ -78,12 +78,12 @@ export default {
 
   data() {
     return {
-      matricula: '',
+      email: '', // Alterado para email
       senha: '',
       loading: false,
       showPassword: false,
       errors: {
-        matricula: null,
+        email: null, // Alterado para email
         senha: null,
         global: null,
       },
@@ -96,14 +96,14 @@ export default {
     },
 
     validateForm() {
-      this.errors.matricula = null;
+      this.errors.email = null; // Alterado para email
       this.errors.senha = null;
       this.errors.global = null;
 
       let valid = true;
 
-      if (!this.matricula) {
-        this.errors.matricula = 'Matrícula é obrigatória.';
+      if (!this.email) { // Alterado para email
+        this.errors.email = 'E-mail é obrigatório.';
         valid = false;
       }
 
@@ -124,14 +124,14 @@ export default {
       this.errors.global = null;
 
       try {
-        console.log('Enviando dados de login:', { username: this.matricula, password: this.senha });
+        console.log('Enviando dados de login:', { email: this.email, password: this.senha });
         const response = await fetch('http://localhost:8000/auth/login/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            username: this.matricula,
+            email: this.email, // Alterado para enviar email
             password: this.senha,
           }),
         });
@@ -155,9 +155,9 @@ export default {
         });
 
         // Redirecionar após login bem-sucedido
-        const redirectTo = this.$route.query.redirect || '/home/overview';  // Certifique-se de que o redirect é válido
+        const redirectTo = this.$route.query.redirect || '/home/overview';
         console.log('Redirecionando para:', redirectTo);
-        this.$router.push(redirectTo); // Alterar para this.$router.push
+        this.$router.push(redirectTo);
       } catch (error) {
         console.log('Erro no login:', error);
         this.errors.global = error.message || 'Erro desconhecido. Tente novamente.';
@@ -165,85 +165,6 @@ export default {
         this.loading = false;
       }
     },
-
-    isAuthenticated() {
-      const token = localStorage.getItem('accessToken');
-      console.log('Verificando se o usuário está autenticado. Token:', token);
-      if (!token) {
-        this.$router.push('/');
-        return false;
-      }
-      return true;
-    },
-
-    // Método para obter o token
-    getAuthToken() {
-      const token = localStorage.getItem('accessToken');
-      console.log('Obtendo token:', token);
-      return token;
-    },
-
-    // Método para fazer requisições autenticadas
-    async fetchWithAuth(url, options = {}) {
-      const token = this.getAuthToken();
-      if (!token) {
-        this.$router.push('/login');
-        return;
-      }
-
-      console.log('Fazendo requisição autenticada para:', url);
-      const response = await fetch(url, {
-        ...options,
-        headers: {
-          ...options.headers,
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (response.status === 401) {
-        console.log('Token expirado. Tentando renovar...');
-        const newToken = await this.refreshAccessToken();
-        if (newToken) {
-          return this.fetchWithAuth(url, options); // Reenvia a requisição com o novo token
-        }
-      }
-
-      return response;
-    },
-
-    async refreshAccessToken() {
-      const refreshToken = localStorage.getItem('refreshToken');
-      console.log('Tentando renovar o token com refreshToken:', refreshToken);
-      if (!refreshToken) {
-        this.$router.push('/login');
-        return;
-      }
-
-      const response = await fetch('http://localhost:8000/auth/refresh/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ refresh: refreshToken }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem('accessToken', data.access);
-        console.log('Novo token de acesso recebido:', data.access);
-        return data.access;
-      } else {
-        this.$router.push('/login');
-      }
-    },
-  },
-
-  created() {
-    console.log('Verificando autenticação...');
-    if (this.isAuthenticated()) {
-      console.log('Usuário autenticado, redirecionando...');
-      this.$router.push('/home/overview');  // Redireciona para a home
-    }
   },
 };
 </script>
