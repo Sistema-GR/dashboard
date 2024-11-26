@@ -1,4 +1,3 @@
-// Importa a função para obter o token de acesso
 import { getAccessToken } from './token';
 
 export default function usePersonService() {
@@ -49,6 +48,8 @@ export default function usePersonService() {
       }
 
       const data = await response.json();
+
+      console.log(`Dados carregados da rota ${route}:`, data);
 
       if (!Array.isArray(data)) {
         console.error('Erro: Formato inesperado de dados. Esperado um array de objetos.', data);

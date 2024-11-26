@@ -12,6 +12,8 @@ import newcal from '../views/Admin/NewCal/index.vue'
 import previousresults from '@/views/Admin/PreviousResults/index.vue'
 import imports from "@/views/Admin/Imports/index.vue"
 import dataversions from '@/views/Admin/DataDversions/index.vue'
+import versionmanager from '@/views/Admin/VersionManager/index.vue'
+import roles from '@/views/Admin/Roles/index.vue'
 //Resource
 import resource from '@/views/Admin/Resource/index.vue'
 import newResource from '@/views/Admin/Resource/NewResource/index.vue'
@@ -38,6 +40,7 @@ import groups from '@/views/AdminPanel/Groups/index.vue'
 import stagegroup from '@/views/AdminPanel/StageGroup/index.vue'
 import rewards from '@/views/AdminPanel/Rewards/index.vue'
 import calendar from "@/views/AdminPanel/Calendar/index.vue"
+import FileManager from '@/views/AdminPanel/FileManager/index.vue'
 //user
 import user from '@/views/User/index.vue'
 import form from '@/views/User/ResourceForm/index.vue'
@@ -67,7 +70,8 @@ const router = createRouter({
         { path: 'previousresults', name: 'previousresults', component: previousresults },
         { path: 'imports', name: 'inports', component: imports },
         { path: 'config', name: 'configs', component: config },
-        { path: 'dataversions', name: 'dataversions', component: dataversions }
+        { path: 'dataversions', name: 'dataversions', component: dataversions },
+        { path: 'versionmanager', name: 'versionmanager', component: versionmanager }
       ]
     },
     {
@@ -90,6 +94,8 @@ const router = createRouter({
         { path: 'report', name: 'report', component: report },
         { path: 'rewards', name: 'reward', component: rewards },
         { path: 'calendar', name: 'calendar', component: calendar },
+        { path: 'files-manager', name: 'files-manager', component: FileManager },
+        { path: 'roles', name: 'roles', component: roles },
       ]
     },
     { path: '/user', 

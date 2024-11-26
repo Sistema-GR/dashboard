@@ -3,7 +3,7 @@
         <div class="flex w-full items-start justify-start px-4 mt-4">
             <Search @search="handleSearch" />
         </div>   
-        <div class="w-full pb-5">
+        <div class="w-full pb-5 capitalize">
             <PrimaryTable :route="'Resignation'" :searchQuery="searchQuery"/>
         </div>
     </Whiteboard>

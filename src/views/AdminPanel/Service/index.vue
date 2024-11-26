@@ -4,7 +4,7 @@
             <Search @search="handleSearch" />
         </div>   
 
-        <div class="w-full pb-5">
+        <div class="w-full pb-5 capitalize">
             <PrimaryTable :route="'Service'" :searchQuery="searchQuery"/>
         </div>
     </Whiteboard>
