@@ -152,7 +152,7 @@ const routes = {
     { name: 'Resultados IDEM', route: '/admin/results', icon: CalculatorIcon, current: false },
     { name: 'Calendario Escolar', route: '/admin/calendar', icon: CalendarIcon  , current: false },
     { name: 'Profissionais', route: '/admin/professional', icon: UsersIcon , current: false },
-    { name: 'Grupos', route: '/admin/groups', icon: UserGroupIcon, current: false },
+    { name: 'Turmas', route: '/admin/groups', icon: UserGroupIcon, current: false },
     { name: 'Etapas Ues', route: '/admin/steps', icon: Square3Stack3DIcon , current: false },
     { name: 'Etapas Por Grupo', route: '/admin/stagegroup', icon: RectangleGroupIcon  , current: false },
     { name: 'Frequência', route: '/admin/frequency', icon: ChartBarSquareIcon , current: false },
