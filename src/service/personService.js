@@ -1,4 +1,3 @@
-// Importa a função para obter o token de acesso
 import { getAccessToken } from './token';
 
 export default function usePersonService() {
