@@ -3,7 +3,7 @@ import { setupAxiosInterceptors } from './services/token';  // Certifique-se de 
 
 // Criação da instância do Axios
 const apiClient = axios.create({
-  baseURL: 'http://localhost:8000/api', 
+  baseURL: 'http://10.203.2.158:8000/api', 
   headers: {
     'Content-Type': 'application/json',
   },

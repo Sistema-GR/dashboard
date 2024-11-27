@@ -1,7 +1,7 @@
 import { getAccessToken } from './token';
 
 export default function usePersonService() {
-  const BASE_URL = "http://localhost:8000/csv";
+  const BASE_URL = "http://10.203.2.158:8000/csv";
 
   const routeJsonMapping = {
     'Results': `${BASE_URL}/process/percentual-gratificacao/`,

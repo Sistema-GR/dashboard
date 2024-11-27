@@ -216,7 +216,7 @@ export default {
         console.log("Payload enviado para general-data:", payload);
 
         const generalDataResponse = await fetch(
-          "http://localhost:8000/csv/api/general-data/",
+          "http://10.203.2.158:8000/csv/api/general-data/",
           {
             method: "POST",
             headers: {
@@ -248,7 +248,7 @@ export default {
         console.log("General Data ID retornado:", generalDataId);
 
         const response = await fetch(
-          "http://localhost:8000/csv/api/create-dataset/",
+          "http://10.203.2.158:8000/csv/api/create-dataset/",
           {
             method: "POST",
             headers: {

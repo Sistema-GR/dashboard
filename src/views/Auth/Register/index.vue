@@ -169,7 +169,7 @@ export default {
       this.loading = true;
 
       try {
-        const response = await axios.post('http://localhost:8000/auth/register/', {
+        const response = await axios.post('http://10.203.2.158:8000/auth/register/', {
           password: this.senha,  
           confirm_password: this.confirmarSenha,  
           email: this.email,
