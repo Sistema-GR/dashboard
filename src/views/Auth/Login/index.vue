@@ -125,7 +125,7 @@ export default {
 
       try {
         console.log('Enviando dados de login:', { email: this.email, password: this.senha });
-        const response = await fetch('http://10.203.2.158:8000/auth/login/', {
+        const response = await fetch('http://10.203.2.185:8000/auth/login/', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

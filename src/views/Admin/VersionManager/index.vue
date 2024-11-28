@@ -86,8 +86,8 @@
   import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
   import { getAccessToken } from '../../../service/token.js';
   
-  const API_URL = "http://10.203.2.158:8000/csv/api/general-data/";
-  const CREATE_DATASET_URL = "http://10.203.2.158:8000/csv/api/create-dataset/";
+  const API_URL = "http://10.203.2.185:8000/csv/api/general-data/";
+  const CREATE_DATASET_URL = "http://10.203.2.185:8000/csv/api/create-dataset/";
   
   export default {
     name: "VersionManager",

@@ -15,6 +15,15 @@
           </div>
 
           <div class="space-y-2">
+            <p>Descrição</p>
+            <TextInput
+              v-model="formData.description"
+              :error="errorMessage"
+              type="text"
+            />
+          </div>
+
+          <div class="space-y-2">
             <p>Selecione o Ano do Pagamento</p>
             <TextInput
               v-model="formData.yearValue"
@@ -130,6 +139,7 @@ export default {
     // Dados do formulário reativos
     const formData = reactive({
       name: "",
+      description: "",
       yearValue: "",
       start_date: "",
       end_date: "",
@@ -145,6 +155,7 @@ export default {
       const {
         name,
         yearValue,
+        description,
         start_date,
         end_date,
         max_value,
@@ -156,6 +167,7 @@ export default {
 
       if (
         !name ||
+        !description ||
         !yearValue ||
         !start_date ||
         !end_date ||
@@ -203,6 +215,7 @@ export default {
 
         const payload = {
           name: formData.name.trim(),
+          description: formData.description.trim(),
           year_value: parseInt(formData.yearValue, 10),
           start_date: new Date(formData.start_date).toISOString().split("T")[0],
           end_date: new Date(formData.end_date).toISOString().split("T")[0],
@@ -216,7 +229,7 @@ export default {
         console.log("Payload enviado para general-data:", payload);
 
         const generalDataResponse = await fetch(
-          "http://10.203.2.158:8000/csv/api/general-data/",
+          "http://10.203.2.185:8000/csv/api/general-data/",
           {
             method: "POST",
             headers: {
@@ -248,7 +261,7 @@ export default {
         console.log("General Data ID retornado:", generalDataId);
 
         const response = await fetch(
-          "http://10.203.2.158:8000/csv/api/create-dataset/",
+          "http://10.203.2.185:8000/csv/api/create-dataset/",
           {
             method: "POST",
             headers: {
@@ -274,8 +287,6 @@ export default {
         errorMessage.value = "Ocorreu um erro ao enviar os dados.";
       }
     };
-
-
 
     return {
       isSidebarMinimized,
