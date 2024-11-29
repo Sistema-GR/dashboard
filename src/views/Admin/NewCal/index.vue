@@ -122,10 +122,11 @@
 <script>
 import { inject, ref, reactive } from "vue";
 import { useRouter } from "vue-router";
+import { createGeneralData, createDataset } from "../../../service/apiService"; 
 import PrimaryButton from "@/components/Buttons/PrimaryButton.vue";
 import TextInput from "@/components/Inputs/TextInput.vue";
 import Whiteboard from "@/components/Whiteboard/Whiteboard.vue";
-import { getAccessToken } from "../../../service/token.js";
+
 
 export default {
   name: "NewCal",
@@ -175,7 +176,7 @@ export default {
         !max_workload ||
         !idem_network_step_1 ||
         !idem_network_step_2 ||
-        !idem_network_step_3 
+        !idem_network_step_3
       ) {
         errorMessage.value = "Todos os campos são obrigatórios.";
         return false;
@@ -207,12 +208,6 @@ export default {
       if (!validateInputs()) return;
 
       try {
-        const token = await getAccessToken();
-        if (!token) {
-          errorMessage.value = "Erro ao obter ou renovar o token de acesso.";
-          return;
-        }
-
         const payload = {
           name: formData.name.trim(),
           description: formData.description.trim(),
@@ -228,60 +223,26 @@ export default {
 
         console.log("Payload enviado para general-data:", payload);
 
-        const generalDataResponse = await fetch(
-          "http://10.203.2.185:8000/csv/api/general-data/",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(payload),
-          }
-        );
+        // Enviar para criar o general data
+        const generalData = await createGeneralData(payload);
 
-        if (!generalDataResponse.ok) {
-          const errorData = await generalDataResponse.json();
-          console.error("Erro ao criar general-data:", errorData);
-          throw new Error(errorData.message || "Erro ao criar o registro em general-data.");
-        }
-
-        const generalData = await generalDataResponse.json();
-        console.log("Resposta da API general-data:", generalData);
-
-        // Acesse o ID dentro de general_data
         const generalDataId = generalData.general_data?.general_data_id;
 
         if (!generalDataId) {
           throw new Error(
-            `Nenhum general_data_id foi retornado pela API. Resposta completa: ${JSON.stringify(generalData)}`
+            `Nenhum general_data_id foi retornado pela API. Resposta completa: ${JSON.stringify(
+              generalData
+            )}`
           );
         }
 
         console.log("General Data ID retornado:", generalDataId);
 
-        const response = await fetch(
-          "http://10.203.2.185:8000/csv/api/create-dataset/",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              general_data_id: generalDataId,
-            }),
-          }
-        );
+        // Criar dataset
+        await createDataset(generalDataId);
 
-        if (response.ok) {
-          router.push({ path: "/home/imports" });
-        } else {
-          const responseData = await response.json();
-          errorMessage.value = `Erro ao criar dataset: ${
-            responseData.message || "Erro desconhecido"
-          }`;
-        }
+        // Redirecionar após o sucesso
+        router.push({ path: "/home/imports" });
       } catch (error) {
         console.error("Erro ao enviar os dados:", error);
         errorMessage.value = "Ocorreu um erro ao enviar os dados.";

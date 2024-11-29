@@ -8,6 +8,7 @@
           label="Matrícula"
           placeholder="00000"
           v-model="matricula"
+          @keydown.enter="handleSubmit"
           :aria-label="'Campo de matrícula'"
           :error="errors.matricula"
         />
@@ -17,6 +18,7 @@
           label="Email"
           placeholder="E-mail"
           v-model="email"
+          @keydown.enter="handleSubmit"
           :aria-label="'Campo de e-mail'"
           :error="errors.email"
         />
@@ -26,8 +28,10 @@
           label="CPF"
           placeholder="CPF"
           v-model="cpf"
+          @keydown.enter="handleSubmit"
           :aria-label="'Campo de CPF'"
           :error="errors.cpf"
+          @input="formatCPF"
         />
 
         <TextInput
@@ -35,6 +39,7 @@
           label="Senha"
           placeholder="Senha"
           v-model="senha"
+          @keydown.enter="handleSubmit"
           :aria-label="'Campo de senha'"
           :error="errors.senha"
         />
@@ -44,6 +49,7 @@
           label="Confirmar Senha"
           placeholder="Confirmar Senha"
           v-model="confirmarSenha"
+          @keydown.enter="handleSubmit"
           :aria-label="'Campo de confirmar senha'"
           :error="errors.confirmarSenha"
         />
@@ -73,14 +79,13 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { register } from "@/service/apiService"; // Importa a função register
 import TextInput from "@/components/Inputs/TextInput.vue";
-import PrimaryButton from "@/components/Buttons/PrimaryButton.vue";
-import Loading from "@/components/Loading/Loading.vue";  
+import PrimaryButton from "@/components/Buttons/PrimaryButton.vue";  
 
 export default {
   name: 'Register',
-  components: { PrimaryButton, TextInput, Loading }, 
+  components: { PrimaryButton, TextInput },
 
   data() {
     return {
@@ -152,13 +157,13 @@ export default {
       return valid;
     },
 
-    // CPF Formatting
+    // Formatar CPF automaticamente
     formatCPF() {
-      let cpf = this.cpf.replace(/\D/g, '').slice(0, 11); 
-      cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
-      cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
-      cpf = cpf.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-      this.cpf = cpf;
+      let cpf = this.cpf.replace(/\D/g, ''); // Remove qualquer coisa que não seja número
+      if (cpf.length <= 11) {
+        cpf = cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4'); // Aplica a formatação
+      }
+      this.cpf = cpf; // Atualiza o valor do campo CPF
     },
 
     async handleSubmit() {
@@ -169,23 +174,11 @@ export default {
       this.loading = true;
 
       try {
-        const response = await axios.post('http://10.203.2.185:8000/auth/register/', {
-          password: this.senha,  
-          confirm_password: this.confirmarSenha,  
-          email: this.email,
-          employeeCode: this.matricula,  
-          cpf: this.cpf,
-        });
-
-        alert('Registro concluído com sucesso!');  
-        this.$router.push('/');  
+        const data = await register(this.email, this.senha, this.confirmarSenha, this.matricula, this.cpf);
+        alert('Registro concluído com sucesso!');
+        this.$router.push('/');  // Redireciona para a página de login
       } catch (error) {
-        if (error.response && error.response.data) {
-          const data = error.response.data;
-          this.errors.global = data.message || 'Erro ao registrar.';
-        } else {
-          this.errors.global = 'Erro de conexão. Tente novamente mais tarde.';
-        }
+        this.errors.global = error.message || 'Erro ao registrar.';
       } finally {
         this.loading = false;
       }
@@ -193,7 +186,7 @@ export default {
   },
 
   watch: {
-    // Watch CPF for formatting
+    // Watch CPF para formatar automaticamente
     cpf(newVal) {
       this.formatCPF();
     }

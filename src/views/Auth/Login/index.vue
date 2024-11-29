@@ -10,6 +10,7 @@
               label="E-mail" 
               placeholder="Digite seu e-mail" 
               v-model="email" 
+              @keydown.enter="login"
               :aria-label="'Campo de e-mail'" 
               :error="errors.email"
             />
@@ -20,6 +21,7 @@
                 label="Senha" 
                 placeholder="Senha" 
                 v-model="senha" 
+                @keydown.enter="login"
                 :aria-label="'Campo de senha'" 
                 :error="errors.senha"
               />
@@ -71,6 +73,7 @@
 import TextInput from "@/components/Inputs/TextInput.vue";
 import PrimaryButton from "@/components/Buttons/PrimaryButton.vue";
 import { EyeSlashIcon, EyeIcon } from "@heroicons/vue/24/outline";
+import { login } from "@/service/apiService";  
 
 export default {
   name: 'Login',
@@ -78,12 +81,12 @@ export default {
 
   data() {
     return {
-      email: '', // Alterado para email
+      email: '',
       senha: '',
       loading: false,
       showPassword: false,
       errors: {
-        email: null, // Alterado para email
+        email: null,
         senha: null,
         global: null,
       },
@@ -96,13 +99,13 @@ export default {
     },
 
     validateForm() {
-      this.errors.email = null; // Alterado para email
+      this.errors.email = null;
       this.errors.senha = null;
       this.errors.global = null;
 
       let valid = true;
 
-      if (!this.email) { // Alterado para email
+      if (!this.email) {
         this.errors.email = 'E-mail é obrigatório.';
         valid = false;
       }
@@ -125,36 +128,19 @@ export default {
 
       try {
         console.log('Enviando dados de login:', { email: this.email, password: this.senha });
-        const response = await fetch('http://10.203.2.185:8000/auth/login/', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: this.email, // Alterado para enviar email
-            password: this.senha,
-          }),
-        });
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          console.log('Erro ao autenticar:', errorData);
-          throw new Error(errorData.detail || 'Erro ao autenticar.');
-        }
+        const data = await login(this.email, this.senha);
 
-        const data = await response.json();
         console.log('Resposta de login:', data);
 
-        // Armazenar os tokens no localStorage e marcar como autenticado
         localStorage.setItem('accessToken', data.access);
         localStorage.setItem('refreshToken', data.refresh);
-        localStorage.setItem('isAuthenticated', 'true'); // Adicionando este item no localStorage
+        localStorage.setItem('isAuthenticated', 'true');
         console.log('Tokens armazenados:', {
           accessToken: localStorage.getItem('accessToken'),
           refreshToken: localStorage.getItem('refreshToken'),
         });
 
-        // Redirecionar após login bem-sucedido
         const redirectTo = this.$route.query.redirect || '/home/overview';
         console.log('Redirecionando para:', redirectTo);
         this.$router.push(redirectTo);
