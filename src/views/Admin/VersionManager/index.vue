@@ -83,11 +83,8 @@
   <script>
   import { ref, inject, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
+  import { fetchVersions, createDataset } from '../../../service/apiService'; 
   import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
-  import { getAccessToken } from '../../../service/token.js';
-  
-  const API_URL = "http://localhost:8000/csv/api/general-data/";
-  const CREATE_DATASET_URL = "http://localhost:8000/csv/api/create-dataset/";
   
   export default {
     name: "VersionManager",
@@ -101,23 +98,10 @@
       const datasetName = ref('');
       const loading = ref(false);
   
-      const fetchVersions = async () => {
+      const fetchVersionsData = async () => {
         loading.value = true;
         try {
-          const token = await getAccessToken();
-          const response = await fetch(API_URL, {
-            method: 'GET',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            }
-          });
-          if (response.ok) {
-            const data = await response.json();
-            versions.value = Array.isArray(data.data) ? data.data : [];
-          } else {
-            console.error("Falha ao buscar versões:", response.status);
-          }
+          versions.value = await fetchVersions();
         } catch (error) {
           console.error("Erro ao buscar versões:", error);
         } finally {
@@ -131,28 +115,14 @@
         );
       };
   
-      const createDataset = async () => {
+      const createNewDataset = async () => {
         try {
-          const token = await getAccessToken();
-          const response = await fetch(CREATE_DATASET_URL, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify({
-              general_data_id: selectedVersion.value,
-              name: datasetName.value
-            })
-          });
-          if (response.ok) {
-            alert("Dataset criado com sucesso!");
-            datasetName.value = '';
-            navigateToImports();
-          } else {
-            alert("Erro ao criar dataset.");
-          }
+          await createDataset(selectedVersion.value, datasetName.value);
+          alert("Dataset criado com sucesso!");
+          datasetName.value = '';
+          navigateToImports();
         } catch (error) {
+          alert("Erro ao criar dataset.");
           console.error("Erro ao criar dataset:", error);
         }
       };
@@ -165,7 +135,7 @@
         router.push('/home/newcal');
       };
   
-      onMounted(fetchVersions);
+      onMounted(fetchVersionsData);
   
       return {
         isSidebarMinimized,
@@ -174,12 +144,11 @@
         selectedVersionDetails,
         datasetName,
         handleVersionChange,
-        createDataset,
+        createNewDataset,
         navigateToImports,
         navigateToNewCal,
         loading
       };
     }
   };
-  </script>
-  
+</script>
