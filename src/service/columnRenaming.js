@@ -71,6 +71,49 @@ const columnRenamingMap = {
       valor_a_pagar_criterios: 'Valor a Pagar por Critérios',
       motivo_nao_recebimento: 'Motivo do Não Recebimento',
       desconto: 'Desconto'
+
+      // matricula: 'Matrícula',
+      // nome: 'Nome', 
+      // admissao: 'Admissão',
+      // cpf: 'CPF',
+      // cod_local_alocacao: 'Código Local Alocação',
+      // nome_local_alocacao: 'Nome Local Alocação',
+      // cargo: 'Cargo',
+      // vinculo: 'Vínculo',
+      // situacao: 'Situação',
+      // inicio_atividade_local: 'Início Atividade Local',
+      // cod_unidade: 'Código Unidade',
+      // nome_unidade: 'Nome Unidade',
+      // cod_disciplina: 'Código Disciplina',
+      // nome_disciplina: 'Nome Disciplina',
+      // fim_atividade_local: 'Fim Atividade Local',
+      // hora_aula: 'Carga Horária Aula',
+      // hora_atividade: 'Carga Horária Atividade',
+      // hora_termo: 'Carga Horária Termo',
+      // tipo_unidade_funcao: 'Disciplinas Atualizadas',
+      // tipo_unidade: 'Tipo de Unidade',
+      // descricao_tipo_unidade: 'Descrição Tipo Local',
+      // data_inicial_trabalho: 'Data Inicial a Considerar',
+      // data_final_trabalho: 'Data Final a Considerar',
+      // dias_de_atuacao_ue: 'Dias de Atuação / UE',
+      // total_dias_de_atuacao: 'Dias de Atuação Total',
+      // percentual_carga_horaria_ue: 'Percentual Carga Horária',
+      // grupo_gr: 'Grupo',
+      // gr_unidade_max: 'Valor Máximo Unidade',
+      // gr_rede_max: 'Valor Máximo Rede',
+      // tem_gratificacao_unidade: 'Tem Gratificação Unidade',
+      // atua_na_etapa_1: 'Atua na Etapa 1',
+      // atua_na_etapa_2: 'Atua na Etapa 2',
+      // atua_na_etapa_3: 'Atua na Etapa 3',
+      // percentual_idem_rede_1: 'IDEM Rede Etapa 1',
+      // percentual_idem_rede_2: 'IDEM Rede Etapa 2',
+      // percentual_idem_rede_3: 'IDEM Rede Etapa 3',
+      // percentual_idem_etapa_1: 'IDEM Unidade Etapa 1',
+      // percentual_idem_etapa_2: 'IDEM Unidade Etapa 2',
+      // percentual_idem_etapa_3: 'IDEM Unidade Etapa 3',
+      // valor_gr_unidade: 'Valor Gratificação Unidade',
+      // valor_gr_rede: 'Valor Gratificação Rede',
+      // valor_total: 'Valor Gratificação Total',
   },
   
   Groups: {
@@ -95,6 +138,14 @@ const columnRenamingMap = {
       etapa_1: 'Atua na Etapa 1',
       etapa_2: 'Atua na Etapa 2',
       etapa_3: 'Atua na Etapa 3'
+
+      // classe_local: 'Tipo Local',
+      // disciplinas_atualizadas: 'Função',
+      // funcao_tipo_local: 'Tipo Unidade Função',
+      // grupo: 'Grupo',
+      // atua_na_etapa_1: 'Atua na Etapa 1',
+      // atua_na_etapa_2: 'Atua na Etapa 2',
+      // atua_na_etapa_3: 'Atua na Etapa 3'
   },
   Frequency: {
       matricula: 'Matrícula',
@@ -191,6 +242,18 @@ const columnRenamingMap = {
       valor_bruto: 'Valor Bruto',
       valor_total: 'Valor Total'
   }
+  // OperatingTime: {
+  //     matricula: 'Matrícula',
+  //     admissao: 'Admissão',
+  //     demissoes: 'Demissão',
+  //     inicio_atividade_local: 'Inicio Atividade Local',
+  //     fim_atividade_local: 'Fim Atividade Local',
+  //     nome: 'Nome',
+  //     classe_local: 'Tipo de Local', // tem como NÃO colocar essa coluna? Se excluir vai dar erro será? 
+  //     diferenca_demissao_fim399: 'Diferença Demissão / Fim Atividade',
+  //     fim_alocacao_final: 'Fim Alocação a Considerar',
+  //     tempo_atuacao: 'Tempo de Atuação'
+  // }
 };
 
 const currencyKeys = ['valor_total', 'valor_bruto', 'gr_unidade_max', 'gr_rede_max', 'valor_gr_unidade', 'valor_gr_rede', 'valor_etapa', 'valor_rede'];
@@ -207,7 +270,7 @@ function formatDate(value) {
   return `${day}/${month}/${year}`;
 }
 
-// Função para formatar booleanos como "Sim" ou "Não"
+// Função para formatar booleanos como 'Sim' ou 'Não'
 function formatBoolean(value) {
   return value ? 'Sim' : 'Não';
 }
@@ -230,7 +293,7 @@ export function renameColumns(columns, route) {
       newColumn.format = (value) => formatDate(value);
     }
 
-    // Aplica formatação de booleano para "Sim" ou "Não"
+    // Aplica formatação de booleano para 'Sim' ou 'Não'
     if (boleanKeys.includes(newColumn.key)) {
       newColumn.format = (value) => formatBoolean(value);
     }
