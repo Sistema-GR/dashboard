@@ -36,13 +36,13 @@
 </template>
 
 <script>
-import { inject } from 'vue';
-import axios from 'axios';
-import FileInput from '@/components/Inputs/FileInput.vue';
-import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
+import FileInput from '@/components/Inputs/FileInput.vue';
 import Loading from '@/components/Loading/Loading.vue';
+import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import { getAccessToken } from '@/service/token.js'; // Importando o serviço de token
+import axios from 'axios';
+import { inject } from 'vue';
 
 export default {
   components: { FileInput, Whiteboard, PrimaryButton, Loading },
@@ -66,6 +66,7 @@ export default {
         frequencia: null,
       },
       BASE_URL: "http://10.203.2.185:8000/csv",
+      // BASE_URL: "http://127.0.0.1:8000/csv",
       endpoint: {
         funcionarios: "/process/funcionarios/",
         atividades: "/process/atividades/",
