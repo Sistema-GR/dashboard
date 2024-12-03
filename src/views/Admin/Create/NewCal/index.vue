@@ -122,7 +122,7 @@
 <script>
 import { inject, ref, reactive } from "vue";
 import { useRouter } from "vue-router";
-import { createGeneralData, createDataset } from "../../../service/apiService"; 
+import { createGeneralData, createDataset } from "../../../../service/apiService"; 
 import PrimaryButton from "@/components/Buttons/PrimaryButton.vue";
 import TextInput from "@/components/Inputs/TextInput.vue";
 import Whiteboard from "@/components/Whiteboard/Whiteboard.vue";
