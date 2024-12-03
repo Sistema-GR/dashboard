@@ -1,22 +1,21 @@
 import { getAccessToken } from './token';
 
 export default function usePersonService() {
-  // Usando a variável global $apiBaseUrl
-  const BASE_URL = window.__VUE__API_BASE_URL || 'http://10.203.2.185:8000/csv'; // Fallback para a URL base
+  const BASE_URL = window.__VUE__API_BASE_URL || 'http://10.203.2.185:8000/csv';
 
   const routeJsonMapping = {
     'Results': `${BASE_URL}/process/percentual-gratificacao/`,
-    'Calendar': `${BASE_URL}/process/dias-nao-contabilizados/`,       
-    'Profissional': `${BASE_URL}/process/funcionarios/`,              
+    'Calendar': `${BASE_URL}/process/dias-nao-contabilizados/`,
+    'Profissional': `${BASE_URL}/process/funcionarios/`,
     'Groups': `${BASE_URL}/process/aprender-mais/`,
     'Steps': `${BASE_URL}/process/etapas-metas/`,
     'StageGroup': `${BASE_URL}/process/funcoes-grupo/`,
-    'Frequency': `${BASE_URL}/process/frequencia/`,                   
-    'Infrequency': `${BASE_URL}/process/motivos-infrequencia/`,       
-    'Resignation': `${BASE_URL}/process/demissoes/`,                  
-    'Activities': `${BASE_URL}/process/atividades/`,                  
-    'Service': `${BASE_URL}/process/formacoes/`, 
-    'Training': `${BASE_URL}/process/atividades/`,                     
+    'Frequency': `${BASE_URL}/process/frequencia/`,
+    'Infrequency': `${BASE_URL}/process/motivos-infrequencia/`,
+    'Resignation': `${BASE_URL}/process/demissoes/`,
+    'Activities': `${BASE_URL}/process/atividades/`,
+    'Service': `${BASE_URL}/process/formacoes/`,
+    'Training': `${BASE_URL}/process/atividades/`,
     'General': `${BASE_URL}/process/dados-gerais/`,
     'Local': `${BASE_URL}/process/tipo-local/`,
     'Report': `${BASE_URL}/process/criterios/`
@@ -29,13 +28,11 @@ export default function usePersonService() {
         throw new Error('URL não encontrada para a rota');
       }
 
-      // Obtém o token de acesso
       const accessToken = await getAccessToken();
       if (!accessToken) {
         throw new Error('Token de acesso não encontrado ou expirado');
       }
 
-      // Adiciona o token de acesso nos headers da requisição
       const response = await fetch(jsonUrl, {
         method: 'GET',
         headers: {
@@ -67,6 +64,44 @@ export default function usePersonService() {
     }
   };
 
+  const saveRowData = async (person) => {
+    try {
+      const accessToken = await getAccessToken();
+      if (!accessToken) {
+        throw new Error('Token de acesso não encontrado ou expirado');
+      }
+
+      if (!person.cpf) {
+        throw new Error('CPF não encontrado nos dados da pessoa');
+      }
+
+      console.log(`Salvando dados do usuário com CPF: ${person.cpf}`);
+
+      const response = await fetch(routeJsonMapping['Profissional'], {
+        method: 'POST',  // Supondo que seja uma operação POST para salvar
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify(person),
+      });
+
+      if (!response.ok) {
+        console.error(`Erro HTTP: ${response.status} ao tentar salvar os dados`);
+        throw new Error(`Erro HTTP: ${response.status}`);
+      }
+
+      const savedData = await response.json();
+
+      console.log('Dados salvos com sucesso:', savedData);
+
+      return savedData;
+    } catch (error) {
+      console.error('Erro ao salvar os dados:', error);
+      throw error;
+    }
+  };
+
   const saveRowDataToStorage = async (person) => {
     try {
       if (!person.cpf) {
@@ -77,10 +112,8 @@ export default function usePersonService() {
 
       const savedRowData = JSON.parse(localStorage.getItem('rowSave')) || {};
 
-      // Usa o CPF como chave para armazenar os dados da pessoa
       savedRowData[person.cpf] = person;
 
-      // Salva os dados atualizados de volta no localStorage
       localStorage.setItem('rowSave', JSON.stringify(savedRowData));
 
       console.log('Dados salvos com sucesso no localStorage:', person);
@@ -92,6 +125,7 @@ export default function usePersonService() {
 
   return {
     loadPeopleData,
+    saveRowData,
     saveRowDataToStorage,
     routeJsonMapping
   };

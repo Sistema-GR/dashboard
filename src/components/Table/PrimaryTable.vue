@@ -57,6 +57,7 @@
 </template>
 
 <script setup>
+import { getAccessToken } from '../../service/token';
 import { ref, computed, watch, onMounted } from 'vue';
 import { EyeIcon } from "@heroicons/vue/24/outline";
 import { debounce } from 'lodash';
@@ -180,22 +181,37 @@ async function saveRowData(person) {
     const { routeJsonMapping } = usePersonService();  
     const cpf = person.cpf; // Usando CPF como identificador único
 
+    // Obtém o token de acesso (garante que o token é válido ou renovado)
+    const token = await getAccessToken();
+    if (!token) {
+      throw new Error('Não foi possível obter um token válido.');
+    }
+
     let dadosProfissional = [];
     let dadosFrequencia = [];
     let dadosCriterios = [];
     const dadosUser = {}; 
 
+    // Cabeçalho com autenticação
+    const headers = {
+      'Authorization': `Bearer ${token}`, // Adiciona o token no cabeçalho
+      'Content-Type': 'application/json',
+    };
+
     // Carrega os dados de Profissionais filtrados pelo CPF
-    const responseProfissional = await fetch(routeJsonMapping['Profissional']);
-    dadosProfissional = (await responseProfissional.json()).filter(prof => prof.cpf === cpf);
+    const responseProfissional = await fetch(routeJsonMapping['Profissional'], { headers });
+    const responseProfissionalData = await responseProfissional.json();
+    dadosProfissional = Array.isArray(responseProfissionalData) ? responseProfissionalData.filter(prof => prof.cpf === cpf) : [];
 
     // Carrega os dados de Frequência filtrados pelo CPF
-    const responseFrequencia = await fetch(routeJsonMapping['Frequency']);
-    dadosFrequencia = (await responseFrequencia.json()).filter(frequencia => frequencia.cpf === cpf);
+    const responseFrequencia = await fetch(routeJsonMapping['Frequency'], { headers });
+    const responseFrequenciaData = await responseFrequencia.json();
+    dadosFrequencia = Array.isArray(responseFrequenciaData) ? responseFrequenciaData.filter(frequencia => frequencia.cpf === cpf) : [];
 
     // Carrega os dados de Critérios filtrados pelo CPF
-    const responseCriterios = await fetch(routeJsonMapping['Report']);
-    dadosCriterios = (await responseCriterios.json()).filter(criterio => criterio.cpf === cpf);
+    const responseCriterios = await fetch(routeJsonMapping['Report'], { headers });
+    const responseCriteriosData = await responseCriterios.json();
+    dadosCriterios = Array.isArray(responseCriteriosData) ? responseCriteriosData.filter(criterio => criterio.cpf === cpf) : [];
 
     // Processa os critérios e organiza os dados para salvar
     for (let i = 0; i < dadosCriterios.length; i++) {
@@ -240,6 +256,8 @@ async function saveRowData(person) {
     alert(`Erro ao salvar dados: ${error.message}`);
   }
 }
+
+
 
 onBeforeRouteLeave((to, from, next) => {
   // Verifica se a rota atual é a de Rewards
