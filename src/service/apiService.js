@@ -4,7 +4,7 @@ import { getAccessToken } from './token';
 
 // Configuração do axios
 const apiClient = axios.create({
-  baseURL: 'http://10.203.2.185:8000',  
+  baseURL: 'http://10.203.2.116:8000',  
   headers: {
     'Content-Type': 'application/json',
   },
