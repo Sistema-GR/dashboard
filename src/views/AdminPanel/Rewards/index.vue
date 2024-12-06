@@ -12,7 +12,7 @@
                         <p class="text-white text-lg font-medium">Nome Do Servidor</p>
                     </div>
                     <div class="flex w-full items-center justify-center py-2.5 rounded-b-lg -translate-y-1 bg-solitude-100 shadow-lg shadow-slate-200">
-                        <p class="font-medium whitespace-nowrap">{{ savedData[0]?.dados?.nome || 'Nome não disponível' }}</p>
+                        <p class="font-medium whitespace-nowrap capitalize">{{ savedData[0]?.dados?.nome || 'Nome não disponível' }}</p>
                     </div>  
                 </div>
             </div>
@@ -67,41 +67,39 @@
 
                                 <div class="overflow-x-auto w-full py-5 mt-5">
                                     <table class="min-w-full border-collapse rounded-lg shadow-lg">
-
                                         <thead>
                                             <tr class="bg-azure-800 text-gray-100">
-                                                <th v-for="(header, index) in ['Descrição', 'Dados', 'Valores a Receber', 'Total']":key="index" class="p-4 font-semibold text-left">{{ header }}</th>
+                                                <th v-for="(header, index) in ['Descrição', 'Dados', 'Valores a Receber', 'Total']" :key="index" class="p-4 font-semibold text-left">{{ header }}</th>
                                             </tr>
                                         </thead>
 
                                         <tbody class="bg-white divide-y divide-gray-200">
                                             <tr>
-
                                                 <td class="p-4 border-r border-gray-200 text-gray-700 font-medium">
-                                                    <p v-for="(label, index) in ['Nome:', 'CPF:', 'Matrícula:', 'Cargo:']" :key="index">{{ label }}</p>                                                    
+                                                    <p v-for="(label, index) in ['Nome:', 'CPF:', 'Matrícula:', 'Cargo:']" :key="index">{{ label }}</p>
                                                 </td>
 
                                                 <td class="p-4 border-r border-gray-200 text-gray-700 whitespace-nowrap">
-                                                    <p>{{ item?.dados?.nome }}</p>
+                                                    <p class="capitalize">{{ item?.dados?.nome }}</p>
                                                     <p>{{ item?.dados?.cpf }}</p>
                                                     <p>{{ item?.dados?.matricula }}</p>
-                                                    <p>{{ item?.dados?.cargo }}</p>
+                                                    <p class="capitalize">{{ item?.dados?.cargo }}</p>
                                                 </td>
 
                                                 <td class="p-4 border-r border-gray-200 text-gray-700 whitespace-nowrap">
-                                                    <p v-for="(label, index) in ['Valor Máximo Rede:', 'Valor Máximo Unidades:', 'Desconto:', 'Valor Total:']" :key="index">{{ label }}</p>   
+                                                    <p v-for="(label, index) in ['Valor Máximo Rede:', 'Valor Máximo Unidades:', 'Desconto:', 'Valor Total:']" :key="index">{{ label }}</p>
                                                 </td>
 
                                                 <td class="p-4 text-gray-700 font-semibold whitespace-nowrap">
-                                                    <p>{{ formatCurrency(item?.dados?.valor_gr_rede_user) }}</p>
-                                                    <p>{{ formatCurrency(item?.dados?.valor_gr_uni_user) }}</p>
-                                                    <p>{{ formatCurrency(item?.dados?.desconto) }}</p>
-                                                    <p>{{ formatCurrency(item?.dados?.valor_total) }}</p>
+                                                    <td class="p-4 text-gray-700 font-semibold whitespace-nowrap">
+                                                        <p>{{ formatCurrency(item?.profissionais[0]?.valor_rede_maximo) }}</p>
+                                                        <p>{{ formatCurrency(item?.profissionais[0]?.valor_unidade_maximo) }}</p>
+                                                        <p>{{ formatCurrency(item?.profissionais[0]?.desconto) }}</p>
+                                                        <p>{{ formatCurrency(item?.dados?.valor_total) }}</p>
+                                                    </td>
                                                 </td>
-
                                             </tr>
                                         </tbody>
-
                                     </table>
                                 </div>
 
@@ -203,13 +201,13 @@
                                                     <span class="text-lg font-medium text-white capitalize whitespace-nowrap mr-10 lg:mr-0">{{ prof?.nome_unidade }}</span>
                                                     <div class="flex flex-row w-full lg:w-auto items-center justify-end space-x-4">
                                                         <span class="text-sm lg:text-lg font-medium text-white">
-                                                            Etapa 1: <span class="font-semibold text-white">{{ prof?.percentual_idem_etapa_1 }}%</span>
+                                                            Etapa 1: <span class="font-semibold text-white">{{ prof?.idem_rede_etapa_1 }}%</span>
                                                         </span>
                                                         <span class="text-sm lg:text-lg font-medium text-white">
-                                                            Etapa 2: <span class="font-semibold text-white">{{ prof?.percentual_idem_etapa_2 }}%</span>
+                                                            Etapa 2: <span class="font-semibold text-white">{{ prof?.idem_rede_etapa_2 }}%</span>
                                                         </span>
                                                         <span class="text-sm lg:text-lg font-medium text-white">
-                                                            Etapa 3: <span class="font-semibold text-white">{{ prof?.percentual_idem_etapa_3 }}%</span>
+                                                            Etapa 3: <span class="font-semibold text-white">{{ prof?.idem_rede_etapa_3 }}%</span>
                                                         </span>
                                                     </div>
                                                 </div>
@@ -228,11 +226,11 @@
 
                                                         <tbody>
                                                             <tr class="hover:bg-gray-50 transition-shadow hover:shadow-md text-center capitalize whitespace-nowrap">
-                                                                <td class="px-4 lg:px-6 py-4 border-b border-gray-300">{{ new Date(prof.data_inicial_trabalho).toLocaleDateString('pt-BR') }}</td>
-                                                                <td class="px-4 lg:px-6 py-4 border-b border-gray-300">{{ new Date(prof.data_final_trabalho).toLocaleDateString('pt-BR') }}</td>
+                                                                <td class="px-4 lg:px-6 py-4 border-b border-gray-300">{{ new Date(prof.inicio_atividade_local).toLocaleDateString('pt-BR') }}</td>
+                                                                <td class="px-4 lg:px-6 py-4 border-b border-gray-300">{{ new Date(prof.fim_atividade_local).toLocaleDateString('pt-BR') }}</td>
                                                                 <td class="px-4 lg:px-6 py-4 border-b border-gray-300">{{ prof.nome_disciplina || 'N/A' }}</td>
-                                                                <td class="px-4 lg:px-6 py-4 border-b border-gray-300">{{ prof.percentual_carga_horaria_ue || 'N/A' }}h</td>
-                                                                <td class="px-4 lg:px-6 py-4 border-b border-gray-300">{{ prof.grupo_gr || 'N/A' }}</td>
+                                                                <td class="px-4 lg:px-6 py-4 border-b border-gray-300">{{ prof.percentual_carga_horaria || 'N/A' }}h</td>
+                                                                <td class="px-4 lg:px-6 py-4 border-b border-gray-300">{{ prof.grupo || 'N/A' }}</td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -264,7 +262,7 @@
                                                     <td class="border border-gray-200 px-4 py-3">{{ new Date(freq.inicio_afastamento).toLocaleDateString('pt-BR') }}</td>
                                                     <td class="border border-gray-200 px-4 py-3">{{ new Date(freq.fim_afastamento).toLocaleDateString('pt-BR') }}</td>
                                                     <td class="border border-gray-200 px-4 py-3">{{ freq.motivo || 'N/A' }}</td>
-                                                    <td class="border border-gray-200 px-4 py-3">{{ freq.qtd_dias_afastados || '0' }}</td>
+                                                    <td class="border border-gray-200 px-4 py-3">{{ freq.dias_afastado || '0' }}</td>
                                                     <td class="border border-gray-200 px-4 py-3">{{ freq.contabiliza ? 'Sim' : 'Não' }}</td>
                                                 </tr>
                                             </tbody>

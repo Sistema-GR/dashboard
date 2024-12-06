@@ -23,8 +23,9 @@
           <p class="text-lg font-semibold">Total a Pagar</p>
           <BanknotesIcon class="w-8 h-auto text-gray-600" />
         </div>
-        <p class="text-3xl font-bold">R$ 567.000,00</p>
+        <p class="text-3xl font-bold">{{ formattedTotalAPagar }}</p> <!-- Exibe o valor formatado automaticamente -->
       </div>
+
 
     </div>
 
@@ -51,19 +52,18 @@
 
       <div v-for="(file, index) in files" :key="index" class="flex items-center justify-between border border-gray-200 rounded-lg p-4 mb-4">
         <div class="flex items-center space-x-4">
-
-          <document-duplicate-icon class="h-8 w-8 text-gray-500" />
-
+          <DocumentDuplicateIcon class="h-8 w-8 text-gray-500" />
           <div class="flex flex-col">
             <p class="text-gray-800 font-medium">{{ file.name }}</p>
             <span class="text-sm text-gray-600">{{ file.size }}</span>
           </div>
         </div>
 
-        <a :href="file.url" download class="flex items-center text-blue-500 hover:text-blue-700">
-          <ArrowDownTrayIcon  class="h-5 w-5 mr-2" />
-          <span class="text-sm font-semibold">Baixar</span>
-        </a>
+        <!-- Botão de download -->
+        <button @click="downloadCSV" class="flex items-center text-blue-500 hover:text-blue-700">
+          <ArrowDownTrayIcon class="h-5 w-5 mr-2" />
+          <span class="text-sm font-semibold">Baixar CSV</span>
+        </button>
       </div>
     </div>
 
@@ -104,9 +104,12 @@
 </template>
 
 <script>
-import { inject, computed } from 'vue';
+import { inject, computed, ref, onMounted } from 'vue';
 import { UsersIcon, BanknotesIcon, DocumentDuplicateIcon, ArrowDownTrayIcon } from "@heroicons/vue/24/outline";
+import axios from 'axios';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
+import { getAccessToken } from '../../../service/token'; // Certifique-se de importar a função getAccessToken
+import { downloadCSV } from '@/service/download';
 
 export default {
   name: "AdminPanel",
@@ -115,6 +118,49 @@ export default {
   setup() {
     const isSidebarMinimized = inject('isSidebarMinimized', false); // Valor padrão
 
+    // Armazenar a soma do valor total
+    const totalAPagar = ref(0);
+
+    // Função para buscar os dados da API e somar os valores
+    const fetchTotalAPagar = async () => {
+      try {
+        const token = await getAccessToken();  // Obtém o token de acesso
+
+        // Verifica se o token foi obtido com sucesso
+        if (token) {
+          // Realiza a requisição com o token no cabeçalho Authorization
+          const response = await axios.get('http://10.203.2.116:8000/csv/process/criterios/', {
+            headers: {
+              Authorization: `Bearer ${token}`,  // Passando o token no cabeçalho
+            },
+          });
+          
+          const data = response.data; // Supondo que a resposta seja um JSON com os dados da tabela
+
+          // Somar os valores de "valor_total"
+          totalAPagar.value = data.reduce((sum, item) => sum + parseFloat(item.valor_total || 0), 0);
+        } else {
+          console.error("Erro: Token de acesso não encontrado.");
+        }
+      } catch (error) {
+        console.error("Erro ao buscar os dados:", error);
+      }
+    };
+
+    // Chamar a função ao montar o componente
+    onMounted(() => {
+      fetchTotalAPagar();
+    });
+
+    // Função para formatar o valor como moeda brasileira
+    const formattedTotalAPagar = computed(() => {
+      return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+      }).format(totalAPagar.value);
+    });
+
+    // Seções para o gráfico
     const chartSections = [
       {
         title: "Motivo de Não Recebimento",
@@ -142,7 +188,7 @@ export default {
           { label: "De R$ 3.000 a R$ 4.500", value: 969 },
           { label: "De R$ 4.500 a R$ 6.000", value: 550 },
           { label: "Mais que R$ 6.000", value: 1212 },
-          { label: "Não receb nada", value: 3125 }
+          { label: "Não recebe nada", value: 3125 }
         ]
       }
     ];
@@ -162,6 +208,7 @@ export default {
       { label: 'Data de Fim', value: '02/12/2024' }
     ];
 
+    // Função para calcular porcentagens dos dados do gráfico
     const calculatePercentages = (sections) => {
       sections.forEach((section) => {
         const total = section.data.reduce((sum, item) => sum + item.value, 0);
@@ -186,9 +233,11 @@ export default {
       totalPeople,
       files,
       version,
+      downloadCSV,
+      totalAPagar, // Passando o valor total calculado para o template
+      formattedTotalAPagar, // Passando o valor formatado para o template
     };
   }
 };
 </script>
-
 

@@ -8,7 +8,7 @@
       </div>
     </div>   
     
-    <div class="w-full pb-5">
+    <div class="w-full pb-5 capitalize">
       <PrimaryTable :route="'Report'" :searchQuery="searchQuery" />
     </div>
   </Whiteboard>
