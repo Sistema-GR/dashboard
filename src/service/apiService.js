@@ -123,3 +123,19 @@ export const processAllFiles = async () => {
     handleApiError(error);
   }
 };
+
+export const fetchEmployeeData = async () => {
+  try {
+    const token = await getAccessToken();
+    const response = await apiClient.get('/csv/user-get/', {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      }
+    });
+    return response.data || [];
+  } catch (error) {
+    console.error("Erro ao buscar dados do funcionário:", error);
+    throw error;
+  }
+};
+

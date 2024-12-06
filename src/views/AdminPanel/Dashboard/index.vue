@@ -194,8 +194,6 @@ export default {
     ];
 
     const files = [
-      { name: 'Relatório Pagamento.pdf', size: '1.2 MB', url: '/path/to/relatorio-anual.pdf' },
-      { name: 'Relatório Completo 399.pdf', size: '500 KB', url: '/path/to/dados-de-vendas.xlsx' },
       { name: 'Relatório Criterios.pdf', size: '3.4 MB', url: '/path/to/apresentacao.pptx' }
     ];
 

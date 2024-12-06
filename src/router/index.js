@@ -16,6 +16,7 @@ import versionmanager from '@/views/Admin/Create/VersionManager/index.vue'
 import roles from '@/views/Admin/Roles/index.vue'
 import create from '@/views/Admin/Create/index.vue'
 import selector from '@/views/Admin/Create/Selector/Index.vue'
+import editversion from '@/views/Admin/Create/EditVersions/index.vue'
 //Resource
 import resource from '@/views/Admin/Resource/index.vue'
 import newResource from '@/views/Admin/Resource/NewResource/index.vue'
@@ -82,6 +83,7 @@ const router = createRouter({
             { path: 'imports', name: 'create-imports', component: imports },
             { path: 'versionmanager', name: 'versionmanager', component: versionmanager },
             { path: 'selector', name: 'selector', component: selector },
+            { path: 'editversion', name: 'editversion', component: editversion },
           ]
         }
       ]
