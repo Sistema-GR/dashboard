@@ -193,9 +193,9 @@ const columnRenamingMap = {
   }
 };
 
-const currencyKeys = ['valor_total', 'valor_bruto', 'gr_unidade_max', 'gr_rede_max', 'valor_gr_unidade', 'valor_gr_rede', 'valor_etapa', 'valor_rede'];
-const dateKeys = ['dia', 'data_inicio', 'data_fim', 'admissao', 'demissao', 'inicio_afastamento', 'fim_afastamento', 'dias_nao_contabilizados', 'inicio_atividade_local', 'fim_atividade_local', 'data_inicial_trabalho', 'data_final_trabalho'];
-const boleanKeys = ['contabiliza', 'tem_gratificacao_unidade', 'atua_na_etapa_1', 'atua_na_etapa_2', 'atua_na_etapa_3', 'tem_anos_iniciais_1', 'tem_anos_iniciais_2', 'tem_anos_finais', 'sim', 'nao', 'exerceu_suas_atividades_na_unidade', 'recebe_atividade', 'recebe_formacao', 'percentual_atividade'  ];  
+const currencyKeys = ['valor_total', 'valor_bruto', 'gr_unidade_max', 'gr_rede_max', 'valor_gr_unidade', 'valor_gr_rede', 'valor_etapa', 'valor_rede', 'valor_unidade_maximo', 'valor_rede_maximo', 'valor_gratificacao_unidade', 'valor_gratificacao_rede', 'valor_gratificacao_registro', 'valor_bruto_total', 'valor_a_pagar_criterios', 'desconto'];
+const dateKeys = ['dia', 'data_inicio', 'data_fim', 'admissao', 'demissao', 'inicio_afastamento', 'fim_afastamento', 'dias_nao_contabilizados', 'inicio_atividade_local', 'fim_atividade_local', 'data_inicial_trabalho', 'data_final_trabalho', 'demissoes', 'inicio_ajustado', 'fim_ajustado', 'inicio_considerar', 'final_considerar'];
+const boleanKeys = ['contabiliza', 'tem_gratificacao_unidade', 'atua_na_etapa_1', 'atua_na_etapa_2', 'atua_na_etapa_3', 'tem_anos_iniciais_1', 'tem_anos_iniciais_2', 'tem_anos_finais', 'sim', 'nao', 'exerceu_suas_atividades_na_unidade', 'recebe_atividade', 'recebe_formacao', 'percentual_atividade', 'atividades', 'formacoes','tempo_atuacao', 'criterio_tempo_atuacao', 'cumpriu_atividades', 'mais_malvado', 'recebe_gratificacao'];  
 
 function formatCurrency(value) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);

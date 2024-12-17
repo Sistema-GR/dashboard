@@ -1,7 +1,7 @@
 import { getAccessToken } from './token';
 
 export default function usePersonService() {
-  const BASE_URL = window.__VUE__API_BASE_URL || 'http://10.203.2.116:8000/csv';
+  const BASE_URL = window.__VUE__API_BASE_URL || 'http://10.203.2.139:8000/csv/'
 
   const routeJsonMapping = {
     'Results': `${BASE_URL}/process/percentual-gratificacao/`,
@@ -9,7 +9,7 @@ export default function usePersonService() {
     'Profissional': `${BASE_URL}/process/funcionarios/`,
     'Groups': `${BASE_URL}/process/aprender-mais/`,
     'Steps': `${BASE_URL}/process/etapas-metas/`,
-    'StageGroup': `${BASE_URL}/process/funcoes-grupo/`,
+    'StageGroup': `${BASE_URL}/process/grupos-atualizado/`,
     'Frequency': `${BASE_URL}/process/frequencia/`,
     'Infrequency': `${BASE_URL}/process/motivos-infrequencia/`,
     'Resignation': `${BASE_URL}/process/demissoes/`,
@@ -41,16 +41,12 @@ export default function usePersonService() {
       });
 
       if (!response.ok) {
-        console.error(`Erro HTTP: ${response.status} ao tentar acessar ${jsonUrl}`);
         throw new Error(`Erro HTTP: ${response.status}`);
       }
 
       const data = await response.json();
 
-      console.log(`Dados carregados da rota ${route}:`, data);
-
       if (!Array.isArray(data)) {
-        console.error('Erro: Formato inesperado de dados. Esperado um array de objetos.', data);
         throw new Error('Formato inesperado de dados');
       }
 
@@ -93,7 +89,7 @@ export default function usePersonService() {
 
       const savedData = await response.json();
 
-      console.log('Dados salvos com sucesso:', savedData);
+
 
       return savedData;
     } catch (error) {

@@ -7,7 +7,7 @@
           <p class="text-lg font-semibold">Total que Recebe</p>
           <UsersIcon class="w-8 h-auto text-gray-600" />
         </div>
-        <p class="text-3xl font-bold">13.599</p>
+        <p class="text-3xl font-bold">{{ totalRecebem }}</p>
       </div>
 
       <div class="flex flex-col bg-gradient-to-r from-gray-100 to-gray-300 border border-gray-200 text-gray-800 rounded-lg shadow-md p-6 w-full sm:w-1/3">
@@ -15,7 +15,7 @@
           <p class="text-lg font-semibold">Total que Não Recebe</p>
           <UsersIcon class="w-8 h-auto text-gray-600" />
         </div>
-        <p class="text-3xl font-bold">2.824</p>
+        <p class="text-3xl font-bold">{{ totalNaoRecebem }}</p>
       </div>
 
       <div class="flex flex-col bg-gradient-to-r from-gray-100 to-gray-300 border border-gray-200 text-gray-800 rounded-lg shadow-md p-6 w-full sm:w-1/3">
@@ -29,6 +29,7 @@
 
     </div>
 
+ 
     <div v-for="(section, index) in chartSections" :key="index" class="w-full bg-white p-6 rounded-lg shadow-lg mt-6 bg-gradient-to-r from-gray-50 to-gray-400">
       <h2 class="text-xl font-semibold mb-4">{{ section.title }}</h2>
 
@@ -37,7 +38,7 @@
           <span class="w-1/4 text-gray-700 font-medium">{{ data.label }}</span>
           <div class="flex flex-row w-3/4 bg-gray-200 rounded-lg h-8 overflow-hidden gap-2 items-center font-medium">
             <div class="bg-primary-800 h-full flex items-center justify-start text-white font-semibold text-center px-2" :style="{ width: data.percentage + '%' }"></div>
-            <div class="whitespace-nowrap">{{ data.percentage }}% ({{ data.value }} pessoas)</div>
+            <div class="whitespace-nowrap">{{ data.percentage.toFixed(2) }}% ({{ data.value }} pessoas)</div>
           </div>
         </div>
       </div>
@@ -46,6 +47,8 @@
         <p class="text-lg font-semibold">Total Geral: {{ section.total }} pessoas</p>
       </div>
     </div>
+
+
 
     <div class="w-full p-6 bg-gradient-to-r from-gray-100 to-gray-300 rounded-lg shadow-lg my-6">
       <h2 class="text-xl font-semibold mb-4 text-gray-800">Downloads</h2>
@@ -108,7 +111,7 @@ import { inject, computed, ref, onMounted } from 'vue';
 import { UsersIcon, BanknotesIcon, DocumentDuplicateIcon, ArrowDownTrayIcon } from "@heroicons/vue/24/outline";
 import axios from 'axios';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
-import { getAccessToken } from '../../../service/token'; // Certifique-se de importar a função getAccessToken
+import { getAccessToken } from '../../../service/token'; 
 import { downloadCSV } from '@/service/download';
 
 export default {
@@ -116,29 +119,98 @@ export default {
   components: { Whiteboard, UsersIcon, BanknotesIcon, DocumentDuplicateIcon, ArrowDownTrayIcon },
 
   setup() {
-    const isSidebarMinimized = inject('isSidebarMinimized', false); // Valor padrão
-
-    // Armazenar a soma do valor total
+    const isSidebarMinimized = inject('isSidebarMinimized', false); 
     const totalAPagar = ref(0);
+    const totalRecebem = ref(0);
+    const totalNaoRecebem = ref(0);
+    const chartSections = ref([]); 
 
-    // Função para buscar os dados da API e somar os valores
-    const fetchTotalAPagar = async () => {
+    const fetchData = async () => {
       try {
-        const token = await getAccessToken();  // Obtém o token de acesso
+        const token = await getAccessToken(); 
 
-        // Verifica se o token foi obtido com sucesso
         if (token) {
-          // Realiza a requisição com o token no cabeçalho Authorization
-          const response = await axios.get('http://10.203.2.116:8000/csv/process/criterios/', {
-            headers: {
-              Authorization: `Bearer ${token}`,  // Passando o token no cabeçalho
-            },
+          // Requisição à API - Rota de Formações
+          const responseFormacoes = await axios.get('http://10.203.2.139:8000/csv/process/criterios/', {
+            headers: { Authorization: `Bearer ${token}` },
           });
-          
-          const data = response.data; // Supondo que a resposta seja um JSON com os dados da tabela
 
-          // Somar os valores de "valor_total"
-          totalAPagar.value = data.reduce((sum, item) => sum + parseFloat(item.valor_total || 0), 0);
+          const dataFormacoes = responseFormacoes.data; 
+
+          totalRecebem.value = dataFormacoes.filter(item => item.recebe_gratificacao === true).length;
+          totalNaoRecebem.value = dataFormacoes.filter(item => item.recebe_gratificacao === false).length;
+
+          const responseCriterios = await axios.get('http://10.203.2.139:8000/csv/process/criterios/', {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          const dataCriterios = responseCriterios.data; 
+
+          totalAPagar.value = dataCriterios.reduce((sum, item) => sum + parseFloat(item.valor_total || 0), 0);
+
+          const faixaPagamento = [
+            { label: "Até R$ 1.500", value: 0 },
+            { label: "De R$ 1.500 a R$ 3.000", value: 0 },
+            { label: "De R$ 3.000 a R$ 4.500", value: 0 },
+            { label: "De R$ 4.500 a R$ 6.000", value: 0 },
+            { label: "Mais que R$ 6.000", value: 0 },
+            { label: "Não recebem nada", value: 0 },
+          ];
+
+          dataCriterios.forEach(item => {
+            const valorTotal = parseFloat(item.valor_total || 0);
+            if (valorTotal === 0) {
+              faixaPagamento[5].value += 1; 
+            } else if (valorTotal <= 1500) {
+              faixaPagamento[0].value += 1; 
+            } else if (valorTotal > 1500 && valorTotal <= 3000) {
+              faixaPagamento[1].value += 1; 
+            } else if (valorTotal > 3000 && valorTotal <= 4500) {
+              faixaPagamento[2].value += 1; 
+            } else if (valorTotal > 4500 && valorTotal <= 6000) {
+              faixaPagamento[3].value += 1; 
+            } else if (valorTotal > 6000) {
+              faixaPagamento[4].value += 1; 
+            }
+          });
+
+          const chartDataFaixaPagamento = {
+            title: "Faixa de Pagamento",
+            data: faixaPagamento
+          };
+
+          const response = await axios.get('http://10.203.2.139:8000/csv/process/funcionarios/', {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          const dataProfissional = response.data; 
+          const totalAtividades = dataProfissional.filter(item => item.atividades === false).length;
+          const totalFormacoes = dataProfissional.filter(item => item.formacoes === false).length;
+          const totalInfrequencia = dataProfissional.filter(item => item.percentual_infrequencia_criterios === false).length;
+          const totalTempoAtuacao = dataProfissional.filter(item => item.tempo_atuacao === false).length;
+
+          const total = dataProfissional.length;
+
+          chartSections.value = [
+            {
+              title: "Motivo de Não Recebimento",
+              data: [
+                { label: "Atividades", value: totalAtividades, percentage: (totalAtividades / total) * 100 },
+                { label: "Formação", value: totalFormacoes, percentage: (totalFormacoes / total) * 100 },
+                { label: "Infrequência por Critérios", value: totalInfrequencia, percentage: (totalInfrequencia / total) * 100 },
+                { label: "Tempo de Atuação", value: totalTempoAtuacao, percentage: (totalTempoAtuacao / total) * 100 },
+              ],
+              total: total
+            },
+            {
+              title: "Ativos e Inativos",
+              data: [
+                { label: "Ativo", value: 0 },
+                { label: "Ausência Temporária", value: 0 }
+              ]
+            },
+            chartDataFaixaPagamento 
+          ];
         } else {
           console.error("Erro: Token de acesso não encontrado.");
         }
@@ -147,12 +219,34 @@ export default {
       }
     };
 
-    // Chamar a função ao montar o componente
+    const fetchActiveData = async () => {
+      try {
+        const token = await getAccessToken();  // Corrigido a sintaxe do await
+
+        if (token) {
+          // Realiza a requisição GET para a API
+          const response = await axios.get('http://10.203.2.139:8000/csv/api/get-active-dataset/', {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          console.log(response.data);  // Mostra os dados no console
+        }
+      } catch (error) {
+        console.error('Erro ao buscar dados:', error);
+      }
+    };
+
+
+
+    const files = [
+      { name: 'Relatório Criterios.csv', size: '3.4 MB', url: '/path/to/apresentacao.pptx' }
+    ];
+
     onMounted(() => {
-      fetchTotalAPagar();
+      fetchData();
+      fetchActiveData();
     });
 
-    // Função para formatar o valor como moeda brasileira
     const formattedTotalAPagar = computed(() => {
       return new Intl.NumberFormat('pt-BR', {
         style: 'currency',
@@ -160,53 +254,6 @@ export default {
       }).format(totalAPagar.value);
     });
 
-    // Seções para o gráfico
-    const chartSections = [
-      {
-        title: "Motivo de Não Recebimento",
-        data: [
-          { label: "Atividades", value: 12 },
-          { label: "Formação", value: 53 },
-          { label: "Frequência", value: 1146 },
-          { label: "Mais de 1 critério individual", value: 487 },
-          { label: "Não recebe valor total por mais de 1 critério", value: 108 },
-          { label: "Tempo de atuação", value: 1427 }
-        ]
-      },
-      {
-        title: "Ativos e Inativos",
-        data: [
-          { label: "Ativo", value: 3777 },
-          { label: "Ausência Temporária", value: 478 }
-        ]
-      },
-      {
-        title: "Faixa de Pagamento",
-        data: [
-          { label: "Até R$ 1.500", value: 471 },
-          { label: "De R$ 1.500 a R$ 3.000", value: 998 },
-          { label: "De R$ 3.000 a R$ 4.500", value: 969 },
-          { label: "De R$ 4.500 a R$ 6.000", value: 550 },
-          { label: "Mais que R$ 6.000", value: 1212 },
-          { label: "Não recebe nada", value: 3125 }
-        ]
-      }
-    ];
-
-    const files = [
-      { name: 'Relatório Criterios.pdf', size: '3.4 MB', url: '/path/to/apresentacao.pptx' }
-    ];
-
-    const version = [
-      { label: 'Nome da Versão', value: 'Versão 1.0' },
-      { label: 'Descrição', value: 'Esta é a versão inicial da dashboard.' },
-      { label: 'Data de Criação', value: '12/12/2024' },
-      { label: 'Valor Total Usado', value: 'R$ 1.200,00' },
-      { label: 'Data de Início', value: '02/02/2024' },
-      { label: 'Data de Fim', value: '02/12/2024' }
-    ];
-
-    // Função para calcular porcentagens dos dados do gráfico
     const calculatePercentages = (sections) => {
       sections.forEach((section) => {
         const total = section.data.reduce((sum, item) => sum + item.value, 0);
@@ -219,23 +266,32 @@ export default {
       return sections;
     };
 
-    const updatedChartSections = calculatePercentages(chartSections);
+    const updatedChartSections = computed(() => calculatePercentages(chartSections.value));
 
     const totalPeople = computed(() =>
-      updatedChartSections.reduce((acc, section) => acc + section.total, 0)
+      updatedChartSections.value.reduce((acc, section) => acc + section.total, 0)
     );
+    
+    const version = [
+      { label: 'Nome da Versão', value: 'Versão 1.0' },
+      { label: 'Descrição', value: 'Esta é a versão inicial da dashboard.' },
+      { label: 'Data de Criação', value: '12/12/2024' },
+      { label: 'Valor Total Usado', value: 'R$ 1.200,00' },
+      { label: 'Data de Início', value: '02/02/2024' },
+      { label: 'Data de Fim', value: '02/12/2024' }
+    ];
 
     return {
       isSidebarMinimized,
       chartSections: updatedChartSections,
       totalPeople,
+      formattedTotalAPagar,
+      totalAPagar, 
+      totalRecebem,
+      totalNaoRecebem,
       files,
-      version,
-      downloadCSV,
-      totalAPagar, // Passando o valor total calculado para o template
-      formattedTotalAPagar, // Passando o valor formatado para o template
+      downloadCSV
     };
   }
 };
 </script>
-

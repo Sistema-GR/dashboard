@@ -65,7 +65,7 @@ export default {
         motivosInfrequencia: null,
         frequencia: null,
       },
-      BASE_URL: "http://10.203.2.116:8000/csv",
+      BASE_URL: "http://10.203.2.139:8000/csv",
       endpoint: {
         funcionarios: "/process/funcionarios/",
         atividades: "/process/atividades/",

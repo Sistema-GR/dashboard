@@ -139,17 +139,21 @@
 
                                                 <tr class="hover:bg-gray-50 transition-shadow hover:shadow-md">
                                                     <td class="border border-gray-200 px-4 py-3 text-gray-700">Tempo de Atuação</td>
-                                                    <td class="border border-gray-200 px-4 py-3 text-gray-700">{{ (item?.dados?.tempo_atuacao) }}</td>
+                                                    <td class="border border-gray-200 px-4 py-3 text-gray-700">
+                                                        {{ item?.dados?.tempo_atuacao === true ? 'Sim' : 'Não' }}
+                                                    </td>
                                                     <td 
                                                         :class="{
-                                                            'text-red-600 font-semibold': item?.dados?.tempo_atuacao === 'Não atua há mais de 6 meses na rede',
-                                                            'text-green-600 font-semibold': item?.dados?.tempo_atuacao === 'Atua há mais de 6 meses na rede'
+                                                            'text-red-600 font-semibold': item?.dados?.tempo_atuacao === false,
+                                                            'text-green-600 font-semibold': item?.dados?.tempo_atuacao === true
                                                         }"
                                                         class="border border-gray-200 px-4 py-3"
                                                     >
-                                                        {{ item?.dados?.tempo_atuacao === 'Atua há mais de 6 meses na rede' ? 'Apto' : 'Não Apto' }}
+                                                        {{ item?.dados?.tempo_atuacao === true ? 'Apto' : 'Não Apto' }}
                                                     </td>
                                                 </tr>
+
+
 
 
                                                 <tr class="hover:bg-gray-50 transition-shadow hover:shadow-md">

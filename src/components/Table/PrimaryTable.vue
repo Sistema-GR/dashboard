@@ -257,8 +257,6 @@ async function saveRowData(person) {
   }
 }
 
-
-
 onBeforeRouteLeave((to, from, next) => {
   // Verifica se a rota atual é a de Rewards
   if (from.path === '/admin/rewards') {
