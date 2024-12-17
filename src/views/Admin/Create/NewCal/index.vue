@@ -50,14 +50,7 @@
             />
           </div>
 
-          <div class="space-y-2">
-            <p>Carga Horária</p>
-            <TextInput
-              v-model="formData.max_workload"
-              :error="errorMessage"
-              type="text"
-            />
-          </div>
+
         </div>
       </div>
 
@@ -67,6 +60,14 @@
       <div class="flex-1 flex items-center justify-center py-12">
         <div class="text-start space-y-5 w-4/6">
           <div class="space-y-2">
+            <div class="space-y-2">
+              <p>Carga Horária</p>
+                <TextInput
+                  v-model="formData.max_workload"
+                  :error="errorMessage"
+                  type="text"
+                />
+              </div>
             <p>Etapa 1</p>
             <TextInput
               placeholder="%"
@@ -122,7 +123,7 @@
 <script>
 import { inject, ref, reactive } from "vue";
 import { useRouter } from "vue-router";
-import { createGeneralData, createDataset } from "../../../service/apiService"; 
+import { createGeneralData, createDataset } from "../../../../service/apiService"; 
 import PrimaryButton from "@/components/Buttons/PrimaryButton.vue";
 import TextInput from "@/components/Inputs/TextInput.vue";
 import Whiteboard from "@/components/Whiteboard/Whiteboard.vue";

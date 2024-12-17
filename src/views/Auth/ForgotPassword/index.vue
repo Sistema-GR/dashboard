@@ -52,12 +52,14 @@ import TextInput from "@/components/Inputs/TextInput.vue";
 import PrimaryButton from "@/components/Buttons/PrimaryButton.vue";
 
 export default {
-  name: 'ForgotPassword',
-  components: { PrimaryButton, TextInput },
-
+  name: "ForgotPassword",
+  components: {
+    PrimaryButton,
+    TextInput,
+  },
   data() {
     return {
-      email: '',
+      email: "",
       loading: false,
       errors: {
         email: null,
@@ -65,28 +67,27 @@ export default {
       },
     };
   },
-
   methods: {
+    // Validação do campo de e-mail
     validateEmail() {
       this.errors.email = null;
       this.errors.global = null;
 
-      // Verificar se o campo de e-mail está preenchido
       if (!this.email) {
-        this.errors.email = 'O e-mail é obrigatório.';
+        this.errors.email = "O e-mail é obrigatório.";
         return false;
       }
 
-      // Verificar se o e-mail está em um formato válido
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailPattern.test(this.email)) {
-        this.errors.email = 'Formato de e-mail inválido.';
+        this.errors.email = "Formato de e-mail inválido.";
         return false;
       }
 
       return true;
     },
 
+    // Submissão do formulário
     async handleSubmit() {
       if (!this.validateEmail()) {
         return;
@@ -95,24 +96,29 @@ export default {
       this.loading = true;
 
       try {
-        // Simulação de requisição ao servidor
-        await new Promise((resolve, reject) => {
-          setTimeout(() => {
-            // Simulação de erro de e-mail não encontrado
-            if (this.email !== 'usuario@exemplo.com') {
-              reject(new Error('Usuário não encontrado.'));
-            } else {
-              resolve();
-            }
-          }, 2000);
-        });
+        const response = await fetch(
+          "http://10.203.2.139:8000/auth/forgot-password/",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ email: this.email }),
+          }
+        );
 
-        // Se o e-mail for encontrado, redireciona para a próxima etapa
-        this.$router.push('/insertcode');
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.detail || "Erro ao enviar solicitação.");
+        }
+
+        // Redireciona para a próxima etapa em caso de sucesso
+        this.$router.push("/insertcode");
       } catch (error) {
-        // Exibir erro global caso o e-mail não seja encontrado
+        // Exibe a mensagem de erro global
         this.errors.global = error.message;
       } finally {
+        // Finaliza o estado de carregamento
         this.loading = false;
       }
     },

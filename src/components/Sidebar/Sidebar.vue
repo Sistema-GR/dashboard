@@ -82,7 +82,7 @@
                               src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" 
                               alt="" 
                             />
-                            <span :class="isSidebarMinimized ? 'hidden' : ''">Tom Cook Harris</span>
+                            <span :class="isSidebarMinimized ? 'hidden' : ''">Matheus Gabriel Grawe</span>
                             <ChevronUpIcon :class="isProfileMenuOpen ? 'rotate-180' : ''" class="w-4 h-auto transition-transform" />
                         </div>
 
@@ -137,15 +137,16 @@ import { ref, computed } from 'vue'
 import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { Bars3Icon, CalculatorIcon, BriefcaseIcon, RectangleGroupIcon , XMarkIcon, ChartBarIcon, UserGroupIcon, 
 UsersIcon, AcademicCapIcon, DocumentTextIcon, CalendarDaysIcon, CalendarIcon, DocumentCheckIcon, ChartBarSquareIcon, 
-Square3Stack3DIcon, ExclamationCircleIcon, InboxIcon , QuestionMarkCircleIcon, Squares2X2Icon, CircleStackIcon, PowerIcon, ChevronUpIcon, PencilIcon } from '@heroicons/vue/24/outline'
+Square3Stack3DIcon, ExclamationCircleIcon, InboxIcon , QuestionMarkCircleIcon, Squares2X2Icon, CircleStackIcon, PowerIcon, ChevronUpIcon, PencilIcon, RectangleStackIcon  } from '@heroicons/vue/24/outline'
 import { useRoute } from 'vue-router';
 
 const routes = {
   'admin': [
-    { name: 'Novo Cálculo', route: '/home/versionmanager', icon: CalculatorIcon, current: false },
+    { name: 'Novo Cálculo', route: '/home/create/selector', icon: CalculatorIcon, current: false },
     { name: 'Cálculo Anteriores', route: '/home/previousresults', icon: ChartBarIcon, current: false },
     { name: 'Recurso', route: '/resource/new', icon: ExclamationCircleIcon, current: false },
     { name: 'Painel do Usuário', route: '/home/dataversions', icon: CircleStackIcon , current: false },
+    { name: 'Selecionar Cálculo', route: '/admin/dashboard', icon: RectangleStackIcon  , current: false },
   ],
   'admin-panel': [
     { name: 'Dashboard', route: '/admin/dashboard', icon: Squares2X2Icon, current: false },
@@ -187,21 +188,7 @@ const filteredNavigation = computed(() => {
 
 const route = useRoute(); 
 const hiddenRoutes = [
-  '/admin/dashboard',
-  '/admin/results',
-  '/admin/calendar',
-  '/admin/professional',
-  '/admin/groups',
-  '/admin/steps',
-  '/admin/stagegroup',
-  '/admin/frequency',
-  '/admin/resignation',
-  '/admin/activities',
-  '/admin/service',
-  '/admin/training',
-  '/admin/report',
-  '/admin/rewards',
-  '/admin'
+
 ];
 
 const showConfigLink = !hiddenRoutes.includes(route.path); 

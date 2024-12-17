@@ -8,12 +8,15 @@ import insertcode from '../views/Auth/InsertCode/index.vue'
 //Admin
 import admin from '../views/Admin/index.vue'
 import home from "@/views/Admin/Home/index.vue"
-import newcal from '../views/Admin/NewCal/index.vue'
+import newcal from '../views/Admin/Create/NewCal/index.vue'
 import previousresults from '@/views/Admin/PreviousResults/index.vue'
-import imports from "@/views/Admin/Imports/index.vue"
+import imports from "@/views/Admin/Create/Imports/index.vue"
 import dataversions from '@/views/Admin/DataDversions/index.vue'
-import versionmanager from '@/views/Admin/VersionManager/index.vue'
+import versionmanager from '@/views/Admin/Create/VersionManager/index.vue'
 import roles from '@/views/Admin/Roles/index.vue'
+import create from '@/views/Admin/Create/index.vue'
+import selector from '@/views/Admin/Create/Selector/Index.vue'
+import editversion from '@/views/Admin/Create/EditVersions/index.vue'
 //Resource
 import resource from '@/views/Admin/Resource/index.vue'
 import newResource from '@/views/Admin/Resource/NewResource/index.vue'
@@ -71,9 +74,21 @@ const router = createRouter({
         { path: 'imports', name: 'inports', component: imports },
         { path: 'config', name: 'configs', component: config },
         { path: 'dataversions', name: 'dataversions', component: dataversions },
-        { path: 'versionmanager', name: 'versionmanager', component: versionmanager }
+        {
+          path: 'create',
+          name: 'create',
+          component: create,
+          children: [
+            { path: 'newcal', name: 'create-newcal', component: newcal },
+            { path: 'imports', name: 'create-imports', component: imports },
+            { path: 'versionmanager', name: 'versionmanager', component: versionmanager },
+            { path: 'selector', name: 'selector', component: selector },
+            { path: 'editversion', name: 'editversion', component: editversion },
+          ]
+        }
       ]
     },
+    
     {
       path: '/admin',
       name: 'adminPanel',

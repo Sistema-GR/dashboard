@@ -4,8 +4,7 @@ import { getAccessToken } from './token';
 
 // Configuração do axios
 const apiClient = axios.create({
-  baseURL: 'http://10.203.2.185:8000', 
-  // baseURL: 'http://127.0.0.1:8000', 
+  baseURL: 'http://10.203.2.139:8000',  
   headers: {
     'Content-Type': 'application/json',
   },
@@ -14,7 +13,7 @@ const apiClient = axios.create({
 // Configuração dos interceptores de requisição
 setupAxiosInterceptors(apiClient);
 
-// Função genérica para tratamento de erros
+// Função genérica para tratamento de erross
 const handleApiError = (error) => {
   console.error("Erro na requisição:", error.response || error.message);
   throw error.response ? error.response.data : error.message;
@@ -124,3 +123,19 @@ export const processAllFiles = async () => {
     handleApiError(error);
   }
 };
+
+export const fetchEmployeeData = async () => {
+  try {
+    const token = await getAccessToken();
+    const response = await apiClient.get('/csv/user-get/', {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      }
+    });
+    return response.data || [];
+  } catch (error) {
+    console.error("Erro ao buscar dados do funcionário:", error);
+    throw error;
+  }
+};
+
