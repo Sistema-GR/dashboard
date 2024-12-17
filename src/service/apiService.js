@@ -13,7 +13,7 @@ const apiClient = axios.create({
 // Configuração dos interceptores de requisição
 setupAxiosInterceptors(apiClient);
 
-// Função genérica para tratamento de erros
+// Função genérica para tratamento de erross
 const handleApiError = (error) => {
   console.error("Erro na requisição:", error.response || error.message);
   throw error.response ? error.response.data : error.message;
