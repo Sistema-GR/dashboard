@@ -188,7 +188,20 @@ const filteredNavigation = computed(() => {
 
 const route = useRoute(); 
 const hiddenRoutes = [
-
+      '/admin/dashboard',
+      '/admin/results',
+      '/admin/calendar',
+      '/admin/professional',
+      '/admin/groups',
+      '/admin/steps',
+      '/admin/stagegroup',
+      '/admin/frequency',
+      '/admin/resignation',
+      '/admin/activities',
+      '/admin/service',
+      '/admin/training',
+      '/admin/report/',
+      '/admin/rewards/',
 ];
 
 const showConfigLink = !hiddenRoutes.includes(route.path); 
