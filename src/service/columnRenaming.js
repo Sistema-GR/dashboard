@@ -240,20 +240,10 @@ const columnRenamingMap = {
       percentual_atividade: 'Percentual de Atividade',
       percentual_total: 'Percentual Total',
       valor_bruto: 'Valor Bruto',
-      valor_total: 'Valor Total'
+      valor_total: 'Valor Total',
+      motivo_nao_recebimento: 'Motivo não recebimento',
+      recebe_gratificacao: 'Recebe?'
   }
-  // OperatingTime: {
-  //     matricula: 'Matrícula',
-  //     admissao: 'Admissão',
-  //     demissoes: 'Demissão',
-  //     inicio_atividade_local: 'Inicio Atividade Local',
-  //     fim_atividade_local: 'Fim Atividade Local',
-  //     nome: 'Nome',
-  //     classe_local: 'Tipo de Local', // tem como NÃO colocar essa coluna? Se excluir vai dar erro será? 
-  //     diferenca_demissao_fim399: 'Diferença Demissão / Fim Atividade',
-  //     fim_alocacao_final: 'Fim Alocação a Considerar',
-  //     tempo_atuacao: 'Tempo de Atuação'
-  // }
 };
 
 const currencyKeys = ['valor_total', 'valor_bruto', 'gr_unidade_max', 'gr_rede_max', 'valor_gr_unidade', 'valor_gr_rede', 'valor_etapa', 'valor_rede', 'valor_unidade_maximo', 'valor_rede_maximo', 'valor_gratificacao_unidade', 'valor_gratificacao_rede', 'valor_gratificacao_registro', 'valor_bruto_total', 'valor_a_pagar_criterios', 'desconto'];
