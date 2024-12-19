@@ -9,8 +9,15 @@
               <tr>
                 <th v-for="column in filteredColumns" :key="column.key" scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-3 whitespace-nowrap break-words">
                   {{ column.label }}
+                  <button @click="toggleFilterMenu(column)" class="ml-2 text-white hover:text-gray-700 translate-y-0.5">
+                    <svg v-if="sortDirection === 'asc'" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M6 9L12 15L18 9" />
+                    </svg>
+                    <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M6 15L12 9L18 15" />
+                    </svg>
+                  </button>
                 </th>
-
                 <th v-if="showEdit" scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-3"></th>
               </tr>
             </thead>
@@ -90,6 +97,7 @@ const isLoading = ref(false);
 const savedRowData = ref({}); 
 const drawerRef = ref(null); 
 const { loadPeopleData, saveRowDataToStorage } = usePersonService(); 
+const sortDirection = ref('asc'); 
 
 const drawerTitle = computed(() => {
   const titles = {
@@ -132,6 +140,24 @@ watch(() => props.searchQuery, debounce(() => {
 }, 300)); 
 
 watch(currentPage, loadMore);
+
+function toggleFilterMenu(column) {
+  // Troca a direção de ordenação
+  sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc';
+
+  // Ordena as pessoas de acordo com a coluna e a direção
+  filteredPeople.value = [...filteredPeople.value].sort((a, b) => {
+    const aValue = a[column.key];
+    const bValue = b[column.key];
+
+    if (aValue < bValue) return sortDirection.value === 'asc' ? -1 : 1;
+    if (aValue > bValue) return sortDirection.value === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  // Atualiza a exibição das pessoas
+  loadMore();
+}
 
 async function fetchPeople() {
   isLoading.value = true; 
