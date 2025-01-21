@@ -97,7 +97,7 @@ export default {
 
       try {
         const response = await fetch(
-          "http://10.203.2.139:8000/auth/forgot-password/",
+          "http://127.0.0.1:8000/auth/forgot-password/",
           {
             method: "POST",
             headers: {

@@ -1,6 +1,7 @@
 <template>
   <Whiteboard title="importações" :isSidebarMinimized="isSidebarMinimized">
     <div class="w-full space-y-10">
+      <FileInput Label="Importar Arquivo com Nome: Aprender Mais.csv" @change="(event) => handleFileUpload(event, 'aprenderMais')" />
       <FileInput Label="Importar Arquivo com Nome: Atividades.csv" @change="(event) => handleFileUpload(event, 'atividades')" />
       <FileInput Label="Importar Arquivo com Nome: Dados Gerais.csv" @change="(event) => handleFileUpload(event, 'dadosGerais')" />
       <FileInput Label="Importar Arquivo com Nome: Definição Etapas.csv" @change="(event) => handleFileUpload(event, 'definicaoEtapas')" />
@@ -14,7 +15,6 @@
       <FileInput Label="Importar Arquivo com Nome: Motivos Infrequência.csv" @change="(event) => handleFileUpload(event, 'motivosInfrequencia')" />
       <FileInput Label="Importar Arquivo com Nome: Tipo Local.csv" @change="(event) => handleFileUpload(event, 'tipoLocal')" />
       <FileInput Label="Importar Arquivo com Nome: Ues Perc Gr.csv" @change="(event) => handleFileUpload(event, 'uesPercGr')" />
-      <FileInput Label="Importar Arquivo com Nome: Valores Grupo.csv" @change="(event) => handleFileUpload(event, 'valoresGrupo')" />
 
         <div class="text-red-500" v-if="errorMessage">{{ errorMessage }}</div>
 
@@ -55,7 +55,7 @@ export default {
         tipoLocal: null,
         dadosGerais: null,
         funcoesGruposEtapas: null,
-        valoresGrupo: null,
+        aprenderMais: null,
         etapasMetas: null,
         uesPercGr: null,
         definicaoEtapas: null,
@@ -65,14 +65,14 @@ export default {
         motivosInfrequencia: null,
         frequencia: null,
       },
-      BASE_URL: "http://10.203.2.139:8000/csv",
+      BASE_URL: "http://127.0.0.1:8000/csv",
       endpoint: {
         funcionarios: "/process/funcionarios/",
         atividades: "/process/atividades/",
         tipoLocal: "/process/tipo-local/",
         dadosGerais: "/process/dados-gerais/",
         funcoesGruposEtapas: "/process/funcoes-grupo/",
-        valoresGrupo: "/process/aprender-mais/",
+        aprenderMais: "/process/aprender-mais/",
         etapasMetas: "/process/etapas-metas/",
         uesPercGr: "/process/percentual-gratificacao/",
         definicaoEtapas: "/process/definicao-etapas/",

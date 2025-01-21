@@ -242,7 +242,10 @@ const columnRenamingMap = {
       valor_bruto: 'Valor Bruto',
       valor_total: 'Valor Total',
       motivo_nao_recebimento: 'Motivo não recebimento',
-      recebe_gratificacao: 'Recebe?'
+      recebe_gratificacao: 'Recebe?',
+      motivo: 'Motivo', 
+      faixa_pagamento: 'Faixa Pagamento',
+      desconto: 'Desconto'
   }
 };
 
