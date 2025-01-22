@@ -1,22 +1,33 @@
 <template>
-  <Whiteboard title="importações" :isSidebarMinimized="isSidebarMinimized">
+  <Whiteboard title="Importações" :isSidebarMinimized="isSidebarMinimized">
     <div class="w-full space-y-10">
-      <FileInput Label="Importar Arquivo com Nome: Aprender Mais.csv" @change="(event) => handleFileUpload(event, 'aprenderMais')" />
-      <FileInput Label="Importar Arquivo com Nome: Atividades.csv" @change="(event) => handleFileUpload(event, 'atividades')" />
-      <FileInput Label="Importar Arquivo com Nome: Dados Gerais.csv" @change="(event) => handleFileUpload(event, 'dadosGerais')" />
-      <FileInput Label="Importar Arquivo com Nome: Definição Etapas.csv" @change="(event) => handleFileUpload(event, 'definicaoEtapas')" />
-      <FileInput Label="Importar Arquivo com Nome: Demissões.csv" @change="(event) => handleFileUpload(event, 'demissoes')" />
-      <FileInput Label="Importar Arquivo com Nome: Dias Não Contabilizados.csv" @change="(event) => handleFileUpload(event, 'diasNaoContabilizados')" />
-      <FileInput Label="Importar Arquivo com Nome: Etapas Metas.csv" @change="(event) => handleFileUpload(event, 'etapasMetas')" />
-      <FileInput Label="Importar Arquivo com Nome: Formações.csv" @change="(event) => handleFileUpload(event, 'formacoes')" />
-      <FileInput Label="Importar Arquivo com Nome: Frequência.csv" @change="(event) => handleFileUpload(event, 'frequencia')" />
-      <FileInput Label="Importar Arquivo com Nome: Funcionario.csv" @change="(event) => handleFileUpload(event, 'funcionarios')" />
-      <FileInput Label="Importar Arquivo com Nome: Funções Grupos Etapas.csv" @change="(event) => handleFileUpload(event, 'funcoesGruposEtapas')" />
-      <FileInput Label="Importar Arquivo com Nome: Motivos Infrequência.csv" @change="(event) => handleFileUpload(event, 'motivosInfrequencia')" />
-      <FileInput Label="Importar Arquivo com Nome: Tipo Local.csv" @change="(event) => handleFileUpload(event, 'tipoLocal')" />
-      <FileInput Label="Importar Arquivo com Nome: Ues Perc Gr.csv" @change="(event) => handleFileUpload(event, 'uesPercGr')" />
+      <!-- Dropdown de seleção de Dataset -->
+      <div class="mb-4">
+        <label for="dataset" class="block text-gray-700">Selecione o Dataset</label>
+        <select v-model="selectedDataset" @change="loadDatasetFiles" class="p-2 border w-full rounded-lg">
+          <option v-for="(dataset, index) in datasets" :key="dataset.folder_uuid" :value="dataset.folder_uuid">
+            {{ dataset.folder_uuid }}
+          </option>
+        </select>
+      </div>
 
-        <div class="text-red-500" v-if="errorMessage">{{ errorMessage }}</div>
+      <div class="w-full space-y-10">
+        <FileInput ref="aprenderMais" Label="Importar Arquivo com Nome: Aprender Mais.csv" :file="files.aprenderMais" @change="(event) => handleFileUpload(event, 'aprenderMais')" />
+        <FileInput ref="atividades" Label="Importar Arquivo com Nome: Atividades.csv" :file="files.atividades" @change="(event) => handleFileUpload(event, 'atividades')" />
+        <FileInput ref="dadosGerais" Label="Importar Arquivo com Nome: Dados Gerais.csv" :file="files.dadosGerais" @change="(event) => handleFileUpload(event, 'dadosGerais')" />
+        <FileInput ref="definicaoEtapas" Label="Importar Arquivo com Nome: Definição Etapas.csv" :file="files.definicaoEtapas" @change="(event) => handleFileUpload(event, 'definicaoEtapas')" />
+        <FileInput ref="demissoes" Label="Importar Arquivo com Nome: Demissões.csv" :file="files.demissoes" @change="(event) => handleFileUpload(event, 'demissoes')" />
+        <FileInput ref="diasNaoContabilizados" Label="Importar Arquivo com Nome: Dias Não Contabilizados.csv" :file="files.diasNaoContabilizados" @change="(event) => handleFileUpload(event, 'diasNaoContabilizados')" />
+        <FileInput ref="etapasMetas" Label="Importar Arquivo com Nome: Etapas Metas.csv" :file="files.etapasMetas" @change="(event) => handleFileUpload(event, 'etapasMetas')" />
+        <FileInput ref="formacoes" Label="Importar Arquivo com Nome: Formações.csv" :file="files.formacoes" @change="(event) => handleFileUpload(event, 'formacoes')" />
+        <FileInput ref="frequencia" Label="Importar Arquivo com Nome: Frequência.csv" :file="files.frequencia" @change="(event) => handleFileUpload(event, 'frequencia')" />
+        <FileInput ref="funcoesGruposEtapas" Label="Importar Arquivo com Nome: Funções Grupos Etapas.csv" :file="files.funcoesGruposEtapas" @change="(event) => handleFileUpload(event, 'funcoesGruposEtapas')" />
+        <FileInput ref="funcionarios" Label="Importar Arquivo com Nome: Funcionario.csv" :file="files.funcionarios" @change="(event) => handleFileUpload(event, 'funcionarios')" />
+        <FileInput ref="motivosInfrequencia" Label="Importar Arquivo com Nome: Motivos Infrequência.csv" :file="files.motivosInfrequencia" @change="(event) => handleFileUpload(event, 'motivosInfrequencia')" />
+        <FileInput ref="tipoLocal" Label="Importar Arquivo com Nome: Tipo Local.csv" :file="files.tipoLocal" @change="(event) => handleFileUpload(event, 'tipoLocal')" />
+        <FileInput ref="uesPercGr" Label="Importar Arquivo com Nome: Ues Perc Gr.csv" :file="files.uesPercGr" @change="(event) => handleFileUpload(event, 'uesPercGr')" />
+      </div>
+      <div class="text-red-500" v-if="errorMessage">{{ errorMessage }}</div>
 
       <div class="flex w-full items-end justify-end mt-8">
           <div class="w-4/12 lg:w-2/12">
@@ -35,6 +46,8 @@
   </Whiteboard>
 </template>
 
+
+
 <script>
 import { inject } from 'vue';
 import axios from 'axios';
@@ -42,132 +55,180 @@ import FileInput from '@/components/Inputs/FileInput.vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
 import Loading from '@/components/Loading/Loading.vue';
-import { getAccessToken } from '@/service/token.js'; // Importando o serviço de token
+import { getAccessToken } from '@/service/token.js';
 
 export default {
   components: { FileInput, Whiteboard, PrimaryButton, Loading },
 
   data() {
     return {
-      files: {
-        funcionarios: null,
-        atividades: null,
-        tipoLocal: null,
-        dadosGerais: null,
-        funcoesGruposEtapas: null,
+      datasets: [],
+      selectedDataset: null,
+      files: { // Inicializando os campos com valores nulos
         aprenderMais: null,
-        etapasMetas: null,
-        uesPercGr: null,
+        atividades: null,
+        dadosGerais: null,
         definicaoEtapas: null,
-        diasNaoContabilizados: null,
         demissoes: null,
+        diasNaoContabilizados: null,
+        etapasMetas: null,
         formacoes: null,
-        motivosInfrequencia: null,
         frequencia: null,
+        funcoesGruposEtapas: null,
+        funcionarios: null,
+        motivosInfrequencia: null,
+        tipoLocal: null,
+        uesPercGr: null
       },
-      BASE_URL: "http://127.0.0.1:8000/csv",
+      BASE_URL: "http://10.203.2.98:8000/csv",
       endpoint: {
-        funcionarios: "/process/funcionarios/",
-        atividades: "/process/atividades/",
-        tipoLocal: "/process/tipo-local/",
-        dadosGerais: "/process/dados-gerais/",
-        funcoesGruposEtapas: "/process/funcoes-grupo/",
         aprenderMais: "/process/aprender-mais/",
-        etapasMetas: "/process/etapas-metas/",
-        uesPercGr: "/process/percentual-gratificacao/",
+        atividades: "/process/atividades/",
+        dadosGerais: "/process/dados-gerais/",
         definicaoEtapas: "/process/definicao-etapas/",
-        diasNaoContabilizados: "/process/dias-nao-contabilizados/",
         demissoes: "/process/demissoes/",
+        diasNaoContabilizados: "/process/dias-nao-contabilizados/", 
+        etapasMetas: "/process/etapas-metas/",
         formacoes: "/process/formacoes/",
+        frequencia: "/process/frequencia/",
+        funcionarios: "/process/funcionarios/",
+        funcoesGruposEtapas: "/process/funcoes-grupo/",
         motivosInfrequencia: "/process/motivos-infrequencia/",
-        frequencia: "/process/frequencia/"
+        tipoLocal: "/process/tipo-local/",
+        uesPercGr: "/process/percentual-gratificacao/",
       },
       isUploading: false,
       isSidebarMinimized: null,
-      errorMessage: '',  // Adicionada a propriedade para mensagens de erro
+      errorMessage: '',
     };
   },
 
   created() {
     this.isSidebarMinimized = inject('isSidebarMinimized');
+    this.fetchDatasets();
   },
 
   methods: {
+    async fetchDatasets() {
+      const token = await getAccessToken();
+      if (!token) {
+        this.errorMessage = 'Usuário não autenticado';
+        return;
+      }
+
+      try {
+        const response = await axios.get(`${this.BASE_URL}/api/get-dataset`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        this.datasets = response.data;
+      } catch (error) {
+        this.errorMessage = `Erro: ${error.response?.status} - ${error.response?.data.error || 'Erro ao carregar datasets'}`;
+        console.error(error);
+      }
+    },
+
+    async loadDatasetFiles() {
+      if (!this.selectedDataset) return;
+
+      const token = await getAccessToken();
+      if (!token) {
+        this.errorMessage = 'Usuário não autenticado';
+        return;
+      }
+
+      try {
+        const response = await axios.get(`${this.BASE_URL}/api/raw-datafiles`, {
+          headers: { Authorization: `Bearer ${token}` },
+          params: { dataset_id: this.selectedDataset },
+        });
+
+        console.log('Arquivos recebidos:', response.data.files);
+
+        const fileMapping = {
+          aprenderMais: 'Aprender Mais.csv',
+          atividades: 'Atividades.csv',
+          dadosGerais: 'Dados Gerais.csv',
+          definicaoEtapas: 'Definição Etapas.csv',
+          demissoes: 'Demissões.csv',
+          diasNaoContabilizados: 'Dias Não Contabilizados.csv',
+          etapasMetas: 'Etapas Metas.csv',
+          formacoes: 'Formações.csv',
+          frequencia: 'Frequência.csv',
+          funcoesGruposEtapas: 'Funções Grupos Etapas.csv',
+          funcionarios: 'Funcionario.csv',
+          motivosInfrequencia: 'Motivos Infrequência.csv',
+          tipoLocal: 'Tipo Local.csv',
+          uesPercGr: 'Ues Perc Gr.csv',
+        };
+
+        response.data.files.forEach((file) => {
+          for (let [key, value] of Object.entries(fileMapping)) {
+            if (file.includes(value) && !this.files[key]) {
+              const fileToAssign = new File([new Blob([file])], value);
+              this.files[key] = fileToAssign;
+              this.handleFileUpload({ target: { files: [fileToAssign] } }, key);
+              break;
+            }
+          }
+        });
+
+        console.log("Arquivos correspondidos e atribuídos:", this);
+
+      } catch (error) {
+        this.errorMessage = `Erro ao carregar os arquivos do dataset: ${error.response?.status} - ${error.response?.data.error || 'Erro desconhecido'}`;
+        console.error(error);
+      }
+    },
+
     handleFileUpload(event, fileType) {
       const file = event.target.files[0];
       if (file && file.type !== 'text/csv') {
-        this.errorMessage = 'Por favor, selecione um arquivo CSV válido.'; // Mensagem de erro
+        this.errorMessage = 'Por favor, selecione um arquivo CSV válido.';
         return;
       }
       this.files[fileType] = file;
-      this.errorMessage = ''; // Limpa a mensagem de erro se o arquivo for válido
-      console.log(`${fileType} selecionado:`, file);
+      this.errorMessage = '';
     },
 
     async uploadFiles() {
-      const filesToUpload = Object.entries(this.files).filter(
-        ([key, value]) => value !== null
-      );
+      const filesToUpload = Object.entries(this.files).filter(([key, value]) => value !== null);
 
-      // Validação: Verifica se pelo menos um arquivo foi selecionado
       if (filesToUpload.length === 0) {
         this.errorMessage = 'Por favor, selecione pelo menos um arquivo!';
         return;
       }
 
-      // Validação: Verifica se todos os arquivos são do tipo CSV
-      const invalidFiles = filesToUpload.filter(
-        ([key, file]) => file.type !== 'text/csv'
-      );
-      if (invalidFiles.length > 0) {
-        this.errorMessage = 'Todos os arquivos devem ser do tipo CSV.';
-        return;
-      }
-
       this.isUploading = true;
-      this.errorMessage = ''; // Limpa a mensagem de erro antes de enviar
+      this.errorMessage = '';
 
-      // Obtém o token de acesso válido
       const token = await getAccessToken();
       if (!token) {
-        this.errorMessage = 'Usuário não autenticado ou token expirado.';
+        this.errorMessage = 'Usuário não autenticado';
         this.isUploading = false;
         return;
       }
 
       try {
-        // Faz upload de cada arquivo individualmente
         for (const [key, file] of filesToUpload) {
           const formData = new FormData();
           formData.append('file', file);
 
           const config = {
-            headers: {
-              'Authorization': `Bearer ${token}`, // Adicionando o token no header
-            },
+            headers: { 'Authorization': `Bearer ${token}` }
           };
 
-          const response = await axios.post(
-            `${this.BASE_URL}${this.endpoint[key]}`,
-            formData,
-            config
-          );
+          const response = await axios.post(`${this.BASE_URL}${this.endpoint[key]}`, formData, config);
           console.log(`${key} arquivo carregado com sucesso`, response.data);
         }
 
-        // Após o upload de todos os arquivos, chama a rota para processar todos eles
         await axios.get(`${this.BASE_URL}/process/all-files/`, {
           headers: { 'Authorization': `Bearer ${token}` },
         });
-        console.log("Todos os arquivos processados com sucesso!");
 
-        // Redirecionar para a página de administração
         this.$router.push({ path: '/admin/dashboard' });
       } catch (error) {
         console.error('Erro ao carregar ou processar os arquivos:', error);
-        this.errorMessage =
-          'Erro ao carregar ou processar os arquivos: ' +
-          (error.response?.data?.error || error.message);
+        this.errorMessage = 'Erro ao carregar ou processar os arquivos';
       } finally {
         this.isUploading = false;
       }
