@@ -85,7 +85,7 @@ export default {
       try {
         const token = await getAccessToken();
         if (token) {
-          const response = await axios.get('http://127.0.0.1:8000/csv/dashboard-info/', {
+          const response = await axios.get('http://10.203.2.98:8000/csv/dashboard-info/', {
             headers: {
               Authorization: `Bearer ${token}`,
             },

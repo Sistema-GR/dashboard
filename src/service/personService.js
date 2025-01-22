@@ -2,7 +2,7 @@ import { getAccessToken } from './token';
 
 export default function usePersonService() {
   // Usando a variável global $apiBaseUrl
-  const BASE_URL = window.__VUE__API_BASE_URL || 'http://127.0.0.1:8000/csv'; // Fallback para a URL base
+  const BASE_URL = window.__VUE__API_BASE_URL || 'http://10.203.2.98:8000/csv'; // Fallback para a URL base
 
   const routeJsonMapping = {
     'Results': `${BASE_URL}/process/percentual-gratificacao/`,
