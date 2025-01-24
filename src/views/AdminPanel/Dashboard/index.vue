@@ -46,6 +46,19 @@
       </div>
     </div>
 
+    <div class="flex flex-col w-full mt-3 bg-gradient-to-r from-gray-100 to-gray-300 border border-gray-200 p-6 rounded-lg shadow-lg mb-5">
+      <h2 class="text-xl font-semibold mb-4 text-gray-800">Arquivos importados</h2>
+      <p class="text-gray-700 mb-4">
+        Aqui você pode gerenciar os arquivos importados. Clique no botão abaixo para visualizar os detalhes.
+      </p>
+      <button 
+        class="self-start bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300"
+        @click="$router.push('files-manager')">
+        Visualizar arquivos
+      </button>
+    </div>
+
+
     <!-- Informações sobre a versão -->
     <div class="flex flex-col w-full mt-3 bg-gradient-to-r from-gray-100 to-gray-300 border border-gray-200 p-6 rounded-lg shadow-lg">
       <h2 class="text-xl font-semibold mb-4 text-gray-800">Informações sobre a Versão</h2>
@@ -85,7 +98,7 @@ export default {
       try {
         const token = await getAccessToken();
         if (token) {
-          const response = await axios.get('http://10.203.2.98:8000/csv/dashboard-info/', {
+          const response = await axios.get('http://10.203.2.98:8000/csv/get-import-files/', {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -192,17 +205,25 @@ export default {
       if (!dashboardData.value.version_info) return [];
 
       return [
-        { label: 'Nome da Versão', value: dashboardData.value.version_info.description || 'Desconhecido' },
-        { label: 'Descrição', value: dashboardData.value.version_info.description || 'Descrição não disponível' },
+        { label: 'Versão', value: dashboardData.value.version_info.description || 'Desconhecido' },
         { label: 'Data de Criação', value: new Date(dashboardData.value.version_info.created_at).toLocaleDateString('pt-BR') },
-        { label: 'Valor Total Usado', value: new Intl.NumberFormat('pt-BR', {
+        { label: 'Valor Máximo', value: new Intl.NumberFormat('pt-BR', {
             style: 'currency',
             currency: 'BRL',
         }).format(dashboardData.value.version_info.max_value) },
+        { label: 'Carga Horária Máxima', value: dashboardData.value.version_info.max_workload || "Carga horária não disponível"},
         { label: 'Data de Início', value: dashboardData.value.version_info.start_date || 'Data não disponível' },
-        { label: 'Data de Fim', value: dashboardData.value.version_info.end_date || 'Data não disponível' }
-      ];
-    });
+        { label: 'Data de Fim', value: dashboardData.value.version_info.end_date || 'Data não disponível' },
+        { 
+          label: 'Resultados IDEM', 
+          value: [
+             `${dashboardData.value.version_info.idem_network_step_1}%`,
+             `${dashboardData.value.version_info.idem_network_step_2}%`,
+             `${dashboardData.value.version_info.idem_network_step_3}%`,
+          ].filter(Boolean).join(', ') || "Carga horária não disponível"
+        },
+        ];
+      });
 
     return {
       isSidebarMinimized,
