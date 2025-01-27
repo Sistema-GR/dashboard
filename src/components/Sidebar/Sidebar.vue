@@ -79,10 +79,12 @@
                         <div  class="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-white cursor-pointer hover:bg-gray-800" @click="toggleProfileMenu">
                             <img 
                               class="h-8 w-8 rounded-full bg-gray-800" 
-                              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" 
+                              src="@/assets/images/profile-pattern.png" 
                               alt="" 
                             />
-                            <span :class="isSidebarMinimized ? 'hidden' : ''">{{ userName }}</span>
+                            <span :class="isSidebarMinimized ? 'hidden' : ''">
+                              {{ userName || 'Carregando...' }}
+                            </span>
                             <ChevronUpIcon :class="isProfileMenuOpen ? 'rotate-180' : ''" class="w-4 h-auto transition-transform" />
                         </div>
 
@@ -181,6 +183,62 @@ const props = defineProps({
 const sidebarOpen = ref(false)
 const isSidebarMinimized = ref(false)
 const userName = ref('')  // Variável para armazenar o nome do usuário
+
+// Função para capitalizar palavras
+function capitalizeWords(str) {
+  return str
+    .split(' ')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ')
+}
+
+// Função para buscar o nome do usuário
+async function fetchUserName() {
+  try {
+    const token = localStorage.getItem('accessToken'); // Recupere o token armazenado no localStorage
+
+    if (!token) {
+      console.error('Token de acesso não encontrado. O usuário pode não estar autenticado.');
+      userName.value = 'Usuário não autenticado';
+      return;
+    }
+
+    // Requisição com token no header
+    axios.get('http://10.203.2.98:8000/auth/user-info/', {
+      headers: {
+        'Authorization': `Bearer ${token}`  // Corrigir o nome do token para "accessToken"
+      }
+    })
+    .then(response => {
+      console.log(response.data);
+
+      // Verifica se os dados foram retornados corretamente
+      if (response.data && response.data.first_name && response.data.last_name) {
+        const firstName = response.data.first_name.charAt(0).toUpperCase() + response.data.first_name.slice(1).toLowerCase();
+        const lastName = capitalizeWords(response.data.last_name);
+        userName.value = `${firstName} ${lastName}`;
+      } else {
+        console.warn('Resposta inesperada:', response.data);
+        userName.value = 'Usuário não encontrado';
+      }
+    })
+    .catch(error => {
+      console.error('Erro ao buscar os dados do usuário:', error);
+      userName.value = 'Erro ao carregar';
+    });
+
+  } catch (error) {
+    console.error('Erro ao buscar os dados do usuário:', error);
+    userName.value = 'Erro ao carregar';
+  }
+}
+
+
+// Executa a função ao montar o componente
+onMounted(() => {
+  fetchUserName()
+})
+
 
 const emit = defineEmits(['update:isSidebarMinimized'])
 
