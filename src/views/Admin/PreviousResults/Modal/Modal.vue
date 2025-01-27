@@ -23,7 +23,8 @@
 
                                   <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                                     
-                                      <DialogTitle as="h3" class="text-lg font-semibold leading-6 text-gray-900">Criar Nova Versão</DialogTitle>
+                                    <h3 class="text-lg font-semibold leading-6 text-gray-900">Criar Nova Versão</h3>
+
                                       <div class="mt-2">
                                          <p class="text-sm text-gray-500">Selecione uma versão existente e forneça detalhes para criar uma nova versão.</p>
                                       </div>
