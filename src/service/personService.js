@@ -7,7 +7,7 @@ export default function usePersonService() {
   const routeJsonMapping = {
     'Results': `${BASE_URL}/process/percentual-gratificacao/`,
     'Calendar': `${BASE_URL}/process/dias-nao-contabilizados/`,
-    'Profissional': `${BASE_URL}/process/funcionarios/`,
+    'Profissional': `${BASE_URL}/process/filtered-funcionarios/`,
     'Groups': `${BASE_URL}/process/aprender-mais/`,
     'Steps': `${BASE_URL}/process/etapas-metas/`,
     'StageGroup': `${BASE_URL}/process/grupos-atualizado/`,
