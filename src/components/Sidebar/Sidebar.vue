@@ -135,13 +135,34 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
 import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
-import { Bars3Icon, CalculatorIcon, BriefcaseIcon, RectangleGroupIcon , XMarkIcon, ChartBarIcon, UserGroupIcon, 
-UsersIcon, AcademicCapIcon, DocumentTextIcon, CalendarDaysIcon, CalendarIcon, DocumentCheckIcon, ChartBarSquareIcon, 
-Square3Stack3DIcon, ExclamationCircleIcon, InboxIcon , QuestionMarkCircleIcon, Squares2X2Icon, CircleStackIcon, PowerIcon, ChevronUpIcon, PencilIcon, RectangleStackIcon  } from '@heroicons/vue/24/outline'
-import { useRoute } from 'vue-router'
+import {
+    AcademicCapIcon,
+    Bars3Icon,
+    BriefcaseIcon,
+    CalculatorIcon,
+    CalendarDaysIcon, CalendarIcon,
+    ChartBarIcon,
+    ChartBarSquareIcon,
+    ChevronUpIcon,
+    CircleStackIcon,
+    DocumentCheckIcon,
+    DocumentTextIcon,
+    ExclamationCircleIcon, InboxIcon,
+    PencilIcon,
+    PowerIcon,
+    QuestionMarkCircleIcon,
+    RectangleGroupIcon,
+    RectangleStackIcon,
+    Square3Stack3DIcon,
+    Squares2X2Icon,
+    UserGroupIcon,
+    UsersIcon,
+    XMarkIcon
+} from '@heroicons/vue/24/outline'
 import axios from 'axios'
+import { computed, onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
 
 const routes = {
   'admin': [
@@ -204,7 +225,7 @@ async function fetchUserName() {
     }
 
     // Requisição com token no header
-    axios.get('http://10.203.2.98:8000/auth/user-info/', {
+    axios.get('http://127.0.0.1:8000/auth/user-info/', {
       headers: {
         'Authorization': `Bearer ${token}`  // Corrigir o nome do token para "accessToken"
       }

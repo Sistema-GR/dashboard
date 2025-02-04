@@ -48,8 +48,8 @@
 </template>
 
 <script>
-import TextInput from "@/components/Inputs/TextInput.vue";
 import PrimaryButton from "@/components/Buttons/PrimaryButton.vue";
+import TextInput from "@/components/Inputs/TextInput.vue";
 
 export default {
   name: "ForgotPassword",
@@ -97,7 +97,7 @@ export default {
 
       try {
         const response = await fetch(
-          "http://10.203.2.98:8000/auth/forgot-password/",
+          "http://127.0.0.1:8000/auth/forgot-password/",
           {
             method: "POST",
             headers: {

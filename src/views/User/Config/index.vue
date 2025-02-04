@@ -45,9 +45,9 @@
 </template>
 
 <script>
-import { inject, ref, onMounted } from 'vue';
-import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import SecondaryButton from '@/components/Buttons/SecondaryButton.vue';
+import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
+import { inject, onMounted, ref } from 'vue';
 
 export default {
     name: "Config",
@@ -70,7 +70,7 @@ export default {
             }
 
             try {
-                const response = await fetch("http://10.203.2.98:8000/auth/user-info/", {
+                const response = await fetch("http://127.0.0.1:8000/auth/user-info/", {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

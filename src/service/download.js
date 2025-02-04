@@ -13,7 +13,7 @@ export const downloadCSV = async () => {
     }
 
     // Faz a requisição para a API com o token de acesso
-    const response = await axios.get('http://10.203.2.98:8000/csv/process/criterios/', {
+    const response = await axios.get('http://127.0.0.1:8000/csv/process/criterios/', {
       headers: {
         Authorization: `Bearer ${token}`,  // Passando o token no cabeçalho
       },

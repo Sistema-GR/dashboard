@@ -78,12 +78,12 @@
 </template>
 
 <script>
-import { UsersIcon, BanknotesIcon, DocumentDuplicateIcon, ArrowDownTrayIcon } from "@heroicons/vue/24/outline";
-import { inject, computed, ref, onMounted } from 'vue';
-import axios from 'axios';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
-import { getAccessToken } from '../../../service/token'; // Certifique-se de importar a função getAccessToken
 import { downloadCSV } from '@/service/download';
+import { ArrowDownTrayIcon, BanknotesIcon, DocumentDuplicateIcon, UsersIcon } from "@heroicons/vue/24/outline";
+import axios from 'axios';
+import { computed, inject, onMounted, ref } from 'vue';
+import { getAccessToken } from '../../../service/token'; // Certifique-se de importar a função getAccessToken
 
 export default {
   name: "AdminPanel",
@@ -98,7 +98,7 @@ export default {
       try {
         const token = await getAccessToken();
         if (token) {
-          const response = await axios.get('http://10.203.2.98:8000/csv/get-import-files/', {
+          const response = await axios.get('http://127.0.0.1:8000/csv/get-import-files/', {
             headers: {
               Authorization: `Bearer ${token}`,
             },
