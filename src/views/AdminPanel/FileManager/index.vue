@@ -38,6 +38,15 @@
             </transition>
           </div>
         </div>
+        <div class="flex justify-end gap-4">
+          <button onclick="window.location.href='/admin/dashboard'" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition">
+            Voltar
+          </button>
+          <button class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition">
+            Salvar
+          </button>
+        </div>
+
       </div>
     </Whiteboard>
   </template>
@@ -57,18 +66,18 @@
       const files = ref([
         { name: 'Frequência', filename: 'frequencia.csv', isOpen: false },
         { name: 'Atividades', filename: 'atividades.csv', isOpen: false },
-        { name: 'Dados Gerais', filename: 'dadosGerais.csv', isOpen: false },
-        { name: 'Definição Etapas', filename: 'definicaoEtapas.csv', isOpen: false },
+        { name: 'Dados Gerais', filename: 'dados_gerais.csv', isOpen: false },
+        { name: 'Definição Etapas', filename: 'definicao_etapa.csv', isOpen: false },
         { name: 'Demissões', filename: 'demissoes.csv', isOpen: false },
-        { name: 'Dias Não Contabilizados', filename: 'diasNaoContabilizados.csv', isOpen: false },
-        { name: 'Etapas Metas', filename: 'etapasMetas.csv', isOpen: false },
+        { name: 'Dias Não Contabilizados', filename: 'dias_nao_contabilizados.csv', isOpen: false },
+        { name: 'Etapas Metas', filename: 'etapas_metas.csv', isOpen: false },
         { name: 'Formações', filename: 'formacoes.csv', isOpen: false },
         { name: 'Funcionario', filename: 'funcionarios.csv', isOpen: false },
-        { name: 'Funções Grupos Etapas', filename: 'funcoesGruposEtapas.csv', isOpen: false },
-        { name: 'Motivos Infrequência', filename: 'motivosInfrequencia.csv', isOpen: false },
-        { name: 'Tipo Local', filename: 'tipoLocal.csv', isOpen: false },
-        { name: 'Ues Perc Gr', filename: 'uesPercGr.csv', isOpen: false },
-        { name: 'Valores Grupo', filename: 'valoresGrupo.csv', isOpen: false }
+        { name: 'Funções Grupos Etapas', filename: 'funcao_grupo_etapas.csv', isOpen: false },
+        { name: 'Motivos Infrequência', filename: 'motivos_infrequencia.csv', isOpen: false },
+        { name: 'Tipo Local', filename: 'tipo_local.csv', isOpen: false },
+        { name: 'Ues Perc Gr', filename: 'ues_perc_gr.csv', isOpen: false },
+        { name: 'Aprender Mais', filename: 'aprender_mais.csv', isOpen: false }
       ])
   
       const toggleFile = (file) => {

@@ -207,23 +207,41 @@ export default {
       return [
         { label: 'Versão', value: dashboardData.value.version_info.description || 'Desconhecido' },
         { label: 'Data de Criação', value: new Date(dashboardData.value.version_info.created_at).toLocaleDateString('pt-BR') },
-        { label: 'Valor Máximo', value: new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-        }).format(dashboardData.value.version_info.max_value) },
-        { label: 'Carga Horária Máxima', value: dashboardData.value.version_info.max_workload || "Carga horária não disponível"},
-        { label: 'Data de Início', value: dashboardData.value.version_info.start_date || 'Data não disponível' },
-        { label: 'Data de Fim', value: dashboardData.value.version_info.end_date || 'Data não disponível' },
         { 
-          label: 'Resultados IDEM', 
-          value: [
-             `${dashboardData.value.version_info.idem_network_step_1}%`,
-             `${dashboardData.value.version_info.idem_network_step_2}%`,
-             `${dashboardData.value.version_info.idem_network_step_3}%`,
-          ].filter(Boolean).join(', ') || "Carga horária não disponível"
+            label: 'Valor Máximo', 
+            value: new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+            }).format(dashboardData.value.version_info.max_value) 
         },
-        ];
-      });
+        { 
+            label: 'Carga Horária Máxima', 
+            value: dashboardData.value.version_info.max_workload 
+                ? `${dashboardData.value.version_info.max_workload} horas` 
+                : "Carga horária não disponível"
+        },
+        { 
+            label: 'Data de Início', 
+            value: dashboardData.value.version_info.start_date 
+                ? new Date(dashboardData.value.version_info.start_date + 'T00:00:00').toLocaleDateString('pt-BR') 
+                : 'Data não disponível'
+        },
+        { 
+            label: 'Data de Fim', 
+            value: dashboardData.value.version_info.end_date 
+                ? new Date(dashboardData.value.version_info.end_date + 'T00:00:00').toLocaleDateString('pt-BR') 
+                : 'Data não disponível'
+        },
+        { 
+            label: 'Resultados IDEM', 
+            value: [
+                dashboardData.value.version_info.idem_network_step_1 !== undefined ? `Etapa 01: ${dashboardData.value.version_info.idem_network_step_1}%` : null,
+                dashboardData.value.version_info.idem_network_step_2 !== undefined ? `Etapa 02: ${dashboardData.value.version_info.idem_network_step_2}%` : null,
+                dashboardData.value.version_info.idem_network_step_3 !== undefined ? `Etapa 03: ${dashboardData.value.version_info.idem_network_step_3}%` : null,
+            ].filter(Boolean).join('\n') || "Etapas não disponíveis"
+        },
+      ];
+    });
 
     return {
       isSidebarMinimized,

@@ -54,8 +54,9 @@
                                 </div>
 
                                 <div class="flex flex-row w-full items-center justify-end gap-3 mt-2">
+                                  <SecondaryButton label="Visualizar" />
+                                  <SecondaryButton label="Criar cópia" />
                                   <SecondaryButton label="Excluir" />
-                                  <SecondaryButton label="Criar Cópia" />
                                 </div>
 
                           </div>
