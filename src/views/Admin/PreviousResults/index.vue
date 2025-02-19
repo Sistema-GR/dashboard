@@ -1,37 +1,40 @@
 <template>
   <Whiteboard title="Cálculo Anteriores" :isSidebarMinimized="isSidebarMinimized">
-    <div class="flex flex-row w-full items-center justify-between p-4 rounded-md cursor-pointer" @click="toggleDropdown">
-      <p class="text-3xl font-semibold">{{ year }}</p>
-      <ChevronDownIcon class="w-6 h-6 text-gray-500 cursor-pointer" />
-    </div>
+    <!-- Seção para exibir os anos -->
+    <div v-for="category in categories" :key="category.name" class="mb-8 w-full">
+      <!-- Exibindo o ano -->
+      <div class="flex flex-row items-start justify-between p-5 rounded-md cursor-pointer bg-gray-50" @click="toggleDropdown(category)">
+        <p class="text-3xl font-semibold text-gray-800">
+          {{ category.name }}  <!-- Exibindo o ano -->
+        </p>
+        <ChevronDownIcon class="w-6 h-6 text-gray-500 cursor-pointer" />
+      </div>
 
-    <div v-show="dropdownOpen" class="w-full px-5 border-gray-300 pt-4">
-      <div class="border-b-2 w-full"></div>
-      <p class="text-normal font-medium text-gray-500">Selecione a Categoria</p>
+      <!-- Exibindo a categoria 'teste' para o ano -->
+      <div v-show="category.isOpen" class="w-full px-6 border-gray-300 pt-6">
+        <div class="border-b-2 w-full mb-6"></div>
+        <p class="text-normal font-medium text-gray-500 mb-6">Selecione a Categoria</p>
 
-      <div class="mt-4 flex flex-col w-full">
-        <div v-for="category in categories" :key="category.name" class="flex flex-col p-3 border-b border-gray-200">
-          <div class="flex flex-row items-center justify-between cursor-pointer" @click="toggleCategory(category)">
-            <div class="flex flex-row items-center gap-1">
-              <FolderIcon class="w-5 h-auto" />
-              <p class="text-gray-900">{{ category.name }}</p>
-            </div>
-            <ChevronDownIcon class="w-5 h-5 text-gray-500" />
+        <!-- Pasta 'teste' única para cada ano -->
+        <div class="flex flex-col p-6 border border-gray-200 rounded-lg bg-white shadow-md w-full">
+          <div class="flex flex-row items-start gap-3 mb-6 w-full">
+            <FolderIcon class="w-6 h-auto text-gray-500" />
+            <p class="text-gray-900 font-medium">teste</p>  <!-- Exibindo categoria 'teste' -->
           </div>
 
-          <div v-show="selectedCategory === category.name" class="mt-2 pl-4">
-            <div v-for="item in category.versions" :key="item.id" class="flex flex-col p-3 border-b border-gray-200">
-              <div class="flex items-center justify-between cursor-pointer" @click="toggleDetails(item)">
-                <p class="italic text-gray-700">{{ item.name }}</p>
+          <!-- Exibindo todos os cálculos dentro da pasta 'teste' -->
+          <div class="mt-6 flex flex-col space-y-6 w-full">
+            <div v-for="item in category.versions" :key="item.id" class="flex flex-col p-6 border border-gray-200 rounded-lg bg-white shadow-md w-full">
+              <div class="flex items-center justify-between cursor-pointer w-full" @click="toggleDetails(item)">
+                <p class="italic text-gray-700">{{ item.description }}</p>
                 <ChevronDownIcon class="w-5 h-5 text-gray-500" />
               </div>
-              <div v-show="selectedVersion === item" class="mt-2">
-                <p><strong>Criado em:</strong> {{ item.createdAt }}</p>
-                <p><strong>Descrição:</strong> {{ item.description }}</p>
-                <p><strong>Pasta:</strong> {{ item.pasta }}</p>
-                <div class="flex flex-row w-full items-center justify-end gap-3 mt-2">
-                  <SecondaryButton label="Visualizar" @click="handleVisualizarClick(item)" />
 
+              <div v-show="selectedVersion === item" class="mt-6 space-y-3 w-full">
+                <p><strong>Criado em:</strong> {{ item.createdAt }}</p>
+                <p><strong>Pasta:</strong> {{ item.pasta }}</p>
+                <div class="flex flex-row items-start justify-start gap-4 mt-6 w-full">
+                  <SecondaryButton label="Visualizar" @click="handleVisualizarClick(item)" />
                   <SecondaryButton label="Criar cópia" @click="copiarCalculo(item)" />
                   <SecondaryButton label="Excluir" @click="excluirCalculo(item.id)" />
                 </div>
@@ -43,6 +46,9 @@
     </div>
   </Whiteboard>
 </template>
+
+
+
 
 <script>
 import axios from 'axios';
@@ -57,9 +63,8 @@ export default {
   components: { Whiteboard, ChevronDownIcon, SecondaryButton, FolderIcon },
   data() {
     return {
-      year: '2024',
+      year: '2024', // Ano inicial, mas substituído pela categoria na visualização
       categories: [],
-      dropdownOpen: false,
       selectedCategory: null,
       selectedVersion: null,
       errorMessage: null
@@ -103,8 +108,9 @@ export default {
 
       for (const year in calculusData) {
         const category = {
-          name: year,
-          versions: []
+          name: year,  // Agora, o nome da categoria é o ano
+          versions: [],
+          isOpen: false // Estado de cada categoria (expandida ou não)
         };
 
         for (const key in calculusData[year]) {
@@ -126,12 +132,9 @@ export default {
       this.categories = formattedCategories;
     },
 
-    toggleDropdown() {
-      this.dropdownOpen = !this.dropdownOpen;
-    },
-
-    toggleCategory(category) {
-      this.selectedCategory = this.selectedCategory === category.name ? null : category.name;
+    toggleDropdown(category) {
+      // Alterna o estado de expansão para a categoria específica
+      category.isOpen = !category.isOpen;
     },
 
     toggleDetails(selectedItem) {
@@ -205,3 +208,4 @@ export default {
   }
 };
 </script>
+
