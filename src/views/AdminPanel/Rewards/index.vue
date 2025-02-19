@@ -91,17 +91,17 @@
                                                 </td>
 
                                                 <td class="p-4 text-gray-700 font-semibold whitespace-nowrap">
-                                                    <td class="p-4 text-gray-700 font-semibold whitespace-nowrap">
-                                                        <p>{{ formatCurrency(item?.profissionais[0]?.valor_gratificacao_rede) }}</p>
-                                                        <p>{{ formatCurrency(item?.profissionais[0]?.valor_gratificacao_unidade) }}</p>
-                                                        <p>{{ formatCurrency(item?.profissionais[0]?.desconto) }}</p>
-                                                        <p>{{ formatCurrency(item?.dados?.valor_total) }}</p>
-                                                    </td>
+                                                    <!-- Cada td agora está corretamente estruturado -->
+                                                    <p>{{ formatCurrency(item?.profissionais[0]?.valor_gratificacao_rede) }}</p>
+                                                    <p>{{ formatCurrency(item?.profissionais[0]?.valor_gratificacao_unidade) }}</p>
+                                                    <p>{{ formatCurrency(item?.profissionais[0]?.desconto) }}</p>
+                                                    <p>{{ formatCurrency(item?.dados?.valor_total) }}</p>
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </table>
                                 </div>
+
 
 
                                 <div class="flex flex-col w-full items-center overflow-hidden py-5 shadow-lg rounded-lg bg-white">

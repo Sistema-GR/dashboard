@@ -69,13 +69,16 @@
         </div>
       </div>
       <div class="mt-6 text-right">
-        <button class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition duration-300">
-          Salvar e Sair
+        <button 
+          @click="navigateHome" 
+          class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition duration-300">
+          Sair
         </button>
       </div>
     </div>
   </Whiteboard>
 </template>
+
 
 <script>
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
@@ -84,6 +87,7 @@ import { ArrowDownTrayIcon, BanknotesIcon, DocumentDuplicateIcon, UsersIcon } fr
 import axios from 'axios';
 import { computed, inject, onMounted, ref } from 'vue';
 import { getAccessToken } from '../../../service/token'; // Certifique-se de importar a função getAccessToken
+import { useRouter } from 'vue-router'; // Importando o useRouter para navegação
 
 export default {
   name: "AdminPanel",
@@ -92,13 +96,14 @@ export default {
   setup() {
     const isSidebarMinimized = inject('isSidebarMinimized', false);
     const dashboardData = ref({});
+    const router = useRouter(); // Inicializando o router
 
     // Função para buscar os dados do dashboard
     const fetchDashboardData = async () => {
       try {
         const token = await getAccessToken();
         if (token) {
-          const response = await axios.get('http://127.0.0.1:8000/csv/get-import-files/', {
+          const response = await axios.get('http://10.203.3.22:8000/csv/get-import-files/', {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -117,6 +122,11 @@ export default {
     onMounted(() => {
       fetchDashboardData();
     });
+
+    // Função para navegar para a página inicial (Home)
+    const navigateHome = () => {
+      router.push({ name: 'home' }); // Substitua 'home' pelo nome da sua rota de home
+    };
 
     // Formatação dos dados do dashboard
     const formattedDashboardData = computed(() => {
@@ -251,6 +261,7 @@ export default {
       cards,
       downloadCSV,
       formattedDashboardData,
+      navigateHome, // Adicionando a função de navegação
     };
   }
 };
