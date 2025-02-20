@@ -92,9 +92,9 @@
 
                                                 <td class="p-4 text-gray-700 font-semibold whitespace-nowrap">
                                                     <!-- Cada td agora está corretamente estruturado -->
-                                                    <p>{{ formatCurrency(item?.profissionais[0]?.valor_gratificacao_rede) }}</p>
-                                                    <p>{{ formatCurrency(item?.profissionais[0]?.valor_gratificacao_unidade) }}</p>
-                                                    <p>{{ formatCurrency(item?.profissionais[0]?.desconto) }}</p>
+                                                    <p>{{ formatCurrency(item?.profissionais[0]?.valor_gr_rede) }}</p>
+                                                    <p>{{ formatCurrency(item?.profissionais[0]?.valor_gr_unidade) }}</p>
+                                                    <p>{{ formatCurrency(item?.dados?.desconto) }}</p>
                                                     <p>{{ formatCurrency(item?.dados?.valor_total) }}</p>
                                                 </td>
                                             </tr>
@@ -233,8 +233,8 @@
                                                                 <td class="px-4 lg:px-6 py-4 border-b border-gray-300">{{ new Date(prof.inicio_atividade_local).toLocaleDateString('pt-BR') }}</td>
                                                                 <td class="px-4 lg:px-6 py-4 border-b border-gray-300">{{ new Date(prof.fim_atividade_local).toLocaleDateString('pt-BR') }}</td>
                                                                 <td class="px-4 lg:px-6 py-4 border-b border-gray-300">{{ prof.nome_disciplina || 'N/A' }}</td>
-                                                                <td class="px-4 lg:px-6 py-4 border-b border-gray-300">{{ prof.percentual_carga_horaria || 'N/A' }}h</td>
-                                                                <td class="px-4 lg:px-6 py-4 border-b border-gray-300">{{ prof.grupo || 'N/A' }}</td>
+                                                                <td class="px-4 lg:px-6 py-4 border-b border-gray-300">{{ prof.hora_aula || 'N/A' }}h</td> 
+                                                                <td class="px-4 lg:px-6 py-4 border-b border-gray-300">{{ prof.grupo_gr || 'N/A' }}</td>
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -293,7 +293,10 @@
       
     </Whiteboard>
 </template>
-  
+
+
+
+
 <script setup>
 import { inject, ref, onMounted, onBeforeUnmount, computed } from 'vue';
 import { ChevronDownIcon, ExclamationCircleIcon, ArrowDownIcon } from "@heroicons/vue/24/outline";

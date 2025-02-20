@@ -142,7 +142,7 @@ export default {
     },
 
     copiarCalculo(item) {
-      console.log('📋 Copiar cálculo:', item);
+      alert('📋 Esta função ainda não foi implementada!');
     },
 
     async verCalculo(id) {
@@ -178,24 +178,27 @@ export default {
     },
 
     async excluirCalculo(id) {
-      try {
-        const token = await getAccessToken();
-        if (!token) {
-          this.errorMessage = 'Usuário não autenticado ou token expirado.';
-          return;
-        }
+      id
+      alert('❌ Esta função ainda não foi implementada!');
+    },
+    //   try {
+    //     const token = await getAccessToken();
+    //     if (!token) {
+    //       this.errorMessage = 'Usuário não autenticado ou token expirado.';
+    //       return;
+    //     }
 
-        await axios.delete(`http://10.203.3.22:8000/csv/delete-calculus/${id}/`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+    //     await axios.delete(`http://10.203.3.22:8000/csv/delete-calculus/${id}/`, {
+    //       headers: { Authorization: `Bearer ${token}` }
+    //     });
 
-        console.log(`🗑️ Cálculo ${id} excluído com sucesso`);
-        this.fetchCalculus();
-      } catch (error) {
-        console.error('❌ Erro ao excluir cálculo:', error);
-        this.errorMessage = 'Erro ao excluir cálculo. Tente novamente mais tarde.';
-      }
-    }
+    //     console.log(`🗑️ Cálculo ${id} excluído com sucesso`);
+    //     this.fetchCalculus();
+    //   } catch (error) {
+    //     console.error('❌ Erro ao excluir cálculo:', error);
+    //     this.errorMessage = 'Erro ao excluir cálculo. Tente novamente mais tarde.';
+    //   }
+    // }
   },
 
   async mounted() {

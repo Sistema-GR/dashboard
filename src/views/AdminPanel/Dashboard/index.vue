@@ -39,7 +39,7 @@
             <span class="text-sm text-gray-600">{{ file.size }}</span>
           </div>
         </div>
-        <button @click="downloadCSV" class="flex items-center text-blue-500 hover:text-blue-700">
+        <button @click="downloadCriteriosCSV" class="flex items-center text-blue-500 hover:text-blue-700">
           <ArrowDownTrayIcon class="h-5 w-5 mr-2" />
           <span class="text-sm font-semibold">Baixar CSV</span>
         </button>
@@ -82,7 +82,7 @@
 
 <script>
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
-import { downloadCSV } from '@/service/download';
+import { downloadCriteriosCSV } from '@/service/download';
 import { ArrowDownTrayIcon, BanknotesIcon, DocumentDuplicateIcon, UsersIcon } from "@heroicons/vue/24/outline";
 import axios from 'axios';
 import { computed, inject, onMounted, ref } from 'vue';
@@ -259,7 +259,7 @@ export default {
       files,
       version,
       cards,
-      downloadCSV,
+      downloadCriteriosCSV,
       formattedDashboardData,
       navigateHome, // Adicionando a função de navegação
     };
