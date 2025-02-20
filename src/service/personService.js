@@ -15,7 +15,7 @@ export default function usePersonService() {
     'Infrequency': `${BASE_URL}/process/motivos-infrequencia/`,
     'Resignation': `${BASE_URL}/process/demissoes/`,
     'Activities': `${BASE_URL}/process/atividades/`,
-    'Service': `${BASE_URL}/process/formacoes/`,
+    'Service': `${BASE_URL}/process/tempo-atuacao/`,
     'Training': `${BASE_URL}/process/atividades/`,
     'General': `${BASE_URL}/process/dados-gerais/`,
     'Local': `${BASE_URL}/process/tipo-local/`,

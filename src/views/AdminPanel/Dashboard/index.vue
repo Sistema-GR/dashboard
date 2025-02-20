@@ -30,7 +30,7 @@
 
     <!-- Seção de Downloads -->
     <div class="w-full p-6 bg-gradient-to-r from-gray-100 to-gray-300 rounded-lg shadow-lg my-6">
-      <h2 class="text-xl font-semibold mb-4 text-gray-800">Downloads</h2>
+      <h2 class="text-xl font-semibold mb-4 text-gray-800">Relatório Final</h2>
       <div v-for="(file, index) in files" :key="index" class="flex items-center justify-between border border-gray-200 rounded-lg p-4 mb-4">
         <div class="flex items-center space-x-4">
           <DocumentDuplicateIcon class="h-8 w-8 text-gray-500" />

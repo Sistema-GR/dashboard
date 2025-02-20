@@ -47,9 +47,6 @@
   </Whiteboard>
 </template>
 
-
-
-
 <script>
 import axios from 'axios';
 import { inject } from 'vue';
@@ -141,9 +138,21 @@ export default {
       this.selectedVersion = this.selectedVersion === selectedItem ? null : selectedItem;
     },
 
-    copiarCalculo(item) {
-      alert('📋 Esta função ainda não foi implementada!');
+    async copiarCalculo(item) {
+      try {
+        const token = await getAccessToken();
+        const response = await axios.post("http://10.203.3.22:8000/csv/copy-calculus/", { calc_id: item.id }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        alert(`Cálculo copiado com sucesso! Novo ID: ${response.data.new_calculus_id}`);
+        
+        // Recarregar a página
+        window.location.reload();
+      } catch (error) {
+        console.error('Erro ao copiar cálculo:', error);
+      }
     },
+
 
     async verCalculo(id) {
       console.log('ID do cálculo:', id);  // Verificar se o ID é correto
@@ -178,27 +187,41 @@ export default {
     },
 
     async excluirCalculo(id) {
-      id
-      alert('❌ Esta função ainda não foi implementada!');
-    },
-    //   try {
-    //     const token = await getAccessToken();
-    //     if (!token) {
-    //       this.errorMessage = 'Usuário não autenticado ou token expirado.';
-    //       return;
-    //     }
+      try {
+        const token = await getAccessToken();
+        if (!token) {
+          this.errorMessage = 'Usuário não autenticado ou token expirado.';
+          return;
+        }
 
-    //     await axios.delete(`http://10.203.3.22:8000/csv/delete-calculus/${id}/`, {
-    //       headers: { Authorization: `Bearer ${token}` }
-    //     });
+        // Confirmação do usuário antes de excluir
+        const confirmacao = confirm('Tem certeza que deseja excluir este cálculo?');
+        if (!confirmacao) {
+          return; // Se o usuário cancelar, não faz nada
+        }
 
-    //     console.log(`🗑️ Cálculo ${id} excluído com sucesso`);
-    //     this.fetchCalculus();
-    //   } catch (error) {
-    //     console.error('❌ Erro ao excluir cálculo:', error);
-    //     this.errorMessage = 'Erro ao excluir cálculo. Tente novamente mais tarde.';
-    //   }
-    // }
+        // Faz a requisição POST para excluir o cálculo
+        const response = await axios.post(
+              "http://10.203.3.22:8000/csv/delete-calculus/",
+              { calc_id: id }, // Envia o ID do cálculo no corpo da requisição
+              {
+                headers: { Authorization: `Bearer ${token}` }
+              }
+            );
+
+            console.log('🗑️ Cálculo excluído com sucesso:', response.data);
+
+            // Atualiza a lista de cálculos após a exclusão
+            await this.fetchCalculus();
+      } catch (error) {
+        console.error('❌ Erro ao excluir cálculo:', error);
+        if (error.response) {
+          this.errorMessage = error.response.data.error || 'Erro ao excluir cálculo. Tente novamente mais tarde.';
+        } else {
+          this.errorMessage = 'Erro de rede ou servidor inacessível.';
+        }
+      }
+    }
   },
 
   async mounted() {
@@ -211,4 +234,3 @@ export default {
   }
 };
 </script>
-
