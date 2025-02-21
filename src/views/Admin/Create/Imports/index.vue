@@ -1,7 +1,7 @@
 <template>
   <Whiteboard title="importações" :isSidebarMinimized="isSidebarMinimized">
     <div class="w-full space-y-10">
-      <FileInput Label="Importar Arquivo com Nome: Aprender Mias.csv" @change="(event) => handleFileUpload(event, 'aprenderMais')" />
+      <FileInput Label="Importar Arquivo com Nome: Aprender Mais.csv" @change="(event) => handleFileUpload(event, 'aprenderMais')" />
       <FileInput Label="Importar Arquivo com Nome: Atividades.csv" @change="(event) => handleFileUpload(event, 'atividades')" />
       <FileInput Label="Importar Arquivo com Nome: Dados Gerais.csv" @change="(event) => handleFileUpload(event, 'dadosGerais')" />
       <FileInput Label="Importar Arquivo com Nome: Definição Etapas.csv" @change="(event) => handleFileUpload(event, 'definicaoEtapas')" />
