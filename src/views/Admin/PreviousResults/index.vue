@@ -1,157 +1,236 @@
 <template>
   <Whiteboard title="Cálculo Anteriores" :isSidebarMinimized="isSidebarMinimized">
-
-
-
-      <div class="flex flex-row w-full items-center justify-between p-4 rounded-md cursor-pointer" @click="toggleDropdown">
-          <p class="text-3xl font-semibold">{{ year }}</p>
-          <ChevronDownIcon class="w-6 h-6 text-gray-500 cursor-pointer" />
+    <!-- Seção para exibir os anos -->
+    <div v-for="category in categories" :key="category.name" class="mb-8 w-full">
+      <!-- Exibindo o ano -->
+      <div class="flex flex-row items-start justify-between p-5 rounded-md cursor-pointer bg-gray-50" @click="toggleDropdown(category)">
+        <p class="text-3xl font-semibold text-gray-800">
+          {{ category.name }}  <!-- Exibindo o ano -->
+        </p>
+        <ChevronDownIcon class="w-6 h-6 text-gray-500 cursor-pointer" />
       </div>
 
-      <div v-show="dropdownOpen" class="w-full px-5 border-gray-300 pt-4">
-          <div class="border-b-2 w-full"></div>
-          <p class="text-normal font-medium text-gray-500">Selecione a Categoria</p>
+      <!-- Exibindo a categoria 'teste' para o ano -->
+      <div v-show="category.isOpen" class="w-full px-6 border-gray-300 pt-6">
+        <div class="border-b-2 w-full mb-6"></div>
+        <p class="text-normal font-medium text-gray-500 mb-6">Selecione a Categoria</p>
 
-          <div class="mt-4 flex flex-col w-full">
-
-              <div v-for="category in categories" :key="category.name" class="flex flex-col p-3 border-b border-gray-200">
-                
-                  <div class="flex flex-row items-center justify-between cursor-pointer" @click="toggleCategory(category)">
-
-                      <div class="flex flex-row items-center gap-1">
-                        <FolderIcon class="w-5 h-auto" />
-                        <p class="text-gray-900">{{ category.name }}</p>
-                      </div>
-
-                      <ChevronDownIcon class="w-5 h-5 text-gray-500" />
-
-                  </div>
-
-                  <div v-show="selectedCategory === category.name" class="mt-2 pl-4">
-
-                      <div v-for="item in category.versions" :key="item.version" class="flex flex-col p-3 border-b border-gray-200">
-
-                          <div class="flex items-center justify-between cursor-pointer" @click="toggleDetails(item)">
-                              <p class="italic text-gray-700">{{ item.version }}</p>
-                              <ChevronDownIcon class="w-5 h-5 text-gray-500" />
-                          </div>
-
-                          <div v-show="selectedVersion === item" class="mt-2">
-
-                                <div class="flex flex-row gap-1">
-                                    <p class="font-medium">Criado por:</p>
-                                    <p class="text-gray-600">{{ item.createdBy }}</p>
-                                </div>
-
-                                <div class="flex flex-row gap-1">
-                                    <p class="font-medium">Data:</p>
-                                    <p class="text-gray-600">{{ item.date }}</p>
-                                </div>
-
-                                <div class="flex flex-row gap-1">
-                                    <p class="font-medium">Descrição:</p>
-                                    <p class="text-gray-600">{{ item.description }}</p>
-                                </div>
-
-                                <div class="flex flex-row w-full items-center justify-end gap-3 mt-2">
-                                  <SecondaryButton label="Visualizar" />
-                                  <SecondaryButton label="Criar cópia" />
-                                  <SecondaryButton label="Excluir" />
-                                </div>
-
-                          </div>
-
-                      </div>
-
-                  </div>
-
-              </div>
-              
+        <!-- Pasta 'teste' única para cada ano -->
+        <div class="flex flex-col p-6 border border-gray-200 rounded-lg bg-white shadow-md w-full">
+          <div class="flex flex-row items-start gap-3 mb-6 w-full">
+            <FolderIcon class="w-6 h-auto text-gray-500" />
+            <p class="text-gray-900 font-medium">teste</p>  <!-- Exibindo categoria 'teste' -->
           </div>
 
-      </div>
+          <!-- Exibindo todos os cálculos dentro da pasta 'teste' -->
+          <div class="mt-6 flex flex-col space-y-6 w-full">
+            <div v-for="item in category.versions" :key="item.id" class="flex flex-col p-6 border border-gray-200 rounded-lg bg-white shadow-md w-full">
+              <div class="flex items-center justify-between cursor-pointer w-full" @click="toggleDetails(item)">
+                <p class="italic text-gray-700">{{ item.description }}</p>
+                <ChevronDownIcon class="w-5 h-5 text-gray-500" />
+              </div>
 
-      <div class="flex w-full items-center justify-end py-3  border-t-2">
-        <div class="flex items-center mt-2">
-          <PrimaryButton value="Incluir" @click="openModal" class="bg-blue-500 px-5 py-3" />
+              <div v-show="selectedVersion === item" class="mt-6 space-y-3 w-full">
+                <p><strong>Criado em:</strong> {{ item.createdAt }}</p>
+                <p><strong>Pasta:</strong> {{ item.pasta }}</p>
+                <div class="flex flex-row items-start justify-start gap-4 mt-6 w-full">
+                  <SecondaryButton label="Visualizar" @click="handleVisualizarClick(item)" />
+                  <SecondaryButton label="Criar cópia" @click="copiarCalculo(item)" />
+                  <SecondaryButton label="Excluir" @click="excluirCalculo(item.id)" />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-
-      <Modal :open="open" @close="closeModal" :categories="categories" />
-
+    </div>
   </Whiteboard>
-
 </template>
 
 <script>
-import { inject } from 'vue'
-import { ChevronDownIcon, FolderIcon } from '@heroicons/vue/24/outline'
-import SecondaryButton from '@/components/Buttons/SecondaryButton.vue'
-import Whiteboard from '@/components/Whiteboard/Whiteboard.vue'
-import Modal from '@/views/Admin/PreviousResults/Modal/Modal.vue'
-import PrimaryButton from '@/components/Buttons/PrimaryButton.vue'
+import axios from 'axios';
+import { inject } from 'vue';
+import { ChevronDownIcon, FolderIcon } from '@heroicons/vue/24/outline';
+import SecondaryButton from '@/components/Buttons/SecondaryButton.vue';
+import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
+import { getAccessToken } from '@/service/token.js';
 
 export default {
-name: 'PreviousResults',
-components: { Whiteboard, ChevronDownIcon, SecondaryButton, FolderIcon, Modal, PrimaryButton },
-data() {
-  return {
-    year: '2024',
-    categories: [
-      {
-        name: 'Versão Principal',
-        icon: 'folder', 
-        versions: [
-          { id: '1', version: '2024_Primeira_versão_v1.0', createdBy: 'Alice', date: '2024-01-01', description: 'Primeira versão do projeto.' },
-        ]
-      },
-      {
-        name: 'Testes',
-        icon: 'folder',
-        versions: [
-          { id: '2', version: '2024_Teste_versão_v1.1', createdBy: 'Bob', date: '2024-02-15', description: 'Testes iniciais realizados.' },
-          { id: '3', version: '2024_Teste_versão_v1.1', createdBy: 'Bob', date: '2024-02-15', description: 'Testes iniciais realizados.' }
-        ]
-      },
-      {
-        name: 'Editados',
-        icon: 'folder',
-        versions: [
-          { id: '4', version: '2024_Edição_versão_v1.2', createdBy: 'Charlie', date: '2024-03-20', description: 'Versão editada com correções.' },
-          { id: '5', version: '2024_Edição_versão_v1.2', createdBy: 'Charlie', date: '2024-03-20', description: 'Versão editada com correções.' },
-        ]
-      },
-    ],
-    dropdownOpen: false,
-    selectedCategory: null,
-    selectedVersion: null,
-    open: false
-  }
-},
-methods: {
-  toggleDropdown() {
-    this.dropdownOpen = !this.dropdownOpen
+  name: 'PreviousResults',
+  components: { Whiteboard, ChevronDownIcon, SecondaryButton, FolderIcon },
+  data() {
+    return {
+      year: '2024', // Ano inicial, mas substituído pela categoria na visualização
+      categories: [],
+      selectedCategory: null,
+      selectedVersion: null,
+      errorMessage: null
+    };
   },
-  toggleCategory(category) {
-    this.selectedCategory = this.selectedCategory === category.name ? null : category.name
-  },
-  toggleDetails(selectedItem) {
-    this.selectedVersion = this.selectedVersion === selectedItem ? null : selectedItem
-  },
-  openModal() {
-    this.open = true
-  },
-  closeModal() {
-    this.open = false
-  }
-},
+  methods: {
+    handleVisualizarClick(item) {
+      console.log('Item clicado:', item); 
+      this.verCalculo(item.id);
+    },
+    
+    async fetchCalculus() {
+      try {
+        const token = await getAccessToken();
+        if (!token) {
+          this.errorMessage = 'Usuário não autenticado ou token expirado.';
+          return;
+        }
 
-setup() {
-  const isSidebarMinimized = inject('isSidebarMinimized')
+        const response = await axios.get("http://10.203.3.22:8000/csv/get-list-calculus/", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
 
-  return {
-    isSidebarMinimized
+        console.log('🔹 Dados recebidos da API:', response.data);
+        
+        if (!response.data) {
+          console.error('❌ Estrutura inesperada na resposta da API:', response.data);
+          return;
+        }
+        
+        this.processCalculusData(response.data);
+      } catch (error) {
+        console.error('❌ Erro ao buscar cálculos:', error);
+        this.errorMessage = 'Erro ao buscar cálculos. Tente novamente mais tarde.';
+      }
+    },
+
+    processCalculusData(calculusData) {
+      const formattedCategories = [];
+      console.log('📌 Processando dados:', calculusData);
+
+      for (const year in calculusData) {
+        const category = {
+          name: year,  // Agora, o nome da categoria é o ano
+          versions: [],
+          isOpen: false // Estado de cada categoria (expandida ou não)
+        };
+
+        for (const key in calculusData[year]) {
+          const calc = calculusData[year][key];
+
+          category.versions.push({
+            id: calc.calculus_id || 'ID desconhecido',
+            name: key || 'Sem nome',
+            description: calc.description || 'Sem descrição',
+            createdAt: calc.created_at ? calc.created_at.split('T')[0] : 'Data desconhecida',
+            pasta: calc.folder_uuid || 'Sem pasta'
+          });
+        }
+
+        formattedCategories.push(category);
+      }
+
+      console.log('✅ Categorias formatadas:', formattedCategories);
+      this.categories = formattedCategories;
+    },
+
+    toggleDropdown(category) {
+      // Alterna o estado de expansão para a categoria específica
+      category.isOpen = !category.isOpen;
+    },
+
+    toggleDetails(selectedItem) {
+      this.selectedVersion = this.selectedVersion === selectedItem ? null : selectedItem;
+    },
+
+    async copiarCalculo(item) {
+      try {
+        const token = await getAccessToken();
+        const response = await axios.post("http://10.203.3.22:8000/csv/copy-calculus/", { calc_id: item.id }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        alert(`Cálculo copiado com sucesso! Novo ID: ${response.data.new_calculus_id}`);
+        
+        // Recarregar a página
+        window.location.reload();
+      } catch (error) {
+        console.error('Erro ao copiar cálculo:', error);
+      }
+    },
+
+
+    async verCalculo(id) {
+      console.log('ID do cálculo:', id);  // Verificar se o ID é correto
+      try {
+        const token = await getAccessToken();
+        if (!token) {
+          this.errorMessage = 'Usuário não autenticado ou token expirado.';
+          return;
+        }
+
+        const response = await axios.post(
+          "http://10.203.3.22:8000/csv/api/set-active-calculus/",
+          { calc_id: id },
+          {
+            headers: { Authorization: `Bearer ${token}` }
+          }
+        );
+
+        console.log('Resposta da API:', response.data);  // Verificar a resposta da API
+        this.$router.push({ path: '/admin/dashboard' });
+
+      } catch (error) {
+        console.error('Erro ao ativar o cálculo:', error);
+        if (error.response) {
+          // A resposta de erro do servidor
+          this.errorMessage = error.response.data.error || 'Erro ao ativar o cálculo. Tente novamente mais tarde.';
+        } else {
+          // Caso o erro seja de rede ou outro problema
+          this.errorMessage = 'Erro de rede ou servidor inacessível.';
+        }
+      }
+    },
+
+    async excluirCalculo(id) {
+      try {
+        const token = await getAccessToken();
+        if (!token) {
+          this.errorMessage = 'Usuário não autenticado ou token expirado.';
+          return;
+        }
+
+        // Confirmação do usuário antes de excluir
+        const confirmacao = confirm('Tem certeza que deseja excluir este cálculo?');
+        if (!confirmacao) {
+          return; // Se o usuário cancelar, não faz nada
+        }
+
+        // Faz a requisição POST para excluir o cálculo
+        const response = await axios.post(
+              "http://10.203.3.22:8000/csv/delete-calculus/",
+              { calc_id: id }, // Envia o ID do cálculo no corpo da requisição
+              {
+                headers: { Authorization: `Bearer ${token}` }
+              }
+            );
+
+            console.log('🗑️ Cálculo excluído com sucesso:', response.data);
+
+            // Atualiza a lista de cálculos após a exclusão
+            await this.fetchCalculus();
+      } catch (error) {
+        console.error('❌ Erro ao excluir cálculo:', error);
+        if (error.response) {
+          this.errorMessage = error.response.data.error || 'Erro ao excluir cálculo. Tente novamente mais tarde.';
+        } else {
+          this.errorMessage = 'Erro de rede ou servidor inacessível.';
+        }
+      }
+    }
+  },
+
+  async mounted() {
+    await this.fetchCalculus();
+  },
+
+  setup() {
+    const isSidebarMinimized = inject('isSidebarMinimized');
+    return { isSidebarMinimized };
   }
-}
-}
+};
 </script>

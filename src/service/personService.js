@@ -2,7 +2,7 @@ import { getAccessToken } from './token';
 
 export default function usePersonService() {
   // Usando a variável global $apiBaseUrl
-  const BASE_URL = window.__VUE__API_BASE_URL || 'http://127.0.0.1:8000/csv'; // Fallback para a URL base
+  const BASE_URL = window.__VUE__API_BASE_URL || 'http://10.203.3.22:8000/csv'; // Fallback para a URL base
 
   const routeJsonMapping = {
     'Results': `${BASE_URL}/process/percentual-gratificacao/`,
@@ -15,7 +15,7 @@ export default function usePersonService() {
     'Infrequency': `${BASE_URL}/process/motivos-infrequencia/`,
     'Resignation': `${BASE_URL}/process/demissoes/`,
     'Activities': `${BASE_URL}/process/atividades/`,
-    'Service': `${BASE_URL}/process/formacoes/`,
+    'Service': `${BASE_URL}/process/tempo-atuacao/`,
     'Training': `${BASE_URL}/process/atividades/`,
     'General': `${BASE_URL}/process/dados-gerais/`,
     'Local': `${BASE_URL}/process/tipo-local/`,
