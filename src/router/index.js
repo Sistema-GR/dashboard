@@ -10,6 +10,7 @@ import admin from '../views/Admin/index.vue'
 import home from "@/views/Admin/Home/index.vue"
 import newcal from '../views/Admin/Create/NewCal/index.vue'
 import previousresults from '@/views/Admin/PreviousResults/index.vue'
+import alloc from '@/views/Admin/AllocCalc/index.vue'
 import imports from "@/views/Admin/Create/Imports/index.vue"
 import dataversions from '@/views/Admin/DataDversions/index.vue'
 import versionmanager from '@/views/Admin/Create/VersionManager/index.vue'
@@ -73,6 +74,7 @@ const router = createRouter({
         { path: 'previousresults', name: 'previousresults', component: previousresults },
         { path: 'imports', name: 'inports', component: imports },
         { path: 'config', name: 'configs', component: config },
+        { path: 'alloc', name: 'alloc', component: alloc },
         { path: 'dataversions', name: 'dataversions', component: dataversions },
         {
           path: 'create',

@@ -92,8 +92,8 @@
 
                                                 <td class="p-4 text-gray-700 font-semibold whitespace-nowrap">
                                                     <td class="p-4 text-gray-700 font-semibold whitespace-nowrap">
-                                                        <p>{{ formatCurrency(item?.profissionais[0]?.valor_rede_maximo) }}</p>
-                                                        <p>{{ formatCurrency(item?.profissionais[0]?.valor_unidade_maximo) }}</p>
+                                                        <p>{{ formatCurrency(item?.profissionais[0]?.valor_gratificacao_rede) }}</p>
+                                                        <p>{{ formatCurrency(item?.profissionais[0]?.valor_gratificacao_unidade) }}</p>
                                                         <p>{{ formatCurrency(item?.profissionais[0]?.desconto) }}</p>
                                                         <p>{{ formatCurrency(item?.dados?.valor_total) }}</p>
                                                     </td>
@@ -140,7 +140,7 @@
                                                 <tr class="hover:bg-gray-50 transition-shadow hover:shadow-md">
                                                     <td class="border border-gray-200 px-4 py-3 text-gray-700">Tempo de Atuação</td>
                                                     <td class="border border-gray-200 px-4 py-3 text-gray-700">
-                                                        {{ item?.dados?.tempo_atuacao === true ? 'Sim' : 'Não' }}
+                                                        {{ item?.dados?.tempo_atuacao === true ? 'Atua há mais de 6 meses' : 'Não atua há mais de 6 meses' }}
                                                     </td>
                                                     <td 
                                                         :class="{
@@ -159,11 +159,11 @@
                                                 <tr class="hover:bg-gray-50 transition-shadow hover:shadow-md">
                                                     <td class="border border-gray-200 px-4 py-3 text-gray-700">Formação</td>
                                                     <td class="border border-gray-200 px-4 py-3 text-gray-700">
-                                                        {{ item?.dados?.formacoes === 'True' ? 'Sim' : item?.dados?.formacoes === 'False' ? 'Não' : item?.dados?.formacoes === 'Sem Dados' ? 'Sim' : 'Indefinido' }}
+                                                        {{ item?.dados?.percentual_formacao === 100 ? '100,00%' : item?.dados?.percentual_formacao === 0 ? '0,00%' : 'Indefinido' }}
                                                     </td>                                                                                   
                                                     <td class="border border-gray-200 px-4 py-3">
-                                                        <span :class="item?.dados?.formacoes === 'True' || item?.dados?.formacoes === 'Sem Dados' ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'">
-                                                            {{ item?.dados?.formacoes === 'True' || item?.dados?.formacoes === 'Sem Dados' ? 'Apto' : 'Não Apto' }}
+                                                        <span :class="item?.dados?.formacoes === true ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'">
+                                                            {{ item?.dados?.formacoes === true ? 'Apto' : 'Não Apto' }}
                                                         </span>
                                                     </td>
                                                 </tr>
@@ -173,7 +173,7 @@
 
                                                 <tr class="hover:bg-gray-50 transition-shadow hover:shadow-md">
                                                     <td class="border border-gray-200 px-4 py-3 text-gray-700">Atividades</td>
-                                                    <td class="border border-gray-200 px-4 py-3 text-gray-700">{{ item?.dados?.recebe_atividade ? 'Sim' : 'Não' }}</td>
+                                                    <td class="border border-gray-200 px-4 py-3 text-gray-700">{{ item?.dados?.percentual_atividade === 100.0 ? '100,00%' : '0,00%' }}</td>
                                                     <td 
                                                         :class="{
                                                             'text-red-600 font-semibold': !item?.dados?.recebe_atividade,
@@ -205,13 +205,13 @@
                                                     <span class="text-lg font-medium text-white capitalize whitespace-nowrap mr-10 lg:mr-0">{{ prof?.nome_unidade }}</span>
                                                     <div class="flex flex-row w-full lg:w-auto items-center justify-end space-x-4">
                                                         <span class="text-sm lg:text-lg font-medium text-white">
-                                                            Etapa 1: <span class="font-semibold text-white">{{ prof?.idem_rede_etapa_1 }}%</span>
+                                                            Etapa 1: <span class="font-semibold text-white">{{ prof?.idem_unidade_etapa_1 }}%</span>
                                                         </span>
                                                         <span class="text-sm lg:text-lg font-medium text-white">
-                                                            Etapa 2: <span class="font-semibold text-white">{{ prof?.idem_rede_etapa_2 }}%</span>
+                                                            Etapa 2: <span class="font-semibold text-white">{{ prof?.idem_unidade_etapa_2 }}%</span>
                                                         </span>
                                                         <span class="text-sm lg:text-lg font-medium text-white">
-                                                            Etapa 3: <span class="font-semibold text-white">{{ prof?.idem_rede_etapa_3 }}%</span>
+                                                            Etapa 3: <span class="font-semibold text-white">{{ prof?.idem_unidade_etapa_3 }}%</span>
                                                         </span>
                                                     </div>
                                                 </div>
