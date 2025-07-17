@@ -24,6 +24,14 @@ export default {
       const file = event.target.files[0];
       this.$emit('file-change', file); 
     },
+
+  handleFileUpload(event) {
+      const file = event.target.files[0];
+      this.$emit('change', { target: { files: [file] } });
+    },
+    setFile(file) {
+      this.$emit('change', { target: { files: [file] } });
+    },
   },
 };
 </script>

@@ -1,5 +1,5 @@
 // URLs da API
-const API_BASE_URL = "http://10.203.2.139:8000";  // Defina o valor diretamente
+const API_BASE_URL = "http://10.203.2.98:8000";  // Defina o valor diretamente
 const REFRESH_TOKEN_URL = `${API_BASE_URL}/auth/token/refresh/`;
 
 
