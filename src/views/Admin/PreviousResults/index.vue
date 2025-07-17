@@ -81,7 +81,7 @@ export default {
           return;
         }
 
-        const response = await axios.get("http://10.203.3.22:8000/csv/get-list-calculus/", {
+        const response = await axios.get("http://127.0.0.1:8000/csv/get-list-calculus/", {
           headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -141,7 +141,7 @@ export default {
     async copiarCalculo(item) {
       try {
         const token = await getAccessToken();
-        const response = await axios.post("http://10.203.3.22:8000/csv/copy-calculus/", { calc_id: item.id }, {
+        const response = await axios.post("http://127.0.0.1:8000/csv/copy-calculus/", { calc_id: item.id }, {
           headers: { Authorization: `Bearer ${token}` }
         });
         alert(`Cálculo copiado com sucesso! Novo ID: ${response.data.new_calculus_id}`);
@@ -164,7 +164,7 @@ export default {
         }
 
         const response = await axios.post(
-          "http://10.203.3.22:8000/csv/api/set-active-calculus/",
+          "http://127.0.0.1:8000/csv/api/set-active-calculus/",
           { calc_id: id },
           {
             headers: { Authorization: `Bearer ${token}` }
@@ -202,7 +202,7 @@ export default {
 
         // Faz a requisição POST para excluir o cálculo
         const response = await axios.post(
-              "http://10.203.3.22:8000/csv/delete-calculus/",
+              "http://127.0.0.1:8000/csv/delete-calculus/",
               { calc_id: id }, // Envia o ID do cálculo no corpo da requisição
               {
                 headers: { Authorization: `Bearer ${token}` }

@@ -104,7 +104,7 @@ export default {
         const token = await getAccessToken();
         if (token) {
           // Requisição à API - Rota de Formações
-          const responseFormacoes = await axios.get('http://10.203.2.98:8000/csv/process/criterios/', {
+          const responseFormacoes = await axios.get('http://127.0.0.1:8000/csv/process/criterios/', {
             headers: { Authorization: `Bearer ${token}` },
           });
 
@@ -113,7 +113,7 @@ export default {
           totalRecebem.value = dataFormacoes.filter(item => item.recebe_gratificacao === true).length;
           totalNaoRecebem.value = dataFormacoes.filter(item => item.recebe_gratificacao === false).length;
 
-          const responseCriterios = await axios.get('http://10.203.2.98:8000/csv/process/criterios/', {
+          const responseCriterios = await axios.get('http://127.0.0.1:8000/csv/process/criterios/', {
             headers: { Authorization: `Bearer ${token}` },
           });
 
