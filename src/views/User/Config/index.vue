@@ -2,10 +2,8 @@
     <Whiteboard title="Configurações" :isSidebarMinimized="isSidebarMinimized">
         <div class="flex w-full gap-4 p-4 mb-4 bg-white rounded-lg shadow-sm">
             <div class="flex p-1 bg-gray-100 rounded-lg shadow-md">
-                <img
-                    class="w-24 object-cover h-auto rounded-lg"
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                />
+                <img class="w-24 object-cover h-auto rounded-lg" src="@/assets/images/profile-pattern.png" />
+
             </div>
   
             <div class="flex flex-row justify-between w-full items-center">
@@ -47,9 +45,9 @@
 </template>
 
 <script>
-import { inject, ref, onMounted } from 'vue';
-import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import SecondaryButton from '@/components/Buttons/SecondaryButton.vue';
+import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
+import { inject, onMounted, ref } from 'vue';
 
 export default {
     name: "Config",
@@ -72,7 +70,7 @@ export default {
             }
 
             try {
-                const response = await fetch("http://10.203.2.98:8000/auth/user-info/", {
+                const response = await fetch("http://10.203.3.22:8000/auth/user-info/", {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

@@ -27,7 +27,7 @@ export default {
         }
 
         try {
-            const response = await fetch("http://10.203.2.98:8000/auth/user-info/", {
+            const response = await fetch("http://10.203.3.22:8000/auth/user-info/", {
                 headers: {
                     Authorization: `Bearer ${token}`, // Inclui o token corretamente
                 },

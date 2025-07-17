@@ -1,12 +1,12 @@
 import { getAccessToken } from './token';
 
   // Usando a variável global $apiBaseUrl
-  const BASE_URL = window.__VUE__API_BASE_URL || 'http://10.203.2.98:8000/csv'; // Fallback para a URL base
+  const BASE_URL = window.__VUE__API_BASE_URL || 'http://10.203.3.22:8000/csv'; // Fallback para a URL base
 
   const routeJsonMapping = {
     'Results': `${BASE_URL}/process/percentual-gratificacao/`,
     'Calendar': `${BASE_URL}/process/dias-nao-contabilizados/`,
-    'Profissional': `${BASE_URL}/process/funcionarios/`,
+    'Profissional': `${BASE_URL}/process/filtered-funcionarios/`,
     'Groups': `${BASE_URL}/process/aprender-mais/`,
     'Steps': `${BASE_URL}/process/etapas-metas/`,
     'StageGroup': `${BASE_URL}/process/grupos-atualizado/`,
@@ -14,7 +14,7 @@ import { getAccessToken } from './token';
     'Infrequency': `${BASE_URL}/process/motivos-infrequencia/`,
     'Resignation': `${BASE_URL}/process/demissoes/`,
     'Activities': `${BASE_URL}/process/atividades/`,
-    'Service': `${BASE_URL}/process/formacoes/`,
+    'Service': `${BASE_URL}/process/tempo-atuacao/`,
     'Training': `${BASE_URL}/process/atividades/`,
     'General': `${BASE_URL}/process/dados-gerais/`,
     'Local': `${BASE_URL}/process/tipo-local/`,

@@ -30,7 +30,7 @@
 
     <!-- Seção de Downloads -->
     <div class="w-full p-6 bg-gradient-to-r from-gray-100 to-gray-300 rounded-lg shadow-lg my-6">
-      <h2 class="text-xl font-semibold mb-4 text-gray-800">Downloads</h2>
+      <h2 class="text-xl font-semibold mb-4 text-gray-800">Relatório Final</h2>
       <div v-for="(file, index) in files" :key="index" class="flex items-center justify-between border border-gray-200 rounded-lg p-4 mb-4">
         <div class="flex items-center space-x-4">
           <DocumentDuplicateIcon class="h-8 w-8 text-gray-500" />
@@ -39,7 +39,7 @@
             <span class="text-sm text-gray-600">{{ file.size }}</span>
           </div>
         </div>
-        <button @click="downloadCSV" class="flex items-center text-blue-500 hover:text-blue-700">
+        <button @click="downloadCriteriosCSV" class="flex items-center text-blue-500 hover:text-blue-700">
           <ArrowDownTrayIcon class="h-5 w-5 mr-2" />
           <span class="text-sm font-semibold">Baixar CSV</span>
         </button>
@@ -69,21 +69,25 @@
         </div>
       </div>
       <div class="mt-6 text-right">
-        <button class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition duration-300">
-          Salvar e Sair
+        <button 
+          @click="navigateHome" 
+          class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition duration-300">
+          Sair
         </button>
       </div>
     </div>
   </Whiteboard>
 </template>
 
+
 <script>
-import { UsersIcon, BanknotesIcon, DocumentDuplicateIcon, ArrowDownTrayIcon } from "@heroicons/vue/24/outline";
-import { inject, computed, ref, onMounted } from 'vue';
-import axios from 'axios';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
+import { downloadCriteriosCSV } from '@/service/download';
+import { ArrowDownTrayIcon, BanknotesIcon, DocumentDuplicateIcon, UsersIcon } from "@heroicons/vue/24/outline";
+import axios from 'axios';
+import { computed, inject, onMounted, ref } from 'vue';
 import { getAccessToken } from '../../../service/token'; // Certifique-se de importar a função getAccessToken
-import { downloadCSV } from '@/service/download';
+import { useRouter } from 'vue-router'; // Importando o useRouter para navegação
 
 export default {
   name: "AdminPanel",
@@ -92,6 +96,7 @@ export default {
   setup() {
     const isSidebarMinimized = inject('isSidebarMinimized', false);
     const dashboardData = ref({});
+    const router = useRouter(); // Inicializando o router
 
     // Função para buscar os dados do dashboard
     const fetchDashboardData = async () => {
@@ -164,6 +169,11 @@ export default {
     onMounted(() => {
       fetchDashboardData();
     });
+
+    // Função para navegar para a página inicial (Home)
+    const navigateHome = () => {
+      router.push({ name: 'home' }); // Substitua 'home' pelo nome da sua rota de home
+    };
 
     // Formatação dos dados do dashboard
     const formattedDashboardData = computed(() => {
@@ -254,23 +264,41 @@ export default {
       return [
         { label: 'Versão', value: dashboardData.value.version_info.description || 'Desconhecido' },
         { label: 'Data de Criação', value: new Date(dashboardData.value.version_info.created_at).toLocaleDateString('pt-BR') },
-        { label: 'Valor Máximo', value: new Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-        }).format(dashboardData.value.version_info.max_value) },
-        { label: 'Carga Horária Máxima', value: dashboardData.value.version_info.max_workload || "Carga horária não disponível"},
-        { label: 'Data de Início', value: dashboardData.value.version_info.start_date || 'Data não disponível' },
-        { label: 'Data de Fim', value: dashboardData.value.version_info.end_date || 'Data não disponível' },
         { 
-          label: 'Resultados IDEM', 
-          value: [
-             `${dashboardData.value.version_info.idem_network_step_1}%`,
-             `${dashboardData.value.version_info.idem_network_step_2}%`,
-             `${dashboardData.value.version_info.idem_network_step_3}%`,
-          ].filter(Boolean).join(', ') || "Carga horária não disponível"
+            label: 'Valor Máximo', 
+            value: new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+            }).format(dashboardData.value.version_info.max_value) 
         },
-        ];
-      });
+        { 
+            label: 'Carga Horária Máxima', 
+            value: dashboardData.value.version_info.max_workload 
+                ? `${dashboardData.value.version_info.max_workload} horas` 
+                : "Carga horária não disponível"
+        },
+        { 
+            label: 'Data de Início', 
+            value: dashboardData.value.version_info.start_date 
+                ? new Date(dashboardData.value.version_info.start_date + 'T00:00:00').toLocaleDateString('pt-BR') 
+                : 'Data não disponível'
+        },
+        { 
+            label: 'Data de Fim', 
+            value: dashboardData.value.version_info.end_date 
+                ? new Date(dashboardData.value.version_info.end_date + 'T00:00:00').toLocaleDateString('pt-BR') 
+                : 'Data não disponível'
+        },
+        { 
+            label: 'Resultados IDEM', 
+            value: [
+                dashboardData.value.version_info.idem_network_step_1 !== undefined ? `Etapa 01: ${dashboardData.value.version_info.idem_network_step_1}%` : null,
+                dashboardData.value.version_info.idem_network_step_2 !== undefined ? `Etapa 02: ${dashboardData.value.version_info.idem_network_step_2}%` : null,
+                dashboardData.value.version_info.idem_network_step_3 !== undefined ? `Etapa 03: ${dashboardData.value.version_info.idem_network_step_3}%` : null,
+            ].filter(Boolean).join('\n') || "Etapas não disponíveis"
+        },
+      ];
+    });
 
     return {
       isSidebarMinimized,
@@ -278,8 +306,9 @@ export default {
       files,
       version,
       cards,
-      downloadCSV,
+      downloadCriteriosCSV,
       formattedDashboardData,
+      navigateHome, // Adicionando a função de navegação
     };
   }
 };

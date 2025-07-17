@@ -1,10 +1,9 @@
 import axios from 'axios';
-import { setupAxiosInterceptors } from './token';  
-import { getAccessToken } from './token';
+import { getAccessToken, setupAxiosInterceptors } from './token';
 
 // Configuração do axios
 const apiClient = axios.create({
-  baseURL: 'http://10.203.2.98:8000/',  
+  baseURL: 'http://10.203.3.22:8000/',  
   headers: {
     'Content-Type': 'application/json',
   },
