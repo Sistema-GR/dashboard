@@ -167,6 +167,7 @@ import { useRoute } from 'vue-router'
 const routes = {
   'admin': [
     { name: 'Novo Cálculo', route: '/home/create/selector', icon: CalculatorIcon, current: false },
+    { name: 'Cálcular Alocação', route: '/home/alloc', icon: RectangleStackIcon  , current: false },
     { name: 'Cálculo Anteriores', route: '/home/previousresults', icon: ChartBarIcon, current: false },
     { name: 'Recurso', route: '/resource/new', icon: ExclamationCircleIcon, current: false },
     { name: 'Painel do Usuário', route: '/home/dataversions', icon: CircleStackIcon , current: false },

@@ -103,10 +103,57 @@ export default {
       try {
         const token = await getAccessToken();
         if (token) {
-          const response = await axios.get('http://10.203.3.22:8000/csv/get-import-files/', {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+          // Requisição à API - Rota de Formações
+          const responseFormacoes = await axios.get('http://10.203.2.98:8000/csv/process/criterios/', {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          const dataFormacoes = responseFormacoes.data; 
+
+          totalRecebem.value = dataFormacoes.filter(item => item.recebe_gratificacao === true).length;
+          totalNaoRecebem.value = dataFormacoes.filter(item => item.recebe_gratificacao === false).length;
+
+          const responseCriterios = await axios.get('http://10.203.2.98:8000/csv/process/criterios/', {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          const dataCriterios = responseCriterios.data; 
+
+          totalAPagar.value = dataCriterios.reduce((sum, item) => sum + parseFloat(item.valor_total || 0), 0);
+
+          const faixaPagamento = [
+            { label: "Até R$ 1.500", value: 0 },
+            { label: "De R$ 1.500 a R$ 3.000", value: 0 },
+            { label: "De R$ 3.000 a R$ 4.500", value: 0 },
+            { label: "De R$ 4.500 a R$ 6.000", value: 0 },
+            { label: "Mais que R$ 6.000", value: 0 },
+            { label: "Não recebem nada", value: 0 },
+          ];
+
+          dataCriterios.forEach(item => {
+            const valorTotal = parseFloat(item.valor_total || 0);
+            if (valorTotal === 0) {
+              faixaPagamento[5].value += 1; 
+            } else if (valorTotal <= 1500) {
+              faixaPagamento[0].value += 1; 
+            } else if (valorTotal > 1500 && valorTotal <= 3000) {
+              faixaPagamento[1].value += 1; 
+            } else if (valorTotal > 3000 && valorTotal <= 4500) {
+              faixaPagamento[2].value += 1; 
+            } else if (valorTotal > 4500 && valorTotal <= 6000) {
+              faixaPagamento[3].value += 1; 
+            } else if (valorTotal > 6000) {
+              faixaPagamento[4].value += 1; 
+            }
+          });
+
+          const chartDataFaixaPagamento = {
+            title: "Faixa de Pagamento",
+            data: faixaPagamento
+          };
+
+          const response = await axios.get('http://10.203.2.139:8000/csv/process/funcionarios/', {
+            headers: { Authorization: `Bearer ${token}` },
           });
 
           dashboardData.value = response.data;
