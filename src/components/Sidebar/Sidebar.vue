@@ -137,13 +137,15 @@ import { ref, computed, onMounted } from 'vue'
 import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { Bars3Icon, CalculatorIcon, BriefcaseIcon, RectangleGroupIcon , XMarkIcon, ChartBarIcon, UserGroupIcon, 
 UsersIcon, AcademicCapIcon, DocumentTextIcon, CalendarDaysIcon, CalendarIcon, DocumentCheckIcon, ChartBarSquareIcon, 
-Square3Stack3DIcon, ExclamationCircleIcon, InboxIcon , QuestionMarkCircleIcon, Squares2X2Icon, CircleStackIcon, PowerIcon, ChevronUpIcon, PencilIcon, RectangleStackIcon  } from '@heroicons/vue/24/outline'
-import { useRoute } from 'vue-router'
+Square3Stack3DIcon, ExclamationCircleIcon, InboxIcon , QuestionMarkCircleIcon, Squares2X2Icon, CircleStackIcon, PowerIcon, ChevronUpIcon, 
+PencilIcon, RectangleStackIcon  } from '@heroicons/vue/24/outline'
+import { useRoute } from 'vue-router';
 import axios from 'axios'
 
 const routes = {
   'admin': [
     { name: 'Novo Cálculo', route: '/home/create/selector', icon: CalculatorIcon, current: false },
+    { name: 'Cálcular Alocação', route: '/home/alloc', icon: RectangleStackIcon  , current: false },
     { name: 'Cálculo Anteriores', route: '/home/previousresults', icon: ChartBarIcon, current: false },
     { name: 'Recurso', route: '/resource/new', icon: ExclamationCircleIcon, current: false },
     { name: 'Painel do Usuário', route: '/home/dataversions', icon: CircleStackIcon , current: false },
