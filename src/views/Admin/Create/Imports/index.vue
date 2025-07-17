@@ -20,6 +20,8 @@
       
     <div class="w-full space-y-10">
       <FileInput Label="Importar Arquivo com Nome: Aprender Mais.csv" @change="(event) => handleFileUpload(event, 'aprenderMais')" />
+      <!--
+      <FileInput Label="Importar Arquivo com Nome: Aprender Mais.csv" @change="(event) => handleFileUpload(event, 'aprenderMais')" />
       <FileInput Label="Importar Arquivo com Nome: Atividades.csv" @change="(event) => handleFileUpload(event, 'atividades')" />
       <FileInput Label="Importar Arquivo com Nome: Dados Gerais.csv" @change="(event) => handleFileUpload(event, 'dadosGerais')" />
       <FileInput Label="Importar Arquivo com Nome: Definição Etapas.csv" @change="(event) => handleFileUpload(event, 'definicaoEtapas')" />
@@ -33,6 +35,7 @@
       <FileInput Label="Importar Arquivo com Nome: Motivos Infrequência.csv" @change="(event) => handleFileUpload(event, 'motivosInfrequencia')" />
       <FileInput Label="Importar Arquivo com Nome: Tipo Local.csv" @change="(event) => handleFileUpload(event, 'tipoLocal')" />
       <FileInput Label="Importar Arquivo com Nome: Ues Perc Gr.csv" @change="(event) => handleFileUpload(event, 'uesPercGr')" />
+      -->
 
         <div class="text-red-500" v-if="errorMessage">{{ errorMessage }}</div>
 
@@ -85,7 +88,7 @@ export default {
         motivosInfrequencia: null,
         frequencia: null,
       },
-      BASE_URL: "http://10.203.2.98:8000/csv",
+      BASE_URL: "http://127.0.0.1:8000/csv",
       endpoint: {
         funcionarios: "/process/funcionarios/",
         atividades: "/process/atividades/",
