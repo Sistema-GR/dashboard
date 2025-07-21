@@ -1,5 +1,5 @@
 <template>
-  <Whiteboard title="importações" :isSidebarMinimized="isSidebarMinimized">
+  <Whiteboard title="Importações" :isSidebarMinimized="isSidebarMinimized">
      <!-- Dropdown para seleção de pasta -->
      <div class="mb-4">
         <label for="folderDropdown" class="block text-sm font-medium text-gray-700">
@@ -19,8 +19,8 @@
       </div>
       
     <div class="w-full space-y-10">
-      <FileInput Label="Importar Arquivo com Nome: Aprender Mais.csv" @change="(event) => handleFileUpload(event, 'aprenderMais')" />
-      <!--
+      <FileInput Label="Importar Arquivos em .CSV" @change="(event) => handleFileUpload(event, 'aprenderMais')" />
+      <!-- VERSÃO ANTIGA E FUNCIONAL ABAIXO ---
       <FileInput Label="Importar Arquivo com Nome: Aprender Mais.csv" @change="(event) => handleFileUpload(event, 'aprenderMais')" />
       <FileInput Label="Importar Arquivo com Nome: Atividades.csv" @change="(event) => handleFileUpload(event, 'atividades')" />
       <FileInput Label="Importar Arquivo com Nome: Dados Gerais.csv" @change="(event) => handleFileUpload(event, 'dadosGerais')" />

@@ -1,4 +1,5 @@
-<!--<template>
+<!-- VERSÃO ANTIGA E FUNCIONAL ---
+<template>
   <div class="space-y-2">
     <label class="text-sm font-medium">{{ Label }}</label>
     <input
@@ -45,7 +46,7 @@ export default {
       @drop.prevent="onDrop"
     >
       <p class="text-gray-600">
-        Drag and drop CSV files here or <span class="text-blue-500 font-semibold">browse</span>
+        Arraste os arquivos aqui ou <span class="text-blue-500 font-semibold">procurar</span>
       </p>
       <input
         class="hidden"
@@ -93,7 +94,7 @@ export default {
     };
   },
   methods: {
-    // Handle manual file selection
+    // Seleção manual
     onFileChange(event) {
       const files = Array.from(event.target.files);
       this.validateAndAddFiles(files);
@@ -113,11 +114,11 @@ export default {
       this.validateAndAddFiles(files);
     },
 
-    // Validate files (only .csv)
+    // Validar arquivos (apenas .csv)
     validateAndAddFiles(files) {
       const validFiles = files.filter((file) => file.name.toLowerCase().endsWith(".csv"));
       if (validFiles.length < files.length) {
-        alert("Some files were ignored because they are not .csv");
+        alert("Alguns arquivos foram ignorados por não serem no formato .csv");
       }
       this.previewFiles.push(...validFiles);
       this.$emit("file-change", this.previewFiles);
