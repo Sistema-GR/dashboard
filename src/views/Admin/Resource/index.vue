@@ -3,18 +3,20 @@
   
     <Whiteboard title="Recurso" class="overflow-auto z-40 relative" :isSidebarMinimized="isSidebarMinimized">
         
-        <div class="flex flex-row items-center w-full justify-start overflow-x-auto border border-gray-200 rounded-lg shadow-md">
-            <Block title="Novo" number="100" customClass="bg-blue-500 hover:bg-blue-600" @click="navigateTo('/resource/new')" />
-            <Block title="Em Progresso" number="20" customClass="bg-orange-500 hover:bg-orange-600" @click="navigateTo('/resource/inprogress')" />
-            <Block title="Pendente" number="36" customClass="bg-yellow-500 hover:bg-yellow-600" @click="navigateTo('/resource/awaiting')" />
-            <Block title="Reaberto" number="7" customClass="bg-red-500 hover:bg-red-600" @click="navigateTo('/resource/reopened')" />
-            <Block title="Finalizado" number="76" customClass="bg-green-500 hover:bg-green-600" @click="navigateTo('/resource/completed')" />
-            <Block title="Cancelado" number="20" customClass="bg-gray-500 hover:bg-gray-600" @click="navigateTo('/resource/canceled')" />
+        <div class="w-full py-3">
+          <div class="grid grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-3 lg:grid-cols-3 lg:gap-3 xl:grid-cols-6 xl:gap-4 justify-items-center">
+            <Block title="Novo" number="100" customClass="bg-blue-500 hover:bg-blue-600 w-full max-w-xs min-w-3xs" @click="navigateTo('/resource/new')" />
+            <Block title="Em Progresso" number="20" customClass="bg-orange-500 hover:bg-orange-600 w-full max-w-xs min-w-3xs" @click="navigateTo('/resource/inprogress')" />
+            <Block title="Pendente" number="36" customClass="bg-yellow-500 hover:bg-yellow-600 w-full max-w-xs min-w-3xs" @click="navigateTo('/resource/awaiting')" />
+            <Block title="Reaberto" number="7" customClass="bg-red-500 hover:bg-red-600 w-full max-w-xs min-w-3xs" @click="navigateTo('/resource/reopened')" />
+            <Block title="Finalizado" number="76" customClass="bg-green-500 hover:bg-green-600 w-full max-w-xs min-w-3xs" @click="navigateTo('/resource/completed')" />
+            <Block title="Cancelado" number="20" customClass="bg-gray-500 hover:bg-gray-600 w-full max-w-xs min-w-3xs" @click="navigateTo('/resource/canceled')" />
+          </div>
         </div>
     
     </Whiteboard>
   
-    <router-view class="z-30 -translate-y-20"></router-view>
+    <router-view class="z-40 -translate-y-4 sm:-translate-y-5 md:-translate-y-20"></router-view>
   </template>
   
 <script>

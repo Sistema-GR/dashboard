@@ -1,13 +1,17 @@
 <template>
   <Whiteboard title="Dashboard" :isSidebarMinimized="isSidebarMinimized">
     <!-- Total Recebe, Total Não Recebe e Total a Pagar -->
-    <div class="flex flex-row w-full gap-6 py-6 overflow-x-auto lg:overflow-x-hidden">
-      <div v-for="(card, index) in cards" :key="index" class="flex flex-col bg-gradient-to-r from-gray-100 to-gray-300 border border-gray-200 text-gray-800 rounded-lg shadow-md p-6 w-full sm:w-1/3">
-        <div class="flex flex-row justify-between items-center mb-4">
-          <p class="text-lg font-semibold">{{ card.title }}</p>
-          <component :is="card.icon" class="w-8 h-auto text-gray-600" />
+    <div class="w-full py-6">
+      <div class="flex flex-wrap justify-center gap-8  xl:justify-between">
+        <div v-for="(card, index) in cards" :key="index" class="flex flex-col bg-gradient-to-r from-gray-100 to-gray-300 border border-gray-200 text-gray-800 rounded-lg shadow-md p-6 min-h-[160px] flex-1 min-w-[280px] max-w-[100%]">
+          <div class="flex flex-row justify-between items-center mb-4">
+            <p class="text-lg font-semibold leading-tight">{{ card.title }}</p>
+            <component :is="card.icon" class="w-8 h-8 text-gray-600 flex-shrink-0" />
+          </div>
+          <div class="flex-grow flex items-end">
+            <p class="text-3xl font-bold w-full text-center">{{ formattedDashboardData[card.dataKey] }}</p>
+          </div>
         </div>
-        <p class="text-3xl font-bold">{{ formattedDashboardData[card.dataKey] }}</p>
       </div>
     </div>
 
@@ -15,7 +19,7 @@
     <div v-for="(section, index) in updatedChartSections" :key="index" class="w-full bg-white p-6 rounded-lg shadow-lg mt-6 bg-gradient-to-r from-gray-50 to-gray-400">
       <h2 class="text-xl font-semibold mb-4">{{ section.title }}</h2>
       <div class="space-y-4">
-        <div v-for="(data, idx) in section.data" :key="idx" class="flex items-center">
+        <div v-for="(data, idx) in section.data" :key="idx" class="flex items-center gap-8">
           <span class="w-1/4 text-gray-700 font-medium">{{ data.label }}</span>
           <div class="flex flex-row w-3/4 bg-gray-200 rounded-lg h-8 overflow-hidden gap-2 items-center font-medium">
             <div class="bg-primary-800 h-full flex items-center justify-start text-white font-semibold text-center px-2" :style="{ width: data.percentage + '%' }"></div>
@@ -31,7 +35,7 @@
     <!-- Seção de Downloads -->
     <div class="w-full p-6 bg-gradient-to-r from-gray-100 to-gray-300 rounded-lg shadow-lg my-6">
       <h2 class="text-xl font-semibold mb-4 text-gray-800">Relatório Final</h2>
-      <div v-for="(file, index) in files" :key="index" class="flex items-center justify-between border border-gray-200 rounded-lg p-4 mb-4">
+      <div v-for="(file, index) in files" :key="index" class="flex items-center justify-between bg-gradient-to-r from-gray-100 to-gray-200 border border-gray-200 rounded-lg p-4 mb-4">
         <div class="flex items-center space-x-4">
           <DocumentDuplicateIcon class="h-8 w-8 text-gray-500" />
           <div class="flex flex-col">
@@ -104,7 +108,7 @@ export default {
         const token = await getAccessToken();
         if (token) {
           // Requisição à API - Rota de Formações
-          const responseFormacoes = await axios.get('http://10.203.2.98:8000/csv/process/criterios/', {
+          const responseFormacoes = await axios.get('http://127.0.0.1:8000/csv/process/criterios/', {
             headers: { Authorization: `Bearer ${token}` },
           });
 
@@ -113,7 +117,7 @@ export default {
           totalRecebem.value = dataFormacoes.filter(item => item.recebe_gratificacao === true).length;
           totalNaoRecebem.value = dataFormacoes.filter(item => item.recebe_gratificacao === false).length;
 
-          const responseCriterios = await axios.get('http://10.203.2.98:8000/csv/process/criterios/', {
+          const responseCriterios = await axios.get('http://127.0.0.1:8000/csv/process/criterios/', {
             headers: { Authorization: `Bearer ${token}` },
           });
 

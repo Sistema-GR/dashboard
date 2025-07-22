@@ -48,8 +48,8 @@
       <div :class="['fixed inset-y-0 z-50 flex flex-col transition-all duration-300', isSidebarMinimized ? 'w-20 overflow-hidden' : 'w-60', 'lg:flex hidden']">
           <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-[#003965] px-6">
               <div class="flex py-5 shrink-0 items-center justify-center border-b border-white">
-                  <img v-if="!isSidebarMinimized" class="h-14 w-auto" src="../../assets/images/logo-horinzontal.png" alt="Your Company" />
-                  <img v-if="isSidebarMinimized" class="h-14 w-auto" src="../../assets/images/logo.png" alt="Your Company" />
+                  <img v-if="!isSidebarMinimized" @click="goBack" class="h-14 w-auto cursor-pointer" src="../../assets/images/logo-horinzontal.png" alt="Your Company" />
+                  <img v-if="isSidebarMinimized" @click="goBack" class="h-14 w-auto cursor-pointer" src="../../assets/images/logo.png" alt="Your Company" />
               </div>
 
               <nav class="flex flex-1 flex-col">
@@ -162,7 +162,7 @@ import {
 } from '@heroicons/vue/24/outline'
 import axios from 'axios'
 import { computed, onMounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const routes = {
   'admin': [
@@ -226,7 +226,7 @@ async function fetchUserName() {
     }
 
     // Requisição com token no header
-    axios.get('http://10.203.3.22:8000/auth/user-info/', {
+    axios.get('http://127.0.0.1:8000/auth/user-info/', {
       headers: {
         'Authorization': `Bearer ${token}`  // Corrigir o nome do token para "accessToken"
       }
@@ -305,6 +305,11 @@ function logout() {
     localStorage.removeItem('isAuthenticated');
 
     window.location.href = '/';
+}
+
+const router = useRouter();
+function goBack() {
+  router.push('/home/overview');
 }
 
 </script>
