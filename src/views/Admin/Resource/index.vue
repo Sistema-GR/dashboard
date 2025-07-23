@@ -20,7 +20,7 @@
   </template>
   
 <script>
-import { provide, ref } from 'vue'
+import { inject } from 'vue'
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import Block from '@/views/Admin/Resource/components/Block/index.vue'
 import infoCard from '@/views/Admin/Resource/components/infoCard/index.vue'
@@ -33,23 +33,16 @@ export default {
     components: {Whiteboard, Block, infoCard, FunnelIcon, Sidebar},
 
     setup() {
-    const isSidebarMinimized = ref(false)
+    const isSidebarMinimized = inject('isSidebarMinimized')
     const router = useRouter()
 
     function navigateTo(route) {
         router.push(route)
     }
 
-    function handleSidebarMinimized(value) {
-        isSidebarMinimized.value = value
-    }
-
-    provide('isSidebarMinimized', isSidebarMinimized)
-
     return {
       isSidebarMinimized,
       navigateTo,
-      handleSidebarMinimized
     }
   }
 }
