@@ -2,6 +2,7 @@
     <Whiteboard title="Calcular Alocação" :isSidebarMinimized="isSidebarMinimized">
 
         <div class="flex flex-col w-full items-center justify-start p-3">
+
             <p>Escolha um opção abaixo</p>
 
             <div>
