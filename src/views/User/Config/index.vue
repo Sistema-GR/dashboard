@@ -1,7 +1,7 @@
 <template>
     <Whiteboard title="Configurações" :isSidebarMinimized="isSidebarMinimized">
-        <div class="flex w-full gap-4 p-4 mb-4 bg-white rounded-lg shadow-sm">
-            <div class="flex p-1 bg-gray-100 rounded-lg shadow-md">
+        <div class="flex w-full gap-4 p-4 mb-4 bg-white rounded-lg shadow-sm, shadow-none">
+            <div class="flex p-1 bg-gray-100 rounded-full shadow-md">
                 <img class="w-24 object-cover h-auto rounded-lg" src="@/assets/images/profile-pattern.png" />
 
             </div>

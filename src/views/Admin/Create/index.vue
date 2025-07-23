@@ -5,7 +5,7 @@
   </template>
   
   <script>
-  import { ref, provide } from 'vue'
+  import { inject } from 'vue'
   import Sidebar from '@/components/Sidebar/Sidebar.vue'
   
   export default {
@@ -13,16 +13,10 @@
       Sidebar
     },
     setup() {
-      const isSidebarMinimized = ref(false)
-  
-      function handleSidebarMinimized(value) {
-        isSidebarMinimized.value = value
-      }
-  
-      provide('isSidebarMinimized', isSidebarMinimized)
-  
+      const isSidebarMinimized = inject('isSidebarMinimized')
+      
       return {
-        handleSidebarMinimized
+        isSidebarMinimized,
       }
     }
   }

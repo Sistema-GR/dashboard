@@ -1,16 +1,15 @@
 <template>
-    <Whiteboard title="Cáclcular Alocação" :isSidebarMinimized="isSidebarMinimized">
+    <Whiteboard title="Calcular Alocação" :isSidebarMinimized="isSidebarMinimized">
 
         <div class="flex flex-col w-full items-center justify-start p-3">
-            <p>Escolha uma opção abaixo</p>
+
+            <p>Escolha um opção abaixo</p>
 
             <div>
                 <PrimaryButton value="Criar nova alocação"/>
             </div>
 
         </div>
-
-
 
     </Whiteboard>
     
