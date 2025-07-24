@@ -100,6 +100,7 @@ export default {
   setup() {
     const isSidebarMinimized = inject('isSidebarMinimized', ref(false));
     const dashboardData = ref(null); // Iniciar como nulo para verificações mais fáceis
+    const dashboardMotivos = ref(null);
     const totalRecebem = ref(0);
     const totalNaoRecebem = ref(0);
     const totalAPagar = ref(0);
@@ -152,8 +153,16 @@ export default {
         const responseFuncionarios = await axios.get('http://127.0.0.1:8000/csv/process/funcionarios/', {
           headers: { Authorization: `Bearer ${token}` },
         });
-
+        console.log('Funcionarios response:', responseFuncionarios.data);
         dashboardData.value = responseFuncionarios.data;
+
+
+        // Requisição para os motivos de não recebimento
+        const responseMotivos = await axios.get('http://127.0.0.1:8000/csv/get-import-files/', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        console.log('Motivos response:', responseMotivos.data);
+        dashboardMotivos.value = responseMotivos.data;
 
       } catch (error) {
         console.error("Erro ao buscar os dados do dashboard:", error);
@@ -202,7 +211,7 @@ export default {
     ]);
 
     const chartSections = computed(() => {
-        const motivoCombinadoCounts = dashboardData.value?.analysis_result?.motivo_combinado_counts || {};
+        const motivoCombinadoCounts = dashboardMotivos.value?.analysis_result?.motivo_combinado_counts || {};
         
         return [
             {
