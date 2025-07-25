@@ -90,109 +90,108 @@ import { downloadCriteriosCSV } from '@/service/download';
 import { ArrowDownTrayIcon, BanknotesIcon, DocumentDuplicateIcon, UsersIcon } from "@heroicons/vue/24/outline";
 import axios from 'axios';
 import { computed, inject, onMounted, ref } from 'vue';
-import { getAccessToken } from '../../../service/token'; // Certifique-se de importar a função getAccessToken
-import { useRouter } from 'vue-router'; // Importando o useRouter para navegação
+import { getAccessToken } from '../../../service/token';
+import { useRouter } from 'vue-router';
 
 export default {
   name: "AdminPanel",
   components: { Whiteboard, UsersIcon, BanknotesIcon, DocumentDuplicateIcon, ArrowDownTrayIcon },
 
   setup() {
-    const isSidebarMinimized = inject('isSidebarMinimized', false);
-    const dashboardData = ref({});
-    const router = useRouter(); // Inicializando o router
+    const isSidebarMinimized = inject('isSidebarMinimized', ref(false));
+    const dashboardData = ref(null); // Iniciar como nulo para verificações mais fáceis
+    const dashboardMotivos = ref(null);
+    const totalRecebem = ref(0);
+    const totalNaoRecebem = ref(0);
+    const totalAPagar = ref(0);
+    const chartDataFaixaPagamento = ref([]); // Manter os dados do gráfico como reativos
+    const router = useRouter();
 
-    // Função para buscar os dados do dashboard
     const fetchDashboardData = async () => {
       try {
         const token = await getAccessToken();
-        if (token) {
-          // Requisição à API - Rota de Formações
-          const responseFormacoes = await axios.get('http://127.0.0.1:8000/csv/process/criterios/', {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-
-          const dataFormacoes = responseFormacoes.data; 
-
-          totalRecebem.value = dataFormacoes.filter(item => item.recebe_gratificacao === true).length;
-          totalNaoRecebem.value = dataFormacoes.filter(item => item.recebe_gratificacao === false).length;
-
-          const responseCriterios = await axios.get('http://127.0.0.1:8000/csv/process/criterios/', {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-
-          const dataCriterios = responseCriterios.data; 
-
-          totalAPagar.value = dataCriterios.reduce((sum, item) => sum + parseFloat(item.valor_total || 0), 0);
-
-          const faixaPagamento = [
-            { label: "Até R$ 1.500", value: 0 },
-            { label: "De R$ 1.500 a R$ 3.000", value: 0 },
-            { label: "De R$ 3.000 a R$ 4.500", value: 0 },
-            { label: "De R$ 4.500 a R$ 6.000", value: 0 },
-            { label: "Mais que R$ 6.000", value: 0 },
-            { label: "Não recebem nada", value: 0 },
-          ];
-
-          dataCriterios.forEach(item => {
-            const valorTotal = parseFloat(item.valor_total || 0);
-            if (valorTotal === 0) {
-              faixaPagamento[5].value += 1; 
-            } else if (valorTotal <= 1500) {
-              faixaPagamento[0].value += 1; 
-            } else if (valorTotal > 1500 && valorTotal <= 3000) {
-              faixaPagamento[1].value += 1; 
-            } else if (valorTotal > 3000 && valorTotal <= 4500) {
-              faixaPagamento[2].value += 1; 
-            } else if (valorTotal > 4500 && valorTotal <= 6000) {
-              faixaPagamento[3].value += 1; 
-            } else if (valorTotal > 6000) {
-              faixaPagamento[4].value += 1; 
-            }
-          });
-
-          const chartDataFaixaPagamento = {
-            title: "Faixa de Pagamento",
-            data: faixaPagamento
-          };
-
-          const response = await axios.get('http://10.203.2.139:8000/csv/process/funcionarios/', {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-
-          dashboardData.value = response.data;
-        } else {
+        if (!token) {
           console.error("Erro: Token de acesso não encontrado.");
+          return;
         }
+
+        // Requisição para critérios para calcular quem recebe/não recebe
+        const responseCriterios = await axios.get('http://127.0.0.1:8000/csv/process/criterios/', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const dataCriterios = responseCriterios.data;
+
+        // Atualiza os totais reativos
+        totalRecebem.value = dataCriterios.filter(item => item.recebe_gratificacao === true).length;
+        totalNaoRecebem.value = dataCriterios.filter(item => item.recebe_gratificacao === false).length;
+        totalAPagar.value = dataCriterios.reduce((sum, item) => sum + parseFloat(item.valor_total || 0), 0);
+        
+        // Lógica para faixa de pagamento
+        const faixaPagamento = [
+          { label: "Até R$ 1.500", value: 0 },
+          { label: "De R$ 1.500 a R$ 3.000", value: 0 },
+          { label: "De R$ 3.000 a R$ 4.500", value: 0 },
+          { label: "De R$ 4.500 a R$ 6.000", value: 0 },
+          { label: "Mais que R$ 6.000", value: 0 },
+          { label: "Não recebem nada", value: 0 },
+        ];
+
+        dataCriterios.forEach(item => {
+          const valorTotal = parseFloat(item.valor_total || 0);
+          if (valorTotal === 0) faixaPagamento[5].value++;
+          else if (valorTotal <= 1500) faixaPagamento[0].value++;
+          else if (valorTotal <= 3000) faixaPagamento[1].value++;
+          else if (valorTotal <= 4500) faixaPagamento[2].value++;
+          else if (valorTotal <= 6000) faixaPagamento[3].value++;
+          else faixaPagamento[4].value++;
+        });
+
+        chartDataFaixaPagamento.value = faixaPagamento;
+
+        // Requisição para os dados principais do dashboard
+        const responseFuncionarios = await axios.get('http://127.0.0.1:8000/csv/process/funcionarios/', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        console.log('Funcionarios response:', responseFuncionarios.data);
+        dashboardData.value = responseFuncionarios.data;
+
+
+        // Requisição para os motivos de não recebimento
+        const responseMotivos = await axios.get('http://127.0.0.1:8000/csv/get-import-files/', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        console.log('Motivos response:', responseMotivos.data);
+        dashboardMotivos.value = responseMotivos.data;
+
       } catch (error) {
         console.error("Erro ao buscar os dados do dashboard:", error);
+        // Considere definir um estado de erro aqui para exibir uma mensagem ao usuário
       }
     };
 
-    // Chamar a função ao montar o componente
-    onMounted(() => {
-      fetchDashboardData();
-    });
+    onMounted(fetchDashboardData);
 
-    // Função para navegar para a página inicial (Home)
     const navigateHome = () => {
-      router.push({ name: 'home' }); // Substitua 'home' pelo nome da sua rota de home
+      router.push({ name: 'home' });
     };
 
-    // Formatação dos dados do dashboard
     const formattedDashboardData = computed(() => {
-      if (!dashboardData.value.analysis_result) return {};
+      // Usar os valores reativos diretamente para os totais
+      const totalRecebeFormatado = totalRecebem.value;
+      const totalNaoRecebeFormatado = totalNaoRecebem.value;
+      const totalAPagarFormatado = new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+      }).format(totalAPagar.value);
 
       return {
-        ...dashboardData.value.analysis_result,
-        soma_valor_total: new Intl.NumberFormat('pt-BR', {
-          style: 'currency',
-          currency: 'BRL',
-        }).format(dashboardData.value.analysis_result.soma_valor_total),
+        registros_maiores_que_zero: totalRecebeFormatado,
+        registros_iguais_a_zero: totalNaoRecebeFormatado,
+        soma_valor_total: totalAPagarFormatado,
       };
     });
 
-    // Estrutura dos cartões
     const cards = computed(() => [
       {
         title: 'Total que Recebe',
@@ -211,95 +210,77 @@ export default {
       }
     ]);
 
-    // Seções para o gráfico
     const chartSections = computed(() => {
-      const motivoCombinadoCounts = dashboardData.value.analysis_result?.motivo_combinado_counts || {};
-      const faixaCounts = dashboardData.value.analysis_result?.faixa_counts || {};
-
-      return [
-        {
-          title: "Motivo de Não Recebimento",
-          data: [
-            { label: "Estagiário", value: motivoCombinadoCounts["Estagiário"] || 0 },
-            { label: "Atividade", value: motivoCombinadoCounts["Atividade"] || 0 },
-            { label: "Formações", value: motivoCombinadoCounts["Formações"] || 0 },
-            { label: "Frequência", value: motivoCombinadoCounts["Frequência"] || 0 },
-            { label: "Tempo de Atuação", value: motivoCombinadoCounts["Tempo de atuação"] || 0 },
-            { label: "Mais de um critério", value: motivoCombinadoCounts["Mais de um critério"] || 0 },
-            { label: "Mais de dois critérios", value: motivoCombinadoCounts["Mais de dois critérios"] || 0 },
-          ]
-        },
-        {
-          title: "Faixa de Pagamento",
-          data: [
-            { label: "Até R$ 1.500", value: faixaCounts["faixa_0_1500"] || 0 },
-            { label: "De R$ 1.500 a R$ 3.000", value: faixaCounts["faixa_1500_3000"] || 0 },
-            { label: "De R$ 3.000 a R$ 4.500", value: faixaCounts["faixa_3000_4500"] || 0 },
-            { label: "De R$ 4.500 a R$ 6.000", value: faixaCounts["faixa_4500_6000"] || 0 },
-            { label: "Mais que R$ 6.000", value: faixaCounts["faixa_6000_mais"] || 0 },
-          ]
-        }
-      ];
+        const motivoCombinadoCounts = dashboardMotivos.value?.analysis_result?.motivo_combinado_counts || {};
+        
+        return [
+            {
+                title: "Motivo de Não Recebimento",
+                data: [
+                    { label: "Estagiário", value: motivoCombinadoCounts["Estagiário"] || 0 },
+                    { label: "Atividade", value: motivoCombinadoCounts["Atividade"] || 0 },
+                    { label: "Formações", value: motivoCombinadoCounts["Formações"] || 0 },
+                    { label: "Frequência", value: motivoCombinadoCounts["Frequência"] || 0 },
+                    { label: "Tempo de Atuação", value: motivoCombinadoCounts["Tempo de atuação"] || 0 },
+                    { label: "Mais de um critério", value: motivoCombinadoCounts["Mais de um critério"] || 0 },
+                    { label: "Mais de dois critérios", value: motivoCombinadoCounts["Mais de dois critérios"] || 0 },
+                ]
+            },
+            {
+                title: "Faixa de Pagamento",
+                data: chartDataFaixaPagamento.value
+            }
+        ];
     });
 
-    // Função para calcular porcentagens
     const calculatePercentages = (sections) => {
       return sections.map(section => {
         const total = section.data.reduce((acc, curr) => acc + curr.value, 0);
-        section.data = section.data.map(item => ({
+        const dataWithPercentage = section.data.map(item => ({
           ...item,
-          percentage: total ? ((item.value / total) * 100).toFixed(2) : 0
+          percentage: total > 0 ? ((item.value / total) * 100).toFixed(2) : "0.00"
         }));
-        return { ...section, total };
+        return { ...section, data: dataWithPercentage, total };
       });
     };
 
-    const updatedChartSections = computed(() => calculatePercentages(chartSections.value));
+    const updatedChartSections = computed(() => {
+        return calculatePercentages(chartSections.value);
+    });
 
-    // Arquivos para download
     const files = [
       { name: 'Relatório Criterios.pdf', size: '3.4 MB', url: '/path/to/apresentacao.pptx' }
     ];
 
-    // Informações sobre a versão
     const version = computed(() => {
-      if (!dashboardData.value.version_info) return [];
-
+      if (!dashboardData.value?.version_info) return [];
+      const { version_info } = dashboardData.value;
       return [
-        { label: 'Versão', value: dashboardData.value.version_info.description || 'Desconhecido' },
-        { label: 'Data de Criação', value: new Date(dashboardData.value.version_info.created_at).toLocaleDateString('pt-BR') },
+        { label: 'Versão', value: version_info.description || 'Desconhecido' },
+        { label: 'Data de Criação', value: new Date(version_info.created_at).toLocaleDateString('pt-BR') },
         { 
             label: 'Valor Máximo', 
-            value: new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL',
-            }).format(dashboardData.value.version_info.max_value) 
+            value: new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(version_info.max_value || 0) 
         },
         { 
             label: 'Carga Horária Máxima', 
-            value: dashboardData.value.version_info.max_workload 
-                ? `${dashboardData.value.version_info.max_workload} horas` 
-                : "Carga horária não disponível"
+            value: version_info.max_workload ? `${version_info.max_workload} horas` : "Não disponível"
         },
         { 
             label: 'Data de Início', 
-            value: dashboardData.value.version_info.start_date 
-                ? new Date(dashboardData.value.version_info.start_date + 'T00:00:00').toLocaleDateString('pt-BR') 
-                : 'Data não disponível'
+            value: version_info.start_date ? new Date(version_info.start_date + 'T00:00:00').toLocaleDateString('pt-BR') : 'Não disponível'
         },
         { 
             label: 'Data de Fim', 
-            value: dashboardData.value.version_info.end_date 
-                ? new Date(dashboardData.value.version_info.end_date + 'T00:00:00').toLocaleDateString('pt-BR') 
-                : 'Data não disponível'
+            value: version_info.end_date ? new Date(version_info.end_date + 'T00:00:00').toLocaleDateString('pt-BR') : 'Não disponível'
         },
         { 
             label: 'Resultados IDEM', 
             value: [
-                dashboardData.value.version_info.idem_network_step_1 !== undefined ? `Etapa 01: ${dashboardData.value.version_info.idem_network_step_1}%` : null,
-                dashboardData.value.version_info.idem_network_step_2 !== undefined ? `Etapa 02: ${dashboardData.value.version_info.idem_network_step_2}%` : null,
-                dashboardData.value.version_info.idem_network_step_3 !== undefined ? `Etapa 03: ${dashboardData.value.version_info.idem_network_step_3}%` : null,
-            ].filter(Boolean).join('\n') || "Etapas não disponíveis"
+                version_info.idem_network_step_1 !== undefined ? `Etapa 01: ${version_info.idem_network_step_1}%` : null,
+                version_info.idem_network_step_2 !== undefined ? `Etapa 02: ${version_info.idem_network_step_2}%` : null,
+                version_info.idem_network_step_3 !== undefined ? `Etapa 03: ${version_info.idem_network_step_3}%` : null,
+            ].filter(Boolean).join('\n') || "Não disponível"
         },
       ];
     });
@@ -312,7 +293,7 @@ export default {
       cards,
       downloadCriteriosCSV,
       formattedDashboardData,
-      navigateHome, // Adicionando a função de navegação
+      navigateHome,
     };
   }
 };
