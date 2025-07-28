@@ -81,9 +81,9 @@ export default {
             error.value = null;
             try {
                 // **Ação Principal: Buscar dados do recurso na API**
-                // Nota: '/api/recursos/meu-status/' é uma rota de exemplo.
+                // Nota: '/recursos/meu-status/' é uma rota de exemplo.
                 // O backend deve identificar o usuário pelo token e retornar seu recurso ativo.
-                const response = await axios.get('/api/recursos/meu-status/', {
+                const response = await axios.get('/recursos/meu-status/', {
                      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
                 });
                 resource.value = response.data;

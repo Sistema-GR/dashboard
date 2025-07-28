@@ -13,8 +13,8 @@
                 <div class="flex items-center border-b-2 py-2 pb-6">
                     <label class="font-semibold w-1/4 text-sm">Nome completo</label>
                     <div class="w-3/4 ml-4">
-                        <input v-model="form.fullName" type="text" class="w-full border rounded-md p-2 text-sm" placeholder="Digite seu nome completo" />
-                        <p v-if="errors.fullName" class="text-red-500 text-sm mt-1">{{ errors.fullName }}</p>
+                        <input v-model="form.nome_completo" type="text" class="w-full border rounded-md p-2 text-sm" placeholder="Digite seu nome completo" />
+                        <p v-if="errors.nome_completo" class="text-red-500 text-sm mt-1">{{ errors.nome_completo }}</p>
                     </div>
                 </div>
 
@@ -53,8 +53,8 @@
                 <div class="flex items-center border-b-2 py-0 pb-6">
                     <label class="font-semibold w-1/4 text-sm">Descrição</label>
                     <div class="w-3/4 ml-4">
-                        <textarea v-model="form.description" class="w-full border rounded-md p-2 text-sm" rows="4" placeholder="Descreva o motivo do recurso aqui..."></textarea>
-                        <p v-if="errors.description" class="text-red-500 text-sm mt-1">{{ errors.description }}</p>
+                        <textarea v-model="form.descricao" class="w-full border rounded-md p-2 text-sm" rows="4" placeholder="Descreva o motivo do recurso aqui..."></textarea>
+                        <p v-if="errors.descricao" class="text-red-500 text-sm mt-1">{{ errors.descricao }}</p>
                     </div>
                 </div>
                 
@@ -148,12 +148,12 @@ export default {
         const router = useRouter();
 
         const form = reactive({
-            fullName: '',
+            nome_completo: '',
             email: '',
             cpf: '',
             matricula: '',
             unidade: '',
-            description: '',
+            descricao: '',
             files: [],
             termsAccepted: false,
         });
@@ -171,12 +171,12 @@ export default {
 
        const validateForm = () => {
             errors.value = {};
-            if (!form.fullName) errors.value.fullName = 'O nome completo é obrigatório.';
+            if (!form.nome_completo) errors.value.nome_completo = 'O nome completo é obrigatório.';
             if (!form.email) errors.value.email = 'O e-mail é obrigatório.';
             if (!form.cpf) errors.value.cpf = 'O CPF é obrigatório.';
             if (!form.matricula) errors.value.matricula = 'A matrícula é obrigatória.';
             if (!form.unidade) errors.value.unidade = 'A unidade de atuação é obrigatória.';
-            if (!form.description) errors.value.description = 'A descrição é obrigatória.';
+            if (!form.descricao) errors.value.descricao = 'A descrição é obrigatória.';
             if (!form.files.length) errors.value.files = 'É necessário anexar pelo menos um documento.';
             if (!form.termsAccepted) errors.value.termsAccepted = 'Você deve aceitar os termos.';
             return Object.keys(errors.value).length === 0;
@@ -187,19 +187,19 @@ export default {
                 isSubmitting.value = true;
 
                 const formData = new FormData();
-                formData.append('fullName', form.fullName);
+                formData.append('nome_completo', form.nome_completo);
                 formData.append('email', form.email);
                 formData.append('cpf', form.cpf);
                 formData.append('matricula', form.matricula);
                 formData.append('unidade_atuacao', form.unidade);
-                formData.append('description', form.description);
+                formData.append('descricao', form.descricao);
                 
                 form.files.forEach(file => {
                     formData.append('documentos', file);
                 });
 
                 try {
-                    await axios.post('/api/recursos/criar/', formData, {
+                    await axios.post('/recursos/criar/', formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data',
                             'Authorization': `Bearer ${localStorage.getItem('accessToken')}` 
@@ -209,8 +209,15 @@ export default {
                     router.push({ name: 'status' });
 
                 } catch (error) {
-                    console.error("Erro ao criar recurso:", error);
-                    alert('Ocorreu um erro ao enviar seu recurso. Tente novamente.');
+                    console.error("Erro ao criar recurso:", error.response ? error.response.data : error.message);
+                    if (error.response && error.response.data) {
+                        const errorMessages = Object.entries(error.response.data)
+                        .map(([field, messages]) => `${field}: ${messages.join(', ')}`)
+                        .join('\n');
+                        alert(`Ocorreram os seguintes erros:\n${errorMessages}`);
+                    } else {
+                        alert('Ocorreu um erro desconhecido ao enviar seu recurso. Tente novamente.');
+                 }
                 } finally {
                     isSubmitting.value = false;
                 }
