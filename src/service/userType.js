@@ -33,7 +33,7 @@ export const isRegularUser = () => {
  */
 export const getDashboardRoute = () => {
   const userType = getUserType();
-  return userType === 'admin' ? '/admin/dashboard' : '/user/overview';
+  return userType === 'admin' ? '/admin/dashboard' : '/home/overview';
 };
 
 /**
