@@ -12,33 +12,48 @@
 
                 <div class="flex items-center border-b-2 py-2 pb-6">
                     <label class="font-semibold w-1/4 text-sm">Nome completo</label>
-                    <span class="text-gray-700 w-3/4 ml-4 text-sm">Tom Cock Harris</span>
+                    <div class="w-3/4 ml-4">
+                        <input v-model="form.fullName" type="text" class="w-full border rounded-md p-2 text-sm" placeholder="Digite seu nome completo" />
+                        <p v-if="errors.fullName" class="text-red-500 text-sm mt-1">{{ errors.fullName }}</p>
+                    </div>
                 </div>
-                
+
                 <div class="flex items-center border-b-2 py-0 pb-6">
                     <label class="font-semibold w-1/4 text-sm">E-mail</label>
-                    <span class="text-gray-700 w-3/4 ml-4 text-sm">tom.harris@example.com</span>
+                    <div class="w-3/4 ml-4">
+                        <input v-model="form.email" type="email" class="w-full border rounded-md p-2 text-sm" placeholder="Digite seu e-mail" />
+                        <p v-if="errors.email" class="text-red-500 text-sm mt-1">{{ errors.email }}</p>
+                    </div>
                 </div>
 
                 <div class="flex items-center border-b-2 py-0 pb-6">
                     <label class="font-semibold w-1/4 text-sm">CPF</label>
-                    <span class="text-gray-700 w-3/4 ml-4 text-sm">123.456.789-00</span>
+                    <div class="w-3/4 ml-4">
+                        <input v-model="form.cpf" type="text" class="w-full border rounded-md p-2 text-sm" placeholder="Digite seu CPF" />
+                        <p v-if="errors.cpf" class="text-red-500 text-sm mt-1">{{ errors.cpf }}</p>
+                    </div>
                 </div>
 
                 <div class="flex items-center border-b-2 py-0 pb-6">
                     <label class="font-semibold w-1/4 text-sm">Matrícula</label>
-                    <span class="text-gray-700 w-3/4 ml-4 text-sm">u04444</span>
+                    <div class="w-3/4 ml-4">
+                        <input v-model="form.matricula" type="text" class="w-full border rounded-md p-2 text-sm" placeholder="Digite sua matrícula" />
+                        <p v-if="errors.matricula" class="text-red-500 text-sm mt-1">{{ errors.matricula }}</p>
+                    </div>
                 </div>
 
                 <div class="flex items-center border-b-2 py-0 pb-6">
                     <label class="font-semibold w-1/4 text-sm">Unidade de atuação</label>
-                    <span class="text-gray-700 w-3/4 ml-4 text-sm">Abdon Batista</span>
+                    <div class="w-3/4 ml-4">
+                        <input v-model="form.unidade" type="text" class="w-full border rounded-md p-2 text-sm" placeholder="Digite sua unidade de atuação" />
+                        <p v-if="errors.unidade" class="text-red-500 text-sm mt-1">{{ errors.unidade }}</p>
+                    </div>
                 </div>
 
                 <div class="flex items-center border-b-2 py-0 pb-6">
                     <label class="font-semibold w-1/4 text-sm">Descrição</label>
                     <div class="w-3/4 ml-4">
-                        <textarea v-model="description" class="w-full border rounded-md p-2 text-sm" rows="4" placeholder="Descreva o motivo do recurso aqui..."></textarea>
+                        <textarea v-model="form.description" class="w-full border rounded-md p-2 text-sm" rows="4" placeholder="Descreva o motivo do recurso aqui..."></textarea>
                         <p v-if="errors.description" class="text-red-500 text-sm mt-1">{{ errors.description }}</p>
                     </div>
                 </div>
@@ -51,14 +66,14 @@
                     </div>
                 </div>
 
-                <div v-if="files.length > 0" class="mt-4">
+                <div v-if="form.files.length > 0" class="mt-4">
                     <div class="mb-2">
                         <h3 class="font-semibold text-sm sm:text-base">Arquivos Anexados:</h3>
                     </div>
 
                     <div class="flex flex-col sm:flex-row sm:items-start sm:gap-4">
                         <div class="flex flex-col w-full gap-3 border-2 border-blue-500 rounded-lg p-1">
-                            <div v-for="(file, index) in files" :key="index" class="flex items-center justify-between gap-4 w-full text-sm text-blue-500 cursor-pointer">
+                            <div v-for="(file, index) in form.files" :key="index" class="flex items-center justify-between gap-4 w-full text-sm text-blue-500 cursor-pointer">
                                 <div class="flex items-center gap-2">
                                     <PaperClipIcon class="w-5 h-5 text-gray-500"/> 
                                     <span class="underline"> {{ file.name }} </span>
@@ -89,7 +104,7 @@
                                 <input 
                                     type="checkbox" 
                                     id="terms" 
-                                    v-model="termsAccepted" 
+                                    v-model="form.termsAccepted" 
                                     class="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out" 
                                 />
                                 <label for="terms" class="text-sm">
@@ -105,8 +120,9 @@
                 <div class="flex w-full justify-end">
                     <PrimaryButton
                         @click="submitForm"
+                        :disabled="isSubmitting"
                         customColor="bg-blue-500 text-sm w-6/12 md:w-3/12"
-                        value="Enviar"
+                        :value="isSubmitting ? 'Enviando...' : 'Enviar'"
                     />
                 </div>
 
@@ -116,11 +132,12 @@
 </template>
 
 <script>
-import { inject, ref } from 'vue';
+import { inject, ref, reactive } from 'vue';
 import { ArrowDownTrayIcon, PaperClipIcon, XMarkIcon } from "@heroicons/vue/24/outline";
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 
 export default {
     name: "ResourceForm",
@@ -128,44 +145,86 @@ export default {
 
     setup() {
         const isSidebarMinimized = inject('isSidebarMinimized');
-        const files = ref([]);
-        const description = ref('');
-        const termsAccepted = ref(false);
-        const errors = ref({});
         const router = useRouter();
 
+        const form = reactive({
+            fullName: '',
+            email: '',
+            cpf: '',
+            matricula: '',
+            unidade: '',
+            description: '',
+            files: [],
+            termsAccepted: false,
+        });
+        
+        const errors = ref({});
+        const isSubmitting = ref(false);
+
         const handleFileUpload = (event) => {
-            files.value = Array.from(event.target.files);
+            form.files = Array.from(event.target.files);
         };
 
         const removeFile = (index) => {
-            files.value.splice(index, 1);
+            form.files.splice(index, 1);
         };
 
-        const validateForm = () => {
+       const validateForm = () => {
             errors.value = {};
-
-            if (!description.value) {
-                errors.value.description = 'A descrição é obrigatória.';
-            }
-            if (!files.value.length) {
-                errors.value.files = 'É necessário anexar pelo menos um documento.';
-            }
-            if (!termsAccepted.value) {
-                errors.value.termsAccepted = 'Você deve aceitar os termos.';
-            }
-
+            if (!form.fullName) errors.value.fullName = 'O nome completo é obrigatório.';
+            if (!form.email) errors.value.email = 'O e-mail é obrigatório.';
+            if (!form.cpf) errors.value.cpf = 'O CPF é obrigatório.';
+            if (!form.matricula) errors.value.matricula = 'A matrícula é obrigatória.';
+            if (!form.unidade) errors.value.unidade = 'A unidade de atuação é obrigatória.';
+            if (!form.description) errors.value.description = 'A descrição é obrigatória.';
+            if (!form.files.length) errors.value.files = 'É necessário anexar pelo menos um documento.';
+            if (!form.termsAccepted) errors.value.termsAccepted = 'Você deve aceitar os termos.';
             return Object.keys(errors.value).length === 0;
         };
 
-        const submitForm = () => {
+         const submitForm = async () => {
             if (validateForm()) {
-                router.push('/user/sucess');
+                isSubmitting.value = true;
+
+                const formData = new FormData();
+                formData.append('fullName', form.fullName);
+                formData.append('email', form.email);
+                formData.append('cpf', form.cpf);
+                formData.append('matricula', form.matricula);
+                formData.append('unidade_atuacao', form.unidade);
+                formData.append('description', form.description);
+                
+                form.files.forEach(file => {
+                    formData.append('documentos', file);
+                });
+
+                try {
+                    await axios.post('/api/recursos/criar/', formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                            'Authorization': `Bearer ${localStorage.getItem('accessToken')}` 
+                        }
+                    });
+
+                    router.push({ name: 'status' });
+
+                } catch (error) {
+                    console.error("Erro ao criar recurso:", error);
+                    alert('Ocorreu um erro ao enviar seu recurso. Tente novamente.');
+                } finally {
+                    isSubmitting.value = false;
+                }
             }
         };
 
         return {
-            isSidebarMinimized, files, description, termsAccepted, errors, handleFileUpload, removeFile, submitForm,
+            isSidebarMinimized, 
+            form, 
+            errors,
+            isSubmitting, 
+            handleFileUpload, 
+            removeFile, 
+            submitForm,
         };
     }
 };
