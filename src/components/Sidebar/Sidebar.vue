@@ -163,6 +163,7 @@ import {
 import axios from 'axios'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { getUserType, clearUserType } from '@/service/userType'
 
 const routes = {
   'admin': [
@@ -265,7 +266,22 @@ onMounted(() => {
 const emit = defineEmits(['update:isSidebarMinimized'])
 
 const filteredNavigation = computed(() => {
-  return routes[props.route] || []
+  const userType = getUserType();
+  
+  // If no user type is stored, default to user navigation
+  if (!userType) {
+    return routes['user'] || [];
+  }
+  
+  // Return appropriate navigation based on user type
+  if (userType === 'admin') {
+    // For admin users, show both admin and admin-panel routes
+    const adminRoutes = [...(routes['admin'] || []), ...(routes['admin-panel'] || [])];
+    return adminRoutes;
+  } else {
+    // For regular users, show only user routes
+    return routes['user'] || [];
+  }
 })
 
 const route = useRoute(); 
@@ -303,6 +319,7 @@ function logout() {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('isAuthenticated');
+    clearUserType(); // Clear the user type from the service
 
     window.location.href = '/';
 }
