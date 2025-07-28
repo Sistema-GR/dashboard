@@ -5,7 +5,7 @@
             <p>Escolha um opção abaixo</p>
 
             <div>
-                <PrimaryButton value="Criar nova alocação"/>
+                <PrimaryButton class="bg-blue-800" value="Criar nova alocação"/>
             </div>
 
         </div>

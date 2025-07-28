@@ -1,6 +1,11 @@
 <template>
-  <nav class="flex items-center justify-between bg-gray-50 py-4 px-6 shadow-md w-full z-50 lg:fixed" aria-label="Breadcrumb">
-      <button @click="goBack" class="hover:underline">Voltar</button>
+  <nav class="grid grid-cols-3 items-center bg-blue-800 py-4 px-6 shadow-md w-full z-50" aria-label="Breadcrumb">
+      <div class="flex justify-start">
+        <button @click="goBack" class="text-white hover:underline text-sm sm:text-base">Voltar</button>
+      </div>
+      <div class="flex justify-center">
+        <h1 class="text-30 text-white text-center font-black uppercase tracking-wide">{{ titlePag }}</h1>
+      </div>
   </nav>
 </template>
 
@@ -12,6 +17,10 @@ const props = defineProps({
   pages: {
     type: Array,
     required: true,
+  },
+  titlePag: {
+    type: String,
+    default: '',
   },
 });
 

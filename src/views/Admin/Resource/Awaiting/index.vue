@@ -1,5 +1,5 @@
 <template>
-    <Whiteboard title="" class="-translate-y-20" :isSidebarMinimized="isSidebarMinimized" :hideBreadcrumbs="true">
+    <Whiteboard title="Aguardando Aprovação" class="-translate-y-20" :isSidebarMinimized="isSidebarMinimized" :hideBreadcrumbs="true">
       <div class="flex flex-col w-full 4 gap-10 lg:flex-row">
 
             <div class="flex-1 px-2 border rounded-lg shadow-lg">

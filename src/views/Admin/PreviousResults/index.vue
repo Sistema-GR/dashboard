@@ -1,5 +1,5 @@
 <template>
-  <Whiteboard title="Cálculo Anteriores" :isSidebarMinimized="isSidebarMinimized">
+  <Whiteboard title="Cálculos Anteriores" :isSidebarMinimized="isSidebarMinimized">
     <!-- Seção para exibir os anos -->
     <div v-for="category in categories" :key="category.name" class="mb-8 w-full">
       <!-- Exibindo o ano -->
