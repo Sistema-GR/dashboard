@@ -1,5 +1,5 @@
 <template>
-    <Whiteboard title="Escolha a opção abaixo" :isSidebarMinimized="isSidebarMinimized">
+    <Whiteboard title="Selecionar Cálculo" :isSidebarMinimized="isSidebarMinimized">
       <div class="flex flex-col md:flex-row w-full items-center justify-center gap-6 p-8">
         <PrimaryButton 
           value="Criar Novo Cálculo"

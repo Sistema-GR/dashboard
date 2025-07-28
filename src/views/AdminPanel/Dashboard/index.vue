@@ -2,7 +2,7 @@
   <Whiteboard title="Dashboard" :isSidebarMinimized="isSidebarMinimized">
     <!-- Total Recebe, Total Não Recebe e Total a Pagar -->
     <div class="w-full py-6">
-      <div class="flex flex-wrap justify-center gap-8  xl:justify-between">
+      <div class="flex flex-wrap justify-center gap-8 xl:justify-between">
         <div v-for="(card, index) in cards" :key="index" class="flex flex-col bg-gradient-to-r from-gray-100 to-gray-300 border border-gray-200 text-gray-800 rounded-lg shadow-md p-6 min-h-[160px] flex-1 min-w-[280px] max-w-[100%]">
           <div class="flex flex-row justify-between items-center mb-4">
             <p class="text-lg font-semibold leading-tight">{{ card.title }}</p>

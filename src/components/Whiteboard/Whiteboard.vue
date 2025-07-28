@@ -4,6 +4,7 @@
       class="flex w-full" 
       v-if="showBreadcrumbs && !hideBreadcrumbs" 
       :pages="breadcrumbPages" 
+      :titlePag="title"
     />
     <div>
       <div class="flex flex-row gap-8 pt-10 items-center">

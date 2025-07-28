@@ -1,6 +1,6 @@
 
 <template>
-  <Whiteboard title="Painel do Usuário" :isSidebarMinimized="isSidebarMinimized">
+  <Whiteboard title="Painel do Usuário" :isSidebarMinimized="isSidebarMinimized" :hideBreadcrumbs="false">
     <div class="flex w-full p-5">
       <h1 class="text-center w-full font-semibold text-15 text-gray-800">
         Selecione a versão que será exibida no painel para todos os usuários
