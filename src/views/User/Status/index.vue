@@ -80,16 +80,12 @@ export default {
             isLoading.value = true;
             error.value = null;
             try {
-                // **Ação Principal: Buscar dados do recurso na API**
-                // Nota: '/recursos/meu-status/' é uma rota de exemplo.
-                // O backend deve identificar o usuário pelo token e retornar seu recurso ativo.
                 const response = await axios.get('/recursos/meu-status/', {
-                     headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+                     headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
                 });
                 resource.value = response.data;
             } catch (err) {
                 if (err.response && err.response.status === 404) {
-                    // Se a API retornar 404, significa que não há recurso para este usuário.
                     resource.value = null; 
                 } else {
                     console.error("Erro ao buscar status do recurso:", err);
