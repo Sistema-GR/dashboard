@@ -1,9 +1,6 @@
 <template>
-<<<<<<< HEAD
-    <Whiteboard title="." :isSidebarMinimized="isSidebarMinimized" class="-translate-y-12 ">
-=======
     <Whiteboard title="." :isSidebarMinimized="isSidebarMinimized" class="-translate-y-12">
->>>>>>> e10cc58ab15f04ab5fb9536dae74304c1d1039ce
+
         <div class="flex w-full items-center justify-center bg-gradient-to-r from-azure-800 to-primary-900 -translate-y-3">
             <p class="text-white text-3xl py-5 uppercase font-bold w-full text-center">Painel da Gratificação</p>
         </div>
