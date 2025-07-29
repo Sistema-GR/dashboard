@@ -1,5 +1,5 @@
 <template>
-    <Whiteboard title="." :isSidebarMinimized="isSidebarMinimized" class="-translate-y-12">
+    <Whiteboard title="." :isSidebarMinimized="isSidebarMinimized" class="-translate-y-3">
 
         <div class="flex w-full items-center justify-center bg-gradient-to-r from-azure-800 to-primary-900 -translate-y-3">
             <p class="text-white text-3xl py-5 uppercase font-bold w-full text-center">Painel da Gratificação</p>
@@ -64,11 +64,7 @@
                                 <p class="text-[20px] font-bold text-white">Matrícula {{ item?.dados?.matricula }}</p>
                                 <ChevronDownIcon class="w-6 h-auto transform text-white transition-transform " :class="{'rotate-180': open}" />
                             </DisclosureButton>
-<<<<<<< HEAD
-                            <DisclosurePanel class=" mx-5">
-=======
                             <DisclosurePanel class=" mx-8 ">
->>>>>>> 6cec35611c08decb2767354d0f67b52ff6c643d2
 
                                 <div class="overflow-x-auto w-full mt-10">
                                     <table class="min-w-full border-collapse rounded-lg shadow-lg">
