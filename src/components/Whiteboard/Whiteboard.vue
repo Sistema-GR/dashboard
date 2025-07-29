@@ -1,5 +1,5 @@
 <template>
-  <main :class="['flex flex-col overflow-hidden transition-all bg-[#edf8f9]', sidebarClass]">
+  <main :class="['flex flex-col overflow-hidden transition-all bg-white', sidebarClass]">
     <Breadcrumbs 
       class="flex w-full" 
       v-if="showBreadcrumbs && !hideBreadcrumbs" 
