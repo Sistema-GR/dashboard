@@ -63,7 +63,7 @@
                                 <p class="text-lg font-medium">Matrícula {{ item?.dados?.matricula }}</p>
                                 <ChevronDownIcon class="w-6 h-auto transform transition-transform ${open ? 'rotate-180' : 'rotate-0'}" />
                             </DisclosureButton>
-                            <DisclosurePanel class="w-full">
+                            <DisclosurePanel class=" mx-5">
 
                                 <div class="overflow-x-auto w-full py-5 mt-5">
                                     <table class="min-w-full border-collapse rounded-lg shadow-lg">

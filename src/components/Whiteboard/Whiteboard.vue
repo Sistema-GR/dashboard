@@ -7,7 +7,7 @@
       :titlePag="title"
     />
     <div>
-      <div class="flex flex-row gap-8 pt-10 items-center">
+      <div class="flex flex-row gap-8 items-center">
       </div>
       <div :class="['flex flex-col items-center w-full mt-5 rounded-md', customClass]">
         <slot></slot>

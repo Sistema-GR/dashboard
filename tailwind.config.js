@@ -12,6 +12,7 @@ module.exports = {
       fontSize: {
         '15': '15px',
         '20': '20px',
+        '25': '25px',
         '30': '30px'
       },
       colors: {

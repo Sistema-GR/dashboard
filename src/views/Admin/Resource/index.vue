@@ -1,10 +1,9 @@
 <template>
     <Sidebar :route="'admin'" @update:isSidebarMinimized="handleSidebarMinimized" class="z-50"/>
-  
     <Whiteboard title="Recurso" class="overflow-auto z-40 relative" :isSidebarMinimized="isSidebarMinimized">
-        
-        <div class="w-full py-3">
-          <div class="grid grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-3 lg:grid-cols-3 lg:gap-3 xl:grid-cols-6 xl:gap-4 justify-items-center">
+
+        <div class="w-full py-3 px-4">
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
             <Block title="Novo" number="100" customClass="bg-blue-500 hover:bg-blue-600 w-full max-w-xs min-w-3xs" @click="navigateTo('/resource/new')" />
             <Block title="Em Progresso" number="20" customClass="bg-orange-500 hover:bg-orange-600 w-full max-w-xs min-w-3xs" @click="navigateTo('/resource/inprogress')" />
             <Block title="Pendente" number="36" customClass="bg-yellow-500 hover:bg-yellow-600 w-full max-w-xs min-w-3xs" @click="navigateTo('/resource/awaiting')" />
@@ -16,11 +15,11 @@
     
     </Whiteboard>
   
-    <router-view class="z-40 -translate-y-4 sm:-translate-y-5 md:-translate-y-20"></router-view>
+    <router-view class="z-40 "></router-view>
   </template>
   
 <script>
-import { inject } from 'vue'
+import { inject, ref, provide } from 'vue'
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import Block from '@/views/Admin/Resource/components/Block/index.vue'
 import infoCard from '@/views/Admin/Resource/components/infoCard/index.vue'
@@ -33,16 +32,24 @@ export default {
     components: {Whiteboard, Block, infoCard, FunnelIcon, Sidebar},
 
     setup() {
-    const isSidebarMinimized = inject('isSidebarMinimized')
+    const isSidebarMinimized = ref(false)
     const router = useRouter()
 
     function navigateTo(route) {
         router.push(route)
     }
 
+    function handleSidebarMinimized(value) {
+        isSidebarMinimized.value = value
+    }
+
+    // Fornece o estado do sidebar para os componentes filhos
+    provide('isSidebarMinimized', isSidebarMinimized)
+
     return {
       isSidebarMinimized,
       navigateTo,
+      handleSidebarMinimized,
     }
   }
 }

@@ -11,9 +11,9 @@
       <!-- Cálculo -->
       <Disclosure v-slot="{ open }">
         <div>
-          <DisclosureButton class="w-full flex justify-left items-center bg-blue-800 text-white px-4 py-4 pl-8 text-lg font-semibold gap-2">
+          <DisclosureButton class="w-full flex justify-left items-center bg-[#4168b5] text-white px-4 py-4 pl-8 text-lg font-semibold gap-2">
             <span class="text-20">Cálculo</span>
-            <ChevronUpIcon class="w-8 h-8 transition-transform" :class="{ 'rotate-180': open }" />
+            <ChevronDownIcon class="w-8 h-8 transition-transform" :class="{ 'rotate-180': open }" />
           </DisclosureButton>
           <DisclosurePanel class="bg-white px-8 py-4">
             <div
@@ -43,9 +43,9 @@
       <!-- Recurso -->
       <Disclosure v-slot="{ open }">
         <div>
-          <DisclosureButton class="w-full flex justify-left items-center bg-blue-800 text-white px-4 py-4 pl-8 text-20 font-semibold gap-2">
+          <DisclosureButton class="w-full flex justify-left items-center bg-[#4168b5] text-white px-4 py-4 pl-8 text-20 font-semibold gap-2">
             <span class="text-20">Recurso</span>
-            <ChevronUpIcon class="w-8 h-8 transition-transform" :class="{ 'rotate-180': open }" />
+            <ChevronDownIcon class="w-8 h-8 transition-transform" :class="{ 'rotate-180': open }" />
           </DisclosureButton>
           <DisclosurePanel class="bg-white px-8 py-4">
             <div
@@ -102,7 +102,7 @@
 <script>
 import { ref, inject, onMounted } from 'vue'
 import { FolderIcon } from '@heroicons/vue/24/outline'
-import { ChevronUpIcon } from '@heroicons/vue/20/solid'
+import { ChevronDownIcon } from '@heroicons/vue/20/solid'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue'
 import Toggle from '@/components/Toggle/Toggle.vue'
@@ -114,7 +114,7 @@ export default {
     Whiteboard,
     Toggle,
     FolderIcon,
-    ChevronUpIcon,
+    ChevronDownIcon,
     Disclosure,
     DisclosureButton,
     DisclosurePanel
