@@ -132,7 +132,7 @@
 </template>
 
 <script>
-import { inject, ref, reactive } from 'vue';
+import { inject, ref, reactive, onMounted } from 'vue';
 import { ArrowDownTrayIcon, PaperClipIcon, XMarkIcon } from "@heroicons/vue/24/outline";
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
@@ -160,6 +160,34 @@ export default {
         
         const errors = ref({});
         const isSubmitting = ref(false);
+        const isLoadingUserData = ref(true);
+
+        const fetchUserData = async () => {
+            isLoadingUserData.value = true;
+            try {
+                const response = await axios.get('/auth/user-info/', {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+                });
+
+                 console.log("DADOS RECEBIDOS DA API USER-INFO:", response.data);
+
+
+                const userData = response.data;
+
+                form.nome_completo = userData.first_name + ' ' + userData.last_name || '';
+                form.email = userData.email || '';
+                form.cpf = userData.cpf || '';
+                form.matricula = userData.employeeCode || '';
+                
+
+            } catch (error) {
+                console.error("Erro ao buscar dados do usuário:", error);
+                alert("Não foi possível carregar seus dados. Por favor, recarregue a página.");
+            } finally {
+                isLoadingUserData.value = false;
+            }
+        };
+        onMounted(fetchUserData);
 
         const handleFileUpload = (event) => {
             form.files = Array.from(event.target.files);
@@ -229,6 +257,7 @@ export default {
             form, 
             errors,
             isSubmitting, 
+            isLoadingUserData,
             handleFileUpload, 
             removeFile, 
             submitForm,
