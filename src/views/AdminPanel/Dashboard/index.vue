@@ -1,20 +1,20 @@
 <template>
   <Whiteboard title="Dashboard" :isSidebarMinimized="isSidebarMinimized">
     <!-- Total Recebe, Total Não Recebe e Total a Pagar -->
-    <div class="grid w-full py-8 mx-8">
-      <div class="flex flex-wrap justify-center gap-8 xl:justify-between mx-8">
+    <div class="grid w-full py-8 px-4 sm:px-6 md:px-8">
+      <div class="flex flex-wrap justify-center gap-6 sm:gap-8 xl:justify-between px-2 sm:px-4 md:px-8">
         <div
           v-for="(card, index) in cards"
           :key="index"
-          class="flex flex-col rounded-lg shadow-md overflow-hidden flex-1 min-w-[280px] max-w-[100%] border border-gray-200"
+          class="flex flex-col rounded-lg shadow-md overflow-hidden flex-1 min-w-[260px] sm:min-w-[300px] md:max-w-[48%] lg:max-w-[32%] border border-gray-200"
         >
           <!-- Cabeçalho -->
           <div
             class="flex items-center justify-between px-4 py-2 text-white text-sm font-semibold"
             :class="[
-              index === 0 ? 'bg-blue-700' :
-              index === 1 ? 'bg-blue-500' :
-              'bg-blue-900'
+              index === 0 ? 'bg-[#3459A2]' :
+              index === 1 ? 'bg-[#3459A2]' :
+              'bg-[#003966]'
             ]"
           >
             <span>{{ card.title }}</span>
@@ -33,17 +33,17 @@
     <div
       v-for="(section, index) in updatedChartSections"
       :key="index"
-      class="w-full bg-white p-6 rounded-lg shadow-lg mt-6 border border-gray-200"
+      class="w-full bg-white p-4 sm:p-6 rounded-lg shadow-lg mt-6 border border-gray-200"
     >
-      <div class="bg-blue-800 text-white text-center py-2 rounded-md mb-6 mx-4 font-bold text-lg">
+      <div class="bg-[#3459A2] text-white text-center py-3.5 rounded-md mb-6 px-2 sm:mx-4 font-bold text-lg">
         {{ section.title }}
       </div>
-      <div class="space-y-4 mx-4">
-        <div v-for="(data, idx) in section.data" :key="idx" class="flex items-center gap-8">
-          <span class="w-1/4 text-gray-800 font-semibold">{{ data.label }}</span>
-          <div class="flex flex-row w-3/4 bg-gray-200 rounded-lg h-6 overflow-hidden items-center">
+      <div class="space-y-3.5 px-2 sm:px-4">
+        <div v-for="(data, idx) in section.data" :key="idx" class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-8">
+          <span class="w-full sm:w-1/4 text-gray-800 font-semibold">{{ data.label }}</span>
+          <div class="flex flex-row w-full sm:w-3/4 bg-gray-200 rounded-lg h-6 overflow-hidden items-center">
             <div
-              class="bg-blue-700 h-full text-white text-xs px-2 flex items-center justify-start font-semibold"
+              class="bg-[#3459A2] h-full text-white text-xs px-2 flex items-center justify-start font-semibold"
               :style="{ width: data.percentage + '%' }"
             ></div>
             <div class="text-xs text-black font-bold ml-3 whitespace-nowrap">
@@ -52,18 +52,18 @@
           </div>
         </div>
       </div>
-      <div class="mt-6 border-t pt-4">
-        <p class="text-base font-semibold text-blue-900">TOTAL GERAL: {{ section.total }} pessoas</p>
+      <div class="mt-6 border-t pt-4 px-2 sm:px-4">
+        <p class="text-base font-semibold text-[#3459A2]">TOTAL GERAL: {{ section.total }} pessoas</p>
       </div>
     </div>
 
     <!-- Seção de Downloads -->
-    <div class="w-full p-6 bg-white border border-gray-200 rounded-lg shadow-lg my-6">
+    <div class="w-full p-4 sm:p-6 bg-white border border-gray-200 rounded-lg shadow-lg my-6">
       <h2 class="text-xl font-semibold mb-4 text-gray-800">Relatório Final</h2>
       <div
         v-for="(file, index) in files"
         :key="index"
-        class="flex items-center justify-between bg-gray-100 border border-gray-200 rounded-lg p-4 mb-4"
+        class="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-gray-100 border border-gray-200 rounded-lg p-4 mb-4"
       >
         <div class="flex items-center space-x-4">
           <DocumentDuplicateIcon class="h-8 w-8 text-gray-500" />
@@ -74,7 +74,7 @@
         </div>
         <button
           @click="downloadCriteriosCSV"
-          class="flex items-center text-blue-600 hover:text-blue-800 font-semibold"
+          class="flex items-center text-blue-600 hover:text-blue-800 font-semibold mt-4 sm:mt-0"
         >
           <ArrowDownTrayIcon class="h-5 w-5 mr-2" />
           <span class="text-sm">Baixar CSV</span>
@@ -83,19 +83,19 @@
     </div>
 
     <!-- Arquivos importados -->
-    <div class="flex flex-col w-full mt-3 bg-white border border-gray-200 p-6 rounded-lg shadow-lg mb-5">
+    <div class="flex flex-col w-full mt-3 bg-white border border-gray-200 p-4 sm:p-6 rounded-lg shadow-lg mb-5">
       <h2 class="text-xl font-semibold mb-4 text-gray-800">Arquivos importados</h2>
       <p class="text-gray-700 mb-4">
         Aqui você pode gerenciar os arquivos importados. Clique no botão abaixo para visualizar os detalhes.
       </p>
-      <button class="self-start bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300"
+      <button class="self-start bg-[#3459A2] hover:bg-[#203661] text-white font-semibold py-2 px-4 rounded-lg transition duration-300"
         @click="$router.push('files-manager')">
         Visualizar arquivos
       </button>
     </div>
 
     <!-- Informações sobre a versão -->
-    <div class="flex flex-col w-full mt-3 bg-white border border-gray-200 p-6 rounded-lg shadow-lg">
+    <div class="flex flex-col w-full mt-3 bg-white border border-gray-200 p-4 sm:p-6 rounded-lg shadow-lg">
       <h2 class="text-xl font-semibold mb-4 text-gray-800">Informações sobre a Versão</h2>
       <div class="space-y-4">
         <div v-for="(field, index) in version" :key="index" class="flex justify-between">
@@ -106,7 +106,7 @@
       <div class="mt-6 text-right">
         <button
           @click="navigateHome"
-          class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-300"
+          class="bg-[#3459A2] text-white px-6 py-2 rounded-lg hover:bg-[#203661] transition duration-300"
         >
           Sair
         </button>
@@ -114,7 +114,6 @@
     </div>
   </Whiteboard>
 </template>
-
 
 
 <script>
