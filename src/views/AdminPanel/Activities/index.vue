@@ -1,6 +1,6 @@
 <template>
     <Whiteboard title="Atividades" :isSidebarMinimized="isSidebarMinimized">
-        <div class="flex w-full items-start justify-start px- mt-4">
+        <div class="flex w-full items-start justify-start pl-10 mt-4">
             <Search @search="handleSearch" />
         </div>
         <div class="w-full pb-5 capitalize">

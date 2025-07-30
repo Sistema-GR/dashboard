@@ -1,6 +1,6 @@
 <template>
   <Whiteboard title="Selecionar Data Version" :isSidebarMinimized="isSidebarMinimized">
-    <div class="flex flex-col w-full items-start justify-start mt-5 pb-5 space-y-6">
+    <div class="flex flex-col w-full items-start justify-start mt-5 pb-5 px-10 space-y-6">
       <!-- Dropdown para selecionar a versão -->
       <label for="version" class="text-lg font-semibold">Selecione uma versão:</label>
       <div class="w-full p-3 shadow-lg rounded-lg bg-white">

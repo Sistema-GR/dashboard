@@ -47,7 +47,7 @@
 
       <div :class="['fixed inset-y-0 z-50 flex flex-col transition-all duration-300', isSidebarMinimized ? 'w-20 overflow-hidden' : 'w-60', 'lg:flex hidden']">
           <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-[#003965] px-6">
-              <div class="flex py-5 shrink-0 items-center justify-center border-b border-white">
+              <div class="flex py-5 shrink-0 items-center justify-center">
                   <img v-if="!isSidebarMinimized" @click="goBack" class="h-14 w-auto cursor-pointer" src="../../assets/images/logo-horinzontal.png" alt="Your Company" />
                   <img v-if="isSidebarMinimized" @click="goBack" class="h-14 w-auto cursor-pointer" src="../../assets/images/logo.png" alt="Your Company" />
               </div>

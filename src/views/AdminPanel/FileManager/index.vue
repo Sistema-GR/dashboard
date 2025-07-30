@@ -1,6 +1,6 @@
 <template>
   <Whiteboard title="Gerenciamento de Arquivos" :isSidebarMinimized="isSidebarMinimized">
-    <div class="flex w-full flex-col gap-5 my-3">
+    <div class="flex w-full flex-col gap-5 my-3 pl-10">
       <!-- Seção de Arquivos Processados -->
       <div>
         <div class="flex items-center justify-between cursor-pointer bg-gray-100 p-3 rounded-lg" @click="toggleProcessed">

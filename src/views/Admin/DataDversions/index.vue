@@ -7,7 +7,7 @@
       </h1>
     </div>
 
-    <div class="flex flex-col gap-1 w-full pb-10">
+    <div class="flex flex-col gap-4 w-full pb-10">
       <!-- Cálculo -->
       <Disclosure v-slot="{ open }">
         <div>
