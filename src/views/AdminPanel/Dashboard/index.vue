@@ -1,8 +1,8 @@
 <template>
   <Whiteboard title="Dashboard" :isSidebarMinimized="isSidebarMinimized">
     <!-- Total Recebe, Total Não Recebe e Total a Pagar -->
-    <div class="w-full py-6">
-      <div class="flex flex-wrap justify-center gap-8 xl:justify-between">
+    <div class="grid w-full py-8 mx-8">
+      <div class="flex flex-wrap justify-center gap-8 xl:justify-between mx-8">
         <div
           v-for="(card, index) in cards"
           :key="index"
@@ -35,10 +35,10 @@
       :key="index"
       class="w-full bg-white p-6 rounded-lg shadow-lg mt-6 border border-gray-200"
     >
-      <div class="bg-blue-800 text-white text-center py-2 rounded-md mb-6 font-bold text-lg">
+      <div class="bg-blue-800 text-white text-center py-2 rounded-md mb-6 mx-4 font-bold text-lg">
         {{ section.title }}
       </div>
-      <div class="space-y-4">
+      <div class="space-y-4 mx-4">
         <div v-for="(data, idx) in section.data" :key="idx" class="flex items-center gap-8">
           <span class="w-1/4 text-gray-800 font-semibold">{{ data.label }}</span>
           <div class="flex flex-row w-3/4 bg-gray-200 rounded-lg h-6 overflow-hidden items-center">
@@ -46,7 +46,7 @@
               class="bg-blue-700 h-full text-white text-xs px-2 flex items-center justify-start font-semibold"
               :style="{ width: data.percentage + '%' }"
             ></div>
-            <div class="text-xs text-blue-900 font-bold ml-2 whitespace-nowrap">
+            <div class="text-xs text-black font-bold ml-3 whitespace-nowrap">
               {{ data.percentage }}% ({{ data.value }} pessoas)
             </div>
           </div>
