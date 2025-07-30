@@ -1,7 +1,7 @@
 <template>
   <nav class="grid grid-cols-3 items-center bg-[#3459a2] py-4 px-6 shadow-md w-full z-50" aria-label="Breadcrumb">
       <div class="flex justify-start">
-        <button @click="goBack" class="text-white font-medium hover:underline text-sm sm:text-base">Voltar</button>
+        <button @click="goBack" class="flex items-center gap-2 text-white font-medium hover:underline text-sm sm:text-base"><img :src="voltarIcon" alt="Voltar" class="w-4 h-4" />Voltar</button>
       </div>
       <div class="flex justify-center">
         <h1 class="text-25 text-white text-center font-black uppercase tracking-wide sm:text-30 whitespace-nowrap">{{ titlePag }}</h1>
@@ -11,7 +11,8 @@
 
 <script setup>
 import { defineProps } from 'vue';
-import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router';
+import voltarIcon from '@/assets/images/voltar.png'
 
 const props = defineProps({
   pages: {
