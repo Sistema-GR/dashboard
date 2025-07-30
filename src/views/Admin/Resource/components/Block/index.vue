@@ -7,7 +7,7 @@
         </div>
         
         <!-- Conteúdo inferior branco -->
-        <div class="bg-[#e3f0ff] px-4 py-4 flex items-center justify-center">
+        <div class="bg-[#e3f0ff] px-10 py-4 flex items-center justify-center">
             <span class="text-black text-15 font-medium">{{ number }}</span>
         </div>
 

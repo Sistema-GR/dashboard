@@ -1,9 +1,9 @@
 <template>
     <div class="w-full bg-[#e3f0ff] border rounded-[10px] p-4 shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer">
         <router-link class="w-full" to="info">
-            <div class="flex items-center justify-between w-full">
+            <div class="flex gap-4 items-center justify-between w-full flex-wrap lg:flex-nowrap">
                 <!-- Avatar e Informações -->
-                <div class="flex items-center gap-4">
+                <div class="flex items-center gap-4 w-full sm:w-auto">
                     <div class="flex-shrink-0">
                         <div class="w-14 h-14 bg-white rounded-[10px] flex items-center justify-center">
                             <UserIcon class="w-12 h-12 text-[#003966]"/>

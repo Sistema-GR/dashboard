@@ -5,7 +5,7 @@
             <p>Escolha um opção abaixo</p>
 
             <div>
-                <PrimaryButton class="bg-blue-800" value="Criar nova alocação"/>
+                <PrimaryButton customColor="bg-[#4168b5] px-8 py-4 shadow-md hover:shadow-lg" value="Criar nova alocação"/>
             </div>
 
         </div>

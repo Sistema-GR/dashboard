@@ -75,23 +75,6 @@
                             >
                                 {{ salvando ? 'Salvando...' : 'Salvar' }}
                             </button>
-                            
-                            <!-- Avatar do usuário -->
-                            <div class="relative">
-                                <div class="w-12 h-12 bg-gray-200 rounded-full overflow-hidden border-2 border-gray-300">
-                                    <img 
-                                        v-if="userAvatar" 
-                                        :src="userAvatar" 
-                                        alt="Avatar do usuário" 
-                                        class="w-full h-full object-cover"
-                                    />
-                                    <div v-else class="w-full h-full bg-gray-300 flex items-center justify-center">
-                                        <UserIcon class="w-6 h-6 text-gray-500" />
-                                    </div>
-                                </div>
-                                <!-- Indicador de notificação -->
-                                <div class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white"></div>
-                            </div>
                         </div>
 
                     </form>

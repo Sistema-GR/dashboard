@@ -9,7 +9,7 @@
     <div>
       <div class="flex flex-row gap-8 items-center">
       </div>
-      <div :class="['flex flex-col items-center w-full mt-5 rounded-md', customClass]">
+      <div :class="['flex flex-col items-center w-full rounded-md', customClass]">
         <slot></slot>
       </div>
     </div>

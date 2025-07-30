@@ -15,7 +15,7 @@
             <span class="text-20">Cálculo</span>
             <ChevronDownIcon class="w-8 h-8 transition-transform" :class="{ 'rotate-180': open }" />
           </DisclosureButton>
-          <DisclosurePanel class="bg-white px-8 py-4">
+          <DisclosurePanel class="bg-white px-10 py-4">
             <div
               v-for="(versao, index) in versoesCalculo"
               :key="versao.id"
@@ -47,7 +47,7 @@
             <span class="text-20">Recurso</span>
             <ChevronDownIcon class="w-8 h-8 transition-transform" :class="{ 'rotate-180': open }" />
           </DisclosureButton>
-          <DisclosurePanel class="bg-white px-8 py-4">
+          <DisclosurePanel class="bg-white px-10 py-4">
             <div
               v-for="(versao, index) in versoesRecurso"
               :key="versao.id"

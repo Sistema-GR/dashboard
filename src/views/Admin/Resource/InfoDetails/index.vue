@@ -1,16 +1,5 @@
 <template>
-    <Whiteboard title="" class="-translate-y-20" :isSidebarMinimized="isSidebarMinimized" :hideBreadcrumbs="true">
-
-        <div class="flex flex-row w-full items-center justify-between border-b-2 py-2 rounded-t-md shadow-md mt-10 lg:mt-0" :class="resourceBgColor">
-            <p class="text-white font-medium text-xl mx-2 pt-2">Recurso</p>
-            <select class="mx-2 text-white" :class="resourceBgColor" v-model="selectedStatus" @change="updateResourceColor">
-                <option value="bg-blue-500">Novo</option>
-                <option value="bg-orange-500">Em Progresso</option>
-                <option value="bg-yellow-500">Pendente</option>
-                <option value="bg-red-500">Reaberto</option>
-                <option value="bg-gray-500">Cancelado</option>
-            </select>
-        </div>
+    <Whiteboard title="" class="px-10 pb-20 lg:ml-10" :isSidebarMinimized="isSidebarMinimized" :hideBreadcrumbs="true">
 
         <div class="flex flex-row items-center justify-between w-full py-3 mt-1">
           <div class="flex flex-col w-full justify-between md:flex-row items-center border rounded-lg p-4 shadow-md bg-white hover:shadow-xl transition-shadow duration-300">

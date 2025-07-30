@@ -88,10 +88,8 @@
       <p class="text-gray-700 mb-4">
         Aqui você pode gerenciar os arquivos importados. Clique no botão abaixo para visualizar os detalhes.
       </p>
-      <button
-        class="self-start bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300"
-        @click="$router.push('files-manager')"
-      >
+      <button class="self-start bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-300"
+        @click="$router.push('files-manager')">
         Visualizar arquivos
       </button>
     </div>
