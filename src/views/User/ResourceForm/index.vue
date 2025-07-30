@@ -1,7 +1,7 @@
 <template>
   <Whiteboard title="Formulário de Recurso" :isSidebarMinimized="isSidebarMinimized">
     <!-- Alerta superior no topo -->
-   <div class="bg-blue-100 text-black flex items-center gap-4 px-6 pl-20 py-4 w-full rounded-md mx-auto mb-6 -mt-5">
+   <div class="bg-blue-100 text-black flex items-center gap-4 px-6 pl-20 py-4 w-full rounded-md mx-auto mb-6">
      <!-- Ícone de exclamação -->
     <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
     <circle cx="12" cy="12" r="10" stroke="black" stroke-width="2" fill="transparent"/>
