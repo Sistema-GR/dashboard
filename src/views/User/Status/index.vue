@@ -41,12 +41,12 @@
 <script>
 import { UserIcon, PencilSquareIcon } from "@heroicons/vue/24/outline";
 import Whiteboard from "@/components/Whiteboard/Whiteboard.vue";
-import Badges from "@/components/Badges/Badges.vue";
+import Badge from "@/components/Badges/Badges.vue";
 import { inject } from 'vue';
 
 export default {
     name: "Status",
-    components: { UserIcon, Whiteboard, Badges, PencilSquareIcon },
+    components: { UserIcon, Whiteboard, Badge, PencilSquareIcon },
     setup() {
         const isSidebarMinimized = inject('isSidebarMinimized');
 
