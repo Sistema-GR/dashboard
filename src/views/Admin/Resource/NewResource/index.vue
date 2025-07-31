@@ -2,7 +2,7 @@
     <Whiteboard title="Novos Recursos" class="" :isSidebarMinimized="isSidebarMinimized" :hideBreadcrumbs="true">
       <div class="flex flex-col w-full lg:flex-row">
 
-            <div class="flex-1 rounded-lg shadow-lg">
+            <div class="flex-1 rounded-[10px] shadow-lg">
 
                 <div class="flex items-center justify-center bg-[#6fa3ef] p-4">
                     <p class="text-20 font-bold text-white">Novos</p>
@@ -16,11 +16,11 @@
                 </div>
 
                 <!-- Painel de filtros -->
-                <!-- <div v-if="showFilter" class="bg-gray-50 border-t border-gray-200 p-4 mx-3 mb-3 rounded-lg">
+                <!-- <div v-if="showFilter" class="bg-gray-50 border-t border-gray-200 p-4 mx-3 mb-3 rounded-[10px]">
                     <div class="space-y-3">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                            <select v-model="filters.status" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                            <label class="block text-15 font-medium text-gray-700 mb-1">Status</label>
+                            <select v-model="filters.status" class="w-full p-2 border border-gray-300 rounded-md text-15">
                                 <option value="">Todos</option>
                                 <option value="aberto">Aberto</option>
                                 <option value="em_analise">Em Análise</option>
@@ -28,14 +28,14 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Data</label>
-                            <input v-model="filters.date" type="date" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                            <label class="block text-15 font-medium text-gray-700 mb-1">Data</label>
+                            <input v-model="filters.date" type="date" class="w-full p-2 border border-gray-300 rounded-md text-15">
                         </div>
                         <div class="flex gap-2">
-                            <button @click="applyFilter" class="px-4 py-2 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600">
+                            <button @click="applyFilter" class="px-4 py-2 bg-blue-500 text-white rounded-md text-15 hover:bg-blue-600">
                                 Aplicar
                             </button>
-                            <button @click="clearFilter" class="px-4 py-2 bg-gray-500 text-white rounded-md text-sm hover:bg-gray-600">
+                            <button @click="clearFilter" class="px-4 py-2 bg-gray-500 text-white rounded-md text-15 hover:bg-gray-600">
                                 Limpar
                             </button>
                         </div>

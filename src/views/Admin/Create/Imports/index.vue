@@ -23,7 +23,7 @@
             <PrimaryButton
               :disabled="isUploading"
               @click="uploadFiles"
-              class="bg-blue-500 py-2 px-3 text-sm"
+              class="bg-blue-500 py-2 px-3 text-15"
               value="Enviar"
             />
             <Loading v-if="isUploading" />

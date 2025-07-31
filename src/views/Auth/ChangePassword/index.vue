@@ -38,11 +38,11 @@
             />
 
             <!-- Mensagem de Erro -->
-            <p v-if="errors.global" class="text-red-500 text-sm mt-1">{{ errors.global }}</p>
+            <p v-if="errors.global" class="text-red-500 text-15 mt-1">{{ errors.global }}</p>
 
             <!-- Link para Login -->
             <div class="w-full flex justify-center pt-3">
-              <router-link to="/" class="text-sm text-amber-50 hover:underline -translate-y-5">Possui login? Clique aqui</router-link>
+              <router-link to="/" class="text-15 text-amber-50 hover:underline -translate-y-5">Possui login? Clique aqui</router-link>
             </div>
           </div>
         </div>

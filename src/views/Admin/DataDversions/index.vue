@@ -11,7 +11,7 @@
       <!-- Cálculo -->
       <Disclosure v-slot="{ open }">
         <div>
-          <DisclosureButton class="w-full flex justify-left items-center bg-[#4168b5] text-white px-4 py-4 sm:pl-8 text-lg font-semibold gap-2">
+          <DisclosureButton class="w-full flex justify-left items-center bg-[#4168b5] text-white px-4 py-4 sm:pl-8 text-20 font-semibold gap-2">
             <span class="text-20">Cálculo</span>
             <ChevronDownIcon class="w-8 h-8 transition-transform" :class="{ 'rotate-180': open }" />
           </DisclosureButton>
@@ -79,7 +79,7 @@
       class="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center"
     >
       <div class="bg-white p-5 rounded-md shadow-lg max-w-sm w-full text-center">
-        <h3 class="text-lg font-semibold mb-4">Deseja realmente alterar a versão ativa?</h3>
+        <h3 class="text-20 font-semibold mb-4">Deseja realmente alterar a versão ativa?</h3>
         <div class="flex justify-around">
           <button
             @click="confirmToggle"

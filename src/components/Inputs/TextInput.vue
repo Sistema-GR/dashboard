@@ -16,7 +16,7 @@
       />
     </div>
 
-    <div v-if="error" class="text-sm font-medium text-label text-red-600 truncate">{{ error }}</div>
+    <div v-if="error" class="text-15 font-medium text-label text-red-600 truncate">{{ error }}</div>
   </div>
 </template>
 
