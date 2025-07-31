@@ -63,14 +63,43 @@
                       <li>
                           <ul role="list" class="-mx-2 space-y-1">
                               <li v-for="item in filteredNavigation" :key="item.name">
-                                  <router-link
-                                      :to="item.route"
-                                      class="['group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 transition-all duration-200',]"
-                                      :class="{ 'bg-white/30 text-white': $route.path === item.route, 'hover:bg-white/30 hover:text-white text-white': $route.path !== item.route }"
-                                    >
+                                <!-- If item has children, render as expandable -->
+                                <div v-if="item.children" class="relative">
+                                  <div
+                                    class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-white hover:bg-white/30 cursor-pointer select-none"
+                                    @click="isCalcMenuOpen = !isCalcMenuOpen"
+                                  >
                                     <component :is="item.icon" class="h-auto w-6 shrink-0 stroke-white" aria-hidden="true" />
                                     <span :class="isSidebarMinimized ? 'hidden' : ''">{{ item.name }}</span>
-                                  </router-link>
+                                    <ChevronDownIcon
+                                      :class="['w-4 h-auto ml-auto transition-transform', isCalcMenuOpen ? 'rotate-180' : '', isSidebarMinimized ? 'hidden' : '']"
+                                    />
+                                  </div>
+                                  <TransitionRoot as="template" :show="isCalcMenuOpen && !isSidebarMinimized">
+                                    <ul class="ml-6 mt-1 space-y-1">
+                                      <li v-for="child in item.children" :key="child.name">
+                                        <router-link
+                                          :to="child.route"
+                                          class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 transition-all duration-200"
+                                          :class="{ 'bg-white/30 text-white': $route.path === child.route, 'hover:bg-white/30 hover:text-white text-white': $route.path !== child.route }"
+                                        >
+                                          <component :is="child.icon" class="h-auto w-5 shrink-0 stroke-white" aria-hidden="true" />
+                                          <span>{{ child.name }}</span>
+                                        </router-link>
+                                      </li>
+                                    </ul>
+                                  </TransitionRoot>
+                                </div>
+                                <!-- Otherwise, render as normal link -->
+                                <router-link
+                                  v-else
+                                  :to="item.route"
+                                  class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 transition-all duration-200"
+                                  :class="{ 'bg-white/30 text-white': $route.path === item.route, 'hover:bg-white/30 hover:text-white text-white': $route.path !== item.route }"
+                                >
+                                  <component :is="item.icon" class="h-auto w-6 shrink-0 stroke-white" aria-hidden="true" />
+                                  <span :class="isSidebarMinimized ? 'hidden' : ''">{{ item.name }}</span>
+                                </router-link>
                               </li>
                           </ul>
                       </li>
@@ -89,7 +118,7 @@
                         </div>
 
                         <!-- Menu de opções do perfil -->
-                        <TransitionRoot as="template" :show="isProfileMenuOpen">
+                        <TransitionRoot as="template" :show="isProfileMenuOpen && !isSidebarMinimized">
                           <TransitionChild
                             as="div"
                             enter="transition ease-out duration-200"
@@ -128,7 +157,7 @@
         
         <a href="#">
             <span class="sr-only">Your profile</span>
-            <img class="h-8 w-8 rounded-full bg-gray-800" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+            <img class="h-8 w-8 rounded-full bg-gray-800" src="@/assets/images/profile-pattern.png" alt="" />
         </a>
       </div>
   </div>
@@ -144,6 +173,7 @@ import {
   CalendarDaysIcon, CalendarIcon,
   ChartBarIcon,
   ChartBarSquareIcon,
+  ChevronDownIcon,
   ChevronUpIcon,
   CircleStackIcon,
   DocumentCheckIcon,
@@ -161,37 +191,41 @@ import {
   XMarkIcon
 } from '@heroicons/vue/24/outline'
 import axios from 'axios'
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { getUserType, clearUserType } from '@/service/userType'
 
 const routes = {
   'admin': [
     { name: 'Novo Cálculo', route: '/home/create/selector', icon: CalculatorIcon, current: false },
-    { name: 'Cálcular Alocação', route: '/home/alloc', icon: RectangleStackIcon  , current: false },
+    { name: 'Cálcular Alocação', route: '/home/alloc', icon: RectangleStackIcon, current: false },
     { name: 'Cálculo Anteriores', route: '/home/previousresults', icon: ChartBarIcon, current: false },
     { name: 'Recurso', route: '/resource/new', icon: ExclamationCircleIcon, current: false },
-    { name: 'Painel do Usuário', route: '/home/dataversions', icon: CircleStackIcon , current: false },
-    { name: 'Selecionar Cálculo', route: '/admin/dashboard', icon: RectangleStackIcon  , current: false },
-  ],
-  'admin-panel': [
-    { name: 'Dashboard', route: '/admin/dashboard', icon: Squares2X2Icon, current: false },
-    { name: 'Resultados IDEM', route: '/admin/results', icon: CalculatorIcon, current: false },
-    { name: 'Calendario Escolar', route: '/admin/calendar', icon: CalendarIcon  , current: false },
-    { name: 'Profissionais', route: '/admin/professional', icon: UsersIcon , current: false },
-    { name: 'Turmas', route: '/admin/groups', icon: UserGroupIcon, current: false },
-    { name: 'Etapas Ues', route: '/admin/steps', icon: Square3Stack3DIcon , current: false },
-    { name: 'Etapas Por Grupo', route: '/admin/stagegroup', icon: RectangleGroupIcon  , current: false },
-    { name: 'Frequência', route: '/admin/frequency', icon: ChartBarSquareIcon , current: false },
-    { name: 'Demissão', route: '/admin/resignation', icon: BriefcaseIcon , current: false },
-    { name: 'Atividades', route: '/admin/activities', icon: DocumentCheckIcon , current: false },
-    { name: 'Tempo de Atuação', route: '/admin/service', icon: CalendarDaysIcon , current: false },
-    { name: 'Formação', route: '/admin/training', icon: AcademicCapIcon , current: false },
-    { name: 'Relatórios Finais', route: '/admin/report', icon: DocumentTextIcon , current: false },
+    { name: 'Painel do Usuário', route: '/home/dataversions', icon: CircleStackIcon, current: false },
+    {
+      name: 'Selecionar Cálculo',
+      icon: RectangleStackIcon,
+      children: [
+        { name: 'Dashboard', route: '/admin/dashboard', icon: Squares2X2Icon, current: false },
+        { name: 'Resultados IDEM', route: '/admin/results', icon: CalculatorIcon, current: false },
+        { name: 'Calendario Escolar', route: '/admin/calendar', icon: CalendarIcon, current: false },
+        { name: 'Profissionais', route: '/admin/professional', icon: UsersIcon, current: false },
+        { name: 'Turmas', route: '/admin/groups', icon: UserGroupIcon, current: false },
+        { name: 'Etapas Ues', route: '/admin/steps', icon: Square3Stack3DIcon, current: false },
+        { name: 'Etapas Por Grupo', route: '/admin/stagegroup', icon: RectangleGroupIcon, current: false },
+        { name: 'Frequência', route: '/admin/frequency', icon: ChartBarSquareIcon, current: false },
+        { name: 'Demissão', route: '/admin/resignation', icon: BriefcaseIcon, current: false },
+        { name: 'Atividades', route: '/admin/activities', icon: DocumentCheckIcon, current: false },
+        { name: 'Tempo de Atuação', route: '/admin/service', icon: CalendarDaysIcon, current: false },
+        { name: 'Formação', route: '/admin/training', icon: AcademicCapIcon, current: false },
+        { name: 'Relatórios Finais', route: '/admin/report', icon: DocumentTextIcon, current: false },
+      ]
+    }
   ],
   'user': [
     { name: 'Resultados', route: '/user/rewards', icon: ChartBarIcon, current: true },
-    { name: 'Status', route: '/user/status', icon: InboxIcon  , current: false },
-    { name: 'FAq', route: '/user/faqs', icon: QuestionMarkCircleIcon , current: false },
+    { name: 'Status', route: '/user/status', icon: InboxIcon, current: false },
+    { name: 'FAQ', route: '/user/faqs', icon: QuestionMarkCircleIcon, current: false },
   ],
 }
 
@@ -265,12 +299,27 @@ onMounted(() => {
 const emit = defineEmits(['update:isSidebarMinimized'])
 
 const filteredNavigation = computed(() => {
-  return routes[props.route] || []
+  const userType = getUserType();
+  
+  // If no user type is stored, default to user navigation
+  if (!userType) {
+    return routes['user'] || [];
+  }
+  
+  // Return appropriate navigation based on user type
+  if (userType === 'admin') {
+    // For admin users, show both admin and admin-panel routes
+    const adminRoutes = [...(routes['admin'] || []), ...(routes['admin-panel'] || [])];
+    return adminRoutes;
+  } else {
+    // For regular users, show only user routes
+    return routes['user'] || [];
+  }
 })
 
 const route = useRoute(); 
 const hiddenRoutes = [
-      '/admin/dashboard',
+      //'/admin/dashboard',
       '/admin/results',
       '/admin/calendar',
       '/admin/professional',
@@ -286,11 +335,12 @@ const hiddenRoutes = [
       '/admin/rewards/',
 ];
 
-const showConfigLink = !hiddenRoutes.includes(route.path); 
+const showConfigLink = computed(() => !hiddenRoutes.includes(route.path));
 const isProfileMenuOpen = ref(false)
+const isCalcMenuOpen = ref(false)
 
 const toggleProfileMenu = () => {
-  isProfileMenuOpen.value = !isProfileMenuOpen.value
+    isProfileMenuOpen.value = !isProfileMenuOpen.value
 }
 
 function toggleSidebar() {
@@ -303,6 +353,7 @@ function logout() {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('isAuthenticated');
+    clearUserType(); // Clear the user type from the service
 
     window.location.href = '/';
 }
@@ -311,5 +362,12 @@ const router = useRouter();
 function goBack() {
   router.push('/home/overview');
 }
+
+watch(isSidebarMinimized, (minimized) => {
+  if (minimized) {
+    isProfileMenuOpen.value = false
+    isCalcMenuOpen.value = false
+  }
+})
 
 </script>

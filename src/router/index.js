@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { getUserType, canAccessRoute, getDashboardRoute } from '@/service/userType'
 //Auth
 import login from '../views/Auth/Login/index.vue'
 import register from '../views/Auth/Register/index.vue'
@@ -147,27 +148,32 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true'; // Verifica se o usuário está autenticado
+  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+  const userType = getUserType();
 
-  if (
-    (
-      to.name !== 'login' &&
-      to.name !== 'register' &&
-      to.name !== 'forgotpassword' &&
-      to.name !== 'changepassword' &&
-      to.name !== 'insertcode'
-    ) &&
-    !isAuthenticated
-  ) {
-    return next({ name: '' });
-  }
+  // Public routes that don't require authentication
+  const publicRoutes = ['login', 'register', 'forgotpassword', 'changepassword', 'insertcode'];
   
-  // Se o usuário estiver autenticado e tentar acessar login ou registro, redireciona para a página principal
-  if (isAuthenticated && (to.name === 'login' || to.name === 'register')) {
-    return next({ name: 'home' }); // Ou para a página que você deseja
+  if (publicRoutes.includes(to.name)) {
+    // If user is authenticated and trying to access auth pages, redirect to appropriate dashboard
+    if (isAuthenticated) {
+      const redirectPath = getDashboardRoute();
+      return next({ path: redirectPath });
+    }
+    return next();
   }
 
-  next(); // Permite navegação
+  // Check if user is authenticated
+  if (!isAuthenticated) {
+    return next({ name: 'login' });
+  }
+
+  // Check if user can access the route
+  if (!canAccessRoute(to.path)) {
+    return next({ path: getDashboardRoute() });
+  }
+
+  next();
 });
 
 export default router;
