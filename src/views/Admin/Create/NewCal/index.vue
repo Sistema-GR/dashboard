@@ -111,7 +111,7 @@
     <div class="flex w-full items-end justify-end pr-10 mb-5">
       <div class="w-4/12 lg:w-2/12">
         <PrimaryButton
-          class="bg-blue-500 py-2 px-3 text-sm"
+          class="bg-blue-500 py-2 px-3 text-15"
           value="Continuar"
           @click="submitData"
         />

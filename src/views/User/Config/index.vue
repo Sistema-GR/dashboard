@@ -3,36 +3,36 @@
     <Whiteboard title="Configurações" class="overflow-auto z-40 relative" :isSidebarMinimized="isSidebarMinimized">
         
         <div class="flex flex-col w-full lg:flex-row">
-            <div class="flex-1 rounded-lg shadow-lg">
+            <div class="flex-1 rounded-[10px] shadow-lg">
                 
                 <!-- Formulário (sem header duplicado) -->
-                <div class="bg-white p-8 rounded-lg">
+                <div class="bg-white p-8 rounded-[10px]">
                     <form @submit.prevent="salvarConfiguracoes" class="space-y-6 max-w-2xl mx-auto">
                         
                         <!-- Nome completo -->
                         <div>
-                            <label for="nomeCompleto" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="nomeCompleto" class="block text-15 font-medium text-gray-700 mb-2">
                                 Nome completo
                             </label>
                             <input
                                 id="nomeCompleto"
                                 v-model="formData.nomeCompleto"
                                 type="text"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-[10px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
                                 placeholder="Digite seu nome completo"
                             />
                         </div>
 
                         <!-- CPF -->
                         <div>
-                            <label for="cpf" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="cpf" class="block text-15 font-medium text-gray-700 mb-2">
                                 CPF
                             </label>
                             <input
                                 id="cpf"
                                 v-model="formData.cpf"
                                 type="text"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-[10px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
                                 placeholder="000.000.000-00"
                                 @input="formatarCPF"
                             />
@@ -40,65 +40,65 @@
 
                         <!-- E-mail -->
                         <div>
-                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="email" class="block text-15 font-medium text-gray-700 mb-2">
                                 E-mail
                             </label>
                             <input
                                 id="email"
                                 v-model="formData.email"
                                 type="email"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-[10px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
                                 placeholder="seuemail@exemplo.com"
                             />
                         </div>
 
                         <!-- Senha Atual -->
                         <div>
-                            <label for="senhaAtual" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="senhaAtual" class="block text-15 font-medium text-gray-700 mb-2">
                                 Senha Atual
                             </label>
                             <input
                                 id="senhaAtual"
                                 v-model="formData.senhaAtual"
                                 type="password"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-[10px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
                                 placeholder="Digite sua senha atual"
                             />
                         </div>
 
                         <!-- Nova Senha -->
                         <div>
-                            <label for="novaSenha" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="novaSenha" class="block text-15 font-medium text-gray-700 mb-2">
                                 Nova Senha
                             </label>
                             <input
                                 id="novaSenha"
                                 v-model="formData.novaSenha"
                                 type="password"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-[10px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
                                 placeholder="Digite sua nova senha"
                                 @input="validarSenhas"
                             />
-                            <p v-if="formData.novaSenha && formData.novaSenha.length < 6" class="text-red-500 text-sm mt-1">
+                            <p v-if="formData.novaSenha && formData.novaSenha.length < 6" class="text-red-500 text-15 mt-1">
                                 A senha deve ter pelo menos 6 caracteres
                             </p>
                         </div>
 
                         <!-- Confirmar Nova Senha -->
                         <div>
-                            <label for="confirmarSenha" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="confirmarSenha" class="block text-15 font-medium text-gray-700 mb-2">
                                 Confirmar Nova Senha
                             </label>
                             <input
                                 id="confirmarSenha"
                                 v-model="formData.confirmarSenha"
                                 type="password"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-[10px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
                                 :class="{ 'border-red-500': senhasNaoConferem }"
                                 placeholder="Confirme sua nova senha"
                                 @input="validarSenhas"
                             />
-                            <p v-if="senhasNaoConferem" class="text-red-500 text-sm mt-1">
+                            <p v-if="senhasNaoConferem" class="text-red-500 text-15 mt-1">
                                 As senhas não conferem
                             </p>
                         </div>
@@ -107,7 +107,7 @@
                         <div class="flex items-center justify-between pt-6">
                             <button
                                 type="submit"
-                                class="bg-[#3459a2] hover:bg-blue-700 text-white font-medium px-8 py-3 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                class="bg-[#3459a2] hover:bg-blue-700 text-white font-medium px-8 py-3 rounded-[10px] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                                 :disabled="salvando"
                             >
                                 {{ salvando ? 'Salvando...' : 'Salvar' }}

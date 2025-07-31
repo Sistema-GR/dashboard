@@ -2,7 +2,7 @@
     <Whiteboard title="Resultados IDEM" :isSidebarMinimized="isSidebarMinimized">
 
         <div class="flex flex-col items-center justify-center py-3">
-            <p class="font-semibold text-sm lg:text-lg">Resultado da Rede</p>
+            <p class="font-semibold text-15 lg:text-20">Resultado da Rede</p>
         </div>
             
             <div class="flex w-full items-center justify-start px-4 sm:px-10 mt-2">

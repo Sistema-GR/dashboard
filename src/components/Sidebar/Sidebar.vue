@@ -28,7 +28,7 @@
                                       <li>
                                           <ul role="list" class="-mx-2 space-y-1">
                                               <li v-for="item in filteredNavigation" :key="item.name">
-                                                  <router-link :to="item.route" :class="[item.current ? 'bg-gray-800 text-white' : 'text-white hover:bg-primary-900 hover:text-white', 'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6']">
+                                                  <router-link :to="item.route" :class="[item.current ? 'bg-gray-800 text-white' : 'text-white hover:bg-primary-900 hover:text-white', 'group flex gap-x-3 rounded-md p-2 text-15 font-semibold leading-6']">
                                                       <component :is="item.icon" class="h-6 w-6 shrink-0" aria-hidden="true" />
                                                       {{ item.name }}
                                                   </router-link>
@@ -54,7 +54,7 @@
 
               <nav class="flex flex-1 flex-col">
                   <div :class="['flex w-full items-center justify-end', isSidebarMinimized ? '-translate-x-1' : '']">
-                      <div @click="toggleSidebar" class="p-1 my-2 cursor-pointer hover:bg-white/30 rounded-lg transition-all duration-200">
+                      <div @click="toggleSidebar" class="p-1 my-2 cursor-pointer hover:bg-white/30 rounded-[10px] transition-all duration-200">
                         <Bars3Icon :class="['w-5 h-auto stroke-white transition-transform', isSidebarMinimized ? 'rotate-180' : '']"/>
                       </div>
                   </div>
@@ -65,7 +65,7 @@
                               <li v-for="item in filteredNavigation" :key="item.name">
                                   <router-link
                                       :to="item.route"
-                                      class="['group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 transition-all duration-200',]"
+                                      class="['group flex gap-x-3 rounded-md p-2 text-15 font-semibold leading-6 transition-all duration-200',]"
                                       :class="{ 'bg-white/30 text-white': $route.path === item.route, 'hover:bg-white/30 hover:text-white text-white': $route.path !== item.route }"
                                     >
                                     <component :is="item.icon" class="h-auto w-6 shrink-0 stroke-white" aria-hidden="true" />
@@ -76,7 +76,7 @@
                       </li>
 
                       <li class="-mx-6 mt-auto" v-if="showConfigLink">
-                        <div  class="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-white cursor-pointer hover:bg-gray-800" @click="toggleProfileMenu">
+                        <div  class="flex items-center gap-x-4 px-6 py-3 text-15 font-semibold leading-6 text-white cursor-pointer hover:bg-gray-800" @click="toggleProfileMenu">
                             <img 
                               class="h-8 w-8 rounded-full bg-gray-800" 
                               src="@/assets/images/profile-pattern.png" 
@@ -100,11 +100,11 @@
                             leave-to="opacity-0 translate-y-4"
                           >
                             <div class="flex flex-col mt-2 space-y-2 bg-gray-800 rounded-md shadow-lg text-white py-2 px-4">
-                              <router-link to="/home/config" class="flex flex-row items-center gap-2 text-sm hover:text-gray-300 transition">
+                              <router-link to="/home/config" class="flex flex-row items-center gap-2 text-15 hover:text-gray-300 transition">
                                 <PencilIcon class="w-4 h-auto" /> 
                                 Acessar Perfil
                               </router-link>
-                              <button class="flex flex-row items-center gap-2 text-sm w-full text-left hover:text-gray-300 transition" @click="logout">
+                              <button class="flex flex-row items-center gap-2 text-15 w-full text-left hover:text-gray-300 transition" @click="logout">
                               <PowerIcon class="w-4 h-auto"/> 
                                 Deslogar
                               </button>
@@ -124,8 +124,8 @@
           <Bars3Icon class="h-6 w-6" aria-hidden="true" />
         </button>
 
-        <div class="flex-1 text-sm font-semibold leading-6 text-white"></div>
-        
+        <div class="flex-1 text-15 font-semibold leading-6 text-white"></div>
+
         <a href="#">
             <span class="sr-only">Your profile</span>
             <img class="h-8 w-8 rounded-full bg-gray-800" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />

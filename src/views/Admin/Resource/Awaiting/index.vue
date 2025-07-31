@@ -2,7 +2,7 @@
     <Whiteboard title="Aguardando Aprovação" class="" :isSidebarMinimized="isSidebarMinimized" :hideBreadcrumbs="true">
       <div class="flex flex-col w-full lg:flex-row">
 
-            <div class="flex-1 rounded-lg shadow-lg">
+            <div class="flex-1 rounded-[10px] shadow-lg">
 
                 <div class="flex items-center justify-center bg-[#f16d91] p-4">
                     <p class="text-20 font-bold text-white">Pendente</p>

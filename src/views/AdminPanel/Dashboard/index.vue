@@ -6,11 +6,11 @@
         <div
           v-for="(card, index) in cards"
           :key="index"
-          class="flex flex-col rounded-lg shadow-md overflow-hidden flex-1 min-w-[260px] sm:max-w-[400px] border border-gray-200"
+          class="flex flex-col rounded-[10px] shadow-md overflow-hidden flex-1 min-w-[260px] sm:max-w-[400px] border border-gray-200"
         >
           <!-- Cabeçalho -->
           <div
-            class="flex items-center justify-between px-4 py-2 text-white text-sm font-semibold"
+            class="flex items-center justify-between px-4 py-2 text-white text-15 font-semibold"
             :class="[
               index === 0 ? 'bg-[#3459A2]' :
               index === 1 ? 'bg-[#3459A2]' :
@@ -41,9 +41,9 @@
       <div class="space-y-4 pt-5 px-4 sm:px-10">
         <div v-for="(data, idx) in section.data" :key="idx" class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-8">
           <span class="w-full sm:w-1/4 text-gray-800 text-15 font-semibold">{{ data.label }}</span>
-          <div class="flex flex-row w-full sm:w-3/4 bg-gray-200 rounded-lg h-6 overflow-hidden items-center">
+          <div class="flex flex-row w-full sm:w-3/4 bg-gray-200 rounded-[10px] h-6 overflow-hidden items-center">
             <div
-              class="bg-[#3459A2] h-full text-white text-15 px-2 flex items-center rounded-lg justify-start font-semibold"
+              class="bg-[#3459A2] h-full text-white text-15 px-2 flex items-center rounded-[10px] justify-start font-semibold"
               :style="{ width: data.percentage + '%' }"
             ></div>
             <div class="text-xs text-black font-bold ml-3 whitespace-nowrap">
@@ -64,13 +64,13 @@
       <div
         v-for="(file, index) in files"
         :key="index"
-        class="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-gray-100 border border-gray-200 rounded-lg mx-4 sm:mx-10 p-4 my-4"
+        class="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-gray-100 border border-gray-200 rounded-[10px] mx-4 sm:mx-10 p-4 my-4"
       >
         <div class="flex items-center space-x-4">
           <DocumentDuplicateIcon class="h-8 w-8 text-gray-500" />
           <div class="flex flex-col">
             <p class="text-gray-800 font-medium">{{ file.name }}</p>
-            <span class="text-sm text-gray-600">{{ file.size }}</span>
+            <span class="text-15 text-gray-600">{{ file.size }}</span>
           </div>
         </div>
         <button
@@ -78,7 +78,7 @@
           class="flex items-center text-blue-600 hover:text-blue-800 font-semibold mt-4 sm:mt-0"
         >
           <ArrowDownTrayIcon class="h-5 w-5 mr-2" />
-          <span class="text-sm">Baixar CSV</span>
+          <span class="text-15">Baixar CSV</span>
         </button>
       </div>
     </div>
@@ -90,7 +90,7 @@
         <p class="text-gray-700 mb-4">
         Aqui você pode gerenciar os arquivos importados. Clique no botão abaixo para visualizar os detalhes.
       </p>
-      <button class="self-start bg-[#3459A2] hover:bg-[#203661] text-white font-semibold py-2 px-4 rounded-lg transition duration-300"
+      <button class="self-start bg-[#3459A2] hover:bg-[#203661] text-white font-semibold py-2 px-4 rounded-[10px] transition duration-300"
         @click="$router.push('files-manager')">
         Visualizar arquivos
       </button>
@@ -109,7 +109,7 @@
       <div class="mt-6 mr-4 sm:mr-10 text-right">
         <button
           @click="navigateHome"
-          class="bg-[#3459A2] text-white px-6 py-2 rounded-lg hover:bg-[#203661] transition duration-300"
+          class="bg-[#3459A2] text-white px-6 py-2 rounded-[10px] hover:bg-[#203661] transition duration-300"
         >
           Sair
         </button>

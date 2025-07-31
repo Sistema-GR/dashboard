@@ -15,7 +15,7 @@
         <p class="text-normal font-medium text-black mb-6">Selecione a categoria</p>
 
         <!-- Pasta 'teste' única para cada ano -->
-        <div class="flex flex-col p-6 border border-gray-200 rounded-lg bg-white shadow-md w-full">
+        <div class="flex flex-col p-6 border border-gray-200 rounded-[10px] bg-white shadow-md w-full">
           <div class="flex flex-row items-start gap-3 mb-6 w-full">
             <FolderIcon class="w-6 h-auto text-black" />
             <p class="text-gray-900 font-medium">teste</p>  <!-- Exibindo categoria 'teste' -->
@@ -23,7 +23,7 @@
 
           <!-- Exibindo todos os cálculos dentro da pasta 'teste' -->
           <div class="mt-6 flex flex-col space-y-6 w-full">
-            <div v-for="item in category.versions" :key="item.id" class="flex flex-col p-6 border border-gray-200 rounded-lg bg-white shadow-md w-full">
+            <div v-for="item in category.versions" :key="item.id" class="flex flex-col p-6 border border-gray-200 rounded-[10px] bg-white shadow-md w-full">
               <div class="flex items-center justify-between cursor-pointer w-full" @click="toggleDetails(item)">
                 <p class="italic text-gray-700">{{ item.description }}</p>
                 <ChevronDownIcon class="w-5 h-5 text-gray-500" />
