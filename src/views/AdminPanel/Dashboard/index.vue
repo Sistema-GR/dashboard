@@ -2,7 +2,7 @@
   <Whiteboard title="Dashboard" :isSidebarMinimized="isSidebarMinimized">
     <!-- Total Recebe, Total Não Recebe e Total a Pagar -->
     <div class="grid w-full py-8">
-      <div class="flex flex-wrap justify-center gap-6 sm:gap-8 xl:justify-between px-2 sm:px-4 md:px-8">
+      <div class="flex flex-wrap justify-center gap-6 sm:gap-8 xl:justify-between px-4 sm:px-10">
         <div
           v-for="(card, index) in cards"
           :key="index"
@@ -38,7 +38,7 @@
       <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3">
         {{ section.title }}
       </div>
-      <div class="space-y-4 pt-5 px-10">
+      <div class="space-y-4 pt-5 px-4 sm:px-10">
         <div v-for="(data, idx) in section.data" :key="idx" class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-8">
           <span class="w-full sm:w-1/4 text-gray-800 text-15 font-semibold">{{ data.label }}</span>
           <div class="flex flex-row w-full sm:w-3/4 bg-gray-200 rounded-lg h-6 overflow-hidden items-center">
@@ -52,7 +52,7 @@
           </div>
         </div>
       </div>
-      <div class="mt-6 border-t flex justify-between items-center border-gray-200 pt-4 px-10">
+      <div class="mt-6 border-t flex justify-between items-center border-gray-200 pt-4 px-4 sm:px-10">
         <p class="text-base font-semibold text-[#3459A2]">TOTAL GERAL:</p>
         <p class="text-base font-semibold text-[#3459A2]">{{ section.total }} pessoas</p>
       </div>
@@ -64,7 +64,7 @@
       <div
         v-for="(file, index) in files"
         :key="index"
-        class="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-gray-100 border border-gray-200 rounded-lg mx-10 p-4 my-4"
+        class="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-gray-100 border border-gray-200 rounded-lg mx-4 sm:mx-10 p-4 my-4"
       >
         <div class="flex items-center space-x-4">
           <DocumentDuplicateIcon class="h-8 w-8 text-gray-500" />
@@ -86,7 +86,7 @@
     <!-- Arquivos importados -->
     <div class="flex flex-col w-full mb-10">
       <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3">Arquivos importados</div>
-      <div class="mx-10 my-4">
+      <div class="mx-4 sm:mx-10 my-4">
         <p class="text-gray-700 mb-4">
         Aqui você pode gerenciar os arquivos importados. Clique no botão abaixo para visualizar os detalhes.
       </p>
@@ -106,7 +106,7 @@
           <span class="text-gray-800">{{ field.value }}</span>
         </div>
       </div>
-      <div class="mt-6 mr-10 text-right">
+      <div class="mt-6 mr-4 sm:mr-10 text-right">
         <button
           @click="navigateHome"
           class="bg-[#3459A2] text-white px-6 py-2 rounded-lg hover:bg-[#203661] transition duration-300"

@@ -1,10 +1,10 @@
 <template>
-  <nav class="grid grid-cols-3 items-center bg-[#3459a2] py-4 px-6 shadow-md w-full z-50" aria-label="Breadcrumb">
+  <nav class="grid grid-cols-3 items-center bg-[#3459a2] py-3 px-4 shadow-md w-full z-50 md:py-4 md:px-6" aria-label="Breadcrumb">
       <div class="flex justify-start">
         <button @click="goBack" class="flex items-center gap-2 text-white font-medium hover:underline text-sm sm:text-base"><img :src="voltarIcon" alt="Voltar" class="w-4 h-4" />Voltar</button>
       </div>
       <div class="flex justify-center">
-        <h1 class="text-25 text-white text-center font-black uppercase tracking-wide sm:text-30 whitespace-nowrap">{{ titlePag }}</h1>
+        <h1 class="text-20 text-white text-center font-black uppercase tracking-wide leading-6 sm:text-25 sm:leading-7 lg:text-30 lg:leading-8 sm:whitespace-nowrap">{{ titlePag }}</h1>
       </div>
   </nav>
 </template>

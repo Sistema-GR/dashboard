@@ -1,8 +1,8 @@
 <template>
-  <div class="px-4 sm:px-2 lg:px-4 w-full">
+  <div class="px-0 sm:px-6 lg:px-8 w-full">
     <div class="mt-6 flow-root">
       <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+        <div class="inline-block min-w-full py-2 align-middle px-8 sm:px-10">
           <table class="min-w-full divide-y divide-gray-300 bg-primary-900 rounded-t-md shadow-md">
 
             <thead>

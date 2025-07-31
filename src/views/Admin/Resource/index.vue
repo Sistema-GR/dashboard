@@ -2,7 +2,7 @@
     <Sidebar :route="'admin'" @update:isSidebarMinimized="handleSidebarMinimized" class="z-50"/>
     <Whiteboard title="Recurso" class="overflow-auto z-40 relative" :isSidebarMinimized="isSidebarMinimized">
 
-        <div class="w-full py-5 px-10">
+        <div class="w-full py-5 px-4 sm:px-10">
           <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
             <Block title="Novo" number="100" customClass="bg-blue-500 hover:bg-blue-600 w-full max-w-xs min-w-3xs" @click="navigateTo('/resource/new')" />
             <Block title="Em Progresso" number="20" customClass="bg-orange-500 hover:bg-orange-600 w-full max-w-xs min-w-3xs" @click="navigateTo('/resource/inprogress')" />

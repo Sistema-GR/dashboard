@@ -52,18 +52,55 @@
                             />
                         </div>
 
-                        <!-- Senha -->
+                        <!-- Senha Atual -->
                         <div>
-                            <label for="senha" class="block text-sm font-medium text-gray-700 mb-2">
-                                Senha
+                            <label for="senhaAtual" class="block text-sm font-medium text-gray-700 mb-2">
+                                Senha Atual
                             </label>
                             <input
-                                id="senha"
-                                v-model="formData.senha"
+                                id="senhaAtual"
+                                v-model="formData.senhaAtual"
                                 type="password"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
-                                placeholder="Digite sua senha"
+                                placeholder="Digite sua senha atual"
                             />
+                        </div>
+
+                        <!-- Nova Senha -->
+                        <div>
+                            <label for="novaSenha" class="block text-sm font-medium text-gray-700 mb-2">
+                                Nova Senha
+                            </label>
+                            <input
+                                id="novaSenha"
+                                v-model="formData.novaSenha"
+                                type="password"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                                placeholder="Digite sua nova senha"
+                                @input="validarSenhas"
+                            />
+                            <p v-if="formData.novaSenha && formData.novaSenha.length < 6" class="text-red-500 text-sm mt-1">
+                                A senha deve ter pelo menos 6 caracteres
+                            </p>
+                        </div>
+
+                        <!-- Confirmar Nova Senha -->
+                        <div>
+                            <label for="confirmarSenha" class="block text-sm font-medium text-gray-700 mb-2">
+                                Confirmar Nova Senha
+                            </label>
+                            <input
+                                id="confirmarSenha"
+                                v-model="formData.confirmarSenha"
+                                type="password"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                                :class="{ 'border-red-500': senhasNaoConferem }"
+                                placeholder="Confirme sua nova senha"
+                                @input="validarSenhas"
+                            />
+                            <p v-if="senhasNaoConferem" class="text-red-500 text-sm mt-1">
+                                As senhas não conferem
+                            </p>
                         </div>
 
                         <!-- Botão Salvar e Avatar -->
@@ -110,7 +147,9 @@ export default {
             nomeCompleto: '',
             cpf: '',
             email: '',
-            senha: ''
+            senhaAtual: '',
+            novaSenha: '',
+            confirmarSenha: ''
         })
 
         // Gerenciar estado da sidebar
@@ -125,6 +164,11 @@ export default {
             valor = valor.replace(/(\d{3})(\d)/, '$1.$2')
             valor = valor.replace(/(\d{3})(\d{1,2})$/, '$1-$2')
             formData.value.cpf = valor
+        }
+
+        // Validar senhas
+        const validarSenhas = () => {
+            senhasNaoConferem.value = formData.value.novaSenha !== formData.value.confirmarSenha
         }
 
         // Salvar configurações
@@ -155,7 +199,9 @@ export default {
                     nomeCompleto: '',
                     cpf: '',
                     email: '',
-                    senha: ''
+                    senhaAtual: '',
+                    novaSenha: '',
+                    confirmarSenha: ''
                 }
                 
             } catch (error) {

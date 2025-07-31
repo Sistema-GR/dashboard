@@ -3,7 +3,7 @@
     <!-- Seção para exibir os anos -->
     <div v-for="category in categories" :key="category.name" class="mb-4 w-full">
       <!-- Exibindo o ano -->
-      <div class="flex flex-row items-center justify-between px-8 p-5 shadow-ms cursor-pointer bg-[#e3f0ff]" @click="toggleDropdown(category)">
+      <div class="flex flex-row items-center justify-between px-4 sm:px-10 p-5 shadow-ms cursor-pointer bg-[#e3f0ff]" @click="toggleDropdown(category)">
         <p class="text-25 font-semibold text-black">
           {{ category.name }}  <!-- Exibindo o ano -->
         </p>
@@ -11,7 +11,7 @@
       </div>
 
       <!-- Exibindo a categoria 'teste' para o ano -->
-      <div v-show="category.isOpen" class="w-full px-10 border-gray-300 pt-6">
+      <div v-show="category.isOpen" class="w-full px-4 sm:px-10 border-gray-300 pt-6">
         <p class="text-normal font-medium text-black mb-6">Selecione a categoria</p>
 
         <!-- Pasta 'teste' única para cada ano -->

@@ -8,14 +8,14 @@
                     <p class="text-20 font-bold text-white">Pendente</p>
                 </div>
 
-                <div class="flex items-center justify-end p-3 px-10">
+                <div class="flex items-center justify-end p-3 px-4 sm:px-10">
                     <div class="flex items-center gap-2 text-black cursor-pointer">
                         <FunnelIcon class="w-5 h-5" />
                         <span class="text-15 text-black">Filtrar</span>
                     </div>
                 </div>
 
-                <div class="mt-1 my-5 space-y-4 px-10">
+                <div class="mt-1 my-5 space-y-4 px-4 sm:px-10">
                     <infoCard situation="Novo" />
                     <infoCard situation="Novo" />
                     <infoCard situation="Novo" />

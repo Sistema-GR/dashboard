@@ -11,11 +11,11 @@
       <!-- Cálculo -->
       <Disclosure v-slot="{ open }">
         <div>
-          <DisclosureButton class="w-full flex justify-left items-center bg-[#4168b5] text-white px-4 py-4 pl-8 text-lg font-semibold gap-2">
+          <DisclosureButton class="w-full flex justify-left items-center bg-[#4168b5] text-white px-4 py-4 sm:pl-8 text-lg font-semibold gap-2">
             <span class="text-20">Cálculo</span>
             <ChevronDownIcon class="w-8 h-8 transition-transform" :class="{ 'rotate-180': open }" />
           </DisclosureButton>
-          <DisclosurePanel class="bg-white px-10 py-4">
+          <DisclosurePanel class="bg-white px-4 sm:px-10 py-4">
             <div
               v-for="(versao, index) in versoesCalculo"
               :key="versao.id"
@@ -43,11 +43,11 @@
       <!-- Recurso -->
       <Disclosure v-slot="{ open }">
         <div>
-          <DisclosureButton class="w-full flex justify-left items-center bg-[#4168b5] text-white px-4 py-4 pl-8 text-20 font-semibold gap-2">
+          <DisclosureButton class="w-full flex justify-left items-center bg-[#4168b5] text-white px-4 py-4 sm:pl-8 text-20 font-semibold gap-2">
             <span class="text-20">Recurso</span>
             <ChevronDownIcon class="w-8 h-8 transition-transform" :class="{ 'rotate-180': open }" />
           </DisclosureButton>
-          <DisclosurePanel class="bg-white px-10 py-4">
+          <DisclosurePanel class="bg-white px-4 sm:px-10 py-4">
             <div
               v-for="(versao, index) in versoesRecurso"
               :key="versao.id"
