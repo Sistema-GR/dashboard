@@ -12,5 +12,14 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
-  }
+  },
+  server: {
+    proxy: {
+        // Redireciona qualquer chamada para /recursos/...
+        '/recursos': {
+            target: 'http://localhost:8000',
+            changeOrigin: true,
+        },
+      }
+    }
 })
