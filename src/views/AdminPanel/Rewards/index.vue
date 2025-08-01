@@ -29,7 +29,6 @@
                 </div>
             </div>
 
-
         </div>
 
         <div class="flex w-full items-center justify-center py-8 px-5 lg:px-0">
@@ -66,8 +65,8 @@
                             </DisclosureButton>
                             <DisclosurePanel class=" mx-8 ">
 
-                                <div class="overflow-x-auto w-full mt-10">
-                                    <table class="min-w-full border-collapse rounded-lg shadow-lg">
+                                <div class="overflow-x-auto w-full mt-10" style="max-width: 100vw; overflow-x: auto;">
+                                    <table class="min-w-full border-collapse rounded-lg shadow-lg" style="min-width: 875px;">
                                         <thead>
                                             <tr class="bg-azure-800 text-gray-100 text-[20px]">
                                                 <th v-for="(header, index) in ['Descrição', 'Dados', 'Valores a Receber', 'Total']" :key="index" class="p-4 font-semibold text-left">{{ header }}</th>
@@ -92,7 +91,6 @@
                                                 </td>
 
                                                 <td class="p-4 text-gray-700 font-semibold whitespace-nowrap">
-                                                    <!-- Cada td agora está corretamente estruturado -->
                                                     <p>{{ formatCurrency(item?.profissionais[0]?.valor_gr_rede) }}</p>
                                                     <p>{{ formatCurrency(item?.profissionais[0]?.valor_gr_unidade) }}</p>
                                                     <p>{{ formatCurrency(item?.dados?.desconto) }}</p>
@@ -103,15 +101,13 @@
                                     </table>
                                 </div>
 
-
-
                                 <div class="flex flex-col w-full items-center overflow-hidden shadow-lg mt-10 rounded-lg bg-white">
                                     <div class="flex w-full border-b items-center justify-center bg-azure-800 py-4 rounded-t-lg">
                                         <p class="text-[30px] text-center font-semibold text-white">Critérios de verificação para gratificação</p>
                                     </div>
 
-                                    <div class="w-full py-5 overflow-x-auto">
-                                        <table class="w-full border-collapse text-[15px]">
+                                    <div class="w-full py-5 overflow-x-auto" style="max-width: 100vw;">
+                                        <table class="w-full border-collapse text-[15px]" style="min-width: 875px;">
                                             <thead>
                                                 <tr class="bg-gray-200 text-gray-800 text-left text-xl">
                                                     <th class="border border-gray-200 px-4 py-3 font-medium w-1/3">Critério</th>
@@ -136,8 +132,6 @@
                                                     </td>
                                                 </tr>
 
-
-
                                                 <tr class="hover:bg-gray-50 transition-shadow hover:shadow-md">
                                                     <td class="border border-gray-200 px-4 py-3 text-gray-700">Tempo de atuação</td>
                                                     <td class="border border-gray-200 px-4 py-3 text-gray-700">
@@ -154,9 +148,6 @@
                                                     </td>
                                                 </tr>
 
-
-
-
                                                 <tr class="hover:bg-gray-50 transition-shadow hover:shadow-md">
                                                     <td class="border border-gray-200 px-4 py-3 text-gray-700">Formação</td>
                                                     <td class="border border-gray-200 px-4 py-3 text-gray-700">
@@ -168,9 +159,6 @@
                                                         </span>
                                                     </td>
                                                 </tr>
-
-
-
 
                                                 <tr class="hover:bg-gray-50 transition-shadow hover:shadow-md">
                                                     <td class="border border-gray-200 px-4 py-3 text-gray-700">Atividades</td>
@@ -217,8 +205,8 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="w-full overflow-x-auto"> 
-                                                    <table class="min-w-full border-collapse text-gray-700"> 
+                                                <div class="w-full overflow-x-auto" style="max-width: 100vw;"> 
+                                                    <table class="min-w-full border-collapse text-gray-700" style="min-width: 875px;"> 
                                                         <thead>
                                                             <tr class="bg-gray-200 text-gray-800 text-[15px] border-b">
                                                                 <th v-for="header in ['Ínicio', 'Fim', 'Função', 'Carga horária', 'Grupo']" 
@@ -251,8 +239,8 @@
                                         <p class="text-xl text-center font-semibold text-black">Frequência (Afastamentos)</p>
                                     </div>
 
-                                    <div class="w-full overflow-x-auto">
-                                        <table class="min-w-full border-collapse bg-white shadow-sm rounded-lg">
+                                    <div class="w-full overflow-x-auto" style="max-width: 100vw;">
+                                        <table class="min-w-full border-collapse bg-white shadow-sm rounded-lg" style="min-width: 875px;">
                                             <thead>
                                                 <tr class="bg-gray-200 text-gray-800 text-[15px]">
                                                     <th v-for="header in ['Início', 'Fim', 'Tipo de afastamento', 'Total dias', 'Contabilizados']" 
@@ -294,7 +282,6 @@
       
     </Whiteboard>
 </template>
-
 
 
 
