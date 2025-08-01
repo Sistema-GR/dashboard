@@ -128,10 +128,85 @@
                     />
                 </div>
 
-            </div>
+        <div class="flex flex-col gap-1">
+          <label class="font-semibold text-15">Documentos</label>
+          <input
+            type="file"
+            @change="handleFileUpload"
+            multiple
+            class="block w-full text-15 text-gray-500 
+                   file:mr-4 file:py-2 file:px-4 
+                   file:border-1 file:border-gray-300 
+                   file:rounded-[10px] file:text-15 file:font-semibold 
+                   file:bg-blue-50 file:text-blue-700 
+                   hover:file:bg-blue-100"
+          />
+          <p v-if="errors.files" class="text-red-500 text-15 mt-1">{{ errors.files }}</p>
         </div>
-    </Whiteboard>
+
+        <!-- Lista de arquivos -->
+        <div v-if="files.length > 0" class="mt-2">
+          <div class="mb-2">
+            <h3 class="font-semibold text-15 sm:text-base">Arquivos Anexados:</h3>
+          </div>
+
+          <div class="flex flex-col gap-2 rounded-[10px] p-2">
+            <div
+              v-for="(file, index) in files"
+              :key="index"
+              class="flex items-center justify-between text-15 text-blue-500"
+            >
+              <div class="flex items-center gap-2">
+                <PaperClipIcon class="w-5 h-5 text-gray-500" />
+                <span class="underline">{{ file.name }}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <ArrowDownTrayIcon class="w-6 h-6 text-gray-700 cursor-pointer" @click="downloadFile(file)" />
+                <XMarkIcon class="w-5 h-5 text-red-500 cursor-pointer" @click="removeFile(index)" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Texto legal -->
+        <div class="space-y-4">
+          <p class="font-medium text-15 text-start">
+            Este formulário é destinado à interposição de recursos por parte dos profissionais vinculados à Secretaria de Educação de Joinville, referente à Gratificação por Resultados, conforme estabelecido pela Lei nº 9.214/2022 e pelo Decreto Municipal nº 49.309/2022.
+            <br><br>
+            O período para submissão de recursos neste formulário é de 17/05/2024 a 16/06/2024, encerrando-se às 23h59 do último dia.
+          </p>
+
+          <p class="font-bold text-15 text-start">
+            Atenção: Para a validação do recurso, é imprescindível anexar documentos que justifiquem e comprovem as alegações, incluindo eventuais divergências nos dados utilizados no cálculo da Gratificação por Resultados. O envio de documentos falsos ou informações inverídicas está sujeito à responsabilização administrativa, civil e criminal, conforme legislação vigente.
+          </p>
+        </div>
+
+        <!-- Termos de aceite -->
+        <div class="flex flex-col items-start gap-2">
+          <div class="flex flex-row items-center gap-2">
+            <input 
+              type="checkbox" 
+              id="terms" 
+              v-model="termsAccepted" 
+              class="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out" 
+            />
+            <label for="terms" class="text-15">
+              Declaro que li e aceito os termos acima.
+            </label>
+          </div>
+          <p v-if="errors.termsAccepted" class="text-red-500 text-15">{{ errors.termsAccepted }}</p>
+        </div>
+
+        <!-- Botão enviar -->
+        <div class="flex justify-end mt-4">
+          <PrimaryButton customColor="bg-[#4168b5] px-8 py-4 shadow-md hover:shadow-lg max-w-36" value="Enviar"/>
+        </div>
+
+      </div>
+    </div>
+  </Whiteboard>
 </template>
+
 
 <script>
 

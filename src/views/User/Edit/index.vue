@@ -37,9 +37,6 @@
                         <textarea v-model="form.descricao" class="w-full border rounded-md p-2 text-sm" rows="4" :disabled="!isEditable"></textarea>
                     </div>
                     
-                    
-
-                    
                     <div class="flex flex-col border-b-2 py-4 gap-1">
                         <label class="font-semibold text-sm mb-1">Anexar Novos Documentos</label>
                         <input type="file" @change="handleFileUpload" multiple class="..." :disabled="!isEditable"/>

@@ -28,7 +28,7 @@
                                       <li>
                                           <ul role="list" class="-mx-2 space-y-1">
                                               <li v-for="item in filteredNavigation" :key="item.name">
-                                                  <router-link :to="item.route" :class="[item.current ? 'bg-gray-800 text-white' : 'text-white hover:bg-primary-900 hover:text-white', 'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6']">
+                                                  <router-link :to="item.route" :class="[item.current ? 'bg-gray-800 text-white' : 'text-white hover:bg-primary-900 hover:text-white', 'group flex gap-x-3 rounded-md p-2 text-15 font-semibold leading-6']">
                                                       <component :is="item.icon" class="h-6 w-6 shrink-0" aria-hidden="true" />
                                                       {{ item.name }}
                                                   </router-link>
@@ -47,14 +47,14 @@
 
       <div :class="['fixed inset-y-0 z-50 flex flex-col transition-all duration-300', isSidebarMinimized ? 'w-20 overflow-hidden' : 'w-60', 'lg:flex hidden']">
           <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-[#003965] px-6">
-              <div class="flex py-5 shrink-0 items-center justify-center border-b border-white">
+              <div class="flex py-5 shrink-0 items-center justify-center">
                   <img v-if="!isSidebarMinimized" @click="goBack" class="h-14 w-auto cursor-pointer" src="../../assets/images/logo-horinzontal.png" alt="Your Company" />
                   <img v-if="isSidebarMinimized" @click="goBack" class="h-14 w-auto cursor-pointer" src="../../assets/images/logo.png" alt="Your Company" />
               </div>
 
               <nav class="flex flex-1 flex-col">
                   <div :class="['flex w-full items-center justify-end', isSidebarMinimized ? '-translate-x-1' : '']">
-                      <div @click="toggleSidebar" class="p-1 my-2 cursor-pointer hover:bg-white/30 rounded-lg transition-all duration-200">
+                      <div @click="toggleSidebar" class="p-1 my-2 cursor-pointer hover:bg-white/30 rounded-[10px] transition-all duration-200">
                         <Bars3Icon :class="['w-5 h-auto stroke-white transition-transform', isSidebarMinimized ? 'rotate-180' : '']"/>
                       </div>
                   </div>
@@ -105,16 +105,14 @@
                       </li>
 
                       <li class="-mx-6 mt-auto" v-if="showConfigLink">
-                        <div  class="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-white cursor-pointer hover:bg-gray-800" @click="toggleProfileMenu">
-                            <img 
-                              class="h-8 w-8 rounded-full bg-gray-800" 
-                              src="@/assets/images/profile-pattern.png" 
-                              alt="" 
-                            />
+                        <div  class="flex items-center gap-2 px-5 py-3 text-15 font-semibold leading-6 text-white cursor-pointer hover:bg-gray-800" @click="toggleProfileMenu">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-12 h-auto text-white">
+                              <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" clip-rule="evenodd" />
+                            </svg>  
                             <span :class="isSidebarMinimized ? 'hidden' : ''">
                               {{ userName || 'Carregando...' }}
                             </span>
-                            <ChevronUpIcon :class="isProfileMenuOpen ? 'rotate-180' : ''" class="w-4 h-auto transition-transform" />
+                            <ChevronUpIcon :class="isProfileMenuOpen ? 'rotate-180' : ''" class="w-5 h-auto transition-transform" />
                         </div>
 
                         <!-- Menu de opções do perfil -->
@@ -129,11 +127,11 @@
                             leave-to="opacity-0 translate-y-4"
                           >
                             <div class="flex flex-col mt-2 space-y-2 bg-gray-800 rounded-md shadow-lg text-white py-2 px-4">
-                              <router-link to="/home/config" class="flex flex-row items-center gap-2 text-sm hover:text-gray-300 transition">
+                              <router-link to="/home/config" class="flex flex-row items-center gap-2 text-15 hover:text-gray-300 transition">
                                 <PencilIcon class="w-4 h-auto" /> 
                                 Acessar Perfil
                               </router-link>
-                              <button class="flex flex-row items-center gap-2 text-sm w-full text-left hover:text-gray-300 transition" @click="logout">
+                              <button class="flex flex-row items-center gap-2 text-15 w-full text-left hover:text-gray-300 transition" @click="logout">
                               <PowerIcon class="w-4 h-auto"/> 
                                 Deslogar
                               </button>
@@ -150,14 +148,20 @@
       <div class="sticky top-0 z-40 flex items-center gap-x-6 bg-[#003965] px-4 py-4 shadow-sm sm:px-6 lg:hidden">
         <button type="button" class="-m-2.5 p-2.5 text-gray-400 lg:hidden" @click="sidebarOpen = true">
           <span class="sr-only">Open sidebar</span>
-          <Bars3Icon class="h-6 w-6" aria-hidden="true" />
+          <Bars3Icon class="h-6 w-6 text-white" aria-hidden="true" />
         </button>
 
-        <div class="flex-1 text-sm font-semibold leading-6 text-white"></div>
-        
+        <div class="flex-1 text-15 font-semibold leading-6 text-white"></div>
+
         <a href="#">
             <span class="sr-only">Your profile</span>
-            <img class="h-8 w-8 rounded-full bg-gray-800" src="@/assets/images/profile-pattern.png" alt="" />
+            <div class="flex text-15 font-medium items-center gap-2 text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-7 h-auto text-white">
+                <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" clip-rule="evenodd" />
+              </svg>
+              Perfil
+            </div>
+
         </a>
       </div>
   </div>
@@ -186,8 +190,10 @@ import {
   RectangleStackIcon,
   Square3Stack3DIcon,
   Squares2X2Icon,
+  UserCircleIcon,
   UserGroupIcon,
   UsersIcon,
+  UserIcon,
   XMarkIcon
 } from '@heroicons/vue/24/outline'
 import axios from 'axios'
@@ -202,6 +208,7 @@ const routes = {
     { name: 'Cálculo Anteriores', route: '/home/previousresults', icon: ChartBarIcon, current: false },
     { name: 'Recurso', route: '/resource/new', icon: ExclamationCircleIcon, current: false },
     { name: 'Painel do Usuário', route: '/home/dataversions', icon: CircleStackIcon, current: false },
+    { name: 'Permissões Acessos', route: '/home/permissionsaccess', icon: UsersIcon  , current: false },
     {
       name: 'Selecionar Cálculo',
       icon: RectangleStackIcon,
@@ -333,6 +340,7 @@ const hiddenRoutes = [
       '/admin/training',
       '/admin/report/',
       '/admin/rewards/',
+      '/admin/permissionsaccess/',
 ];
 
 const showConfigLink = computed(() => !hiddenRoutes.includes(route.path));

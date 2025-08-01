@@ -1,30 +1,29 @@
 <template>
-  <Whiteboard title="Cálculo Anteriores" :isSidebarMinimized="isSidebarMinimized">
+  <Whiteboard title="Cálculos Anteriores" :isSidebarMinimized="isSidebarMinimized">
     <!-- Seção para exibir os anos -->
-    <div v-for="category in categories" :key="category.name" class="mb-8 w-full">
+    <div v-for="category in categories" :key="category.name" class="mb-4 w-full">
       <!-- Exibindo o ano -->
-      <div class="flex flex-row items-start justify-between p-5 rounded-md cursor-pointer bg-gray-50" @click="toggleDropdown(category)">
-        <p class="text-3xl font-semibold text-gray-800">
+      <div class="flex flex-row items-center justify-between px-4 sm:px-10 p-5 shadow-ms cursor-pointer bg-[#e3f0ff]" @click="toggleDropdown(category)">
+        <p class="text-25 font-semibold text-black">
           {{ category.name }}  <!-- Exibindo o ano -->
         </p>
-        <ChevronDownIcon class="w-6 h-6 text-gray-500 cursor-pointer" />
+        <ChevronDownIcon class="w-6 h-6 text-black cursor-pointer" />
       </div>
 
       <!-- Exibindo a categoria 'teste' para o ano -->
-      <div v-show="category.isOpen" class="w-full px-6 border-gray-300 pt-6">
-        <div class="border-b-2 w-full mb-6"></div>
-        <p class="text-normal font-medium text-gray-500 mb-6">Selecione a Categoria</p>
+      <div v-show="category.isOpen" class="w-full px-4 sm:px-10 border-gray-300 pt-6">
+        <p class="text-normal font-medium text-black mb-6">Selecione a categoria</p>
 
         <!-- Pasta 'teste' única para cada ano -->
-        <div class="flex flex-col p-6 border border-gray-200 rounded-lg bg-white shadow-md w-full">
+        <div class="flex flex-col p-6 border border-gray-200 rounded-[10px] bg-white shadow-md w-full">
           <div class="flex flex-row items-start gap-3 mb-6 w-full">
-            <FolderIcon class="w-6 h-auto text-gray-500" />
+            <FolderIcon class="w-6 h-auto text-black" />
             <p class="text-gray-900 font-medium">teste</p>  <!-- Exibindo categoria 'teste' -->
           </div>
 
           <!-- Exibindo todos os cálculos dentro da pasta 'teste' -->
           <div class="mt-6 flex flex-col space-y-6 w-full">
-            <div v-for="item in category.versions" :key="item.id" class="flex flex-col p-6 border border-gray-200 rounded-lg bg-white shadow-md w-full">
+            <div v-for="item in category.versions" :key="item.id" class="flex flex-col p-6 border border-gray-200 rounded-[10px] bg-white shadow-md w-full">
               <div class="flex items-center justify-between cursor-pointer w-full" @click="toggleDetails(item)">
                 <p class="italic text-gray-700">{{ item.description }}</p>
                 <ChevronDownIcon class="w-5 h-5 text-gray-500" />

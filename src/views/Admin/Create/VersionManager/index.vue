@@ -1,16 +1,16 @@
 <template>
   <Whiteboard title="Selecionar Data Version" :isSidebarMinimized="isSidebarMinimized">
-    <div class="flex flex-col w-full items-start justify-start mt-5 pb-5 space-y-6">
+    <div class="flex flex-col w-full items-start justify-start mt-5 pb-5 px-10 space-y-6">
       <!-- Dropdown para selecionar a versão -->
-      <label for="version" class="text-lg font-semibold">Selecione uma versão:</label>
-      <div class="w-full p-3 shadow-lg rounded-lg bg-white">
+      <label for="version" class="text-20 font-semibold">Selecione uma versão:</label>
+      <div class="w-full p-3 shadow-lg rounded-[10px] bg-white">
         <select
           id="version"
           v-model="selectedVersionId"
           @change="handleVersionChange"
           class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
         >
-          <option value="" disabled selected>Escolha uma versão</option>
+          <option value="" class="text-gray-400" disabled selected>Escolha uma versão</option>
           <option
             v-for="version in versions"
             :key="version.general_data_id"
@@ -23,8 +23,8 @@
 
       <!-- Detalhes da versão -->
       <div v-if="selectedVersionDetails" class="w-full">
-        <div class="bg-white shadow-lg rounded-lg p-6 space-y-4">
-          <h3 class="text-xl font-semibold text-blue-600">Detalhes da Versão Selecionada</h3>
+        <div class="bg-white shadow-lg rounded-[10px] p-6 space-y-4">
+          <h3 class="text-15 font-semibold text-blue-600">Detalhes da Versão Selecionada</h3>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-black">
             <TextInput label="Descrição" v-model="editableVersionDetails.description" label-class="text-black"/>
             <TextInput label="Ano Pagamento" v-model="editableVersionDetails.year_value" label-class="text-black"/>
