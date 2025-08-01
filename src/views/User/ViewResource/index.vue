@@ -1,86 +1,129 @@
 <template>
-    <Whiteboard title="Formulário de Recurso" :isSidebarMinimized="isSidebarMinimized">
-
-        <div class="flex flex-col w-full py-2 bg-white">
-            <p class="text-lg font-bold mb-4">Dados do Servidor</p>
-            <div class="space-y-2">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-                    <p class="font-semibold text-sm mb-1">CPF:</p>
-                    <p class="text-gray-600 text-sm">123.456.789-00</p>
-                </div>
-
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-                    <p class="font-semibold text-sm mb-1">Email:</p>
-                    <p class="text-gray-600 text-sm">example@domain.com</p>
-                </div>
-
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-                    <p class="font-semibold text-sm mb-1">Cargo:</p>
-                    <p class="text-gray-600 text-sm">Desenvolvedor</p>
-                </div>
-
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-                    <p class="font-semibold text-sm mb-1">Unidade:</p>
-                    <p class="text-gray-600 text-sm">TI</p>
-                </div>
-            </div>
+    <Whiteboard :title="`Detalhes do Recurso #${resourceId}`" :isSidebarMinimized="isSidebarMinimized">
+        
+        
+        <div v-if="isLoading" class="text-center p-10">
+            <p class="text-gray-600">Buscando detalhes do recurso...</p>
         </div>
 
-        <div class="flex flex-col w-full mt-5 bg-white pb-8 border-t-2">
-            <p class="text-lg font-bold mb-2 mt-5">Descrição</p>
-            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry...</p> 
+        
+        <div v-else-if="error" class="text-center p-10 bg-red-50 border border-red-200 rounded-lg">
+            <p class="text-red-700 font-semibold">{{ error }}</p>
         </div>
 
-        <div class="flex flex-col w-full border-t-2">
-            <div class="py-4">
-                <h3 class="text-lg font-bold">Arquivos Anexados:</h3>
+        
+        <div v-else class="flex flex-col w-full gap-6 px-4 py-4 relative z-0">
+            
+            
+            <div class="flex justify-end">
+                <router-link :to="{ name: 'edit', params: { id: resourceId } }">
+                    <PrimaryButton customColor="bg-blue-500 text-sm">
+                        <PencilSquareIcon class="w-5 h-5 mr-2" />
+                        Editar Recurso
+                    </PrimaryButton>
+                </router-link>
             </div>
 
-            <div class="flex flex-col sm:flex-row sm:items-start sm:gap-4">
-                <div class="flex flex-col w-full gap-3 border-2 border-blue-500 rounded-lg p-1">
-                    <div class="flex items-center justify-between gap-4 w-full text-sm text-blue-500 cursor-pointer">
-                        <div class="flex items-center gap-2">
-                            <PaperClipIcon class="w-5 h-5 text-gray-500"/> 
-                            <span class="underline"> Atividades </span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <ArrowDownTrayIcon class="w-6 h-6 text-gray-700 cursor-pointer" @click="downloadFile(file)" />
-                        </div>
-                    </div>
+           
+            <div class="bg-white p-4 rounded-lg shadow-sm border relative z-10">
+                <h2 class="text-xl font-bold mb-4 border-b pb-2">Informações do Recurso</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div><strong>Protocolo:</strong> #{{ resource.id }}</div>
+                    <div><strong>Status:</strong> <span class="capitalize font-semibold">{{ (resource.status || '').replace('_', ' ') }}</span></div>
+                    <div><strong>Nome Completo:</strong> {{ resource.nome_completo }}</div>
+                    <div><strong>Matrícula:</strong> {{ resource.matricula }}</div>
+                    <div><strong>CPF:</strong> {{ resource.cpf }}</div>
+                    <div><strong>Email:</strong> {{ resource.email }}</div>
+                    <div><strong>Unidade de Atuação:</strong> {{ resource.unidade_atuacao }}</div>
+                    <div><strong>Data de Abertura:</strong> {{ formatDate(resource.created_at) }}</div>
                 </div>
             </div>
-        </div>
 
-        <div class="flex flex-col w-full border-t-2 pt-4 mt-5">
-            <div>
-                <button @click="toggleResposta" class="flex justify-between items-center w-full text-left">
-                    <span class="text-lg font-bold">Resposta</span>
-                    <span class="transform transition-transform duration-300" :class="{'rotate-180': isRespostaOpen}">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                        </svg>
-                    </span>
-                </button>
+            
+            <div class="bg-white p-4 rounded-lg shadow-sm border">
+                <h3 class="text-lg font-bold mb-2">Descrição</h3>
+                <p class="text-gray-700 whitespace-pre-wrap">{{ resource.descricao }}</p>
             </div>
-            <div v-if="isRespostaOpen" class="mt-2">
-                <p v-if="resposta">Resposta do administrador: {{ resposta }}</p>
-                <p v-else class="text-gray-500">Sem resposta disponível.</p>
-            </div>
-        </div>
 
+            
+            <div class="bg-white p-4 rounded-lg shadow-sm border">
+                <h3 class="text-lg font-bold mb-2">Motivo do Recurso</h3>
+                <p class="text-sm text-gray-500">A ser categorizado pelo responsável.</p>
+            </div>
+
+           
+            <div class="bg-white p-4 rounded-lg shadow-sm border">
+                <h3 class="text-lg font-bold mb-2">Documentos Anexados</h3>
+                <div v-if="resource.documentos && resource.documentos.length > 0" class="space-y-2">
+                    <a v-for="doc in resource.documentos" :key="doc.id" :href="doc.arquivo_url" download @click.stop class="flex items-center gap-2 p-2 rounded-md bg-blue-50 hover:bg-blue-100 text-blue-700 transition-colors">
+                        <PaperClipIcon class="w-5 h-5" />
+                        <span class="underline">{{ doc.arquivo.split('/').pop() }}</span>
+                    </a>
+                </div>
+                <p v-else class="text-sm text-gray-500">Nenhum documento foi anexado a este recurso.</p>
+            </div>
+
+        </div>
     </Whiteboard>
 </template>
 
-<script setup>
-import { inject, ref } from 'vue';
-import { PaperClipIcon, ArrowDownTrayIcon } from "@heroicons/vue/24/outline";
-import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
+<script>
+import { inject, ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import axios from 'axios';
 
-const isSidebarMinimized = inject('isSidebarMinimized');
-const isRespostaOpen = ref(false);
-const resposta = ref(''); 
 
-function toggleResposta() {
-    isRespostaOpen.value = !isRespostaOpen.value;
-}
+import Whiteboard from "@/components/Whiteboard/Whiteboard.vue";
+import PrimaryButton from "@/components/Buttons/PrimaryButton.vue";
+import { UserIcon, PencilSquareIcon, PaperClipIcon } from "@heroicons/vue/24/outline";
+
+export default {
+    name: "ResourceView",
+    components: { Whiteboard, PrimaryButton, UserIcon, PencilSquareIcon, PaperClipIcon },
+    
+    setup() {
+        const isSidebarMinimized = inject('isSidebarMinimized');
+        const route = useRoute(); 
+        const resourceId = route.params.id; 
+
+        const resource = ref(null);
+        const isLoading = ref(true);
+        const error = ref(null);
+
+        const formatDate = (dateString) => {
+            if (!dateString) return 'N/A';
+            return new Date(dateString).toLocaleDateString('pt-BR', {
+                year: 'numeric', month: 'long', day: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            });
+        };
+        
+        const fetchResourceDetails = async () => {
+            isLoading.value = true;
+            error.value = null;
+            try {
+                const response = await axios.get(`/recursos/${resourceId}/`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+                });
+                resource.value = response.data;
+            } catch (err) {
+                console.error("Erro ao buscar detalhes do recurso:", err);
+                error.value = "Não foi possível carregar os detalhes deste recurso. Verifique se ele existe e se você tem permissão para visualizá-lo.";
+            } finally {
+                isLoading.value = false;
+            }
+        };
+
+        onMounted(fetchResourceDetails);
+
+        return {
+            isSidebarMinimized,
+            resource,
+            resourceId,
+            isLoading,
+            error,
+            formatDate
+        };
+    }
+};
 </script>
