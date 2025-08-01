@@ -76,16 +76,14 @@
                       </li>
 
                       <li class="-mx-6 mt-auto" v-if="showConfigLink">
-                        <div  class="flex items-center gap-x-4 px-6 py-3 text-15 font-semibold leading-6 text-white cursor-pointer hover:bg-gray-800" @click="toggleProfileMenu">
-                            <img 
-                              class="h-8 w-8 rounded-full bg-gray-800" 
-                              src="@/assets/images/profile-pattern.png" 
-                              alt="" 
-                            />
+                        <div  class="flex items-center gap-2 px-5 py-3 text-15 font-semibold leading-6 text-white cursor-pointer hover:bg-gray-800" @click="toggleProfileMenu">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-12 h-auto text-white">
+                              <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" clip-rule="evenodd" />
+                            </svg>  
                             <span :class="isSidebarMinimized ? 'hidden' : ''">
                               {{ userName || 'Carregando...' }}
                             </span>
-                            <ChevronUpIcon :class="isProfileMenuOpen ? 'rotate-180' : ''" class="w-4 h-auto transition-transform" />
+                            <ChevronUpIcon :class="isProfileMenuOpen ? 'rotate-180' : ''" class="w-5 h-auto transition-transform" />
                         </div>
 
                         <!-- Menu de opções do perfil -->
@@ -121,14 +119,19 @@
       <div class="sticky top-0 z-40 flex items-center gap-x-6 bg-[#003965] px-4 py-4 shadow-sm sm:px-6 lg:hidden">
         <button type="button" class="-m-2.5 p-2.5 text-gray-400 lg:hidden" @click="sidebarOpen = true">
           <span class="sr-only">Open sidebar</span>
-          <Bars3Icon class="h-6 w-6" aria-hidden="true" />
+          <Bars3Icon class="h-6 w-6 text-white" aria-hidden="true" />
         </button>
 
         <div class="flex-1 text-15 font-semibold leading-6 text-white"></div>
 
         <a href="#">
             <span class="sr-only">Your profile</span>
-            <img class="h-8 w-8 rounded-full bg-gray-800" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+            <div class="flex text-15 font-medium items-center gap-2 text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-7 h-auto text-white">
+                <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" clip-rule="evenodd" />
+              </svg>
+              Perfil
+            </div>
         </a>
       </div>
   </div>
@@ -156,8 +159,10 @@ import {
   RectangleStackIcon,
   Square3Stack3DIcon,
   Squares2X2Icon,
+  UserCircleIcon,
   UserGroupIcon,
   UsersIcon,
+  UserIcon,
   XMarkIcon
 } from '@heroicons/vue/24/outline'
 import axios from 'axios'
@@ -172,6 +177,7 @@ const routes = {
     { name: 'Recurso', route: '/resource/new', icon: ExclamationCircleIcon, current: false },
     { name: 'Painel do Usuário', route: '/home/dataversions', icon: CircleStackIcon , current: false },
     { name: 'Selecionar Cálculo', route: '/admin/dashboard', icon: RectangleStackIcon  , current: false },
+    { name: 'Permissões Acessos', route: '/home/permissionsaccess', icon: UsersIcon  , current: false },
   ],
   'admin-panel': [
     { name: 'Dashboard', route: '/admin/dashboard', icon: Squares2X2Icon, current: false },
@@ -284,6 +290,7 @@ const hiddenRoutes = [
       '/admin/training',
       '/admin/report/',
       '/admin/rewards/',
+      '/admin/permissionsaccess/',
 ];
 
 const showConfigLink = !hiddenRoutes.includes(route.path); 

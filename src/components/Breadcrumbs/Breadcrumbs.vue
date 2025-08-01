@@ -1,5 +1,5 @@
 <template>
-  <nav class="grid grid-cols-3 items-center bg-[#3459a2] py-3 px-4 shadow-md w-full z-50 md:py-4 md:px-6" aria-label="Breadcrumb">
+  <nav class="grid grid-cols-3 items-center bg-[#3459a2] py-3 px-4 shadow-md w-full z-50 md:py-5 md:px-6" aria-label="Breadcrumb">
       <div class="flex justify-start">
         <button @click="goBack" class="flex items-center gap-2 text-white font-medium hover:underline text-15 sm:text-base"><img :src="voltarIcon" alt="Voltar" class="w-4 h-4" />Voltar</button>
       </div>

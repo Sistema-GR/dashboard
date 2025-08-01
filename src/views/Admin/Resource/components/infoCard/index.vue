@@ -5,8 +5,8 @@
                 <!-- Avatar e Informações -->
                 <div class="flex items-center gap-4 w-full sm:w-auto">
                     <div class="flex-shrink-0">
-                        <div class="w-14 h-14 bg-white rounded-[10px] flex items-center justify-center">
-                            <UserIcon class="w-12 h-12 text-[#003966]"/>
+                        <div class="w-14 h-14 flex items-center justify-center">
+                            <UserIcon class="w-14 h-14 text-[#003965]"/>
                         </div>
                     </div>
                     

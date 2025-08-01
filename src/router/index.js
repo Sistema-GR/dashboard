@@ -18,6 +18,7 @@ import roles from '@/views/Admin/Roles/index.vue'
 import create from '@/views/Admin/Create/index.vue'
 import selector from '@/views/Admin/Create/Selector/Index.vue'
 import editversion from '@/views/Admin/Create/EditVersions/index.vue'
+import permissionsaccess from '@/views/Admin/PermissionsAccess/index.vue'
 //Resource
 import resource from '@/views/Admin/Resource/index.vue'
 import newResource from '@/views/Admin/Resource/NewResource/index.vue'
@@ -76,6 +77,7 @@ const router = createRouter({
         { path: 'config', name: 'configs', component: config },
         { path: 'alloc', name: 'alloc', component: alloc },
         { path: 'dataversions', name: 'dataversions', component: dataversions },
+        { path: 'permissionsaccess', name: 'PermissionsAccess', component: permissionsaccess },
         {
           path: 'create',
           name: 'create',

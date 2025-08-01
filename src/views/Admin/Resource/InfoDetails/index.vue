@@ -3,9 +3,9 @@
 
         <div class="flex flex-row items-center justify-between w-full py-3 mt-1">
           <div class="flex flex-col w-full justify-between md:flex-row items-center border rounded-[10px] p-4 shadow-md bg-white hover:shadow-xl transition-shadow duration-300">
-            <div class="flex w-full flex-row items-start">
+            <div class="flex w-full flex-row items-center">
               <div class="flex mb-3 md:mb-0 mr-3">
-                <UserIcon class="w-16 h-16 text-gray-300" />
+                <UserIcon class="w-14 h-14 text-[#003965]" />
               </div>
               <div class="flex flex-col items-start">
                 <p class="text-15 font-semibold text-gray-900">Matheus Gabriel Grawe</p>
