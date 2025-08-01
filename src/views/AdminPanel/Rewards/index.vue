@@ -66,7 +66,7 @@
                             <DisclosurePanel class=" mx-8 ">
 
                                 <div class="overflow-x-auto w-full mt-10" style="max-width: 100vw; overflow-x: auto;">
-                                    <table class="min-w-full border-collapse rounded-lg shadow-lg" style="min-width: 875px;">
+                                    <table class="w-full border-collapse rounded-lg shadow-lg" style="min-width: 875px;">
                                         <thead>
                                             <tr class="bg-azure-800 text-gray-100 text-[20px]">
                                                 <th v-for="(header, index) in ['Descrição', 'Dados', 'Valores a Receber', 'Total']" :key="index" class="p-4 font-semibold text-left">{{ header }}</th>
@@ -101,7 +101,7 @@
                                     </table>
                                 </div>
 
-                                <div class="flex flex-col w-full items-center overflow-hidden shadow-lg mt-10 rounded-lg bg-white">
+                                <div class="flex flex-col w-full items-center shadow-lg mt-10 rounded-lg bg-white">
                                     <div class="flex w-full border-b items-center justify-center bg-azure-800 py-4 rounded-t-lg">
                                         <p class="text-[30px] text-center font-semibold text-white">Critérios de verificação para gratificação</p>
                                     </div>
@@ -206,7 +206,7 @@
                                                 </div>
 
                                                 <div class="w-full overflow-x-auto" style="max-width: 100vw;"> 
-                                                    <table class="min-w-full border-collapse text-gray-700" style="min-width: 875px;"> 
+                                                    <table class="w-full border-collapse text-gray-700" style="min-width: 875px;"> 
                                                         <thead>
                                                             <tr class="bg-gray-200 text-gray-800 text-[15px] border-b">
                                                                 <th v-for="header in ['Ínicio', 'Fim', 'Função', 'Carga horária', 'Grupo']" 
@@ -240,7 +240,7 @@
                                     </div>
 
                                     <div class="w-full overflow-x-auto" style="max-width: 100vw;">
-                                        <table class="min-w-full border-collapse bg-white shadow-sm rounded-lg" style="min-width: 875px;">
+                                        <table class="w-full border-collapse bg-white shadow-sm rounded-lg" style="min-width: 875px;">
                                             <thead>
                                                 <tr class="bg-gray-200 text-gray-800 text-[15px]">
                                                     <th v-for="header in ['Início', 'Fim', 'Tipo de afastamento', 'Total dias', 'Contabilizados']" 
