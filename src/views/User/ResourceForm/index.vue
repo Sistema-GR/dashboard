@@ -134,7 +134,9 @@
 </template>
 
 <script>
+
 import { inject, ref, reactive, onMounted } from 'vue';
+
 import { ArrowDownTrayIcon, PaperClipIcon, XMarkIcon } from "@heroicons/vue/24/outline";
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
@@ -162,6 +164,7 @@ export default {
         
         const errors = ref({});
         const isSubmitting = ref(false);
+
         const isLoadingUserData = ref(true);
 
         const fetchUserData = async () => {
@@ -193,6 +196,7 @@ export default {
         onMounted(() => {
             fetchUserData();
         });
+
 
         const handleFileUpload = (event) => {
             form.files = Array.from(event.target.files);
@@ -262,7 +266,9 @@ export default {
             form, 
             errors,
             isSubmitting, 
+
             isLoadingUserData,
+
             handleFileUpload, 
             removeFile, 
             submitForm,

@@ -1,6 +1,7 @@
 <template>
     <Whiteboard title="Status dos Meus Recursos" :isSidebarMinimized="isSidebarMinimized">
         
+
         
         <div v-if="isLoading" class="text-center p-10">
             <p class="text-gray-600">Buscando seus recursos...</p>
@@ -58,6 +59,7 @@
                     </router-link>
                 </div>
             </div>
+
         </div>
     </Whiteboard>
 </template>
@@ -65,7 +67,9 @@
 <script>
 import { UserIcon, PencilSquareIcon } from "@heroicons/vue/24/outline";
 import Whiteboard from "@/components/Whiteboard/Whiteboard.vue";
+
 import Badge from "@/components/Badges/Badges.vue";
+
 import { inject, ref, onMounted } from 'vue';
 import axios from 'axios';
 
@@ -74,7 +78,9 @@ export default {
     components: { UserIcon, Whiteboard, Badge, PencilSquareIcon },
     setup() {
         const isSidebarMinimized = inject('isSidebarMinimized');
+
         const resource = ref([]);
+
         const isLoading = ref(true);
         const error = ref(null);
 
@@ -89,12 +95,15 @@ export default {
             isLoading.value = true;
             error.value = null;
             try {
+
+
                 const response = await axios.get('/recursos/meu-status/', {
                      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
                 });
                 resource.value = response.data;
             } catch (err) {
                 if (err.response && err.response.status === 404) {
+
                     resource.value = null; 
                 } else {
                     console.error("Erro ao buscar status do recurso:", err);
