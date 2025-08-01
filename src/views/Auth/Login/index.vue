@@ -74,6 +74,7 @@ import TextInput from "@/components/Inputs/TextInput.vue";
 import PrimaryButton from "@/components/Buttons/PrimaryButton.vue";
 import { EyeSlashIcon, EyeIcon } from "@heroicons/vue/24/outline";
 import { login } from "@/service/apiService";  
+import { setUserType, getDashboardRoute } from "@/service/userType";
 
 export default {
   name: 'Login',
@@ -136,12 +137,24 @@ export default {
         localStorage.setItem('accessToken', data.access);
         localStorage.setItem('refreshToken', data.refresh);
         localStorage.setItem('isAuthenticated', 'true');
+        
+        // Store user type information using the service
+        if (data.user) {
+          setUserType(data.user);
+        }
+        
         console.log('Tokens armazenados:', {
           accessToken: localStorage.getItem('accessToken'),
           refreshToken: localStorage.getItem('refreshToken'),
+          userType: localStorage.getItem('userType'),
         });
 
-        const redirectTo = this.$route.query.redirect || '/home/overview';
+        // Determine redirect based on user type
+        let redirectTo = this.$route.query.redirect;
+        if (!redirectTo) {
+          redirectTo = getDashboardRoute();
+        }
+        
         console.log('Redirecionando para:', redirectTo);
         this.$router.push(redirectTo);
       } catch (error) {
