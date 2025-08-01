@@ -50,6 +50,8 @@
                     </div>
                 </div>
 
+                
+
                 <div class="flex items-center border-b-2 py-0 pb-6">
                     <label class="font-semibold w-1/4 text-sm">Descrição</label>
                     <div class="w-3/4 ml-4">
@@ -187,7 +189,10 @@ export default {
                 isLoadingUserData.value = false;
             }
         };
-        onMounted(fetchUserData);
+
+        onMounted(() => {
+            fetchUserData();
+        });
 
         const handleFileUpload = (event) => {
             form.files = Array.from(event.target.files);

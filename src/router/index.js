@@ -124,8 +124,9 @@ const router = createRouter({
         { path: 'faqs', name: 'faqs', component: faqs },
         { path: 'criteria', name: 'criteria', component: criteria },
         { path: 'status', name: 'status', component: status },
-        { path: 'view', name: 'view', component: view }, 
-        { path: 'edit', name: 'edit', component: edit },
+        // { path: 'view', name: 'view', component: view }, 
+        { path: 'view/:id', name: 'view', component: view },
+        { path: 'edit/:id', name: 'edit', component: edit },
         { path: 'sucess', name: 'sucess', component: sucess },
         { path: 'config', name: 'config', component: config },
       ]

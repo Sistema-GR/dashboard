@@ -212,7 +212,19 @@ export default {
       file.isOpen = !file.isOpen;
     };
 
-    return { isSidebarMinimized, importedFiles, processedFiles, isProcessedOpen, isImportedOpen, toggleProcessed, toggleImported, toggleFile, baixarArquivo, fazerEdicao, fazerRecalculo };
+    return { 
+      isSidebarMinimized,
+      importedFiles,
+      processedFiles,
+      isProcessedOpen,
+      isImportedOpen,
+      toggleProcessed,
+      toggleImported,
+      toggleFile,
+      baixarArquivo,
+      fazerEdicao,
+      fazerRecalculo
+    };
   }
 };
 </script>
