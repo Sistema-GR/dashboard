@@ -3,13 +3,12 @@
     <Whiteboard title="Recurso" class="overflow-auto z-40 relative" :isSidebarMinimized="isSidebarMinimized">
 
         <div class="w-full py-5 px-4 sm:px-10">
-          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-            <Block title="Novo" number="100" customClass="bg-blue-500 hover:bg-blue-600 w-full max-w-xs min-w-3xs" @click="navigateTo('/resource/new')" />
-            <Block title="Em Progresso" number="20" customClass="bg-orange-500 hover:bg-orange-600 w-full max-w-xs min-w-3xs" @click="navigateTo('/resource/inprogress')" />
-            <Block title="Pendente" number="36" customClass="bg-yellow-500 hover:bg-yellow-600 w-full max-w-xs min-w-3xs" @click="navigateTo('/resource/awaiting')" />
-            <Block title="Reaberto" number="7" customClass="bg-red-500 hover:bg-red-600 w-full max-w-xs min-w-3xs" @click="navigateTo('/resource/reopened')" />
-            <Block title="Finalizado" number="76" customClass="bg-green-500 hover:bg-green-600 w-full max-w-xs min-w-3xs" @click="navigateTo('/resource/completed')" />
-            <Block title="Cancelado" number="20" customClass="bg-gray-500 hover:bg-gray-600 w-full max-w-xs min-w-3xs" @click="navigateTo('/resource/canceled')" />
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+            <Block title="Aguardando Resposta" number="100" customClass="bg-blue-500 hover:bg-blue-600 w-full max-w-xs min-w-3xs" @click="navigateTo('/resource/aguardando-resposta')" />
+            <Block title="Análise Pendente" number="20" customClass="bg-orange-500 hover:bg-orange-600 w-full max-w-xs min-w-3xs" @click="navigateTo('/resource/analise-pendente')" />
+            <Block title="Aguardando Envio" number="36" customClass="bg-yellow-500 hover:bg-yellow-600 w-full max-w-xs min-w-3xs" @click="navigateTo('/resource/aguardando-envio')" />
+            <Block title="Fora Do Prazo" number="7" customClass="bg-red-500 hover:bg-red-600 w-full max-w-xs min-w-3xs" @click="navigateTo('/resource/fora-do-prazo')" />
+            <Block title="Respondido" number="76" customClass="bg-green-500 hover:bg-green-600 w-full max-w-xs min-w-3xs" @click="navigateTo('/resource/respondido')" />
           </div>
         </div>
     

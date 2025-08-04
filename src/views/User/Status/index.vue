@@ -22,7 +22,7 @@
             <div v-for="resource in resource" :key="resource.id" class="flex flex-col items-center justify-start w-full bg-white border border-gray-200 rounded-lg p-4 shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <div class="w-full">
                     <div class="flex items-center justify-between w-full pb-3 border-b mb-4">
-                        <p class="text-lg font-semibold text-gray-700 capitalize">{{ (resource.status || 'aberto').replace('_', ' ') }}</p>
+                        <p class="text-lg font-semibold text-gray-700 capitalize">{{ (resource.status || 'aguardando_resposta').replace('_', ' ') }}</p>
                         <router-link class="w-full cursor-pointer" :to="{ name: 'edit', params: { id: resource.id } }">
                             <!-- <p class="group-hover:text-black text-sm">Editar</p>
                             <PencilSquareIcon class="w-5 h-auto stroke-black" /> -->
