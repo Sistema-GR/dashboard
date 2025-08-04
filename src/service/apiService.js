@@ -95,7 +95,29 @@ export const uploadFile = async (file, endpoint) => {
   try {
     const token = await getAccessToken();
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('funcionarios', funcionariosFile);
+    formData.append('demissoes', demissoesFile);
+    formData.append('frequencia', frequenciaFile);
+    formData.append('atividades', atividadesFile);
+    formData.append('tipoLocal', tipoLocalFile);
+    formData.append('dadosGerais', atividadesFile);
+    formData.append('funcoesGruposEtapas', funcoesGruposEtapasFile);
+    /*  process/funcionarios/",
+        atividades: "/process/atividades/",
+        tipoLocal: "/process/tipo-local/",
+        dadosGerais: "/process/dados-gerais/",
+        funcoesGruposEtapas: "/process/funcoes-grupo/",
+        aprenderMais: "/process/aprender-mais/",
+        etapasMetas: "/process/etapas-metas/",
+        uesPercGr: "/process/percentual-gratificacao/",
+        definicaoEtapas: "/process/definicao-etapas/",
+        diasNaoContabilizados: "/process/dias-nao-contabilizados/",
+        demissoes: "/process/demissoes/",
+        formacoes: "/process/formacoes/",
+        motivosInfrequencia: "/process/motivos-infrequencia/",
+        frequencia: "/process/frequencia/"*/
+    // ... append all other required files
+    formData.append('dias_nao_contabilizados', diasNaoContabilizadosFile);
 
     const response = await apiClient.post(endpoint, formData, {
       headers: {
