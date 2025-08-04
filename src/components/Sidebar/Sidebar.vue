@@ -19,7 +19,7 @@
                           </TransitionChild>
 
                           <div class="flex grow flex-col gap-y-5 overflow-y-auto px-6 pb-2 ring-1 ring-white/10">
-                              <div class="flex h-16 shrink-0 mt-5 justify-center items-center border-b-2 border-white">
+                              <div class="flex h-16 shrink-0 mt-5 justify-center items-center">
                                   <img class="h-12 w-auto" src="../../assets/images/logo-horinzontal.png" alt="Your Company" />
                               </div>
 
@@ -28,12 +28,75 @@
                                       <li>
                                           <ul role="list" class="-mx-2 space-y-1">
                                               <li v-for="item in filteredNavigation" :key="item.name">
-                                                  <router-link :to="item.route" :class="[item.current ? 'bg-gray-800 text-white' : 'text-white hover:bg-primary-900 hover:text-white', 'group flex gap-x-3 rounded-md p-2 text-15 font-semibold leading-6']">
+                                                  <!-- Mobile - Se tem filhos, renderizar como expansível -->
+                                                  <div v-if="item.children" class="relative">
+                                                    <div
+                                                      class="group flex gap-x-3 rounded-md p-2 text-15 font-semibold leading-6 text-white hover:bg-primary-900 cursor-pointer select-none"
+                                                      @click="isCalcMenuOpen = !isCalcMenuOpen"
+                                                    >
+                                                      <component :is="item.icon" class="h-6 w-6 shrink-0" aria-hidden="true" />
+                                                      {{ item.name }}
+                                                      <ChevronDownIcon
+                                                        :class="['w-4 h-auto ml-auto transition-transform', isCalcMenuOpen ? 'rotate-180' : '']"
+                                                      />
+                                                    </div>
+                                                    <TransitionRoot as="template" :show="isCalcMenuOpen">
+                                                      <ul class="ml-6 mt-1 space-y-1">
+                                                        <li v-for="child in item.children" :key="child.name">
+                                                          <router-link
+                                                            :to="child.route"
+                                                            class="group flex gap-x-3 rounded-md p-2 text-15 font-semibold leading-6 transition-all duration-200"
+                                                            :class="{ 'bg-gray-800 text-white': $route.path === child.route, 'hover:bg-primary-900 hover:text-white text-white': $route.path !== child.route }"
+                                                          >
+                                                            <component :is="child.icon" class="h-5 w-5 shrink-0" aria-hidden="true" />
+                                                            <span>{{ child.name }}</span>
+                                                          </router-link>
+                                                        </li>
+                                                      </ul>
+                                                    </TransitionRoot>
+                                                  </div>
+                                                  <!-- Mobile - Caso contrário, renderizar como link normal -->
+                                                  <router-link v-else :to="item.route" :class="[item.current ? 'bg-gray-800 text-white' : 'text-white hover:bg-primary-900 hover:text-white', 'group flex gap-x-3 rounded-md p-2 text-15 font-semibold leading-6']">
                                                       <component :is="item.icon" class="h-6 w-6 shrink-0" aria-hidden="true" />
                                                       {{ item.name }}
                                                   </router-link>
                                               </li>
                                           </ul>
+                                      </li>
+
+                                      <!-- Menu do perfil no mobile -->
+                                      <li class="-mx-6 mt-auto" v-if="showConfigLink">
+                                        <div class="flex items-center gap-2 px-5 py-3 text-15 font-semibold leading-6 text-white cursor-pointer hover:bg-gray-800" @click="toggleProfileMenu">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-12 h-auto text-white">
+                                              <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" clip-rule="evenodd" />
+                                            </svg>  
+                                            <span>{{ userName || 'Carregando...' }}</span>
+                                            <ChevronUpIcon :class="isProfileMenuOpen ? 'rotate-180' : ''" class="w-5 h-auto transition-transform" />
+                                        </div>
+
+                                        <!-- Menu de opções do perfil no mobile -->
+                                        <TransitionRoot as="template" :show="isProfileMenuOpen">
+                                          <TransitionChild
+                                            as="div"
+                                            enter="transition ease-out duration-200"
+                                            enter-from="opacity-0 translate-y-4"
+                                            enter-to="opacity-100 translate-y-0"
+                                            leave="transition ease-in duration-150"
+                                            leave-from="opacity-100 translate-y-0"
+                                            leave-to="opacity-0 translate-y-4"
+                                          >
+                                            <div class="flex flex-col mt-2 space-y-2 bg-gray-800 rounded-md shadow-lg text-white py-2 px-4 relative z-50">
+                                              <router-link to="/home/config" class="flex flex-row items-center gap-2 text-15 hover:text-gray-300 transition">
+                                                <PencilIcon class="w-4 h-auto" /> 
+                                                Acessar Perfil
+                                              </router-link>
+                                              <button class="flex flex-row items-center gap-2 text-15 w-full text-left hover:text-gray-300 transition" @click="logout">
+                                              <PowerIcon class="w-4 h-auto"/> 
+                                                Deslogar
+                                              </button>
+                                            </div>
+                                          </TransitionChild>
+                                        </TransitionRoot>
                                       </li>
                                   </ul>
                               </nav>
@@ -67,7 +130,7 @@
                                 <div v-if="item.children" class="relative">
                                   <div
                                     class="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-white hover:bg-white/30 cursor-pointer select-none"
-                                    @click="isCalcMenuOpen = !isCalcMenuOpen"
+                                    @click="toggleCalcMenu"
                                   >
                                     <component :is="item.icon" class="h-auto w-6 shrink-0 stroke-white" aria-hidden="true" />
                                     <span :class="isSidebarMinimized ? 'hidden' : ''">{{ item.name }}</span>
@@ -76,7 +139,7 @@
                                     />
                                   </div>
                                   <TransitionRoot as="template" :show="isCalcMenuOpen && !isSidebarMinimized">
-                                    <ul class="ml-6 mt-1 space-y-1">
+                                    <ul class="ml-6 mt-1 space-y-1 relative z-40">
                                       <li v-for="child in item.children" :key="child.name">
                                         <router-link
                                           :to="child.route"
@@ -105,14 +168,14 @@
                       </li>
 
                       <li class="-mx-6 mt-auto" v-if="showConfigLink">
-                        <div  class="flex items-center gap-2 px-5 py-3 text-15 font-semibold leading-6 text-white cursor-pointer hover:bg-gray-800" @click="toggleProfileMenu">
+                        <div class="flex items-center gap-2 px-5 py-3 text-15 font-semibold leading-6 text-white cursor-pointer hover:bg-gray-800 relative z-50" @click="toggleProfileMenu">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-12 h-auto text-white">
                               <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" clip-rule="evenodd" />
                             </svg>  
                             <span :class="isSidebarMinimized ? 'hidden' : ''">
                               {{ userName || 'Carregando...' }}
                             </span>
-                            <ChevronUpIcon :class="isProfileMenuOpen ? 'rotate-180' : ''" class="w-5 h-auto transition-transform" />
+                            <ChevronUpIcon :class="[isProfileMenuOpen ? 'rotate-180' : '', isSidebarMinimized ? 'hidden' : '']" class="w-5 h-auto transition-transform" />
                         </div>
 
                         <!-- Menu de opções do perfil -->
@@ -126,7 +189,7 @@
                             leave-from="opacity-100 translate-y-0"
                             leave-to="opacity-0 translate-y-4"
                           >
-                            <div class="flex flex-col mt-2 space-y-2 bg-gray-800 rounded-md shadow-lg text-white py-2 px-4">
+                            <div class="flex flex-col mt-2 space-y-2 bg-gray-800 rounded-md shadow-lg text-white py-2 px-4 relative z-50">
                               <router-link to="/home/config" class="flex flex-row items-center gap-2 text-15 hover:text-gray-300 transition">
                                 <PencilIcon class="w-4 h-auto" /> 
                                 Acessar Perfil
@@ -153,7 +216,7 @@
 
         <div class="flex-1 text-15 font-semibold leading-6 text-white"></div>
 
-        <a href="#">
+        <a href="#" @click="sidebarOpen = true">
             <span class="sr-only">Your profile</span>
             <div class="flex text-15 font-medium items-center gap-2 text-white">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-7 h-auto text-white">
@@ -161,7 +224,6 @@
               </svg>
               Perfil
             </div>
-
         </a>
       </div>
   </div>
@@ -349,6 +411,11 @@ const isCalcMenuOpen = ref(false)
 
 const toggleProfileMenu = () => {
     isProfileMenuOpen.value = !isProfileMenuOpen.value
+}
+
+// Nova função específica para o menu de cálculo
+const toggleCalcMenu = () => {
+    isCalcMenuOpen.value = !isCalcMenuOpen.value
 }
 
 function toggleSidebar() {

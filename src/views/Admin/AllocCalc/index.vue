@@ -1,8 +1,10 @@
 <template>
     <Whiteboard title="Calcular Alocação" :isSidebarMinimized="isSidebarMinimized">
-        <div class="flex flex-col w-full items-center justify-start p-3">
+        <div class="flex flex-col w-full items-center justify-center">
 
-            <p>Escolha um opção abaixo</p>
+            <div class="flex w-full p-5">
+                <p class="text-center w-full font-semibold text-15 text-gray-800">Escolha um opção abaixo</p>
+            </div>
 
             <div>
                 <PrimaryButton customColor="bg-[#4168b5] px-8 py-4 shadow-md hover:shadow-lg" value="Criar nova alocação"/>
