@@ -1,7 +1,10 @@
 <template>
     <Whiteboard title="Formulário de Recurso" :isSidebarMinimized="isSidebarMinimized">
         <div class="flex flex-col w-full px-4">
-            <div class="flex flex-col space-y-6 py-4">
+            <div v-if="isLoadingUserData" class="text-center p-10">
+                <p class="text-gray-600">Carregando seus dados...</p>
+            </div>
+            <div v-else class="flex flex-col space-y-6 py-4">
 
                 <div class="flex items-center border-b-2 py-0 pb-6">
                     <label class="font-semibold w-1/4 text-sm">Motivo de não recebimento</label>
@@ -13,7 +16,7 @@
                 <div class="flex items-center border-b-2 py-2 pb-6">
                     <label class="font-semibold w-1/4 text-sm">Nome completo</label>
                     <div class="w-3/4 ml-4">
-                        <input v-model="form.nome_completo" type="text" class="w-full border rounded-md p-2 text-sm" placeholder="Digite seu nome completo" />
+                        <input v-model="form.nome_completo" type="text" readonly class="w-full border rounded-md p-2 text-sm bg-gray-100 cursor-not-allowed" />
                         <p v-if="errors.nome_completo" class="text-red-500 text-sm mt-1">{{ errors.nome_completo }}</p>
                     </div>
                 </div>
@@ -21,7 +24,7 @@
                 <div class="flex items-center border-b-2 py-0 pb-6">
                     <label class="font-semibold w-1/4 text-sm">E-mail</label>
                     <div class="w-3/4 ml-4">
-                        <input v-model="form.email" type="email" class="w-full border rounded-md p-2 text-sm" placeholder="Digite seu e-mail" />
+                        <input v-model="form.email" type="email" readonly class="w-full border rounded-md p-2 text-sm bg-gray-100 cursor-not-allowed" />
                         <p v-if="errors.email" class="text-red-500 text-sm mt-1">{{ errors.email }}</p>
                     </div>
                 </div>
@@ -29,7 +32,7 @@
                 <div class="flex items-center border-b-2 py-0 pb-6">
                     <label class="font-semibold w-1/4 text-sm">CPF</label>
                     <div class="w-3/4 ml-4">
-                        <input v-model="form.cpf" type="text" class="w-full border rounded-md p-2 text-sm" placeholder="Digite seu CPF" />
+                        <input v-model="form.cpf" type="text" readonly class="w-full border rounded-md p-2 text-sm bg-gray-100 cursor-not-allowed" />
                         <p v-if="errors.cpf" class="text-red-500 text-sm mt-1">{{ errors.cpf }}</p>
                     </div>
                 </div>
@@ -37,7 +40,7 @@
                 <div class="flex items-center border-b-2 py-0 pb-6">
                     <label class="font-semibold w-1/4 text-sm">Matrícula</label>
                     <div class="w-3/4 ml-4">
-                        <input v-model="form.matricula" type="text" class="w-full border rounded-md p-2 text-sm" placeholder="Digite sua matrícula" />
+                        <input v-model="form.matricula" type="text" readonly class="w-full border rounded-md p-2 text-sm bg-gray-100 cursor-not-allowed" />
                         <p v-if="errors.matricula" class="text-red-500 text-sm mt-1">{{ errors.matricula }}</p>
                     </div>
                 </div>
@@ -49,8 +52,6 @@
                         <p v-if="errors.unidade" class="text-red-500 text-sm mt-1">{{ errors.unidade }}</p>
                     </div>
                 </div>
-
-                
 
                 <div class="flex items-center border-b-2 py-0 pb-6">
                     <label class="font-semibold w-1/4 text-sm">Descrição</label>
@@ -75,15 +76,12 @@
 
                     <div class="flex flex-col sm:flex-row sm:items-start sm:gap-4">
                         <div class="flex flex-col w-full gap-3 border-2 border-blue-500 rounded-lg p-1">
-                            <div v-for="(file, index) in form.files" :key="index" class="flex items-center justify-between gap-4 w-full text-sm text-blue-500 cursor-pointer">
+                            <div v-for="(file, index) in form.files" :key="index" class="flex items-center justify-between gap-4 w-full text-sm text-blue-500">
                                 <div class="flex items-center gap-2">
                                     <PaperClipIcon class="w-5 h-5 text-gray-500"/> 
                                     <span class="underline"> {{ file.name }} </span>
                                 </div>
-                                <div class="flex items-center gap-2">
-                                    <ArrowDownTrayIcon class="w-6 h-6 text-gray-700 cursor-pointer" @click="downloadFile(file)" />
-                                    <XMarkIcon class="w-5 h-5 text-red-500 cursor-pointer" @click="removeFile(index)" />
-                                </div>
+                                <XMarkIcon class="w-5 h-5 text-red-500 cursor-pointer" @click="removeFile(index)" />
                             </div>
                         </div>
                     </div>
@@ -115,7 +113,6 @@
                             </div>
                             <p v-if="errors.termsAccepted" class="text-red-500 text-sm">{{ errors.termsAccepted }}</p>
                         </div>
-                        
                     </div>
                 </div>
 
@@ -128,90 +125,13 @@
                     />
                 </div>
 
-        <div class="flex flex-col gap-1">
-          <label class="font-semibold text-15">Documentos</label>
-          <input
-            type="file"
-            @change="handleFileUpload"
-            multiple
-            class="block w-full text-15 text-gray-500 
-                   file:mr-4 file:py-2 file:px-4 
-                   file:border-1 file:border-gray-300 
-                   file:rounded-[10px] file:text-15 file:font-semibold 
-                   file:bg-blue-50 file:text-blue-700 
-                   hover:file:bg-blue-100"
-          />
-          <p v-if="errors.files" class="text-red-500 text-15 mt-1">{{ errors.files }}</p>
-        </div>
-
-        <!-- Lista de arquivos -->
-        <div v-if="files.length > 0" class="mt-2">
-          <div class="mb-2">
-            <h3 class="font-semibold text-15 sm:text-base">Arquivos Anexados:</h3>
-          </div>
-
-          <div class="flex flex-col gap-2 rounded-[10px] p-2">
-            <div
-              v-for="(file, index) in files"
-              :key="index"
-              class="flex items-center justify-between text-15 text-blue-500"
-            >
-              <div class="flex items-center gap-2">
-                <PaperClipIcon class="w-5 h-5 text-gray-500" />
-                <span class="underline">{{ file.name }}</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <ArrowDownTrayIcon class="w-6 h-6 text-gray-700 cursor-pointer" @click="downloadFile(file)" />
-                <XMarkIcon class="w-5 h-5 text-red-500 cursor-pointer" @click="removeFile(index)" />
-              </div>
             </div>
-          </div>
         </div>
-
-        <!-- Texto legal -->
-        <div class="space-y-4">
-          <p class="font-medium text-15 text-start">
-            Este formulário é destinado à interposição de recursos por parte dos profissionais vinculados à Secretaria de Educação de Joinville, referente à Gratificação por Resultados, conforme estabelecido pela Lei nº 9.214/2022 e pelo Decreto Municipal nº 49.309/2022.
-            <br><br>
-            O período para submissão de recursos neste formulário é de 17/05/2024 a 16/06/2024, encerrando-se às 23h59 do último dia.
-          </p>
-
-          <p class="font-bold text-15 text-start">
-            Atenção: Para a validação do recurso, é imprescindível anexar documentos que justifiquem e comprovem as alegações, incluindo eventuais divergências nos dados utilizados no cálculo da Gratificação por Resultados. O envio de documentos falsos ou informações inverídicas está sujeito à responsabilização administrativa, civil e criminal, conforme legislação vigente.
-          </p>
-        </div>
-
-        <!-- Termos de aceite -->
-        <div class="flex flex-col items-start gap-2">
-          <div class="flex flex-row items-center gap-2">
-            <input 
-              type="checkbox" 
-              id="terms" 
-              v-model="termsAccepted" 
-              class="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out" 
-            />
-            <label for="terms" class="text-15">
-              Declaro que li e aceito os termos acima.
-            </label>
-          </div>
-          <p v-if="errors.termsAccepted" class="text-red-500 text-15">{{ errors.termsAccepted }}</p>
-        </div>
-
-        <!-- Botão enviar -->
-        <div class="flex justify-end mt-4">
-          <PrimaryButton customColor="bg-[#4168b5] px-8 py-4 shadow-md hover:shadow-lg max-w-36" value="Enviar"/>
-        </div>
-
-      </div>
-    </div>
-  </Whiteboard>
+    </Whiteboard>
 </template>
 
-
 <script>
-
 import { inject, ref, reactive, onMounted } from 'vue';
-
 import { ArrowDownTrayIcon, PaperClipIcon, XMarkIcon } from "@heroicons/vue/24/outline";
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
@@ -233,13 +153,12 @@ export default {
             matricula: '',
             unidade: '',
             descricao: '',
-            files: [],
+            files: [], // Esta linha é crucial para evitar o erro da tela branca
             termsAccepted: false,
         });
         
         const errors = ref({});
         const isSubmitting = ref(false);
-
         const isLoadingUserData = ref(true);
 
         const fetchUserData = async () => {
@@ -248,17 +167,12 @@ export default {
                 const response = await axios.get('/auth/user-info/', {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
                 });
-
-                 console.log("DADOS RECEBIDOS DA API USER-INFO:", response.data);
-
-
                 const userData = response.data;
 
-                form.nome_completo = userData.first_name + ' ' + userData.last_name || '';
+                form.nome_completo = userData.first_name + ' ' + userData.last_name|| '';
                 form.email = userData.email || '';
                 form.cpf = userData.cpf || '';
                 form.matricula = userData.employeeCode || '';
-                
 
             } catch (error) {
                 console.error("Erro ao buscar dados do usuário:", error);
@@ -268,10 +182,7 @@ export default {
             }
         };
 
-        onMounted(() => {
-            fetchUserData();
-        });
-
+        onMounted(fetchUserData);
 
         const handleFileUpload = (event) => {
             form.files = Array.from(event.target.files);
@@ -297,7 +208,6 @@ export default {
          const submitForm = async () => {
             if (validateForm()) {
                 isSubmitting.value = true;
-
                 const formData = new FormData();
                 formData.append('nome_completo', form.nome_completo);
                 formData.append('email', form.email);
@@ -317,9 +227,7 @@ export default {
                             'Authorization': `Bearer ${localStorage.getItem('accessToken')}` 
                         }
                     });
-
                     router.push({ name: 'status' });
-
                 } catch (error) {
                     console.error("Erro ao criar recurso:", error.response ? error.response.data : error.message);
                     if (error.response && error.response.data) {
@@ -329,7 +237,7 @@ export default {
                         alert(`Ocorreram os seguintes erros:\n${errorMessages}`);
                     } else {
                         alert('Ocorreu um erro desconhecido ao enviar seu recurso. Tente novamente.');
-                 }
+                    }
                 } finally {
                     isSubmitting.value = false;
                 }
@@ -341,9 +249,7 @@ export default {
             form, 
             errors,
             isSubmitting, 
-
             isLoadingUserData,
-
             handleFileUpload, 
             removeFile, 
             submitForm,

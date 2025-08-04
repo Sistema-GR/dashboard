@@ -5,7 +5,7 @@
             <div class="flex-1 rounded-[10px] shadow-lg">
 
                 <div class="flex items-center justify-center bg-[#f16d91] p-4">
-                    <p class="text-20 font-bold text-white">Pendente</p>
+                    <p class="text-20 font-bold text-white">Aguardando Envio</p>
                 </div>
 
                 <div class="flex items-center justify-end p-3 px-4 sm:px-10">
