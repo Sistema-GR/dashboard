@@ -1,4 +1,5 @@
 <template>
+
     <Whiteboard :title="`Detalhes do Recurso #${resourceId}`" :isSidebarMinimized="isSidebarMinimized">
         
         
@@ -38,7 +39,6 @@
                     <div><strong>Data de Abertura:</strong> {{ formatDate(resource.created_at) }}</div>
                 </div>
             </div>
-
             
             <div class="bg-white p-4 rounded-lg shadow-sm border">
                 <h3 class="text-lg font-bold mb-2">Descrição</h3>

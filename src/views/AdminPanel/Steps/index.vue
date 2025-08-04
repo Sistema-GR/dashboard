@@ -1,6 +1,6 @@
 <template>
     <Whiteboard title="Etapas Ues" :isSidebarMinimized="isSidebarMinimized">
-        <div class="flex w-full items-start justify-start px-4 mt-4">
+        <div class="flex w-full items-start justify-start px-4 sm:px-10 mt-4">
             <Search @search="handleSearch" />
         </div>   
 

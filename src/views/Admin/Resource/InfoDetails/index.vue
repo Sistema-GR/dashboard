@@ -1,26 +1,15 @@
 <template>
-    <Whiteboard title="" class="-translate-y-20" :isSidebarMinimized="isSidebarMinimized" :hideBreadcrumbs="true">
-
-        <div class="flex flex-row w-full items-center justify-between border-b-2 py-2 rounded-t-md shadow-md mt-10 lg:mt-0" :class="resourceBgColor">
-            <p class="text-white font-medium text-xl mx-2 pt-2">Recurso</p>
-            <select class="mx-2 text-white" :class="resourceBgColor" v-model="selectedStatus" @change="updateResourceColor">
-                <option value="bg-blue-500">Novo</option>
-                <option value="bg-orange-500">Em Progresso</option>
-                <option value="bg-yellow-500">Pendente</option>
-                <option value="bg-red-500">Reaberto</option>
-                <option value="bg-gray-500">Cancelado</option>
-            </select>
-        </div>
+    <Whiteboard title="" class="px-10 pb-20 lg:ml-10" :isSidebarMinimized="isSidebarMinimized" :hideBreadcrumbs="true">
 
         <div class="flex flex-row items-center justify-between w-full py-3 mt-1">
-          <div class="flex flex-col w-full justify-between md:flex-row items-center border rounded-lg p-4 shadow-md bg-white hover:shadow-xl transition-shadow duration-300">
-            <div class="flex w-full flex-row items-start">
+          <div class="flex flex-col w-full justify-between md:flex-row items-center border rounded-[10px] p-4 shadow-md bg-white hover:shadow-xl transition-shadow duration-300">
+            <div class="flex w-full flex-row items-center">
               <div class="flex mb-3 md:mb-0 mr-3">
-                <UserIcon class="w-16 h-16 text-gray-300" />
+                <UserIcon class="w-14 h-14 text-[#003965]" />
               </div>
               <div class="flex flex-col items-start">
-                <p class="text-lg font-semibold text-gray-900">Matheus Gabriel Grawe</p>
-                <p class="text-sm text-gray-600">u4573</p>
+                <p class="text-15 font-semibold text-gray-900">Matheus Gabriel Grawe</p>
+                <p class="text-15 text-gray-600">u4573</p>
               </div>
             </div>
 
@@ -51,45 +40,45 @@
           </div>
         </div>
 
-        <div class="flex flex-col w-full py-4 mt-3 p-4 bg-white border rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <p class="text-lg font-bold mb-2">Dados do Servidor</p>
+        <div class="flex flex-col w-full py-4 mt-3 p-4 bg-white border rounded-[10px] shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <p class="text-15 font-bold mb-2">Dados do Servidor</p>
             <div class="space-y-2">
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-                  <p class="font-medium">CPF:</p>
-                  <p class="text-gray-600">123.456.789-00</p>
+                  <p class="text-15">CPF:</p>
+                  <p class="text-15 text-gray-600">123.456.789-00</p>
                 </div>
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-                  <p class="font-medium">Email:</p>
-                  <p class="text-gray-600">example@domain.com</p>
+                  <p class="text-15">Email:</p>
+                  <p class="text-15 text-gray-600">example@domain.com</p>
                 </div>
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-                  <p class="font-medium">Cargo:</p>
-                  <p class="text-gray-600">Desenvolvedor</p>
+                  <p class="text-15">Cargo:</p>
+                  <p class="text-15 text-gray-600">Desenvolvedor</p>
                 </div>
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-                  <p class="font-medium">Unidade:</p>
-                  <p class="text-gray-600">TI</p>
+                  <p class="text-15">Unidade:</p>
+                  <p class="text-15 text-gray-600">TI</p>
                 </div>
             </div>
         </div>
 
-        <div class="flex flex-col w-full mt-5 p-4 bg-white border rounded-lg shadow-lg pb-8 hover:shadow-xl transition-shadow duration-300">
-            <p class="text-lg font-bold mb-2">Descrição</p>
+        <div class="flex flex-col w-full mt-5 p-4 bg-white border rounded-[10px] shadow-lg pb-8 hover:shadow-xl transition-shadow duration-300">
+            <p class="text-15 font-bold mb-2">Descrição</p>
             <p> Lorem Ipsum is simply dummy text of the printing and typesetting industry...</p>
         </div>
 
-        <div class="flex flex-col w-full mt-8 p-4 bg-white border rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <p class="text-lg font-bold mb-2">Escolher Versão para Abrir</p>
+        <div class="flex flex-col w-full mt-8 p-4 bg-white border rounded-[10px] shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <p class="text-15 font-bold mb-2">Escolher Versão para Abrir</p>
             <select v-model="selectedVersion" class="border rounded-md py-2 px-4">
                 <option value="primeira-versao">Primeira Versão</option>
                 <option value="segunda-versao">Segunda Versão</option>
             </select>
         </div>
 
-        <div class="flex flex-col items-center justify-between w-full mt-5 p-4 bg-white border rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+        <div class="flex flex-col items-center justify-between w-full mt-5 p-4 bg-white border rounded-[10px] shadow-lg hover:shadow-xl transition-shadow duration-300">
 
             <div class="flex flex-row w-full justify-between">
-                <p class="text-lg font-bold">Responder Recurso</p>
+                <p class="text-15 font-bold">Responder Recurso</p>
                 <button @click="toggleReportResponse" class="bg-blue-500 text-white py-2 px-4 rounded-md">
                   Responder
                 </button>
@@ -104,8 +93,8 @@
 
         </div>
         
-        <div class="flex flex-col w-full mt-5 p-4 bg-white border rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300" v-if="previousResponses.length">
-          <p class="text-lg font-bold mb-2">Respostas Anteriores</p>
+        <div class="flex flex-col w-full mt-5 p-4 bg-white border rounded-[10px] shadow-lg hover:shadow-xl transition-shadow duration-300" v-if="previousResponses.length">
+          <p class="text-15 font-bold mb-2">Respostas Anteriores</p>
           <ul class="space-y-2">
             <li v-for="(response, index) in previousResponses" :key="index" class="text-gray-600 border-b pb-2">
               <div v-if="!isEditing[index]" class="flex justify-between items-center">

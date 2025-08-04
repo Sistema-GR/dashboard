@@ -1,40 +1,45 @@
 <template>
-     <div class="flex flex-col items-center justify-start w-full bg-white border border-gray-200 rounded-lg p-4 shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer">
-            <router-link class="w-full" to="info">
-                <div class="flex items-center justify-between w-full pb-3 border-b mb-4">
-                    <p class="text-lg font-semibold text-gray-700">Aberto</p>
-                    <p class="text-sm text-gray-500">01/02/2023</p>
-                </div>
-
-                <div class="flex w-full gap-4">
-                    <div class="p-2 bg-gray-100 rounded-lg">
-                        <UserIcon class="w-16 h-16 text-gray-400"/>
-                    </div>
-
-                    <div class="flex flex-row items-center justify-between w-full">
-                        <div class="flex flex-col gap-2">
-                            <p class="text-base font-medium text-gray-800">Matheus Gabriel Grawe</p>
-                            <p class="text-sm text-gray-600">Erro no processamento do pagamento</p>
-                        </div>
-
-                        <div class="flex flex-col items-end gap-2">
-                            <div> 
-                                <Badges text="Formação" />
-                            </div>
+    <div class="w-full bg-[#e3f0ff] border rounded-[10px] p-4 shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer">
+        <router-link class="w-full" to="info">
+            <div class="flex gap-4 items-center justify-between w-full flex-wrap lg:flex-nowrap">
+                <!-- Avatar e Informações -->
+                <div class="flex items-center gap-4 w-full sm:w-auto">
+                    <div class="flex-shrink-0">
+                        <div class="w-14 h-14 flex items-center justify-center">
+                            <UserIcon class="w-14 h-14 text-[#003965]"/>
                         </div>
                     </div>
+                    
+                    <div class="flex flex-col">
+                        <h3 class="text-15 font-bold text-black mb-1">Nome do divo</h3>
+                        <p class="text-15 text-black">Deu ruim no pagamento</p>
+                    </div>
                 </div>
-            </router-link>
-        </div>
+
+                <!-- Status -->
+                <div class="flex flex-col items-center">
+                    <p class="text-15 font-bold text-black mb-1">Status</p>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-15 font-medium bg-red-100 text-red-700">
+                        Formação
+                    </span>
+                </div>
+
+                <!-- Aberto e Data -->
+                <div class="flex flex-col items-end">
+                    <p class="text-15 font-medium text-black mb-1">Aberto</p>
+                    <p class="text-15 text-black">01/01/2025</p>
+                </div>
+            </div>
+        </router-link>
+    </div>
 </template>
 
 <script>
 import { UserIcon } from "@heroicons/vue/24/outline";
-import Badges from "@/components/Badges/Badges.vue";
 
 export default {
     name: "infoCard",
-    components: {UserIcon, Badges},
+    components: {UserIcon},
     props: {
         situation:{
             type: String,

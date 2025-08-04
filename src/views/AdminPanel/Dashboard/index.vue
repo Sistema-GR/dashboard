@@ -1,81 +1,116 @@
 <template>
   <Whiteboard title="Dashboard" :isSidebarMinimized="isSidebarMinimized">
     <!-- Total Recebe, Total Não Recebe e Total a Pagar -->
-    <div class="w-full py-6">
-      <div class="flex flex-wrap justify-center gap-8  xl:justify-between">
-        <div v-for="(card, index) in cards" :key="index" class="flex flex-col bg-gradient-to-r from-gray-100 to-gray-300 border border-gray-200 text-gray-800 rounded-lg shadow-md p-6 min-h-[160px] flex-1 min-w-[280px] max-w-[100%]">
-          <div class="flex flex-row justify-between items-center mb-4">
-            <p class="text-lg font-semibold leading-tight">{{ card.title }}</p>
-            <component :is="card.icon" class="w-8 h-8 text-gray-600 flex-shrink-0" />
+    <div class="grid w-full py-8">
+      <div class="flex flex-wrap justify-center gap-6 sm:gap-8 xl:justify-between px-4 sm:px-10">
+        <div
+          v-for="(card, index) in cards"
+          :key="index"
+          class="flex flex-col rounded-[10px] shadow-md overflow-hidden flex-1 min-w-[260px] sm:max-w-[400px] border border-gray-200"
+        >
+          <!-- Cabeçalho -->
+          <div
+            class="flex items-center justify-between px-4 py-2 text-white text-15 font-semibold"
+            :class="[
+              index === 0 ? 'bg-[#3459A2]' :
+              index === 1 ? 'bg-[#3459A2]' :
+              'bg-[#003966]'
+            ]"
+          >
+            <span>{{ card.title }}</span>
+            <component :is="card.icon" class="w-5 h-5 text-white opacity-80" />
           </div>
-          <div class="flex-grow flex items-end">
-            <p class="text-3xl font-bold w-full text-center">{{ formattedDashboardData[card.dataKey] }}</p>
+
+          <!-- Valor -->
+          <div class="bg-[#e3f0ff] py-6 flex items-center justify-center text-2xl font-bold text-gray-800">
+            {{ formattedDashboardData[card.dataKey] }}
           </div>
         </div>
       </div>
     </div>
 
     <!-- Seções do gráfico -->
-    <div v-for="(section, index) in updatedChartSections" :key="index" class="w-full bg-white p-6 rounded-lg shadow-lg mt-6 bg-gradient-to-r from-gray-50 to-gray-400">
-      <h2 class="text-xl font-semibold mb-4">{{ section.title }}</h2>
-      <div class="space-y-4">
-        <div v-for="(data, idx) in section.data" :key="idx" class="flex items-center gap-8">
-          <span class="w-1/4 text-gray-700 font-medium">{{ data.label }}</span>
-          <div class="flex flex-row w-3/4 bg-gray-200 rounded-lg h-8 overflow-hidden gap-2 items-center font-medium">
-            <div class="bg-primary-800 h-full flex items-center justify-start text-white font-semibold text-center px-2" :style="{ width: data.percentage + '%' }"></div>
-            <div class="whitespace-nowrap">{{ data.percentage }}% ({{ data.value }} pessoas)</div>
+    <div
+      v-for="(section, index) in updatedChartSections"
+      :key="index"
+      class="w-full mb-10"
+    >
+      <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3">
+        {{ section.title }}
+      </div>
+      <div class="space-y-4 pt-5 px-4 sm:px-10">
+        <div v-for="(data, idx) in section.data" :key="idx" class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-8">
+          <span class="w-full sm:w-1/4 text-gray-800 text-15 font-semibold">{{ data.label }}</span>
+          <div class="flex flex-row w-full sm:w-3/4 bg-gray-200 rounded-[10px] h-6 overflow-hidden items-center">
+            <div
+              class="bg-[#3459A2] h-full text-white text-15 px-2 flex items-center rounded-[10px] justify-start font-semibold"
+              :style="{ width: data.percentage + '%' }"
+            ></div>
+            <div class="text-xs text-black font-bold ml-3 whitespace-nowrap">
+              {{ data.percentage }}% ({{ data.value }} pessoas)
+            </div>
           </div>
         </div>
       </div>
-      <div class="mt-6 border-t pt-4">
-        <p class="text-lg font-semibold">Total Geral: {{ section.total }} pessoas</p>
+      <div class="mt-6 border-t flex justify-between items-center border-gray-200 pt-4 px-4 sm:px-10">
+        <p class="text-base font-semibold text-[#3459A2]">TOTAL GERAL:</p>
+        <p class="text-base font-semibold text-[#3459A2]">{{ section.total }} pessoas</p>
       </div>
     </div>
 
     <!-- Seção de Downloads -->
-    <div class="w-full p-6 bg-gradient-to-r from-gray-100 to-gray-300 rounded-lg shadow-lg my-6">
-      <h2 class="text-xl font-semibold mb-4 text-gray-800">Relatório Final</h2>
-      <div v-for="(file, index) in files" :key="index" class="flex items-center justify-between bg-gradient-to-r from-gray-100 to-gray-200 border border-gray-200 rounded-lg p-4 mb-4">
+    <div class="w-full mb-10">
+      <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3">Relatório Final</div>
+      <div
+        v-for="(file, index) in files"
+        :key="index"
+        class="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-gray-100 border border-gray-200 rounded-[10px] mx-4 sm:mx-10 p-4 my-4"
+      >
         <div class="flex items-center space-x-4">
           <DocumentDuplicateIcon class="h-8 w-8 text-gray-500" />
           <div class="flex flex-col">
             <p class="text-gray-800 font-medium">{{ file.name }}</p>
-            <span class="text-sm text-gray-600">{{ file.size }}</span>
+            <span class="text-15 text-gray-600">{{ file.size }}</span>
           </div>
         </div>
-        <button @click="downloadCriteriosCSV" class="flex items-center text-blue-500 hover:text-blue-700">
+        <button
+          @click="downloadCriteriosCSV"
+          class="flex items-center text-blue-600 hover:text-blue-800 font-semibold mt-4 sm:mt-0"
+        >
           <ArrowDownTrayIcon class="h-5 w-5 mr-2" />
-          <span class="text-sm font-semibold">Baixar CSV</span>
+          <span class="text-15">Baixar CSV</span>
         </button>
       </div>
     </div>
 
-    <div class="flex flex-col w-full mt-3 bg-gradient-to-r from-gray-100 to-gray-300 border border-gray-200 p-6 rounded-lg shadow-lg mb-5">
-      <h2 class="text-xl font-semibold mb-4 text-gray-800">Arquivos importados</h2>
-      <p class="text-gray-700 mb-4">
+    <!-- Arquivos importados -->
+    <div class="flex flex-col w-full mb-10">
+      <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3">Arquivos importados</div>
+      <div class="mx-4 sm:mx-10 my-4">
+        <p class="text-gray-700 mb-4">
         Aqui você pode gerenciar os arquivos importados. Clique no botão abaixo para visualizar os detalhes.
       </p>
-      <button 
-        class="self-start bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300"
+      <button class="self-start bg-[#3459A2] hover:bg-[#203661] text-white font-semibold py-2 px-4 rounded-[10px] transition duration-300"
         @click="$router.push('files-manager')">
         Visualizar arquivos
       </button>
+      </div>
     </div>
 
-
     <!-- Informações sobre a versão -->
-    <div class="flex flex-col w-full mt-3 bg-gradient-to-r from-gray-100 to-gray-300 border border-gray-200 p-6 rounded-lg shadow-lg">
-      <h2 class="text-xl font-semibold mb-4 text-gray-800">Informações sobre a Versão</h2>
+    <div class="flex flex-col w-full mb-10">
+      <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3">Informações sobre a Versão</div>
       <div class="space-y-4">
         <div v-for="(field, index) in version" :key="index" class="flex justify-between">
           <span class="font-medium text-gray-700">{{ field.label }}:</span>
           <span class="text-gray-800">{{ field.value }}</span>
         </div>
       </div>
-      <div class="mt-6 text-right">
-        <button 
-          @click="navigateHome" 
-          class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition duration-300">
+      <div class="mt-6 mr-4 sm:mr-10 text-right">
+        <button
+          @click="navigateHome"
+          class="bg-[#3459A2] text-white px-6 py-2 rounded-[10px] hover:bg-[#203661] transition duration-300"
+        >
           Sair
         </button>
       </div>

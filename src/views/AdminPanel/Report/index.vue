@@ -1,7 +1,7 @@
 <template>
   <Whiteboard title="Relatório Final" :isSidebarMinimized="isSidebarMinimized">
 
-    <div class="flex flex-row w-full items-start justify-between px-4 mt-4">
+    <div class="flex flex-row w-full items-start justify-between px-4 sm:px-10 mt-4">
       <Search @search="handleSearch" />
     </div>   
     

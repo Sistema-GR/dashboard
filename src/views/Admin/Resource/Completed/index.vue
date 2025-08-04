@@ -1,15 +1,21 @@
 <template>
-    <Whiteboard title="" class="-translate-y-20" :isSidebarMinimized="isSidebarMinimized" :hideBreadcrumbs="true">
-      <div class="flex flex-col w-full 4 gap-10 lg:flex-row">
+    <Whiteboard title="Finalizado" class="" :isSidebarMinimized="isSidebarMinimized" :hideBreadcrumbs="true">
+      <div class="flex flex-col w-full lg:flex-row">
 
-            <div class="flex-1 px-2 border rounded-lg shadow-lg">
+            <div class="flex-1 rounded-[10px] shadow-lg">
 
-                <div class="flex items-center justify-between border-b-2 m-3">
-                    <p class="text-xl font-semibold my-2">Finalizado</p>
-                    <FunnelIcon class="w-5 h-auto stroke-gray-400 cursor-pointer" />
+                <div class="flex items-center justify-center bg-[#ff8051] p-4">
+                    <p class="text-20 font-bold text-white">Finalizado</p>
                 </div>
 
-                <div class="m-3 space-y-3">
+                <div class="flex items-center justify-end p-3 px-4 sm:px-10">
+                    <div class="flex items-center gap-2 text-black cursor-pointer hover:underline">
+                        <FunnelIcon class="w-5 h-5" />
+                        <span class="text-15 text-black">Filtrar</span>
+                    </div>
+                </div>
+
+                <div class="mt-1 my-5 space-y-4 px-4 sm:px-10">
                     <infoCard situation="Novo" />
                     <infoCard situation="Novo" />
                     <infoCard situation="Novo" />
@@ -24,12 +30,12 @@
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import infoCard from '@/views/Admin/Resource/components/infoCard/index.vue'
 import { FunnelIcon } from "@heroicons/vue/24/outline";
-import { inject } from 'vue';
+import { inject, ref } from 'vue';
 
 export default {
     components: {infoCard, Whiteboard, FunnelIcon},
     setup() {
-    const isSidebarMinimized = inject('isSidebarMinimized')
+    const isSidebarMinimized = inject('isSidebarMinimized', ref(false))
 
     return {
       isSidebarMinimized
