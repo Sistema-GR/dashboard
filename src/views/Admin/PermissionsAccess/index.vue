@@ -2,40 +2,11 @@
   <Whiteboard title="PERMISSÕES PARA ADMINISTRADORES" :isSidebarMinimized="isSidebarMinimized">
     <!-- Bloco 1 -->
     <section class="flex flex-row items-center justify-between shadow-ms w-full mb-5 bg-[#c2ddfd] text-black px-4 lg:px-10 p-5">
-      <h2 class="text-25 font-semibold text-black">Perfil de ...</h2>
+      <h2 class="text-25 font-semibold text-black">Perfil do administrador</h2>
     </section>
-
-    <!-- Tabela de Perfil -->
-    <div class="mb-10 px-4 lg:px-10 w-full">
-      <div class="w-full mx-auto overflow-x-auto bg-white rounded-[10px] shadow">
-        <table class="w-full table-fixed">
-          <thead class="bg-[#3459a2] text-white">
-            <tr>
-              <th class="text-left px-5 py-3 w-[33%]">Nome</th>
-              <th class="text-left px-5 py-3 w-[25%]">CPF</th>
-              <th class="text-left px-5 py-3 w-[33%]">Setor</th>
-              <th class="text-center px-5 py-3 w-[%]"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(usuario, index) in usuariosPerfil" :key="usuario.cpf" class="border-t">
-              <td class="px-5 py-3 truncate">{{ usuario.nome }}</td>
-              <td class="px-5 py-3 truncate">{{ usuario.cpf }}</td>
-              <td class="px-5 py-3 truncate">{{ usuario.setor }}</td>
-              <td class="px-5 py-3 text-center">
-                <button @click="confirmarRemocao('perfil', index)" class="text-gray-600 hover:text-red-600">
-                  <TrashIcon class="w-5 h-5 inline" />
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Campo para adicionar ao Perfil -->
+    <!-- Campo para adicionar ao Perfil de alteração -->
     <div class="flex flex-row items-center justify-between shadow-ms w-full mb-5 bg-[#e3f0ff] text-black px-4 lg:px-10 p-4">
-      <label class="text-20 font-semibold">Adicionar ao Perfil</label>
+      <label class="text-20 font-semibold">Perfil de alteração</label>
       <div class="relative flex flex-row items-center w-full max-w-80 gap-3">
         <div class="relative w-full">
           <input
@@ -64,8 +35,8 @@
         </button>
       </div>
     </div>
-
-    <!-- Bloco 2 -->
+    
+    <!-- Tabela de perfil de alteração -->
     <div class="mb-10 px-4 lg:px-10 w-full">
       <div class="w-full mx-auto overflow-x-auto bg-white rounded-[10px] shadow">
         <table class="w-full table-fixed">
@@ -74,16 +45,16 @@
               <th class="text-left px-5 py-3 w-[33%]">Nome</th>
               <th class="text-left px-5 py-3 w-[25%]">CPF</th>
               <th class="text-left px-5 py-3 w-[33%]">Setor</th>
-              <th class="text-center px-5 py-3 w-[9%]"></th>
+              <th class="text-center px-5 py-3 w-[%]"></th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(usuario, index) in usuariosExemplo" :key="usuario.cpf" class="border-t">
+            <tr v-for="(usuario, index) in usuariosPerfil" :key="usuario.cpf" class="border-t">
               <td class="px-5 py-3 truncate">{{ usuario.nome }}</td>
               <td class="px-5 py-3 truncate">{{ usuario.cpf }}</td>
               <td class="px-5 py-3 truncate">{{ usuario.setor }}</td>
               <td class="px-5 py-3 text-center">
-                <button @click="confirmarRemocao('exemplo', index)" class="text-gray-600 hover:text-red-600">
+                <button @click="confirmarRemocao('perfil', index)" class="text-gray-600 hover:text-red-600">
                   <TrashIcon class="w-5 h-5 inline" />
                 </button>
               </td>
@@ -93,9 +64,9 @@
       </div>
     </div>
 
-    <!-- Campo para adicionar ao Exemplo -->
+    <!-- Campo para adicionar perfil de visualização -->
     <div class="flex flex-row items-center justify-between shadow-ms w-full mb-5 bg-[#e3f0ff] text-black px-4 lg:px-10 p-4">
-      <label class="text-20 font-semibold">Adicionar ao Exemplo</label>
+      <label class="text-20 font-semibold">Perfil de visualização</label>
       <div class="relative flex flex-row items-center w-full max-w-80 gap-3">
         <div class="relative w-full">
           <input
@@ -124,6 +95,67 @@
         </button>
       </div>
     </div>
+
+    <!-- Perfil de visualização -->
+    <div class="mb-10 px-4 lg:px-10 w-full">
+      <div class="w-full mx-auto overflow-x-auto bg-white rounded-[10px] shadow">
+        <table class="w-full table-fixed">
+          <thead class="bg-[#3459a2] text-white">
+            <tr>
+              <th class="text-left px-5 py-3 w-[33%]">Nome</th>
+              <th class="text-left px-5 py-3 w-[25%]">CPF</th>
+              <th class="text-left px-5 py-3 w-[33%]">Setor</th>
+              <th class="text-center px-5 py-3 w-[9%]"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(usuario, index) in usuariosExemplo" :key="usuario.cpf" class="border-t">
+              <td class="px-5 py-3 truncate">{{ usuario.nome }}</td>
+              <td class="px-5 py-3 truncate">{{ usuario.cpf }}</td>
+              <td class="px-5 py-3 truncate">{{ usuario.setor }}</td>
+              <td class="px-5 py-3 text-center">
+                <button @click="confirmarRemocao('exemplo', index)" class="text-gray-600 hover:text-red-600">
+                  <TrashIcon class="w-5 h-5 inline" />
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+<!-- cod de filtro-->
+ <!-- <div class="flex items-center justify-end p-3 px-4 sm:px-10">
+      <div class="flex items-center gap-2 text-black cursor-pointer" @click="toggleFilter">
+          <FunnelIcon class="w-5 h-5" />
+          <span class="text-15 text-black">Filtrar</span>
+      </div>
+  </div>
+ <div v-if="showFilter" class="bg-gray-50 border-t border-gray-200 p-4 mx-3 mb-3 rounded-[10px]">
+    <div class="space-y-3">
+        <div>
+            <label class="block text-15 font-medium text-gray-700 mb-1">Status</label>
+            <select v-model="filters.status" class="w-full p-2 border border-gray-300 rounded-md text-15">
+                <option value="">Todos</option>
+                <option value="aberto">Aberto</option>
+                <option value="em_analise">Em Análise</option>
+                <option value="finalizado">Finalizado</option>
+            </select>
+        </div>
+        <div>
+            <label class="block text-15 font-medium text-gray-700 mb-1">Data</label>
+            <input v-model="filters.date" type="date" class="w-full p-2 border border-gray-300 rounded-md text-15">
+        </div>
+        <div class="flex gap-2">
+            <button @click="applyFilter" class="px-4 py-2 bg-blue-500 text-white rounded-md text-15 hover:bg-blue-600">
+                Aplicar
+            </button>
+            <button @click="clearFilter" class="px-4 py-2 bg-gray-500 text-white rounded-md text-15 hover:bg-gray-600">
+                Limpar
+            </button>
+        </div>
+    </div>
+</div> -->
+
 
     <!-- Modal de confirmação -->
     <div v-if="modalAberto" class="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center">
