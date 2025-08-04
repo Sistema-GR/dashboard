@@ -245,10 +245,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-th,
-td {
-  white-space: nowrap;
-}
-</style>
