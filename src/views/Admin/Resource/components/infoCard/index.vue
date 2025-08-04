@@ -11,7 +11,7 @@
                     </div>
                     
                     <div class="flex flex-col">
-                        <h3 class="text-15 font-bold text-black mb-1">Nome do divo</h3>
+                        <h3 class="text-15 font-bold text-black mb-1">Matheus Gabriel Grawe</h3>
                         <p class="text-15 text-black">Deu ruim no pagamento</p>
                     </div>
                 </div>
