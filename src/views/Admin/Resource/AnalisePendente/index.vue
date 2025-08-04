@@ -1,15 +1,15 @@
 <template>
-    <Whiteboard title="Finalizado" class="" :isSidebarMinimized="isSidebarMinimized" :hideBreadcrumbs="true">
+    <Whiteboard title="Em Progresso" class="" :isSidebarMinimized="isSidebarMinimized" :hideBreadcrumbs="true">
       <div class="flex flex-col w-full lg:flex-row">
 
             <div class="flex-1 rounded-[10px] shadow-lg">
 
-                <div class="flex items-center justify-center bg-[#ff8051] p-4">
-                    <p class="text-20 font-bold text-white">Finalizado</p>
+                <div class="flex items-center justify-center bg-[#6668d4] p-4">
+                    <p class="text-20 font-bold text-white">Analise Pendente</p>
                 </div>
 
                 <div class="flex items-center justify-end p-3 px-4 sm:px-10">
-                    <div class="flex items-center gap-2 text-black cursor-pointer hover:underline">
+                    <div class="flex items-center gap-2 text-black cursor-pointer">
                         <FunnelIcon class="w-5 h-5" />
                         <span class="text-15 text-black">Filtrar</span>
                     </div>

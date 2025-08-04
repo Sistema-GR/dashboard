@@ -1,11 +1,11 @@
 <template>
-    <Whiteboard title="Cancelado" class="" :isSidebarMinimized="isSidebarMinimized" :hideBreadcrumbs="true">
+    <Whiteboard title="Finalizado" class="" :isSidebarMinimized="isSidebarMinimized" :hideBreadcrumbs="true">
       <div class="flex flex-col w-full lg:flex-row">
 
             <div class="flex-1 rounded-[10px] shadow-lg">
 
-                <div class="flex items-center justify-center bg-[#f4b72f] p-4">
-                    <p class="text-20 font-bold text-white">Cancelado</p>
+                <div class="flex items-center justify-center bg-[#ff8051] p-4">
+                    <p class="text-20 font-bold text-white">Respondido</p>
                 </div>
 
                 <div class="flex items-center justify-end p-3 px-4 sm:px-10">

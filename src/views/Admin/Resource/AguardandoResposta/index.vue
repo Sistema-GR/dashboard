@@ -5,7 +5,7 @@
             <div class="flex-1 rounded-[10px] shadow-lg">
 
                 <div class="flex items-center justify-center bg-[#6fa3ef] p-4">
-                    <p class="text-20 font-bold text-white">Novos</p>
+                    <p class="text-20 font-bold text-white">Aguardando Resposta</p>
                 </div>
 
                 <div class="flex items-center justify-end p-3 px-4 sm:px-10">
