@@ -18,7 +18,7 @@
                 <Badges :text="selectedBadge" />
                 <ChevronDownIcon class="w-5 h-auto" />
               </button>
-              <TransitionRoot :show="isBadgeDropdownOpen" as="div" class="absolute -left-40 top-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10">
+              <TransitionRoot :show="isBadgeDropdownOpen" as="div" class="absolute -left-40 top-0 mt-2 w-64 bg-white rounded-[10px] shadow-lg z-10">
                 <TransitionChild
                   as="div"
                   enter="transition ease-out duration-200"
@@ -69,7 +69,7 @@
 
         <div class="flex flex-col w-full mt-8 p-4 bg-white border rounded-[10px] shadow-lg hover:shadow-xl transition-shadow duration-300">
             <p class="text-15 font-bold mb-2">Escolher Versão para Abrir</p>
-            <select v-model="selectedVersion" class="border rounded-md py-2 px-4">
+            <select v-model="selectedVersion" class="border rounded-[10px] py-2 px-4">
                 <option value="primeira-versao">Primeira Versão</option>
                 <option value="segunda-versao">Segunda Versão</option>
             </select>
@@ -79,14 +79,14 @@
 
             <div class="flex flex-row w-full justify-between">
                 <p class="text-15 font-bold">Responder Recurso</p>
-                <button @click="toggleReportResponse" class="bg-blue-500 text-white py-2 px-4 rounded-md">
+                <button @click="toggleReportResponse" class="bg-blue-500 text-white py-2 px-4 rounded-[10px]">
                   Responder
                 </button>
             </div>
 
             <div class="flex flex-col w-full py-2 mt-2" v-if="isReportResponseOpen">
-                <textarea v-model="reportResponse" rows="5" class="w-full border rounded-md p-2 mb-4" placeholder="Escreva sua resposta aqui..."></textarea>
-                <button @click="submitReportResponse" class="bg-green-500 text-white py-2 px-4 rounded-md w-3/12 lg:w-2/12">
+                <textarea v-model="reportResponse" rows="5" class="w-full border rounded-[10px] p-2 mb-4" placeholder="Escreva sua resposta aqui..."></textarea>
+                <button @click="submitReportResponse" class="bg-green-500 text-white py-2 px-4 rounded-[10px] w-3/12 lg:w-2/12">
                   Enviar
                 </button>
             </div>
@@ -113,12 +113,12 @@
               </div>
 
               <div v-else>
-                <textarea v-model="editedResponse" rows="3" class="w-full border rounded-md p-2 mb-4" />
+                <textarea v-model="editedResponse" rows="3" class="w-full border rounded-[10px] p-2 mb-4" />
                 <div class="flex justify-end space-x-2">
-                  <button @click="updateResponse(index)" class="bg-green-500 text-white py-1 px-3 rounded-md">
+                  <button @click="updateResponse(index)" class="bg-green-500 text-white py-1 px-3 rounded-[10px]">
                     Atualizar
                   </button>
-                  <button @click="cancelEdit(index)" class="bg-gray-500 text-white py-1 px-3 rounded-md">
+                  <button @click="cancelEdit(index)" class="bg-gray-500 text-white py-1 px-3 rounded-[10px]">
                     Cancelar
                   </button>
                 </div>

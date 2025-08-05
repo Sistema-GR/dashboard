@@ -8,8 +8,8 @@
         <div class="flex flex-col items-center justify-center w-full gap-5 pt-8 pb-4 lg:px-10 lg:gap-10 lg:flex-row">
 
             <div class="w-full" v-if="savedData.length > 0">
-                <div :class="`flex flex-col items-center justify-center bg-transparent rounded-lg`">
-                    <div class="flex items-center justify-center w-full py-3 rounded-lg bg-azure-800">
+                <div :class="`flex flex-col items-center justify-center bg-transparent rounded-[10px]`">
+                    <div class="flex items-center justify-center w-full py-3 rounded-[10px] bg-azure-800">
                         <p class="text-white text-[20px] font-medium">Nome Do Servidor</p>
                     </div>
                     <div class="flex w-full items-center justify-center py-2.5 rounded-b-lg -translate-y-1 bg-solitude-100 shadow-lg shadow-slate-200">
@@ -19,8 +19,8 @@
             </div>
 
             <div class="w-full" v-if="savedData.length > 0">
-                <div :class="`flex flex-col items-center justify-center bg-transparent rounded-lg`">
-                    <div class="flex items-center justify-center w-full py-3 rounded-lg bg-azure-800">
+                <div :class="`flex flex-col items-center justify-center bg-transparent rounded-[10px]`">
+                    <div class="flex items-center justify-center w-full py-3 rounded-[10px] bg-azure-800">
                         <p class="text-white text-[20px] font-medium">Valor</p>
                     </div>
                     <div class="flex w-full items-center justify-center py-2.5 rounded-b-lg -translate-y-1 bg-solitude-100 shadow-lg shadow-slate-200">
@@ -66,7 +66,7 @@
                             <DisclosurePanel class=" mx-8 ">
 
                                 <div class="overflow-x-auto w-full mt-10" style="max-width: 100vw; overflow-x: auto;">
-                                    <table class="w-full border-collapse rounded-lg shadow-lg" style="min-width: 875px;">
+                                    <table class="w-full border-collapse rounded-[10px] shadow-lg" style="min-width: 875px;">
                                         <thead>
                                             <tr class="bg-azure-800 text-gray-100 text-[20px]">
                                                 <th v-for="(header, index) in ['Descrição', 'Dados', 'Valores a Receber', 'Total']" :key="index" class="p-4 font-semibold text-left">{{ header }}</th>
@@ -101,7 +101,7 @@
                                     </table>
                                 </div>
 
-                                <div class="flex flex-col w-full items-center shadow-lg mt-10 rounded-lg bg-white">
+                                <div class="flex flex-col w-full items-center shadow-lg mt-10 rounded-[10px] bg-white">
                                     <div class="flex w-full border-b items-center justify-center bg-azure-800 py-4 rounded-t-lg">
                                         <p class="text-[30px] text-center font-semibold text-white">Critérios de verificação para gratificação</p>
                                     </div>
@@ -178,7 +178,7 @@
                                     </div>
                                 </div>
 
-                                <div class="flex flex-col w-full items-center mt-10 shadow-lg rounded-lg bg-gray-50">
+                                <div class="flex flex-col w-full items-center mt-10 shadow-lg rounded-[10px] bg-gray-50">
                                     <div class="flex w-full items-center justify-center bg-azure-800 py-4 rounded-t-lg border shadow-md">
                                         <p class="text-[30px] font-semibold text-white">Alocações em 2024</p>
                                     </div>
@@ -233,14 +233,14 @@
                                     </div>
                                 </div>
 
-                                <div class="flex flex-col w-full items-center normal-case overflow-hidden mt-5 shadow-lg mb-10 rounded-lg bg-gray-50">
+                                <div class="flex flex-col w-full items-center normal-case overflow-hidden mt-5 shadow-lg mb-10 rounded-[10px] bg-gray-50">
 
                                     <div class="flex w-full border-b items-center justify-center bg-[#C3DFFF] py-3 rounded-t-lg">
                                         <p class="text-xl text-center font-semibold text-black">Frequência (Afastamentos)</p>
                                     </div>
 
                                     <div class="w-full overflow-x-auto" style="max-width: 100vw;">
-                                        <table class="w-full border-collapse bg-white shadow-sm rounded-lg" style="min-width: 875px;">
+                                        <table class="w-full border-collapse bg-white shadow-sm rounded-[10px]" style="min-width: 875px;">
                                             <thead>
                                                 <tr class="bg-gray-200 text-gray-800 text-[15px]">
                                                     <th v-for="header in ['Início', 'Fim', 'Tipo de afastamento', 'Total dias', 'Contabilizados']" 
@@ -273,7 +273,7 @@
 
         <div class="flex w-full items-center justify-end mr-3 mb-3">
             <router-link to="/user/form">
-                <div class="flex flex-row items-center justify-center px-5 py-2 mt-10 gap-1 bg-tropical-blue-200 hover:bg-gray-400 ease-in-out duration-200 cursor-pointer rounded-xl">
+                <div class="flex flex-row items-center justify-center px-5 py-2 mt-10 gap-1 bg-tropical-blue-200 hover:bg-gray-400 ease-in-out duration-200 cursor-pointer rounded-[10px]">
                     <ExclamationCircleIcon class="w-6 h-auto" />
                     <p class="font-medium">Recurso</p>
                 </div>

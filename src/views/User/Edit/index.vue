@@ -13,7 +13,7 @@
             <div v-else class="flex flex-col">
                 
                 
-                <div v-if="!isEditable" class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-md my-4" role="alert">
+                <div v-if="!isEditable" class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-[10px] my-4" role="alert">
                     <p class="font-bold">Prazo Excedido</p>
                     <p>Este recurso não pode mais ser editado, pois o prazo de {{ editTimeLimitInDays }} dias após a criação já passou.</p>
                 </div>
@@ -34,7 +34,7 @@
                     
                     <div class="flex flex-col border-b-2 py-5">
                         <label class="text-lg font-bold mb-2">Descrição do Recurso</label>
-                        <textarea v-model="form.descricao" class="w-full border rounded-md p-2 text-sm" rows="4" :disabled="!isEditable"></textarea>
+                        <textarea v-model="form.descricao" class="w-full border rounded-[10px] p-2 text-sm" rows="4" :disabled="!isEditable"></textarea>
                     </div>
                     
                     <div class="flex flex-col border-b-2 py-4 gap-1">

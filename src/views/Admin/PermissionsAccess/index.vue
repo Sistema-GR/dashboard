@@ -134,7 +134,7 @@
     <div class="space-y-3">
         <div>
             <label class="block text-15 font-medium text-gray-700 mb-1">Status</label>
-            <select v-model="filters.status" class="w-full p-2 border border-gray-300 rounded-md text-15">
+            <select v-model="filters.status" class="w-full p-2 border border-gray-300 rounded-[10px] text-15">
                 <option value="">Todos</option>
                 <option value="aberto">Aberto</option>
                 <option value="em_analise">Em Análise</option>
@@ -143,13 +143,13 @@
         </div>
         <div>
             <label class="block text-15 font-medium text-gray-700 mb-1">Data</label>
-            <input v-model="filters.date" type="date" class="w-full p-2 border border-gray-300 rounded-md text-15">
+            <input v-model="filters.date" type="date" class="w-full p-2 border border-gray-300 rounded-[10px] text-15">
         </div>
         <div class="flex gap-2">
-            <button @click="applyFilter" class="px-4 py-2 bg-blue-500 text-white rounded-md text-15 hover:bg-blue-600">
+            <button @click="applyFilter" class="px-4 py-2 bg-blue-500 text-white rounded-[10px] text-15 hover:bg-blue-600">
                 Aplicar
             </button>
-            <button @click="clearFilter" class="px-4 py-2 bg-gray-500 text-white rounded-md text-15 hover:bg-gray-600">
+            <button @click="clearFilter" class="px-4 py-2 bg-gray-500 text-white rounded-[10px] text-15 hover:bg-gray-600">
                 Limpar
             </button>
         </div>

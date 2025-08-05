@@ -16,7 +16,7 @@
                 <div class="flex items-center border-b-2 py-2 pb-6">
                     <label class="font-semibold w-1/4 text-sm">Nome completo</label>
                     <div class="w-3/4 ml-4">
-                        <input v-model="form.nome_completo" type="text" readonly class="w-full border rounded-md p-2 text-sm bg-gray-100 cursor-not-allowed" />
+                        <input v-model="form.nome_completo" type="text" readonly class="w-full border rounded-[10px] p-2 text-sm bg-gray-100 cursor-not-allowed" />
                         <p v-if="errors.nome_completo" class="text-red-500 text-sm mt-1">{{ errors.nome_completo }}</p>
                     </div>
                 </div>
@@ -24,7 +24,7 @@
                 <div class="flex items-center border-b-2 py-0 pb-6">
                     <label class="font-semibold w-1/4 text-sm">E-mail</label>
                     <div class="w-3/4 ml-4">
-                        <input v-model="form.email" type="email" readonly class="w-full border rounded-md p-2 text-sm bg-gray-100 cursor-not-allowed" />
+                        <input v-model="form.email" type="email" readonly class="w-full border rounded-[10px] p-2 text-sm bg-gray-100 cursor-not-allowed" />
                         <p v-if="errors.email" class="text-red-500 text-sm mt-1">{{ errors.email }}</p>
                     </div>
                 </div>
@@ -32,7 +32,7 @@
                 <div class="flex items-center border-b-2 py-0 pb-6">
                     <label class="font-semibold w-1/4 text-sm">CPF</label>
                     <div class="w-3/4 ml-4">
-                        <input v-model="form.cpf" type="text" readonly class="w-full border rounded-md p-2 text-sm bg-gray-100 cursor-not-allowed" />
+                        <input v-model="form.cpf" type="text" readonly class="w-full border rounded-[10px] p-2 text-sm bg-gray-100 cursor-not-allowed" />
                         <p v-if="errors.cpf" class="text-red-500 text-sm mt-1">{{ errors.cpf }}</p>
                     </div>
                 </div>
@@ -40,7 +40,7 @@
                 <div class="flex items-center border-b-2 py-0 pb-6">
                     <label class="font-semibold w-1/4 text-sm">Matrícula</label>
                     <div class="w-3/4 ml-4">
-                        <input v-model="form.matricula" type="text" readonly class="w-full border rounded-md p-2 text-sm bg-gray-100 cursor-not-allowed" />
+                        <input v-model="form.matricula" type="text" readonly class="w-full border rounded-[10px] p-2 text-sm bg-gray-100 cursor-not-allowed" />
                         <p v-if="errors.matricula" class="text-red-500 text-sm mt-1">{{ errors.matricula }}</p>
                     </div>
                 </div>
@@ -48,7 +48,7 @@
                 <div class="flex items-center border-b-2 py-0 pb-6">
                     <label class="font-semibold w-1/4 text-sm">Unidade de atuação</label>
                     <div class="w-3/4 ml-4">
-                        <input v-model="form.unidade" type="text" class="w-full border rounded-md p-2 text-sm" placeholder="Digite sua unidade de atuação" />
+                        <input v-model="form.unidade" type="text" class="w-full border rounded-[10px] p-2 text-sm" placeholder="Digite sua unidade de atuação" />
                         <p v-if="errors.unidade" class="text-red-500 text-sm mt-1">{{ errors.unidade }}</p>
                     </div>
                 </div>
@@ -56,7 +56,7 @@
                 <div class="flex items-center border-b-2 py-0 pb-6">
                     <label class="font-semibold w-1/4 text-sm">Descrição</label>
                     <div class="w-3/4 ml-4">
-                        <textarea v-model="form.descricao" class="w-full border rounded-md p-2 text-sm" rows="4" placeholder="Descreva o motivo do recurso aqui..."></textarea>
+                        <textarea v-model="form.descricao" class="w-full border rounded-[10px] p-2 text-sm" rows="4" placeholder="Descreva o motivo do recurso aqui..."></textarea>
                         <p v-if="errors.descricao" class="text-red-500 text-sm mt-1">{{ errors.descricao }}</p>
                     </div>
                 </div>
@@ -64,7 +64,7 @@
                 <div class="flex items-center border-b-2 py-0 pb-6">
                     <label class="font-semibold w-1/4 text-sm">Documentos</label>
                     <div class="w-3/4 ml-4">
-                        <input type="file" @change="handleFileUpload" multiple class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border file:border-gray-300 file:rounded-lg file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/>
+                        <input type="file" @change="handleFileUpload" multiple class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border file:border-gray-300 file:rounded-[10px] file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/>
                         <p v-if="errors.files" class="text-red-500 text-sm mt-1">{{ errors.files }}</p>
                     </div>
                 </div>
@@ -75,7 +75,7 @@
                     </div>
 
                     <div class="flex flex-col sm:flex-row sm:items-start sm:gap-4">
-                        <div class="flex flex-col w-full gap-3 border-2 border-blue-500 rounded-lg p-1">
+                        <div class="flex flex-col w-full gap-3 border-2 border-blue-500 rounded-[10px] p-1">
                             <div v-for="(file, index) in form.files" :key="index" class="flex items-center justify-between gap-4 w-full text-sm text-blue-500">
                                 <div class="flex items-center gap-2">
                                     <PaperClipIcon class="w-5 h-5 text-gray-500"/> 

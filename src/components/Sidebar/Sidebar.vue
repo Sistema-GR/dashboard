@@ -31,7 +31,7 @@
                                                   <!-- Mobile - Se tem filhos, renderizar como expansível -->
                                                   <div v-if="item.children" class="relative">
                                                     <div
-                                                      class="group flex gap-x-3 rounded-md p-1.5 text-15 font-semibold leading-6 text-white hover:bg-primary-900 cursor-pointer select-none"
+                                                      class="group flex gap-x-3 rounded-[10px] p-1.5 text-15 font-semibold leading-6 text-white hover:bg-primary-900 cursor-pointer select-none"
                                                       @click="isCalcMenuOpen = !isCalcMenuOpen"
                                                     >
                                                       <component :is="item.icon" class="h-6 w-6 shrink-0" aria-hidden="true" />
@@ -45,7 +45,7 @@
                                                         <li v-for="child in item.children" :key="child.name">
                                                           <router-link
                                                             :to="child.route"
-                                                            class="group flex gap-x-2 rounded-md p-1 text-13 font-medium leading-5 transition-all duration-200"
+                                                            class="group flex gap-x-2 rounded-[10px] p-1 text-13 font-medium leading-5 transition-all duration-200"
                                                             :class="{ 'bg-gray-800 text-white': $route.path === child.route, 'hover:bg-primary-900 hover:text-white text-white': $route.path !== child.route }"
                                                           >
                                                             <component :is="child.icon" class="h-4 w-4 shrink-0" aria-hidden="true" />
@@ -56,7 +56,7 @@
                                                     </TransitionRoot>
                                                   </div>
                                                   <!-- Mobile - Caso contrário, renderizar como link normal -->
-                                                  <router-link v-else :to="item.route" :class="[item.current ? 'bg-gray-800 text-white' : 'text-white hover:bg-primary-900 hover:text-white', 'group flex gap-x-3 rounded-md p-1.5 text-15 font-semibold leading-6']">
+                                                  <router-link v-else :to="item.route" :class="[item.current ? 'bg-gray-800 text-white' : 'text-white hover:bg-primary-900 hover:text-white', 'group flex gap-x-3 rounded-[10px] p-1.5 text-15 font-semibold leading-6']">
                                                       <component :is="item.icon" class="h-6 w-6 shrink-0" aria-hidden="true" />
                                                       {{ item.name }}
                                                   </router-link>
@@ -85,7 +85,7 @@
                                             leave-from="opacity-100 translate-y-0"
                                             leave-to="opacity-0 translate-y-4"
                                           >
-                                            <div class="flex flex-col mt-2 space-y-2 bg-gray-800 rounded-md shadow-lg text-white py-2 px-4 relative z-50">
+                                            <div class="flex flex-col mt-2 space-y-2 bg-gray-800 rounded-[10px] shadow-lg text-white py-2 px-4 relative z-50">
                                               <router-link to="/home/config" class="flex flex-row items-center gap-2 text-15 hover:text-gray-300 transition">
                                                 <PencilIcon class="w-4 h-auto" /> 
                                                 Acessar Perfil
@@ -129,7 +129,7 @@
                                 <!-- If item has children, render as expandable -->
                                 <div v-if="item.children" class="relative">
                                   <div
-                                    class="group flex gap-x-3 rounded-md p-1.5 text-15 font-semibold leading-6 text-white hover:bg-white/30 cursor-pointer select-none"
+                                    class="group flex gap-x-3 rounded-[10px] p-1.5 text-15 font-semibold leading-6 text-white hover:bg-white/30 cursor-pointer select-none"
                                     :class="{ 'justify-center': isSidebarMinimized }"
                                     @click="toggleCalcMenu"
                                   >
@@ -144,7 +144,7 @@
                                       <li v-for="child in item.children" :key="child.name">
                                         <router-link
                                           :to="child.route"
-                                          class="group flex gap-x-2 rounded-md p-1 text-13 font-medium leading-5 transition-all duration-200"
+                                          class="group flex gap-x-2 rounded-[10px] p-1 text-13 font-medium leading-5 transition-all duration-200"
                                           :class="{ 'bg-white/30 text-white': $route.path === child.route, 'hover:bg-white/30 hover:text-white text-white': $route.path !== child.route }"
                                         >
                                           <component :is="child.icon" class="h-auto w-4 shrink-0 stroke-white" aria-hidden="true" />
@@ -158,7 +158,7 @@
                                 <router-link
                                   v-else
                                   :to="item.route"
-                                  class="group flex gap-x-3 rounded-md p-1.5 text-15 font-semibold leading-6 transition-all duration-200"
+                                  class="group flex gap-x-3 rounded-[10px] p-1.5 text-15 font-semibold leading-6 transition-all duration-200"
                                   :class="{ 
                                     'bg-white/30 text-white': $route.path === item.route, 
                                     'hover:bg-white/30 hover:text-white text-white': $route.path !== item.route,
@@ -204,7 +204,7 @@
                             leave-from="opacity-100 translate-y-0"
                             leave-to="opacity-0 translate-y-4"
                           >
-                            <div class="flex flex-col mt-2 space-y-2 bg-gray-800 rounded-md shadow-lg text-white py-2 px-4 relative z-50">
+                            <div class="flex flex-col mt-2 space-y-2 bg-gray-800 rounded-[10px] shadow-lg text-white py-2 px-4 relative z-50">
                               <router-link to="/home/config" class="flex flex-row items-center gap-2 text-15 hover:text-gray-300 transition">
                                 <PencilIcon class="w-4 h-auto" /> 
                                 Acessar Perfil

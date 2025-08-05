@@ -8,7 +8,7 @@
           id="version"
           v-model="selectedVersionId"
           @change="handleVersionChange"
-          class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          class="w-full p-3 border border-gray-300 rounded-[10px] focus:ring-2 focus:ring-blue-500 focus:outline-none"
         >
           <option value="" class="text-gray-400" disabled selected>Escolha uma versão</option>
           <option
@@ -42,7 +42,7 @@
         <div class="flex flex-col sm:flex-row w-full space-y-4 sm:space-y-0 sm:space-x-4 mt-4">
           <button
             @click="submitData"
-            class="w-full sm:w-auto px-6 py-3 bg-green-500 text-white font-bold rounded-md hover:bg-green-600 focus:outline-none"
+            class="w-full sm:w-auto px-6 py-3 bg-green-500 text-white font-bold rounded-[10px] hover:bg-green-600 focus:outline-none"
           >
             Continuar
           </button>
