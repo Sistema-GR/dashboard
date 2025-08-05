@@ -30,8 +30,8 @@
         </div>
         <button
           @click="adicionarUsuario('perfil')"
-          class="bg-transparent border-2 rounded-full border-black text-black m-2 hover:border-[#003965]">
-          <PlusIcon class="w-6 h-6 inline text-black hover:text-[#003965]" />
+          class="bg-transparent text-black m-2 hover:text-[#003965]">
+          <PlusCircleIcon class="w-8 h-8 inline text-black hover:text-[#003965]" />
         </button>
       </div>
     </div>
@@ -90,8 +90,8 @@
         </div>
         <button
           @click="adicionarUsuario('exemplo')"
-          class="bg-transparent border-2 rounded-full border-black text-black m-2 hover:border-[#003965]">
-          <PlusIcon class="w-6 h-6 inline text-black hover:text-[#003965]" />
+          class="bg-transparent text-black m-2 hover:text-[#003965]">
+          <PlusCircleIcon class="w-8 h-8 inline text-black hover:text-[#003965]" />
         </button>
       </div>
     </div>
@@ -172,12 +172,12 @@
 
 <script>
 import { ref, inject } from 'vue'
-import { TrashIcon, PlusIcon } from '@heroicons/vue/24/outline'
+import { TrashIcon, PlusCircleIcon } from '@heroicons/vue/24/outline'
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue'
 
 export default {
   name: 'PermissionsAccess',
-  components: { Whiteboard, TrashIcon, PlusIcon },
+  components: { Whiteboard, TrashIcon, PlusCircleIcon },
   setup() {
     const isSidebarMinimized = inject('isSidebarMinimized')
 
