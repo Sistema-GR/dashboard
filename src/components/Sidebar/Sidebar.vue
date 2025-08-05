@@ -26,7 +26,7 @@
                               <nav class="flex flex-1 flex-col">
                                   <ul role="list" class="flex flex-1 flex-col gap-y-5">
                                       <li>
-                                          <ul role="list" class="-mx-2 space-y-0.5">
+                                          <ul role="list" class="-mx-2 grid gap-1">
                                               <li v-for="item in filteredNavigation" :key="item.name">
                                                   <!-- Mobile - Se tem filhos, renderizar como expansível -->
                                                   <div v-if="item.children" class="relative">
@@ -124,7 +124,7 @@
 
                   <ul role="list" class="flex flex-1 flex-col gap-y-5">
                       <li>
-                          <ul role="list" class="-mx-2 space-y-0.5">
+                          <ul role="list" class="-mx-2 grid gap-1">
                               <li v-for="item in filteredNavigation" :key="item.name">
                                 <!-- If item has children, render as expandable -->
                                 <div v-if="item.children" class="relative">
@@ -134,7 +134,7 @@
                                     @click="toggleCalcMenu"
                                   >
                                     <component :is="item.icon" class="h-auto w-6 shrink-0 stroke-white" aria-hidden="true" />
-                                    <span :class="isSidebarMinimized ? 'hidden' : 'whitespace-nowrap'">{{ item.name }}</span>
+                                    <span :class="isSidebarMinimized">{{ item.name }}</span>
                                     <ChevronDownIcon
                                       :class="['w-4 h-auto ml-auto transition-transform', isCalcMenuOpen ? 'rotate-180' : '', isSidebarMinimized ? 'hidden' : '']"
                                     />
