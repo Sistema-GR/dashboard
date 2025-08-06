@@ -63,9 +63,9 @@
                                 <p class="text-20 font-bold text-white">Matrícula {{ item?.dados?.matricula }}</p>
                                 <ChevronDownIcon class="w-6 h-auto transform text-white transition-transform " :class="{'rotate-180': open}" />
                             </DisclosureButton>
-                            <DisclosurePanel class="mx-4 lg:mx-10 ">
+                            <DisclosurePanel class="mx-4 lg:mx-10 overflow-x-scroll sm:overflow-x-hidden">
 
-                                <div class="overflow-x-auto w-full mt-10" style="max-width: 100vw;">
+                                <div class="w-full mt-10 min-w-[875px]">
                                     <div class="min-w-[875px]">
                                         <table class="w-full border-collapse rounded-[10px] shadow-lg">
                                             <thead>
@@ -103,12 +103,12 @@
                                     </div>
                                 </div>
 
-                                <div class="flex flex-col w-full items-center shadow-lg mt-10 rounded-[10px] bg-white">
+                                <div class="flex flex-col w-full items-center shadow-lg mt-10 min-w-[875px]  rounded-[10px] bg-white">
                                     <div class="flex w-full border-b items-center justify-center bg-azure-800 py-4 rounded-t-lg">
                                         <p class="text-25  text-center font-semibold text-white">Critérios de verificação para gratificação</p>
                                     </div>
 
-                                    <div class="w-full overflow-x-auto" style="max-width: 100vw;">
+                                    <div class="w-full min-w-[875px]">
                                         <div class="min-w-[875px]">
                                             <table class="w-full border-collapse text-15">
                                                 <thead>
@@ -182,7 +182,7 @@
                                     </div>
                                 </div>
 
-                                <div class="flex flex-col w-full items-center mt-10 shadow-lg rounded-[10px] bg-gray-50">
+                                <div class="flex flex-col w-full items-center mt-10 shadow-lg rounded-[10px] bg-gray-50 min-w-[875px]">
                                     <div class="flex w-full items-center justify-center bg-azure-800 py-4 rounded-t-lg border shadow-md">
                                         <p class="text-25 font-semibold text-white">Alocações em 2024</p>
                                     </div>
@@ -194,7 +194,7 @@
                                                 :key="profIndex" 
                                                 class="flex-col w-full"
                                             >
-                                                <div class="flex overflow-x-auto flex-row w-full justify-between items-center bg-[#C3DFFF] px-4 py-2 rounded-t-lg">
+                                                <div class="flex flex-row w-full justify-between items-center bg-[#C3DFFF] px-4 py-2 rounded-t-lg">
                                                     <span class="text-20 font-medium text-black normal-case whitespace-nowrap mr-10 lg:mr-0">{{ prof?.nome_unidade }}</span>
                                                     <div class=" text-20 flex flex-row w-full lg:w-auto items-center justify-end space-x-4">
                                                         <span class="lg:text-20 font-medium text-black">
@@ -209,7 +209,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="w-full overflow-x-auto" style="max-width: 100vw;"> 
+                                                <div class="w-full" style="max-width: 100vw;"> 
                                                     <div class="min-w-[875px]">
                                                         <table class="w-full border-collapse text-gray-700"> 
                                                             <thead>
@@ -239,13 +239,13 @@
                                     </div>
                                 </div>
 
-                                <div class="flex flex-col w-full items-center normal-case overflow-hidden mt-10 shadow-lg mb-10 rounded-[10px] bg-gray-50">
+                                <div class="flex flex-col w-full items-center normal-case overflow-hidden mt-10 min-w-[875px] shadow-lg mb-10 rounded-[10px] bg-gray-50">
 
                                     <div class="flex w-full border-b items-center justify-center bg-azure-800 py-3 rounded-t-lg">
                                         <p class="text-25 text-center font-semibold text-white">Frequência (Afastamentos)</p>
                                     </div>
 
-                                    <div class="w-full overflow-x-auto" style="max-width: 100vw;">
+                                    <div class="w-full min-w-[875px]">
                                         <div class="min-w-[875px]">
                                             <table class="w-full border-collapse bg-white shadow-sm rounded-[10px]">
                                                 <thead>
