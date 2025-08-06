@@ -92,7 +92,6 @@ export const createGeneralData = async (data) => {
 };
 
 export const uploadFile = async (file, endpoint) => {
-  try {
     const token = await getAccessToken();
     const formData = new FormData();
     formData.append('funcionarios', funcionariosFile);
@@ -102,32 +101,28 @@ export const uploadFile = async (file, endpoint) => {
     formData.append('tipoLocal', tipoLocalFile);
     formData.append('dadosGerais', atividadesFile);
     formData.append('funcoesGruposEtapas', funcoesGruposEtapasFile);
-    /*  process/funcionarios/",
-        atividades: "/process/atividades/",
-        tipoLocal: "/process/tipo-local/",
-        dadosGerais: "/process/dados-gerais/",
-        funcoesGruposEtapas: "/process/funcoes-grupo/",
-        aprenderMais: "/process/aprender-mais/",
-        etapasMetas: "/process/etapas-metas/",
-        uesPercGr: "/process/percentual-gratificacao/",
-        definicaoEtapas: "/process/definicao-etapas/",
-        diasNaoContabilizados: "/process/dias-nao-contabilizados/",
-        demissoes: "/process/demissoes/",
-        formacoes: "/process/formacoes/",
-        motivosInfrequencia: "/process/motivos-infrequencia/",
-        frequencia: "/process/frequencia/"*/
-    // ... append all other required files
+    formData.append('aprenderMais', aprenderMaisFile);
+    formData.append('etapasMetas', etapasMetasFile);
+    formData.append('uesPercGr', uesPercGrFile);
+    formData.append('definicaoEtapas', definicaoEtapasFile);
+    formData.append('formacoes', formacoesFile);
+    formData.append('motivosInfrequencia', motivosInfrequenciaFile);
     formData.append('dias_nao_contabilizados', diasNaoContabilizadosFile);
 
-    const response = await apiClient.post(endpoint, formData, {
+    fetch('/csv/process/unified-upload/', {
+      method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
       },
+      body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Success:', data);
+    })
+    .catch(error => {
+      console.error('Error:', error);
     });
-    return response.data;
-  } catch (error) {
-    handleApiError(error);
-  }
 };
 
 // Função para processar todos os arquivos
