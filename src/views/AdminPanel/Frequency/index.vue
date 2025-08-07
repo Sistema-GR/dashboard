@@ -1,9 +1,9 @@
 <template>
     <Whiteboard title="Frequência" :isSidebarMinimized="isSidebarMinimized">
 
-        <div class="flex flex-row w-full items-start justify-between px-4 mt-4">
+        <div class="flex flex-row w-full items-center gap-3 justify-between px-4 sm:px-10 mt-4">
             <Search @search="handleSearch" />
-            <div class="flex flex-row items-center gap-1 cursor-pointer">
+            <div class="flex flex-row items-center  gap-1 w-full max-w-64 cursor-pointer">
                <p class="text-gray-800 font-medium hover:text-blue-900" @click="navigateTo('infrequency')">Dados de Infrequência</p>
             </div>
         </div>   

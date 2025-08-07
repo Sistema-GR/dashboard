@@ -1,6 +1,6 @@
 <template>
     <Whiteboard title="Etapa por Grupo" :isSidebarMinimized="isSidebarMinimized">
-        <div class="flex w-full items-start justify-start px-4 mt-4">
+        <div class="flex w-full items-start justify-start px-4 sm:px-10 mt-4">
             <Search />
         </div>   
         <div class="w-full pb-5 capitalize">

@@ -1,136 +1,171 @@
 <template>
     <Whiteboard title="Editar Recurso" :isSidebarMinimized="isSidebarMinimized">
-
         <div class="flex flex-col w-full px-4">
-
-            <p class="font-medium text-sm text-justify mb-8 mt-4">
-                Utilize este formulário para editar a solicitação de recurso relacionada à Gratificação por Resultados. Certifique-se de fornecer todas as informações necessárias e anexar documentos que justifiquem sua solicitação.
-            </p>
-
-            <p class="font-bold text-sm mb-5 text-justify pb-1">
-                Lembre-se de revisar todas as informações antes de salvar as alterações. A data limite para a submissão de recursos é 16/06/2024.
-            </p>
-
            
-            <div class="flex flex-col w-full border-t-2 py-4 bg-white">
-                <p class="text-lg font-bold mb-4">Dados do Servidor</p>
-                    <div class="space-y-2">
-
-                        <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-                            <p class="font-semibold text-sm mb-1">CPF:</p>
-                            <p class="text-gray-600 text-sm">123.456.789-00</p>
-                        </div>
-
-                        <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-                            <p class="font-semibold text-sm mb-1">Email:</p>
-                            <p class="text-gray-600 text-sm">example@domain.com</p>
-                        </div>
-
-                        <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-                            <p class="font-semibold text-sm mb-1">Cargo:</p>
-                            <p class="text-gray-600 text-sm">Desenvolvedor</p>
-                        </div>
-
-                         <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-                            <p class="font-semibold text-sm mb-1">Unidade:</p>
-                            <p class="text-gray-600 text-sm">TI</p>
-                        </div>
-
-                    </div>
+            <div v-if="isLoading" class="text-center p-10">
+                <p>Carregando dados do recurso para edição...</p>
+            </div>
+            
+            <div v-else-if="error" class="text-center p-10 text-red-500">
+                <p>{{ error }}</p>
             </div>
 
-            <div class="flex flex-col border-t-2 py-1">
-
-                <div class="flex flex-col border-b-2 py-5">
-                    <label class="text-lg font-bold mb-2">Descrição do Recurso</label>
-                    <textarea v-model="description"class="w-full border rounded-md p-2 text-sm" rows="4" placeholder="Descreva o motivo do recurso aqui..." :class="{ 'border-red-500': descriptionError }" @input="validateDescription" />
-                    <p v-if="descriptionError" class="text-red-500 text-xs mt-1">A descrição é obrigatória.</p>
+            <div v-else class="flex flex-col">
+                
+                
+                <div v-if="!isEditable" class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-md my-4" role="alert">
+                    <p class="font-bold">Prazo Excedido</p>
+                    <p>Este recurso não pode mais ser editado, pois o prazo de {{ editTimeLimitInDays }} dias após a criação já passou.</p>
                 </div>
 
-                <div class="flex flex-col border-b-2 py-4 gap-1">
-                    <label class="font-semibold text-sm mb-1">Documentos Anexados</label>
-                    <input type="file" @change="handleFileUpload" multiple  class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border file:border-gray-300 file:rounded-lg file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/>
-
-                    <div v-if="files.length > 0" class="mt-4">
-                        <h3 class="font-semibold text-sm mb-2">Arquivos Anexados:</h3>
-                        <div class="flex flex-col space-y-2">
-                            <div v-for="(file, index) in files" :key="index" class="flex items-center justify-between border p-2 rounded-lg bg-blue-50 border-blue-500 text-blue-700">
-                                <div class="flex items-center gap-2">
-                                    <PaperClipIcon class="w-5 h-5 text-gray-500"/> 
-                                    <span class="underline">{{ file.name }}</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <ArrowDownTrayIcon class="w-6 h-6 text-gray-700 cursor-pointer" @click="downloadFile(file)" />
-                                    <XMarkIcon class="w-5 h-5 text-red-500 cursor-pointer" @click="removeFile(index)" />
-                                </div>
-                            </div>
-                        </div>
+                
+                <div class="flex flex-col w-full border-t-2 py-4 mt-4">
+                    <p class="text-lg font-bold mb-4">Dados do Servidor</p>
+                    <div class="space-y-2 text-sm">
+                        <div><strong>CPF:</strong> <span class="text-gray-600">{{ resource.cpf }}</span></div>
+                        <div><strong>Email:</strong> <span class="text-gray-600">{{ resource.email }}</span></div>
+                        <div><strong>Matrícula:</strong> <span class="text-gray-600">{{ resource.matricula }}</span></div>
+                        <div><strong>Unidade:</strong> <span class="text-gray-600">{{ resource.unidade_atuacao }}</span></div>
                     </div>
                 </div>
 
-                <RouterLink to="sucess" class="flex w-full justify-end mt-6 space-x-4">
-                    <PrimaryButton customColor="bg-blue-500 text-sm w-6/12 md:w-3/12" value="Salvar" :disabled="isSaving" @click="saveChanges" />
-                </RouterLink>
-
+                
+                <div class="flex flex-col border-t-2 py-1 mt-4">
+                    
+                    <div class="flex flex-col border-b-2 py-5">
+                        <label class="text-lg font-bold mb-2">Descrição do Recurso</label>
+                        <textarea v-model="form.descricao" class="w-full border rounded-md p-2 text-sm" rows="4" :disabled="!isEditable"></textarea>
+                    </div>
+                    
+                    <div class="flex flex-col border-b-2 py-4 gap-1">
+                        <label class="font-semibold text-sm mb-1">Anexar Novos Documentos</label>
+                        <input type="file" @change="handleFileUpload" multiple class="..." :disabled="!isEditable"/>
+                    </div>
+                    
+                    
+                    <div class="flex w-full justify-end mt-6 space-x-4">
+                        <PrimaryButton 
+                            value="Salvar Alterações" 
+                            :disabled="isSaving || !isEditable" 
+                            @click="saveChanges" 
+                            :customColor="!isEditable ? 'bg-gray-400' : 'bg-blue-500'"
+                        />
+                    </div>
+                </div>
             </div>
         </div>
     </Whiteboard>
 </template>
 
 <script>
-import { inject, ref } from 'vue';
+import { inject, ref, onMounted, reactive, computed } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import axios from 'axios'; 
+
+
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
-import { PaperClipIcon, ArrowDownTrayIcon, XMarkIcon  } from '@heroicons/vue/20/solid';
-import { RouterLink } from 'vue-router';
 
 export default {
     name: "ResourceEdit",
-    components: { Whiteboard, PrimaryButton, PaperClipIcon, ArrowDownTrayIcon, XMarkIcon  },
+    components: { Whiteboard, PrimaryButton },
+    
     setup() {
-        const isSidebarMinimized = inject('isSidebarMinimized');
-        const title = ref('');
-        const description = ref('');
-        const files = ref([]);
+        const route = useRoute();
+        const router = useRouter();
+        const resourceId = route.params.id;
+        
+        // console.log("ID do recurso pego da URL:", resourceId);
+
+        const resource = ref(null);
+        const form = reactive({
+            descricao: '',
+        });
+        const newFiles = ref([]);
+        const editTimeLimitInDays = 10; 
+        
+        const isLoading = ref(true);
         const isSaving = ref(false);
-        const titleError = ref(false);
-        const descriptionError = ref(false);
+        const error = ref(null);
 
-        const handleFileUpload = (event) => {
-            files.value = Array.from(event.target.files);
-        };
-
-        const validateTitle = () => {
-            titleError.value = !title.value.trim();
-        };
-
-        const validateDescription = () => {
-            descriptionError.value = !description.value.trim();
-        };
-
-        const saveChanges = () => {
-            validateTitle();
-            validateDescription();
-
-            if (titleError.value || descriptionError.value) return;
-
-            isSaving.value = true;
-            // Simula uma chamada de API para salvar as alterações
-            setTimeout(() => {
-                isSaving.value = false;
-                // Redirecionar ou mostrar mensagem de sucesso
-            }, 2000);
-        };
-
-        const downloadFile = (file) => {
+       
+        const isEditable = computed(() => {
+            if (!resource.value) return false;
             
+            const createdAt = new Date(resource.value.created_at);
+            const now = new Date();
+            const differenceInMilliseconds = now - createdAt;
+            const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
+            
+            return differenceInDays <= editTimeLimitInDays;
+        });
+
+        
+        const fetchResourceData = async () => {
+            isLoading.value = true;
+            try {
+                const response = await axios.get(`/recursos/${resourceId}/`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+                });
+                resource.value = response.data;                 
+                form.descricao = response.data.descricao;
+
+                
+            } catch (err) {
+                error.value = "Não foi possível carregar o recurso para edição.";
+            } finally {
+                isLoading.value = false;
+            }
         };
 
-        const removeFile = (index) => {
-            files.value.splice(index, 1);
+        onMounted(fetchResourceData);
+        
+        const handleFileUpload = (event) => { newFiles.value = Array.from(event.target.files); };
+
+        const saveChanges = async () => {
+            if (!isEditable.value) {
+                alert("O prazo para edição deste recurso já expirou.");
+                return;
+            }
+            
+            isSaving.value = true;
+            const formData = new FormData();
+            formData.append('descricao', form.descricao);
+
+            
+            newFiles.value.forEach(file => {
+                formData.append('documentos', file);
+            });
+
+            try {
+                
+                await axios.patch(`/recursos/${resourceId}/`, formData, {
+                    headers: { 
+                        'Content-Type': 'multipart/form-data',
+                        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                    }
+                });
+                router.push({ name: 'status' });
+            } catch (err) {
+                const apiError = err.response?.data?.detail || "Não foi possível salvar as alterações.";
+                alert(apiError);
+            } finally {
+                isSaving.value = false;
+            }
         };
 
-        return { isSidebarMinimized, title, description, files, handleFileUpload, saveChanges, isSaving, titleError, descriptionError, downloadFile, removeFile };
+        return { 
+            form, 
+            resource,
+            newFiles,
+            editTimeLimitInDays,
+            isEditable,
+            isLoading,
+            isSaving,
+            error,
+            handleFileUpload, 
+            saveChanges,
+        };
     }
 };
 </script>

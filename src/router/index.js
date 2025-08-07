@@ -19,14 +19,9 @@ import roles from '@/views/Admin/Roles/index.vue'
 import create from '@/views/Admin/Create/index.vue'
 import selector from '@/views/Admin/Create/Selector/Index.vue'
 import editversion from '@/views/Admin/Create/EditVersions/index.vue'
+import permissionsaccess from '@/views/Admin/PermissionsAccess/index.vue'
 //Resource
 import resource from '@/views/Admin/Resource/index.vue'
-import newResource from '@/views/Admin/Resource/NewResource/index.vue'
-import inprogress from '@/views/Admin/Resource/InProgress/index.vue'
-import awaiting from '@/views/Admin/Resource/Awaiting/index.vue'
-import reopened from '@/views/Admin/Resource/Reopened/index.vue'
-import completed from '@/views/Admin/Resource/Completed/index.vue'
-import cancel from '@/views/Admin/Resource/Cancel/index.vue'
 import infodetails from '@/views/Admin/Resource/InfoDetails/index.vue'
 //AdminPanel
 import adminPanel from '@/views/AdminPanel/index.vue'
@@ -77,6 +72,7 @@ const router = createRouter({
         { path: 'config', name: 'configs', component: config },
         { path: 'alloc', name: 'alloc', component: alloc },
         { path: 'dataversions', name: 'dataversions', component: dataversions },
+        { path: 'permissionsaccess', name: 'PermissionsAccess', component: permissionsaccess },
         {
           path: 'create',
           name: 'create',
@@ -125,8 +121,9 @@ const router = createRouter({
         { path: 'faqs', name: 'faqs', component: faqs },
         { path: 'criteria', name: 'criteria', component: criteria },
         { path: 'status', name: 'status', component: status },
-        { path: 'view', name: 'view', component: view }, 
-        { path: 'edit', name: 'edit', component: edit },
+        // { path: 'view', name: 'view', component: view }, 
+        { path: 'view/:id', name: 'view', component: view },
+        { path: 'edit/:id', name: 'edit', component: edit },
         { path: 'sucess', name: 'sucess', component: sucess },
         { path: 'config', name: 'config', component: config },
       ]
@@ -135,14 +132,15 @@ const router = createRouter({
       name: 'resource', 
       component: resource,
       children: [
-        { path: 'new', name: 'newResource', component: newResource },
-        { path: 'inprogress', name: 'inprogress', component: inprogress },
-        { path: 'awaiting', name: 'awaiting', component: awaiting },
-        { path: 'reopened', name: 'reopened', component: reopened },
-        { path: 'completed', name: 'completed', component: completed },
-        { path: 'canceled', name: 'cancel', component: cancel },
+
         { path: 'info', name: 'info', component: infodetails },
       ]
+    },
+    { 
+      path: '/resource/info/:id',
+      name: 'resource-details',
+      component: infodetails,
+      props: true
     },
   ]
 })

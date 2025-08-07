@@ -1,7 +1,10 @@
 <template>
     <Whiteboard title="Formulário de Recurso" :isSidebarMinimized="isSidebarMinimized">
         <div class="flex flex-col w-full px-4">
-            <div class="flex flex-col space-y-6 py-4">
+            <div v-if="isLoadingUserData" class="text-center p-10">
+                <p class="text-gray-600">Carregando seus dados...</p>
+            </div>
+            <div v-else class="flex flex-col space-y-6 py-4">
 
                 <div class="flex items-center border-b-2 py-0 pb-6">
                     <label class="font-semibold w-1/4 text-sm">Motivo de não recebimento</label>
@@ -13,7 +16,7 @@
                 <div class="flex items-center border-b-2 py-2 pb-6">
                     <label class="font-semibold w-1/4 text-sm">Nome completo</label>
                     <div class="w-3/4 ml-4">
-                        <input v-model="form.nome_completo" type="text" class="w-full border rounded-md p-2 text-sm" placeholder="Digite seu nome completo" />
+                        <input v-model="form.nome_completo" type="text" readonly class="w-full border rounded-md p-2 text-sm bg-gray-100 cursor-not-allowed" />
                         <p v-if="errors.nome_completo" class="text-red-500 text-sm mt-1">{{ errors.nome_completo }}</p>
                     </div>
                 </div>
@@ -21,7 +24,7 @@
                 <div class="flex items-center border-b-2 py-0 pb-6">
                     <label class="font-semibold w-1/4 text-sm">E-mail</label>
                     <div class="w-3/4 ml-4">
-                        <input v-model="form.email" type="email" class="w-full border rounded-md p-2 text-sm" placeholder="Digite seu e-mail" />
+                        <input v-model="form.email" type="email" readonly class="w-full border rounded-md p-2 text-sm bg-gray-100 cursor-not-allowed" />
                         <p v-if="errors.email" class="text-red-500 text-sm mt-1">{{ errors.email }}</p>
                     </div>
                 </div>
@@ -29,7 +32,7 @@
                 <div class="flex items-center border-b-2 py-0 pb-6">
                     <label class="font-semibold w-1/4 text-sm">CPF</label>
                     <div class="w-3/4 ml-4">
-                        <input v-model="form.cpf" type="text" class="w-full border rounded-md p-2 text-sm" placeholder="Digite seu CPF" />
+                        <input v-model="form.cpf" type="text" readonly class="w-full border rounded-md p-2 text-sm bg-gray-100 cursor-not-allowed" />
                         <p v-if="errors.cpf" class="text-red-500 text-sm mt-1">{{ errors.cpf }}</p>
                     </div>
                 </div>
@@ -37,7 +40,7 @@
                 <div class="flex items-center border-b-2 py-0 pb-6">
                     <label class="font-semibold w-1/4 text-sm">Matrícula</label>
                     <div class="w-3/4 ml-4">
-                        <input v-model="form.matricula" type="text" class="w-full border rounded-md p-2 text-sm" placeholder="Digite sua matrícula" />
+                        <input v-model="form.matricula" type="text" readonly class="w-full border rounded-md p-2 text-sm bg-gray-100 cursor-not-allowed" />
                         <p v-if="errors.matricula" class="text-red-500 text-sm mt-1">{{ errors.matricula }}</p>
                     </div>
                 </div>
@@ -73,15 +76,12 @@
 
                     <div class="flex flex-col sm:flex-row sm:items-start sm:gap-4">
                         <div class="flex flex-col w-full gap-3 border-2 border-blue-500 rounded-lg p-1">
-                            <div v-for="(file, index) in form.files" :key="index" class="flex items-center justify-between gap-4 w-full text-sm text-blue-500 cursor-pointer">
+                            <div v-for="(file, index) in form.files" :key="index" class="flex items-center justify-between gap-4 w-full text-sm text-blue-500">
                                 <div class="flex items-center gap-2">
                                     <PaperClipIcon class="w-5 h-5 text-gray-500"/> 
                                     <span class="underline"> {{ file.name }} </span>
                                 </div>
-                                <div class="flex items-center gap-2">
-                                    <ArrowDownTrayIcon class="w-6 h-6 text-gray-700 cursor-pointer" @click="downloadFile(file)" />
-                                    <XMarkIcon class="w-5 h-5 text-red-500 cursor-pointer" @click="removeFile(index)" />
-                                </div>
+                                <XMarkIcon class="w-5 h-5 text-red-500 cursor-pointer" @click="removeFile(index)" />
                             </div>
                         </div>
                     </div>
@@ -113,7 +113,6 @@
                             </div>
                             <p v-if="errors.termsAccepted" class="text-red-500 text-sm">{{ errors.termsAccepted }}</p>
                         </div>
-                        
                     </div>
                 </div>
 
@@ -132,7 +131,7 @@
 </template>
 
 <script>
-import { inject, ref, reactive } from 'vue';
+import { inject, ref, reactive, onMounted } from 'vue';
 import { ArrowDownTrayIcon, PaperClipIcon, XMarkIcon } from "@heroicons/vue/24/outline";
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
@@ -154,12 +153,36 @@ export default {
             matricula: '',
             unidade: '',
             descricao: '',
-            files: [],
+            files: [], // Esta linha é crucial para evitar o erro da tela branca
             termsAccepted: false,
         });
         
         const errors = ref({});
         const isSubmitting = ref(false);
+        const isLoadingUserData = ref(true);
+
+        const fetchUserData = async () => {
+            isLoadingUserData.value = true;
+            try {
+                const response = await axios.get('/auth/user-info/', {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+                });
+                const userData = response.data;
+
+                form.nome_completo = userData.first_name + ' ' + userData.last_name|| '';
+                form.email = userData.email || '';
+                form.cpf = userData.cpf || '';
+                form.matricula = userData.employeeCode || '';
+
+            } catch (error) {
+                console.error("Erro ao buscar dados do usuário:", error);
+                alert("Não foi possível carregar seus dados. Por favor, recarregue a página.");
+            } finally {
+                isLoadingUserData.value = false;
+            }
+        };
+
+        onMounted(fetchUserData);
 
         const handleFileUpload = (event) => {
             form.files = Array.from(event.target.files);
@@ -185,7 +208,6 @@ export default {
          const submitForm = async () => {
             if (validateForm()) {
                 isSubmitting.value = true;
-
                 const formData = new FormData();
                 formData.append('nome_completo', form.nome_completo);
                 formData.append('email', form.email);
@@ -205,19 +227,34 @@ export default {
                             'Authorization': `Bearer ${localStorage.getItem('accessToken')}` 
                         }
                     });
-
                     router.push({ name: 'status' });
-
                 } catch (error) {
-                    console.error("Erro ao criar recurso:", error.response ? error.response.data : error.message);
+    console.error("Erro ao criar recurso:", error.response ? error.response.data : error.message);
+    
+                   
                     if (error.response && error.response.data) {
-                        const errorMessages = Object.entries(error.response.data)
-                        .map(([field, messages]) => `${field}: ${messages.join(', ')}`)
-                        .join('\n');
-                        alert(`Ocorreram os seguintes erros:\n${errorMessages}`);
+                        const errorData = error.response.data;
+                        let errorMessage;
+
+                        if (typeof errorData.detail === 'string') {
+                            errorMessage = errorData.detail;
+                        } 
+
+                        else {
+                            errorMessage = Object.entries(errorData)
+                                .map(([field, messages]) => {
+                                    const messageText = Array.isArray(messages) ? messages.join(', ') : messages;
+                                    return `${field}: ${messageText}`;
+                                })
+                                .join('\n');
+                        }
+                        alert(`Ocorreram os seguintes erros:\n${errorMessage}`);
+
                     } else {
                         alert('Ocorreu um erro desconhecido ao enviar seu recurso. Tente novamente.');
-                 }
+                    }
+                    // =============================================================
+
                 } finally {
                     isSubmitting.value = false;
                 }
@@ -229,6 +266,7 @@ export default {
             form, 
             errors,
             isSubmitting, 
+            isLoadingUserData,
             handleFileUpload, 
             removeFile, 
             submitForm,

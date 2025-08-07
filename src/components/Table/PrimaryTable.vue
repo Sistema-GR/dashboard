@@ -1,13 +1,13 @@
 <template>
-  <div class="px-4 sm:px-2 lg:px-4 w-full">
+  <div class="px-0 sm:px-6 lg:px-8 w-full">
     <div class="mt-6 flow-root">
       <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+        <div class="inline-block min-w-full py-2 align-middle px-8 sm:px-10">
           <table class="min-w-full divide-y divide-gray-300 bg-primary-900 rounded-t-md shadow-md">
 
             <thead>
               <tr>
-                <th v-for="column in filteredColumns" :key="column.key" scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-3 whitespace-nowrap break-words">
+                <th v-for="column in filteredColumns" :key="column.key" scope="col" class="py-3.5 pl-4 pr-3 text-left text-15 font-semibold text-white sm:pl-3 whitespace-nowrap break-words">
                   {{ column.label }}
                   <button @click="toggleFilterMenu(column)" class="ml-2 text-white hover:text-gray-700 translate-y-0.5">
                     <svg v-if="sortDirection === 'asc'" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -24,17 +24,17 @@
 
             <tbody class="bg-white">
               <tr v-for="person in visiblePeople" :key="person.matricula" class="even:bg-gray-50">
-                <td v-for="column in filteredColumns" :key="column.key" class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-3">
+                <td v-for="column in filteredColumns" :key="column.key" class="whitespace-nowrap py-4 pl-4 pr-3 text-15 font-medium text-gray-900 sm:pl-3">
                   {{ column.format ? column.format(person[column.key]) : person[column.key] }}
                 </td>
 
-                <td v-if="showEdit" class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
+                <td v-if="showEdit" class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-15 font-medium sm:pr-3">
                   <a href="#" @click.prevent="openDrawer(person)" class="text-indigo-600 hover:text-indigo-900">
                     Edit<span class="sr-only">, {{ person }}</span>
                   </a>
                 </td>
 
-                <td v-if="showGr" class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
+                <td v-if="showGr" class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-15 font-medium sm:pr-3">
                   <div class="text-indigo-600 hover:text-indigo-900" @click.prevent="saveRowData(person)">
                     <EyeIcon class="w-5 h-5" />
                     <span class="sr-only">Visualização da Gratificação</span>
