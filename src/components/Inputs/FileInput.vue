@@ -1,101 +1,67 @@
 <template>
-  <div class="unified-upload">
-    <label class="block mb-2 text-sm font-medium">Upload CSV files</label>
-
+  <div class="space-y-2">
+    <label class="text-sm font-medium">{{ Label }}</label>
     <!-- Drag & Drop / Click area -->
     <div
-      class="border-2 border-dashed rounded p-6 text-center cursor-pointer"
-      :class="{
-        'border-blue-500 bg-blue-50': isDragOver,
-        'opacity-50 pointer-events-none': isUploading
-      }"
-      @click="$refs.fileInput.click()"
+      class="border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors duration-200"
+      :class="isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300'"
+      @click="openFileDialog"
       @dragover.prevent="onDragOver"
       @dragleave.prevent="onDragLeave"
       @drop.prevent="onDrop"
     >
+      <p class="text-gray-600">
+        Arraste os arquivos aqui ou <span class="text-blue-500 font-semibold">procurar</span>
+      </p>
       <input
-        ref="fileInput"
-        type="file"
         class="hidden"
+        type="file"
         multiple
-        accept=".csv,text/csv"
-        @change="onFileInputChange"
+        accept=".csv"
+        ref="fileInput"
+        @change="onFileChange"
       />
-      <div>
-        <p class="mb-1">Drag and drop CSV files here, or click to browse</p>
-        <p class="text-xs text-gray-500">Only `.csv` files are accepted. Max files: {{ maxFiles }}</p>
-      </div>
     </div>
-
     <!-- Preview list -->
-    <div class="mt-4 space-y-2">
-      <div
-        v-for="(f, idx) in files"
-        :key="f.id"
-        class="p-3 border rounded flex items-start gap-3"
+    <ul v-if="previewFiles.length" class="mt-4 space-y-1 text-sm text-gray-700">
+      <li
+        v-for="(file, index) in previewFiles"
+        :key="index"
+        class="flex items-center justify-between bg-gray-100 p-2 rounded"
       >
-        <div class="flex-1">
-          <div class="flex items-baseline justify-between">
-            <div>
-              <div class="font-medium">{{ f.name }}</div>
-              <div class="text-xs text-gray-500">
-                {{ humanSize(f.size) }} • mapped: <strong>{{ f.mappedKey || '—' }}</strong>
-              </div>
-              <div class="text-xs text-gray-500 mt-1">
-                Hash: <code class="text-xs">{{ f.hash || 'computing...' }}</code>
-              </div>
-            </div>
-
-            <div class="text-right">
-              <div v-if="f.error" class="text-sm text-red-600">{{ f.error }}</div>
-              <div v-else-if="isUploading">
-                <div class="text-xs">Progress</div>
-                <progress :value="f.progress" max="100" class="w-40"></progress>
-                <div class="text-xs">{{ f.progress }}%</div>
-              </div>
-            </div>
-          </div>
-
-          <div v-if="f.preview" class="mt-2 text-xs text-gray-600">
-            {{ f.preview }}
-          </div>
-        </div>
-
-        <div class="flex flex-col items-end gap-2">
-          <button
-            class="px-3 py-1 rounded border text-sm"
-            @click="removeFile(idx)"
-            :disabled="isUploading"
-          >
-            Remove
-          </button>
-        </div>
-      </div>
-    </div>
-
+        <span>{{ file.name }} ({{ formatSize(file.size) }})</span>
+        <button
+          class="text-red-500 hover:text-red-700 text-xs font-bold ml-2"
+          @click="removeFile(index)"
+        >
+          Remove
+        </button>
+      </li>
+    </ul>
     <!-- Controls -->
     <div class="mt-4 flex items-center gap-3">
       <button
         class="px-4 py-2 rounded bg-blue-600 text-white"
-        :disabled="files.length === 0 || isUploading"
+        :disabled="previewFiles.length === 0 || isUploading"
         @click="uploadAll"
       >
-        {{ isUploading ? 'Uploading...' : 'Upload all as unified request' }}
+        {{ isUploading ? 'Enviando...' : 'Enviar' }}
       </button>
 
       <button
         class="px-4 py-2 rounded border"
-        :disabled="files.length === 0 || isUploading"
+        :disabled="previewFiles.length === 0 || isUploading"
         @click="clearAll"
       >
-        Clear
+        Limpar
       </button>
 
       <div v-if="uploadResult" class="text-sm text-green-600">
         {{ uploadResult }}
       </div>
-    </div>
+
+      <div class="text-red-500" v-if="errorMessage">{{ errorMessage }}</div>
+    </div>    
   </div>
 </template>
 
@@ -103,30 +69,26 @@
 import axios from 'axios';
 import { getAccessToken } from '@/service/token.js';
 
-/*
-Props:
-- endpoint (string) default '/csv/process/unified-upload/'
-- maxFiles: optional maximum files allowed
-- expectedFiles: array of { key: 'funcionarios', patterns: ['funcionario','funcionarios','employees'] } used to auto-map filename -> key.
-- tokenProvider: optional function to return Bearer token (if you have custom auth).
-*/
-
 export default {
-  name: 'UnifiedUpload',
+  name: "FileInput",
   props: {
+    Label: {
+      type: String,
+      required: true,
+      default: "Importar Arquivos em .CSV",
+    },
     endpoint: {
       type: String,
       default: '/csv/process/unified-upload/',
     },
     baseUrl: {
       type: String,
-      default: '', // if your project uses a base url, set it; index.vue can pass it.
+      default: window.__VUE__API_BASE_URL || 'http://127.0.0.1:8000',
     },
     maxFiles: {
       type: Number,
-      default: 50,
+      default: 14,
     },
-    // default expected files mapping — customize as needed
     expectedFiles: {
       type: Array,
       default: () => [
@@ -146,60 +108,47 @@ export default {
         { key: 'funcao_grupo_etapas', label: '14. Função, Grupo e Etapas', patterns: ['funcao_grupo_etapas'] },  
       ],
     },
-    // Optional function prop to obtain token. If not provided, falls back to getAccessToken import or localStorage
-    tokenProvider: {
-      type: Function,
-      default: null,
-    },
   },
   data() {
     return {
-      files: [], // { id, file, name, size, mappedKey, hash, progress, error, preview }
-      isDragOver: false,
+      previewFiles: [], // { id, file, name, size, mappedKey, hash, progress, error, preview }
+      isDragging: false,
       isUploading: false,
       uploadResult: '',
+      errorMessage: '',
     };
   },
   methods: {
+    // Drag events
     onDragOver() {
-      if (!this.isUploading) this.isDragOver = true;
+      if (!this.isUploading) this.isDragging = true;
     },
     onDragLeave() {
-      this.isDragOver = false;
+      this.isDragging = false;
     },
-    async onDrop(e) {
-      this.isDragOver = false;
-      const dropped = Array.from(e.dataTransfer.files || []);
-      await this.addFiles(dropped);
+    async onDrop(event) {
+      this.isDragging = false;
+      const files = Array.from(event.dataTransfer.files || []);
+      await this.validateAndAddFiles(files);
     },
-    async onFileInputChange(e) {
-      const chosen = Array.from(e.target.files || []);
-      e.target.value = null; // reset
-      await this.addFiles(chosen);
-    },
-    async addFiles(fileList) {
+
+    // Seleção manual
+    async onFileChange(event) {
+      const files = Array.from(event.target.files || []);
+      event.target.value = ""; // Reset input for re-selection
+      await this.validateAndAddFiles(files);
+    },    
+    
+    // Validar arquivos (apenas .csv)
+    async validateAndAddFiles(fileList) {
       if (!fileList || fileList.length === 0) return;
 
       const allowed = fileList.filter(f => this.isCsvFile(f));
-      const rejected = fileList.filter(f => !this.isCsvFile(f));
+      if (allowed.length < fileList.length) {
+        alert("Alguns arquivos foram ignorados por não serem no formato .csv");
+      }      
 
-      if (rejected.length > 0) {
-        rejected.forEach(r => {
-          this.files.push({
-            id: this.makeId(),
-            file: r,
-            name: r.name,
-            size: r.size,
-            mappedKey: null,
-            hash: null,
-            progress: 0,
-            error: 'Rejected: not a .csv file',
-            preview: null,
-          });
-        });
-      }
-
-      const toAdd = allowed.slice(0, Math.max(0, this.maxFiles - this.files.length));
+      const toAdd = allowed.slice(0, Math.max(0, this.maxFiles - this.previewFiles.length));
       for (const f of toAdd) {
         const id = this.makeId();
         const mapped = this.autoMapFilename(f.name);
@@ -215,20 +164,21 @@ export default {
           error: null,
           preview,
         };
-        this.files.push(entry);
+        this.previewFiles.push(entry);
 
         // compute hash asynchronously, don't block UI
         this.computeHash(f)
           .then(h => {
-            const idx = this.files.findIndex(x => x.id === id);
-            if (idx !== -1) this.$set(this.files[idx], 'hash', h);
+            const idx = this.previewFiles.findIndex(x => x.id === id);
+            if (idx !== -1) this.$set(this.previewFiles[idx], 'hash', h);
           })
           .catch(err => {
-            const idx = this.files.findIndex(x => x.id === id);
-            if (idx !== -1) this.$set(this.files[idx], 'error', 'Hash failed');
+            const idx = this.previewFiles.findIndex(x => x.id === id);
+            if (idx !== -1) this.$set(this.previewFiles[idx], 'error', 'Hash failed');
             console.error('hash error', err);
           });
       }
+      this.$emit("file-change", this.previewFiles);
     },
 
     isCsvFile(file) {
@@ -249,22 +199,26 @@ export default {
 
     removeFile(index) {
       if (this.isUploading) return;
-      this.files.splice(index, 1);
+      this.previewFiles.splice(index, 1);
+      this.$emit("file-change", this.previewFiles);
     },
 
     clearAll() {
       if (this.isUploading) return;
-      this.files = [];
+      this.previewFiles = [];
     },
 
     makeId() {
       return Math.random().toString(36).slice(2, 10);
     },
 
-    humanSize(bytes) {
-      if (bytes < 1024) return `${bytes} B`;
-      if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-      return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+    formatSize(size) {
+      const kb = size / 1024;
+      return kb > 1024 ? (kb / 1024).toFixed(2) + " MB" : kb.toFixed(2) + " KB";
+    },
+
+    openFileDialog() {
+      this.$refs.fileInput.click();
     },
 
     async computeHash(file) {
@@ -276,30 +230,16 @@ export default {
       return hashHex;
     },
 
-    async getAuthToken() {
-      // prefer tokenProvider if provided
-      if (this.tokenProvider) {
-        try {
-          const t = await this.tokenProvider();
-          if (t) return t;
-        } catch (e) {
-          // fallback
-        }
+    async waitForHashes(timeoutMs = 5000) {
+      const start = Date.now();
+      while (Date.now() - start < timeoutMs) {
+        const pending = this.previewFiles.some(f => !f.hash && !f.error);
+        if (!pending) return;
+        // short sleep
+        // eslint-disable-next-line no-await-in-loop
+        await new Promise(r => setTimeout(r, 200));
       }
-
-      // try common global getAccessToken if available
-      if (typeof window !== 'undefined' && window.getAccessToken) {
-        try {
-          const t = await window.getAccessToken();
-          if (t) return t;
-        } catch (e) {}
-      }
-
-      // fallback localStorage
-      const t = localStorage.getItem('token') || localStorage.getItem('access_token');
-      return t || null;
     },
-
     /**
      * uploadAll
      * - builds a manifest with file metadata (name, mappedKey, hash)
@@ -307,11 +247,11 @@ export default {
      * - sends single POST to baseUrl + endpoint
      */
     async uploadAll() {
-      if (this.files.length === 0) return;
+      if (this.previewFiles.length === 0) return;
       if (this.isUploading) return;
 
       // ensure all hashes are computed before uploading (or at least give a short timeout)
-      const missingHash = this.files.filter(f => !f.hash && !f.error);
+      const missingHash = this.previewFiles.filter(f => !f.hash && !f.error);
       if (missingHash.length > 0) {
         // wait for outstanding hash computations but not indefinitely
         await this.waitForHashes(5000); // wait up to 5s for remaining hashes
@@ -320,13 +260,13 @@ export default {
       this.isUploading = true;
       this.uploadResult = '';
       // reset progress
-      this.files.forEach(f => (f.progress = 0));
+      this.previewFiles.forEach(f => (f.progress = 0));
 
       const form = new FormData();
       const manifest = [];
 
       // append files with clear keys
-      this.files.forEach((f, idx) => {
+      this.previewFiles.forEach((f, idx) => {
         const key = f.mappedKey ? f.mappedKey : `unmapped_${idx}`;
         const formKey = key; // use raw key, like 'funcionarios'
         form.append(formKey, f.file, f.name);
@@ -344,29 +284,24 @@ export default {
       form.append('manifest', JSON.stringify(manifest));
 
       // add any other metadata needed
-      form.append('count', String(this.files.length));
+      form.append('count', String(this.previewFiles.length));
 
       const token = await getAccessToken();
-      //const token = await this.getAuthToken();
       const headers = {
         'Authorization': `Bearer ${token}`
       };
-      //if (token) headers['Authorization'] = `Bearer ${token}`;
 
       // If you use a base URL, use it. Otherwise axios will use default base.
       const url = (this.baseUrl || '') + this.endpoint;
 
       try {
-        // Provide a single onUploadProgress and map progress to files proportionally by bytes
-        const totalBytes = this.files.reduce((s, f) => s + (f.size || 0), 0) || 1;
-
         await axios.post(url, form, {
           headers,
           onUploadProgress: (progressEvent) => {
             const loaded = progressEvent.loaded;
             // Map loaded bytes proportionally to files
             let cumulative = 0;
-            for (const f of this.files) {
+            for (const f of this.previewFiles) {
               const prevCumulative = cumulative;
               cumulative += f.size || 0;
               // approximate file progress based on loaded bytes
@@ -380,11 +315,7 @@ export default {
             }
           },
         });
-        //await axios.get(`${this.BASE_URL}/process/all-files/`, {
-        //  headers: { 'Authorization': `Bearer ${token}` },
-        //});
 
-        //console.log("Todos os arquivos processados com sucesso!");
         this.uploadResult = 'Upload successful';
         // you can emit an event with manifest and response if the parent wants to act
         this.$emit('uploaded', { manifest });
@@ -399,23 +330,6 @@ export default {
         this.isUploading = false;
       }
     },
-
-    async waitForHashes(timeoutMs = 5000) {
-      const start = Date.now();
-      while (Date.now() - start < timeoutMs) {
-        const pending = this.files.some(f => !f.hash && !f.error);
-        if (!pending) return;
-        // short sleep
-        // eslint-disable-next-line no-await-in-loop
-        await new Promise(r => setTimeout(r, 200));
-      }
-    },
   },
 };
 </script>
-
-<style scoped>
-.unified-upload input[type='file'] {
-  display: none;
-}
-</style>
