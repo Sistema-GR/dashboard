@@ -268,7 +268,7 @@ const routes = {
     { name: 'Novo Cálculo', route: '/home/create/selector', icon: CalculatorIcon, current: false },
     { name: 'Cálcular Alocação', route: '/home/alloc', icon: RectangleStackIcon, current: false },
     { name: 'Cálculo Anteriores', route: '/home/previousresults', icon: ChartBarIcon, current: false },
-    { name: 'Recurso', route: '/resource/aguardando-resposta', icon: ExclamationCircleIcon, current: false },
+    { name: 'Recurso', route: '/resource', icon: ExclamationCircleIcon, current: false },
     { name: 'Painel do Usuário', route: '/home/dataversions', icon: CircleStackIcon, current: false },
     { name: 'Permissões Acessos', route: '/home/permissionsaccess', icon: UsersIcon  , current: false },
     {

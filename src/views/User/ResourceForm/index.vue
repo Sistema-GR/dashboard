@@ -229,15 +229,32 @@ export default {
                     });
                     router.push({ name: 'status' });
                 } catch (error) {
-                    console.error("Erro ao criar recurso:", error.response ? error.response.data : error.message);
+    console.error("Erro ao criar recurso:", error.response ? error.response.data : error.message);
+    
+                   
                     if (error.response && error.response.data) {
-                        const errorMessages = Object.entries(error.response.data)
-                        .map(([field, messages]) => `${field}: ${messages.join(', ')}`)
-                        .join('\n');
-                        alert(`Ocorreram os seguintes erros:\n${errorMessages}`);
+                        const errorData = error.response.data;
+                        let errorMessage;
+
+                        if (typeof errorData.detail === 'string') {
+                            errorMessage = errorData.detail;
+                        } 
+
+                        else {
+                            errorMessage = Object.entries(errorData)
+                                .map(([field, messages]) => {
+                                    const messageText = Array.isArray(messages) ? messages.join(', ') : messages;
+                                    return `${field}: ${messageText}`;
+                                })
+                                .join('\n');
+                        }
+                        alert(`Ocorreram os seguintes erros:\n${errorMessage}`);
+
                     } else {
                         alert('Ocorreu um erro desconhecido ao enviar seu recurso. Tente novamente.');
                     }
+                    // =============================================================
+
                 } finally {
                     isSubmitting.value = false;
                 }

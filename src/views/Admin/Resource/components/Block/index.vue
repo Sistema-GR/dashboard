@@ -1,12 +1,12 @@
 <template>
-    <div class="flex flex-col w-full bg-[#e3f0ff] rounded-[10px] overflow-hidden border transition-all shadow-sm hover:shadow-md duration-300 ease-in-out transform hover:scale-105 cursor-pointer">
+    <div :class="`flex flex-col w-full bg-[#e3f0ff] rounded-[10px] overflow-hidden border transition-all shadow-sm hover:shadow-md duration-300 ease-in-out transform hover:scale-105 cursor-pointer ${isActive ? 'ring-2 ring-offset-2 ring-black' : ''}`">
         
-        <!-- Header colorido -->
-        <div :class="`flex items-center justify-center px-4 py-3 rounded-[10px] text-white ${getColorClass()}`">
+        
+        <div :class="`flex items-center justify-center px-4 py-3 text-white ${colorClass}`">
             <span class="font-bold text-15">{{ title }}</span>
         </div>
         
-        <!-- Conteúdo inferior branco -->
+        
         <div class="bg-[#e3f0ff] px-10 py-4 flex items-center justify-center">
             <span class="text-black text-15 font-medium">{{ number }}</span>
         </div>
@@ -15,41 +15,36 @@
 </template>
 
 <script>
-import { UserIcon } from "@heroicons/vue/24/outline";
-
+import { computed } from 'vue';
 export default {
     name: "Block",
-    components: { UserIcon },
-
     props: {
-      title: {
-        type: String,
-        required: true,
-        default: 'Default Title'
-      },
-      number: {
-        type: String,
-        required: true,
-        default: '0'
-      },
-      customClass: {
-        type: String,
-        default: ''
-      }
+      title: { type: String, required: true },
+      number: { type: [String, Number], required: true },
+      
+      colorKey: { type: String, default: 'gray' },
+      
+      isActive: { type: Boolean, default: false }
     },
+    setup(props) {
+        
+        const colorClass = computed(() => {
+            const colorMap = {
+                blue: 'bg-[#6fa3ef]',
+                purple: 'bg-[#6668d4]',
+                pink: 'bg-[#f16d91]',
+                orange: 'bg-[#ff8051]',
+                teal: 'bg-[#6cc69d]',
+                yellow: 'bg-[#f4b72f]',
+                gray: 'bg-gray-500' 
+            };
+            
+            return colorMap[props.colorKey] || colorMap['gray'];
+        });
 
-    methods: {
-        getColorClass() {
-            // Extrai a cor do customClass e retorna a cor personalizada correta
-            if (this.customClass.includes('bg-blue-500')) return 'bg-[#6fa3ef]'     // Novo
-            if (this.customClass.includes('bg-orange-500')) return 'bg-[#6668d4]'   // Em Progresso
-            if (this.customClass.includes('bg-yellow-500')) return 'bg-[#f16d91]'   // Pendente
-            if (this.customClass.includes('bg-red-500')) return 'bg-[#6cc69d]'      // Reaberto
-            if (this.customClass.includes('bg-green-500')) return 'bg-[#ff8051]'    // Finalizado
-            if (this.customClass.includes('bg-gray-500')) return 'bg-[#f4b72f]'     // Cancelado
-            return 'bg-gray-500'
-        }
+        return {
+            colorClass // Exponha para o template
+        };
     }
 }
 </script>
-

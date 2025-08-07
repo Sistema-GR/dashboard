@@ -22,11 +22,6 @@ import editversion from '@/views/Admin/Create/EditVersions/index.vue'
 import permissionsaccess from '@/views/Admin/PermissionsAccess/index.vue'
 //Resource
 import resource from '@/views/Admin/Resource/index.vue'
-import recursoAguardandoResposta from '@/views/Admin/Resource/AguardandoResposta/index.vue'
-import recursoAnalisePendente from '@/views/Admin/Resource/AnalisePendente/index.vue'
-import recursoAguardandoEnvio from '@/views/Admin/Resource/AguardandoEnvio/index.vue'
-import recursoForaDoPrazo from '@/views/Admin/Resource/ForaDoPrazo/index.vue'
-import recursoRespondido from '@/views/Admin/Resource/Respondido/index.vue'
 import infodetails from '@/views/Admin/Resource/InfoDetails/index.vue'
 //AdminPanel
 import adminPanel from '@/views/AdminPanel/index.vue'
@@ -137,13 +132,15 @@ const router = createRouter({
       name: 'resource', 
       component: resource,
       children: [
-        { path: 'aguardando-envio', name: 'recursoAguardandoEnvio', component: recursoAguardandoEnvio },
-        { path: 'analise-pendente', name: 'recursoAnalisePendente', component: recursoAnalisePendente },
-        { path: 'aguardando-resposta', name: 'recursoAguardandoResposta', component: recursoAguardandoResposta },
-        { path: 'respondido', name: 'recursoRespondido', component: recursoRespondido },
-        { path: 'fora-do-prazo', name: 'recursoForaDoPrazo', component: recursoForaDoPrazo },
+
         { path: 'info', name: 'info', component: infodetails },
       ]
+    },
+    { 
+      path: '/resource/info/:id',
+      name: 'resource-details',
+      component: infodetails,
+      props: true
     },
   ]
 })
