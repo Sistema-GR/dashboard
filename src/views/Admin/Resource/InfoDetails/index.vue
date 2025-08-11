@@ -1,210 +1,181 @@
 <template>
-    <Whiteboard title="" class="px-10 pb-20 lg:ml-10" :isSidebarMinimized="isSidebarMinimized" :hideBreadcrumbs="true">
 
-        <div class="flex flex-row items-center justify-between w-full py-3 mt-1">
-          <div class="flex flex-col w-full justify-between md:flex-row items-center border rounded-[10px] p-4 shadow-md bg-white hover:shadow-xl transition-shadow duration-300">
-            <div class="flex w-full flex-row items-center">
-              <div class="flex mb-3 md:mb-0 mr-3">
-                <UserIcon class="w-14 h-14 text-[#003965]" />
-              </div>
-              <div class="flex flex-col items-start">
-                <p class="text-15 font-semibold text-gray-900">Matheus Gabriel Grawe</p>
-                <p class="text-15 text-gray-600">u4573</p>
-              </div>
-            </div>
+    <Sidebar :route="'admin'" @update:isSidebarMinimized="handleSidebarMinimized" class="z-50"/>
+    <Whiteboard :title="`Detalhes do Recurso #${resourceId}`" class="!overflow-visible overflow-y-auto z-40 relative" :isSidebarMinimized="isSidebarMinimized" >
 
-            <div class="relative flex items-center border-t justify-center w-full lg:border-hidden lg:w-fit">
-              <button @click="toggleBadgeDropdown" class="flex items-center space-x-2  mt-5 lg:mt-0">
-                <Badges :text="selectedBadge" />
-                <ChevronDownIcon class="w-5 h-auto" />
-              </button>
-              <TransitionRoot :show="isBadgeDropdownOpen" as="div" class="absolute -left-40 top-0 mt-2 w-64 bg-white rounded-[10px] shadow-lg z-10">
-                <TransitionChild
-                  as="div"
-                  enter="transition ease-out duration-200"
-                  enterFrom="transform opacity-0 scale-95"
-                  enterTo="transform opacity-100 scale-100"
-                  leave="transition ease-in duration-75"
-                  leaveFrom="transform opacity-100 scale-100"
-                  leaveTo="transform opacity-0 scale-95"
-                  class="max-h-96 overflow-y-auto"
-                >
-                  <ul>
-                    <li v-for="(badge, index) in badges" :key="index" @click="selectBadge(badge)" class="cursor-pointer px-4 py-2 hover:bg-gray-100 flex items-center space-x-2 whitespace-nowrap">
-                      <Badges :text="badge" />
-                    </li>
-                  </ul>
-                </TransitionChild>
-              </TransitionRoot>
-            </div>
-          </div>
-        </div>
-
-        <div class="flex flex-col w-full py-4 mt-3 p-4 bg-white border rounded-[10px] shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <p class="text-15 font-bold mb-2">Dados do Servidor</p>
-            <div class="space-y-2">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-                  <p class="text-15">CPF:</p>
-                  <p class="text-15 text-gray-600">123.456.789-00</p>
-                </div>
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-                  <p class="text-15">Email:</p>
-                  <p class="text-15 text-gray-600">example@domain.com</p>
-                </div>
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-                  <p class="text-15">Cargo:</p>
-                  <p class="text-15 text-gray-600">Desenvolvedor</p>
-                </div>
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-                  <p class="text-15">Unidade:</p>
-                  <p class="text-15 text-gray-600">TI</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="flex flex-col w-full mt-5 p-4 bg-white border rounded-[10px] shadow-lg pb-8 hover:shadow-xl transition-shadow duration-300">
-            <p class="text-15 font-bold mb-2">Descrição</p>
-            <p> Lorem Ipsum is simply dummy text of the printing and typesetting industry...</p>
-        </div>
-
-        <div class="flex flex-col w-full mt-8 p-4 bg-white border rounded-[10px] shadow-lg hover:shadow-xl transition-shadow duration-300">
-            <p class="text-15 font-bold mb-2">Escolher Versão para Abrir</p>
-            <select v-model="selectedVersion" class="border rounded-[10px] py-2 px-4">
-                <option value="primeira-versao">Primeira Versão</option>
-                <option value="segunda-versao">Segunda Versão</option>
-            </select>
-        </div>
-
-        <div class="flex flex-col items-center justify-between w-full mt-5 p-4 bg-white border rounded-[10px] shadow-lg hover:shadow-xl transition-shadow duration-300">
-
-            <div class="flex flex-row w-full justify-between">
-                <p class="text-15 font-bold">Responder Recurso</p>
-                <button @click="toggleReportResponse" class="bg-blue-500 text-white py-2 px-4 rounded-[10px]">
-                  Responder
-                </button>
-            </div>
-
-            <div class="flex flex-col w-full py-2 mt-2" v-if="isReportResponseOpen">
-                <textarea v-model="reportResponse" rows="5" class="w-full border rounded-[10px] p-2 mb-4" placeholder="Escreva sua resposta aqui..."></textarea>
-                <button @click="submitReportResponse" class="bg-green-500 text-white py-2 px-4 rounded-[10px] w-3/12 lg:w-2/12">
-                  Enviar
-                </button>
-            </div>
-
-        </div>
+        <div v-if="isLoading" class="text-center p-10">Carregando dados...</div>
+        <div v-else-if="error" class="text-center p-10 text-red-500">{{ error }}</div>
         
-        <div class="flex flex-col w-full mt-5 p-4 bg-white border rounded-[10px] shadow-lg hover:shadow-xl transition-shadow duration-300" v-if="previousResponses.length">
-          <p class="text-15 font-bold mb-2">Respostas Anteriores</p>
-          <ul class="space-y-2">
-            <li v-for="(response, index) in previousResponses" :key="index" class="text-gray-600 border-b pb-2">
-              <div v-if="!isEditing[index]" class="flex justify-between items-center">
+        <div v-else-if="recurso">
+            <!-- CARD DE IDENTIFICAÇÃO -->
+            <div class="flex w-full justify-between items-center border rounded-[10px] p-4 shadow-md bg-white">
+              <div class="flex items-center">
+                <UserIcon class="w-14 h-14 text-[#003965] mr-3" />
                 <div>
-                  <p class="font-semibold">Resposta {{ index + 1 }}:</p>
-                  <p>{{ response }}</p>
-                </div>
-                <div class="flex items-center space-x-2">
-                  <button @click="editResponse(index)" class="text-blue-500">
-                    <PencilIcon class="w-5 h-5" />
-                  </button>
-                  <button @click="deleteResponse(index)" class="text-red-500">
-                    <TrashIcon class="w-5 h-5" />
-                  </button>
+                  <p class="text-15 font-semibold text-gray-900">{{ recurso.nome_completo }}</p>
+                  <p class="text-15 text-gray-600">{{ recurso.matricula }}</p>
                 </div>
               </div>
+              <div class="relative">
+                <button @click="isBadgeDropdownOpen = !isBadgeDropdownOpen" class="flex items-center space-x-2">
+                    <span>Alterar Categoria</span><ChevronDownIcon class="w-5 h-auto" />
+                </button>
+                <div v-if="isBadgeDropdownOpen" class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10 max-h-96 overflow-y-auto">
+                    <ul>
+                      <li v-for="motivo in todosMotivos" :key="motivo.text" @click="toggleCriterio(motivo.text)" class="cursor-pointer px-4 py-2 hover:bg-gray-100 flex items-center">
+                        <input type="checkbox" :checked="recurso.criterios_selecionados.includes(motivo.text)" class="mr-2">
+                        <Badges :text="motivo.text" />
+                      </li>
+                    </ul>
+                </div>
+              </div>
+            </div>
 
-              <div v-else>
-                <textarea v-model="editedResponse" rows="3" class="w-full border rounded-[10px] p-2 mb-4" />
-                <div class="flex justify-end space-x-2">
-                  <button @click="updateResponse(index)" class="bg-green-500 text-white py-1 px-3 rounded-[10px]">
-                    Atualizar
-                  </button>
-                  <button @click="cancelEdit(index)" class="bg-gray-500 text-white py-1 px-3 rounded-[10px]">
-                    Cancelar
-                  </button>
+            <!-- CARD DE DADOS DO SERVIDOR -->
+            <div class="flex flex-col w-full py-4 mt-3 p-4 bg-white border rounded-[10px] shadow-lg">
+                <p class="text-15 font-bold mb-2">Dados do Servidor</p>
+                <div class="space-y-2 text-sm">
+                    <div><strong>CPF:</strong> {{ recurso.cpf }}</div>
+                    <div><strong>Email:</strong> {{ recurso.email }}</div>
+                    <div><strong>Unidade:</strong> {{ recurso.unidade_atuacao }}</div>
+                    <div><strong>Aberto em:</strong> {{ new Date(recurso.created_at).toLocaleString() }}</div>
                 </div>
-              </div>
-            </li>
-          </ul>
+            </div>
+
+            <!-- CARD DE DESCRIÇÃO E MOTIVOS -->
+            <div class="flex flex-col w-full mt-5 p-4 bg-white border rounded-[10px] shadow-lg">
+                <p class="text-15 font-bold mb-2">Descrição do Usuário</p>
+                <p>{{ recurso.descricao }}</p>
+                <p class="text-15 font-bold mt-4 mb-2">Categorias Atuais</p>
+                <div v-if="recurso.criterios_selecionados && recurso.criterios_selecionados.length" class="flex flex-wrap gap-2">
+                    <Badges v-for="criterio in recurso.criterios_selecionados" :key="criterio" :text="criterio" />
+                </div>
+                <p v-else class="text-sm text-gray-500">Nenhuma categoria definida.</p>
+            </div>
+
+            <!-- CARD DE RESPOSTA -->
+            <div class="flex flex-col items-center w-full mt-5 p-4 bg-white border rounded-[10px] shadow-lg">
+                <div class="flex flex-row w-full justify-between">
+                    <p class="text-15 font-bold">Responder Recurso</p>
+                    <button @click="isReportResponseOpen = !isReportResponseOpen" class="bg-blue-500 text-white py-2 px-4 rounded-md">Responder</button>
+                </div>
+                <div class="flex flex-col w-full py-2 mt-2" v-if="isReportResponseOpen">
+                    <textarea v-model="newResponseText" rows="5" class="w-full border rounded-md p-2 mb-4"></textarea>
+                    <button @click="submitReportResponse" class="bg-green-500 text-white py-2 px-4 rounded-md w-auto self-end">Enviar Resposta</button>
+                </div>
+            </div>
+            
+            <!-- CARD DE RESPOSTAS ANTERIORES -->
+            <div v-if="recurso.respostas && recurso.respostas.length" class="flex flex-col w-full mt-5 p-4 bg-white border rounded-[10px] shadow-lg">
+              <p class="text-15 font-bold mb-2">Histórico de Respostas</p>
+              <ul>
+                <li v-for="response in recurso.respostas" :key="response.id" class="border-b py-2">
+                  <p>{{ response.texto }}</p>
+                  <p class="text-xs text-gray-500 mt-1">Por: {{ response.autor_nome }} em {{ new Date(response.created_at).toLocaleString() }}</p>
+                </li>
+              </ul>
+            </div>
         </div>
-
     </Whiteboard>
 </template>
 
 <script>
+import { ref, inject, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import axios from 'axios';
 import Badges from '@/components/Badges/Badges.vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
-import { UserIcon, ChevronDownIcon, PencilIcon, TrashIcon } from "@heroicons/vue/24/outline";
-import { TransitionRoot, TransitionChild } from '@headlessui/vue';
-import { inject } from 'vue';
+import { UserIcon, ChevronDownIcon } from "@heroicons/vue/24/outline";
+import { MOTIVOS_RECURSO } from '@/config/resourceConstants.js';
+import Sidebar from '@/components/Sidebar/Sidebar.vue';
 
 export default {
-  name: "InfoDetails",
-  components: { Whiteboard, UserIcon, Badges, TransitionRoot, TransitionChild, ChevronDownIcon, PencilIcon, TrashIcon },
-  data() {
-    return {
-      selectedStatus: 'bg-blue-500',
-      selectedBadge: 'Grupo',
-      isBadgeDropdownOpen: false,
-      badges: [
-        "Falta", "Formação", "Impostos", "Mudança de matrícula/Unidade",
-        "Carga horária", "Grupo", "Tempo de atuação", "Esclarecimento",
-        "Discordância", "Pagamento Indevido", "Local",
-        "Alega atuação em outra etapa", "Atividades", "Mais de um critério"
-      ],
-      selectedVersion: 'primeira-versao',
-      isReportResponseOpen: false,
-      reportResponse: '',
-      previousResponses: [], // List of previous responses
-      isEditing: {}, // Track which response is being edited
-      editedResponse: '', // For storing the response being edited
-    };
-  },
-  setup() {
-    const isSidebarMinimized = inject('isSidebarMinimized');
-    return {
-      isSidebarMinimized
+    name: "InfoDetails",
+    components: { Whiteboard, UserIcon, Badges, ChevronDownIcon, Sidebar },
+    
+    setup() {
+        const isSidebarMinimized = ref(false);
+        const route = useRoute();
+        const resourceId = route.params.id;
+
+        const recurso = ref(null);
+        const isLoading = ref(true);
+        const error = ref(null);
+        
+        const isBadgeDropdownOpen = ref(false);
+        const todosMotivos = ref(MOTIVOS_RECURSO);
+        
+        const isReportResponseOpen = ref(false);
+        const newResponseText = ref('');
+
+        async function fetchData() {
+            isLoading.value = true;
+            try {
+                const response = await axios.get(`/recursos/${resourceId}/`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+                });
+                recurso.value = response.data;
+            } catch (err) {
+                console.error("Erro ao buscar detalhes do recurso:", err);
+                error.value = "Não foi possível carregar os dados.";
+            } finally {
+                isLoading.value = false;
+            }
+        }
+
+        async function toggleCriterio(criterioText) {
+            const currentCriterios = recurso.value.criterios_selecionados || [];
+            const newCriterios = currentCriterios.includes(criterioText)
+                ? currentCriterios.filter(c => c !== criterioText)
+                : [...currentCriterios, criterioText];
+            
+            try {
+                const response = await axios.patch(`/recursos/${resourceId}/`, { criterios_selecionados: newCriterios }, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+                });
+                recurso.value = response.data;
+            } catch (err) {
+                console.error("Erro ao atualizar critérios:", err);
+                alert("Não foi possível salvar a categoria.");
+            }
+        }
+
+        async function submitReportResponse() {
+            if (!newResponseText.value.trim()) return;
+            try {
+                await axios.post(`/recursos/${resourceId}/responder/`, { texto: newResponseText.value }, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+                });
+                newResponseText.value = '';
+                isReportResponseOpen.value = false;
+                await fetchData();
+            } catch (err) {
+                console.error("Erro ao enviar resposta:", err);
+                alert("Não foi possível enviar a resposta.");
+            }
+        }
+        
+        function handleSidebarMinimized(value) {
+        isSidebarMinimized.value = value
+        }
+
+        onMounted(fetchData);
+
+        return {
+            isSidebarMinimized,
+            handleSidebarMinimized,
+            resourceId,
+            recurso,
+            isLoading,
+            error,
+            isBadgeDropdownOpen,
+            todosMotivos,
+            toggleCriterio,
+            isReportResponseOpen,
+            newResponseText,
+            submitReportResponse,
+            
+        };
     }
-  },
-  computed: {
-    resourceBgColor() {
-      return this.selectedStatus;
-    }
-  },
-  methods: {
-    updateResourceColor() {
-      this.resourceBgColor = this.selectedStatus;
-    },
-    toggleBadgeDropdown() {
-      this.isBadgeDropdownOpen = !this.isBadgeDropdownOpen;
-    },
-    selectBadge(badge) {
-      this.selectedBadge = badge;
-      this.isBadgeDropdownOpen = false;
-    },
-    toggleReportResponse() {
-      this.isReportResponseOpen = !this.isReportResponseOpen;
-    },
-    submitReportResponse() {
-      console.log("Resposta do relatório enviada:", this.reportResponse);
-      this.previousResponses.push(this.reportResponse); // Add response to previousResponses
-      this.reportResponse = ''; // Clear the textarea after submitting
-      this.isReportResponseOpen = false; // Close the form after submission
-    },
-    editResponse(index) {
-      this.isEditing = { ...this.isEditing, [index]: true };
-      this.editedResponse = this.previousResponses[index]; // Set the current response to be edited
-    },
-    updateResponse(index) {
-      this.previousResponses.splice(index, 1, this.editedResponse); // Update the response in the list
-      this.isEditing = { ...this.isEditing, [index]: false }; // Exit editing mode
-      this.editedResponse = ''; // Clear edited response
-    },
-    cancelEdit(index) {
-      this.isEditing = { ...this.isEditing, [index]: false }; // Exit editing mode
-    },
-    deleteResponse(index) {
-      this.previousResponses.splice(index, 1); // Remove the response from the list
-    }
-  }
 };
 </script>

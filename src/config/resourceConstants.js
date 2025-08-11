@@ -72,3 +72,26 @@ export const MOTIVOS_RECURSO = [
 ];
 
 export const DEFAULT_MOTIVO = MOTIVOS_RECURSO[0];
+
+export const STATUS_DEFINITIONS = {
+    'aguardando_envio': {
+        label: 'Aguardando Envio',
+        colorKey: 'blue',
+    },
+    'analise_pendente': {
+        label: 'Análise Pendente',
+        colorKey: 'purple',
+    },
+    'aguardando_resposta': {
+        label: 'Aguardando Resposta',
+        colorKey: 'pink',
+    },
+    'respondido': {
+        label: 'Respondido',
+        colorKey: 'orange',
+    },
+    'fora_do_prazo': {
+        label: 'Fora do Prazo',
+        colorKey: 'teal',
+    },
+};
