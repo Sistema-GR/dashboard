@@ -8,7 +8,7 @@
         </div>
 
         
-        <div v-else-if="error" class="text-center p-10 bg-red-50 border border-red-200 rounded-lg">
+        <div v-else-if="error" class="text-center p-10 bg-red-50 border border-red-200 rounded-[10px]">
             <p class="text-red-700 font-semibold">{{ error }}</p>
         </div>
 
@@ -26,7 +26,7 @@
             </div>
 
            
-            <div class="bg-white p-4 rounded-lg shadow-sm border relative z-10">
+            <div class="bg-white p-4 rounded-[10px] shadow-sm border relative z-10">
                 <h2 class="text-xl font-bold mb-4 border-b pb-2">Informações do Recurso</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                     <div><strong>Protocolo:</strong> #{{ resource.id }}</div>
@@ -40,14 +40,14 @@
                 </div>
             </div>
             
-            <div class="bg-white p-4 rounded-lg shadow-sm border">
+            <div class="bg-white p-4 rounded-[10px] shadow-sm border">
                 <h3 class="text-lg font-bold mb-2">Descrição</h3>
                 <p class="text-gray-700 whitespace-pre-wrap">{{ resource.descricao }}</p>
             </div>
 
 
            
-            <div class="bg-white p-4 rounded-lg shadow-sm border">
+            <div class="bg-white p-4 rounded-[10px] shadow-sm border">
                 <h3 class="text-lg font-bold mb-2">Documentos Anexados</h3>
                 <div v-if="resource.documentos && resource.documentos.length > 0" class="space-y-2">
                     <a v-for="doc in resource.documentos" :key="doc.id" @click.prevent="downloadAuthenticatedFile(doc)" 

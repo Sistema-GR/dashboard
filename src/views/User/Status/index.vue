@@ -6,7 +6,7 @@
         </div>
 
         
-        <div v-else-if="error" class="text-center p-10 bg-red-50 border border-red-200 rounded-lg">
+        <div v-else-if="error" class="text-center p-10 bg-red-50 border border-red-200 rounded-[10px]">
             <p class="text-red-700 font-semibold">{{ error }}</p>
         </div>
 
@@ -29,7 +29,7 @@
 
                     <router-link class="w-full cursor-pointer" :to="{ name: 'view', params: { id: resource.id } }">
                         <div class="flex w-full gap-4">
-                            <div class="p-2 bg-gray-100 rounded-lg">
+                            <div class="p-2 bg-gray-100 rounded-[10px]">
                                 <UserIcon class="w-16 h-16 text-gray-400"/>
                             </div>
                             <div class="flex flex-row items-center justify-between w-full">

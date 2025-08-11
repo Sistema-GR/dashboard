@@ -92,20 +92,37 @@ export const createGeneralData = async (data) => {
 };
 
 export const uploadFile = async (file, endpoint) => {
-  try {
     const token = await getAccessToken();
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('funcionarios', funcionariosFile);
+    formData.append('demissoes', demissoesFile);
+    formData.append('frequencia', frequenciaFile);
+    formData.append('atividades', atividadesFile);
+    formData.append('tipoLocal', tipoLocalFile);
+    formData.append('dadosGerais', atividadesFile);
+    formData.append('funcoesGruposEtapas', funcoesGruposEtapasFile);
+    formData.append('aprenderMais', aprenderMaisFile);
+    formData.append('etapasMetas', etapasMetasFile);
+    formData.append('uesPercGr', uesPercGrFile);
+    formData.append('definicaoEtapas', definicaoEtapasFile);
+    formData.append('formacoes', formacoesFile);
+    formData.append('motivosInfrequencia', motivosInfrequenciaFile);
+    formData.append('dias_nao_contabilizados', diasNaoContabilizadosFile);
 
-    const response = await apiClient.post(endpoint, formData, {
+    fetch('/csv/process/unified-upload/', {
+      method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
       },
+      body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Success:', data);
+    })
+    .catch(error => {
+      console.error('Error:', error);
     });
-    return response.data;
-  } catch (error) {
-    handleApiError(error);
-  }
 };
 
 // Função para processar todos os arquivos
