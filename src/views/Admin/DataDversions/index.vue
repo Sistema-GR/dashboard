@@ -78,18 +78,18 @@
       v-if="showConfirmation"
       class="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center"
     >
-      <div class="bg-white p-5 rounded-md shadow-lg max-w-sm w-full text-center">
+      <div class="bg-white p-5 rounded-[10px] shadow-lg max-w-sm w-full text-center">
         <h3 class="text-20 font-semibold mb-4">Deseja realmente alterar a versão ativa?</h3>
         <div class="flex justify-around">
           <button
             @click="confirmToggle"
-            class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+            class="px-4 py-2 bg-blue-500 text-white rounded-[10px] hover:bg-blue-600"
           >
             Sim
           </button>
           <button
             @click="cancelToggle"
-            class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400"
+            class="px-4 py-2 bg-gray-300 rounded-[10px] hover:bg-gray-400"
           >
             Não
           </button>

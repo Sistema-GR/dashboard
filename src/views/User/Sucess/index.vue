@@ -8,7 +8,7 @@
 
             <button 
                 @click="goToStatus" 
-                class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-green-600 transition duration-300">
+                class="bg-blue-500 text-white px-6 py-2 rounded-[10px] hover:bg-green-600 transition duration-300">
                 Acompanhar Status
             </button>
         </div>

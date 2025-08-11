@@ -10,6 +10,7 @@ module.exports = {
         sans: ['Montserrat', 'sans-serif'],
       },
       fontSize: {
+        '13': '13px',
         '15': '15px',
         '20': '20px',
         '25': '25px',
