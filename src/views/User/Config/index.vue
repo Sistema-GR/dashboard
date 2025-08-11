@@ -1,6 +1,6 @@
 <template>
-    <Sidebar :route="'admin'" @update:isSidebarMinimized="handleSidebarMinimized" class="z-50"/>
-    <Whiteboard title="Configurações" class="overflow-auto z-40 relative" :isSidebarMinimized="isSidebarMinimized">
+
+  <Whiteboard title="Configurações" :isSidebarMinimized="isSidebarMinimized">
         <div class="flex flex-col w-full lg:flex-row">
             <div class="flex-1 rounded-[10px] shadow-lg">
                 <div class="bg-white p-8 rounded-[10px]">
@@ -61,15 +61,16 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
-import Sidebar from '@/components/Sidebar/Sidebar.vue'
-import Whiteboard from '@/components/Whiteboard/Whiteboard.vue'
+import { ref, onMounted, inject } from 'vue'
+import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 
 export default {
     name: 'Configuracoes',
-    components: { Sidebar, Whiteboard },
+    components: { Whiteboard },
     setup() {
-        const isSidebarMinimized = ref(false)
+        // Injetar o valor ou usar false como fallback
+        const isSidebarMinimized = inject('isSidebarMinimized', ref(false))
+        
         const salvando = ref(false)
         const senhasNaoConferem = ref(false)
 
