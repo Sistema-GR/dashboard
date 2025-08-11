@@ -11,7 +11,7 @@
         </div>
 
        
-        <div v-else-if="resource.length === 0" class="text-center p-10">
+        <div v-else-if="resources.length === 0" class="text-center p-10">
              <p class="text-gray-700">Você ainda não abriu nenhum recurso.</p>
              <router-link :to="{name: 'form'}" class="text-blue-600 hover:underline mt-2 inline-block">
                 Clique aqui para abrir seu primeiro recurso.
@@ -19,13 +19,11 @@
         </div>
         
         <div v-else class="flex flex-col w-full gap-4 px-4">
-            <div v-for="resource in resource" :key="resource.id" class="flex flex-col items-center justify-start w-full bg-white border border-gray-200 rounded-lg p-4 shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <div v-for="resource in resources" :key="resource.id" class="flex flex-col items-center justify-start w-full bg-white border border-gray-200 rounded-lg p-4 shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <div class="w-full">
                     <div class="flex items-center justify-between w-full pb-3 border-b mb-4">
                         <p class="text-lg font-semibold text-gray-700 capitalize">{{ (resource.status || 'aguardando_resposta').replace('_', ' ') }}</p>
                         <router-link class="w-full cursor-pointer" :to="{ name: 'edit', params: { id: resource.id } }">
-                            <!-- <p class="group-hover:text-black text-sm">Editar</p>
-                            <PencilSquareIcon class="w-5 h-auto stroke-black" /> -->
                         </router-link>
                     </div>
 
@@ -76,7 +74,7 @@ export default {
     setup() {
         const isSidebarMinimized = inject('isSidebarMinimized');
 
-        const resource = ref([]);
+        const resources = ref([]);
 
         const isLoading = ref(true);
         const error = ref(null);
@@ -97,11 +95,11 @@ export default {
                 const response = await axios.get('/recursos/meu-status/', {
                      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
                 });
-                resource.value = response.data;
+                resources.value = response.data;
             } catch (err) {
                 if (err.response && err.response.status === 404) {
 
-                    resource.value = null; 
+                    resource.value = []; 
                 } else {
                     console.error("Erro ao buscar status do recurso:", err);
                     error.value = "Não foi possível carregar os dados. Por favor, tente recarregar a página.";
@@ -115,7 +113,7 @@ export default {
 
         return {
             isSidebarMinimized,
-            resource,
+            resources,
             isLoading,
             error,
             formatDate

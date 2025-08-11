@@ -3,7 +3,7 @@
     <Whiteboard title="Recurso" class="!overflow-visible overflow-y-auto z-40 relative" :isSidebarMinimized="isSidebarMinimized">
 
         <div class="w-full py-5 px-4 sm:px-10">
-          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             <Block 
               title="Aguardando Resposta" 
               :number="countByStatus('aguardando_resposta')" 
@@ -24,13 +24,6 @@
               :isActive="selectedStatus === 'aguardando_envio'"
               :colorKey="STATUS_DEFINITIONS['aguardando_envio'].colorKey"
               @click="setStatusFilter('aguardando_envio')" 
-            />
-            <Block 
-              title="Fora do Prazo" 
-              :number="countByStatus('fora_do_prazo')" 
-              :isActive="selectedStatus === 'fora_do_prazo'"
-              :colorKey="STATUS_DEFINITIONS['fora_do_prazo'].colorKey"
-              @click="setStatusFilter('fora_do_prazo')" 
             />
             <Block 
               title="Respondido" 
@@ -57,6 +50,7 @@
               :key="recurso.id" 
               :recurso="recurso"
               @status-updated="handleStatusUpdate"
+              @responsavel-updated="handleResponsavelUpdate"
             />
           <div v-if="!filteredRecursos.length && !isLoading" class="text-center text-gray-500 py-10">
             Nenhum recurso encontrado.
@@ -83,79 +77,81 @@ export default {
     components: {Whiteboard, Block, infoCard, FunnelIcon, Sidebar},
 
     setup() {
-    const isSidebarMinimized = ref(false)
-    const recursos = ref([])
-    const selectedStatus = ref('aguardando_resposta')
-    const isLoading = ref(true)
+        const isSidebarMinimized = ref(false)
+        const recursos = ref([])
+        const selectedStatus = ref('aguardando_resposta')
+        const isLoading = ref(true)
 
-    async function fetchRecursos() {
-          isLoading.value = true;
-          try {
-            const response = await axios.get('/recursos/admin/todos/', {
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-                }
-              });
-                console.log("--- DADOS RECEBIDOS DA API EM Resource.vue ---", response.data);
+        async function fetchRecursos() {
+            isLoading.value = true;
+            try {
+                const response = await axios.get('/recursos/admin/todos/', {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+                });
                 recursos.value = response.data;
-          } catch (error) {
+            } catch (error) {
                 console.error('Erro ao buscar recursos:', error);
                 if (error.response && error.response.status === 403) {
-                  alert("Você não tem permissão para visualizar esta página.");
+                    alert("Você não tem permissão para visualizar esta página.");
                 }
-          } finally {
+            } finally {
                 isLoading.value = false;
-          }
-    }
+            }
+        }
 
-    onMounted(fetchRecursos);
+        onMounted(fetchRecursos);
 
-    function handleSidebarMinimized(value) {
-        isSidebarMinimized.value = value
-    }
+        function handleSidebarMinimized(value) {
+            isSidebarMinimized.value = value
+        }
 
-    const filteredRecursos = computed(() => {
-        if (!recursos.value) return [];
-        return recursos.value.filter(r => r.status === selectedStatus.value);
-      });
-    
-    const countByStatus = (status) => {
-        if (!recursos.value) return 0;
-        return recursos.value.filter(r => r.status === status).length;
-      };
+        const filteredRecursos = computed(() => {
+            if (!recursos.value) return [];
+            return recursos.value.filter(r => r.status === selectedStatus.value);
+        });
+        
+        const countByStatus = (status) => {
+            if (!recursos.value) return 0;
+            return recursos.value.filter(r => r.status === status).length;
+        };
 
-    function setStatusFilter(status) {
-        selectedStatus.value = status;
-      }
-    
-    async function handleStatusUpdate({ recursoId, newStatus }) {
-      try {
-          
-          const index = recursos.value.findIndex(r => r.id === recursoId);
+        function setStatusFilter(status) {
+            selectedStatus.value = status;
+        }
+        
+        async function handleStatusUpdate({ recursoId, newStatus }) {
+            try {
+                const index = recursos.value.findIndex(r => r.id === recursoId);
+                if (index === -1) return;
+                
+                const response = await axios.patch(`/recursos/${recursoId}/`, { status: newStatus }, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+                });
 
-          if (index === -1) {
-              console.error("Recurso não encontrado na lista local.");
-              return;
-          }
-          
-          const response = await axios.patch(`/recursos/${recursoId}/`, { status: newStatus }, {
-              headers: {
-                  'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-              }
-          });
+                recursos.value[index] = response.data;
+            } catch (error) {
+                console.error("Erro ao atualizar o status:", error);
+            }
+        }
 
-          recursos.value[index] = response.data;
-          
-      } catch (error) {
-          console.error("Erro ao atualizar o status:", error);
-      }
-  }
+        // [!code start]
+        // NOVO: Função para lidar com a atualização do responsável
+        function handleResponsavelUpdate(updatedRecurso) {
+            // Encontra o índice do recurso na lista principal de 'recursos'
+            const index = recursos.value.findIndex(r => r.id === updatedRecurso.id);
 
-    const activeStatusStyle = computed(() => {
+            // Se encontrou, substitui o objeto antigo pelo novo que veio do evento
+            if (index !== -1) {
+                recursos.value[index] = updatedRecurso;
+            }
+        }
+        // [!code end]
+
+        const activeStatusStyle = computed(() => {
             return STATUS_DEFINITIONS[selectedStatus.value] || {};
         });
-    
-     const activeStatusColorClass = computed(() => {
+        
+        const activeStatusColorClass = computed(() => {
             const colorKey = activeStatusStyle.value.colorKey;
             const colorMap = {
                 blue: 'bg-[#6fa3ef]',
@@ -168,23 +164,23 @@ export default {
             return colorMap[colorKey] || colorMap['gray'];
         });
 
-    provide('isSidebarMinimized', isSidebarMinimized)
+        provide('isSidebarMinimized', isSidebarMinimized)
 
-    return {
-      isSidebarMinimized,
-      handleSidebarMinimized,
-      recursos,
-      isLoading,
-      selectedStatus,
-      filteredRecursos,
-      countByStatus,
-      setStatusFilter,
-      handleStatusUpdate,
-      activeStatusStyle,
-      STATUS_DEFINITIONS,
-      activeStatusColorClass
+        return {
+            isSidebarMinimized,
+            handleSidebarMinimized,
+            recursos,
+            isLoading,
+            selectedStatus,
+            filteredRecursos,
+            countByStatus,
+            setStatusFilter,
+            handleStatusUpdate,
+            activeStatusStyle,
+            STATUS_DEFINITIONS,
+            activeStatusColorClass,
+            handleResponsavelUpdate, // [!code ++]
+        }
     }
-  }
 }
-
 </script>
