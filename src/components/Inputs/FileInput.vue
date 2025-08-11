@@ -2,7 +2,7 @@
   <div class="space-y-2">
     <label class="text-15 font-medium">{{ Label }}</label>
     <input
-      class="block w-5/6 border border-gray-200 shadow-sm rounded-[10px] text-15 file:bg-gray-50 file:border-0 file:me-4 file:py-3 file:px-4 dark:file:bg-blue-500 dark:file:text-white file:cursor-pointer"
+      class="block w-full border border-gray-200 shadow-sm rounded-[10px] text-15 file:bg-gray-50 file:border-0 file:me-4 file:py-3 file:px-4 dark:file:bg-blue-500 dark:file:text-white file:cursor-pointer"
       type="file"
       @change="onFileChange"
     />

@@ -1,6 +1,6 @@
 <template>
   <Whiteboard title="importações" :isSidebarMinimized="isSidebarMinimized">
-    <div class="w-full space-y-10">
+    <div class="w-full justify-center px-10 py-8 space-y-10">
       <FileInput Label="Importar Arquivo com Nome: Aprender Mais.csv" @change="(event) => handleFileUpload(event, 'aprenderMais')" />
       <FileInput Label="Importar Arquivo com Nome: Atividades.csv" @change="(event) => handleFileUpload(event, 'atividades')" />
       <FileInput Label="Importar Arquivo com Nome: Dados Gerais.csv" @change="(event) => handleFileUpload(event, 'dadosGerais')" />
