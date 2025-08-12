@@ -3,28 +3,26 @@
     <div class="w-full space-y-10">      
       <!-- FileInput para upload dos arquivos em .csv -->
       <FileInput Label="Importar Arquivos em .CSV"
+      @taUpando="loadingUpdate"
       @uploaded="onUnifiedUploaded"/>
-      <Loading v-if="isUploading" />
-
     </div>
+    <Loading v-if="isUploading" />
   </Whiteboard>
 </template>
 
 <script>
-import { inject, ref, computed } from 'vue';
+import { inject } from 'vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import FileInput from '@/components/Inputs/FileInput.vue';
 import Loading from '@/components/Loading/Loading.vue';
 
-const fileInputRef = ref(null);
-const isUploading = computed(() => fileInputRef.value?.isUploading ?? false);
-
 export default {
   components: { FileInput, Whiteboard, Loading },
-
+  
   data() {
     return {     
       isSidebarMinimized: null,
+      isUploading: false,
     };
   },
 
@@ -35,6 +33,11 @@ export default {
   methods: {
     onUnifiedUploaded({ manifest }) {
       console.log('Unified upload manifest', manifest);
+      this.isUploading = false;
+      this.$router.push({ path: '/admin/dashboard' });
+    },
+    loadingUpdate(valor) {
+      this.isUploading = valor;      
     },
   },
 };

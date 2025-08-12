@@ -15,6 +15,7 @@
                                 Nome completo
                             </label>
                             <input
+                                disabled
                                 id="nomeCompleto"
                                 v-model="formData.nomeCompleto"
                                 type="text"
@@ -29,6 +30,7 @@
                                 CPF
                             </label>
                             <input
+                                disabled
                                 id="cpf"
                                 v-model="formData.cpf"
                                 type="text"
@@ -44,6 +46,7 @@
                                 E-mail
                             </label>
                             <input
+                                disabled
                                 id="email"
                                 v-model="formData.email"
                                 type="email"
@@ -123,11 +126,12 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import Sidebar from '@/components/Sidebar/Sidebar.vue'
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue'
 import { UserIcon } from '@heroicons/vue/24/outline'
+import { getAccessToken } from '@/service/token'
 
 export default {
     name: "Configuracoes",
@@ -143,7 +147,7 @@ export default {
         const userAvatar = ref(null)
 
         // Dados do formulário
-        const formData = ref({
+        const formData = reactive({
             nomeCompleto: '',
             cpf: '',
             email: '',
@@ -193,19 +197,37 @@ export default {
 
         // Carregar dados do usuário
         const carregarDadosUsuario = async () => {
+            
+            const token = await getAccessToken();
+            if (!token) {
+                console.error("Token de autenticação não encontrado");
+                return;
+            }
+
             try {
-                // AQUI: Manter a lógica existente de busca do backend
-                formData.value = {
-                    nomeCompleto: '',
-                    cpf: '',
-                    email: '',
-                    senhaAtual: '',
-                    novaSenha: '',
-                    confirmarSenha: ''
+                const response = await fetch("http://127.0.0.1:8000/auth/user-info/", {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Erro ao buscar informações do usuário");
                 }
+
+                const data = await response.json();
                 
+                // Garantir que os dados estão sendo atribuídos corretamente
+                const firstName = data.first_name.charAt(0).toUpperCase() + data.first_name.slice(1).toLowerCase();
+                const lastName = data.last_name.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+                
+                formData.nomeCompleto = `${firstName} ${lastName}`;
+                //userRole.value = data.role || 'Cargo não disponível';
+                formData.cpf = data.cpf || 'Não disponível';
+                formData.email = data.email || 'Não disponível';
+
             } catch (error) {
-                console.error('Erro ao carregar dados:', error)
+                console.error("Erro ao obter dados:", error);
             }
         }
 
