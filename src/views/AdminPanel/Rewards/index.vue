@@ -2,12 +2,12 @@
     <Whiteboard title="." :isSidebarMinimized="isSidebarMinimized">
 
         <div class="flex py-4 px-6 shadow-md w-full z-50 items-center justify-center bg-gradient-to-r from-azure-800 to-primary-900">
-            <h1 class="text-20 text-white text-center font-black uppercase tracking-wide sm:text-25 lg:text-30 whitespace-nowrap">Painel da Gratificação</h1>
+            <h1 id="tutorial-title" class="text-20 text-white text-center font-black uppercase tracking-wide sm:text-25 lg:text-30 whitespace-nowrap">Painel da Gratificação</h1>
         </div>
        
         <div class="flex flex-col items-center justify-center w-full gap-5 pt-8 pb-4 lg:px-10 lg:gap-10 lg:flex-row">
 
-            <div class="w-full px-10" v-if="savedData.length > 0">
+            <div id="tutorial-server-name" class="w-full px-10" v-if="savedData.length > 0">
                 <div :class="`flex flex-col items-center justify-center bg-transparent rounded-[10px]`">
                     <div class="flex items-center justify-center w-full py-3 rounded-[10px] bg-azure-800">
                         <p class="text-white text-20 font-semibold">Nome Do Servidor</p>
@@ -18,7 +18,7 @@
                 </div>
             </div>
 
-            <div class="w-full px-10" v-if="savedData.length > 0">
+            <div id="tutorial-value" class="w-full px-10" v-if="savedData.length > 0">
                 <div :class="`flex flex-col items-center justify-center bg-transparent rounded-[10px]`">
                     <div class="flex items-center justify-center w-full py-3 rounded-[10px] bg-azure-800">
                         <p class="text-white text-20 font-semibold">Valor</p>
@@ -31,7 +31,7 @@
 
         </div>
 
-        <div class="flex w-full items-center justify-center py-8 px-10">
+        <div id="tutorial-warning" class="flex w-full items-center justify-center py-8 px-10">
             <p class="text-red-600 text-20 lg:text-25 font-medium text-center">Aviso: os valores nesta página não consideram eventuais descontos de impostos.</p>
         </div>
 
@@ -51,7 +51,7 @@
 
         <Disclosure>
             <template #default="{ open }">
-                <DisclosureButton class="flex flex-row w-full items-center justify-between py-4 px-5 bg-azure-800 hover:bg-gray-400 ease-in-out duration-200 cursor-pointer">
+                <DisclosureButton id="tutorial-details" class="flex flex-row w-full items-center justify-between py-4 px-5 bg-azure-800 hover:bg-gray-400 ease-in-out duration-200 cursor-pointer">
                     <p class="text-20 font-bold text-white">Detalhamento por matrícula</p>
                     <ChevronDownIcon class="w-6 h-auto transform transition-transform text-white" :class="{ 'rotate-180': open }" />
                 </DisclosureButton>
@@ -59,7 +59,7 @@
 
                     <Disclosure v-for="(item, index) in savedData" :key="index">
                         <template #default="{open}">
-                            <DisclosureButton class="flex flex-row w-full items-center justify-between py-4 px-5 bg-[#7597da] text-black ease-in-out duration-200 cursor-pointer">
+                            <DisclosureButton :id="`tutorial-matricula-${index}`" class="flex flex-row w-full items-center justify-between py-4 px-5 bg-[#7597da] text-black ease-in-out duration-200 cursor-pointer">
                                 <p class="text-20 font-bold text-white">Matrícula {{ item?.dados?.matricula }}</p>
                                 <ChevronDownIcon class="w-6 h-auto transform text-white transition-transform " :class="{'rotate-180': open}" />
                             </DisclosureButton>
@@ -67,7 +67,7 @@
 
                                 <div class="w-full mt-10 min-w-[875px]">
                                     <div class="min-w-[875px]">
-                                        <table class="w-full border-collapse rounded-[10px] shadow-lg">
+                                        <table id="painel-infos" class="w-full border-collapse rounded-[10px] shadow-lg">
                                             <thead>
                                                 <tr class="bg-azure-800 text-gray-100 text-20">
                                                     <th v-for="(header, index) in ['Descrição', 'Dados', 'Valores a Receber', 'Total']" :key="index" class="p-4 font-semibold text-left whitespace-nowrap">{{ header }}</th>
@@ -80,7 +80,7 @@
                                                         <p v-for="(label, index) in ['Nome:', 'CPF:', 'Matrícula:', 'Cargo:']" :key="index">{{ label }}</p>
                                                     </td>
 
-                                                    <td class="p-4 border-r border-gray-200 text-gray-700 whitespace-nowrap">
+                                                    <td id="tutorial-table-dados" class="p-4 border-r border-gray-200 text-gray-700 whitespace-nowrap">
                                                         <p class="capitalize">{{ item?.dados?.nome }}</p>
                                                         <p>{{ item?.dados?.cpf }}</p>
                                                         <p>{{ item?.dados?.matricula }}</p>
@@ -92,10 +92,10 @@
                                                     </td>
 
                                                     <td class="p-4 text-gray-700 font-semibold whitespace-nowrap">
-                                                        <p>{{ formatCurrency(item?.profissionais[0]?.valor_gr_rede) }}</p>
-                                                        <p>{{ formatCurrency(item?.profissionais[0]?.valor_gr_unidade) }}</p>
-                                                        <p>{{ formatCurrency(item?.dados?.desconto) }}</p>
-                                                        <p>{{ formatCurrency(item?.dados?.valor_total) }}</p>
+                                                        <p id="tutorial-valor-rede">{{ formatCurrency(item?.profissionais[0]?.valor_gr_rede) }}</p>
+                                                        <p id="tutorial-valor-unidade">{{ formatCurrency(item?.profissionais[0]?.valor_gr_unidade) }}</p>
+                                                        <p id="tutorial-desconto">{{ formatCurrency(item?.dados?.desconto) }}</p>
+                                                        <p id="tutorial-valor-total">{{ formatCurrency(item?.dados?.valor_total) }}</p>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -103,7 +103,7 @@
                                     </div>
                                 </div>
 
-                                <div class="flex flex-col w-full items-center shadow-lg mt-10 min-w-[875px]  rounded-[10px] bg-white">
+                                <div id="tutorial-criteria" class="flex flex-col w-full items-center shadow-lg mt-10 min-w-[875px]  rounded-[10px] bg-white">
                                     <div class="flex w-full border-b items-center justify-center bg-azure-800 py-4 rounded-t-lg">
                                         <p class="text-25  text-center font-semibold text-white">Critérios de verificação para gratificação</p>
                                     </div>
@@ -182,7 +182,7 @@
                                     </div>
                                 </div>
 
-                                <div class="flex flex-col w-full items-center mt-10 shadow-lg rounded-[10px] bg-gray-50 min-w-[875px]">
+                                <div id="tutorial-allocations" class="flex flex-col w-full items-center mt-10 shadow-lg rounded-[10px] bg-gray-50 min-w-[875px]">
                                     <div class="flex w-full items-center justify-center bg-azure-800 py-4 rounded-t-lg border shadow-md">
                                         <p class="text-25 font-semibold text-white">Alocações em 2024</p>
                                     </div>
@@ -239,7 +239,7 @@
                                     </div>
                                 </div>
 
-                                <div class="flex flex-col w-full items-center normal-case overflow-hidden mt-10 min-w-[875px] shadow-lg mb-10 rounded-[10px] bg-gray-50">
+                                <div id="tutorial-frequency" class="flex flex-col w-full items-center normal-case overflow-hidden mt-10 min-w-[875px] shadow-lg mb-10 rounded-[10px] bg-gray-50">
 
                                     <div class="flex w-full border-b items-center justify-center bg-azure-800 py-3 rounded-t-lg">
                                         <p class="text-25 text-center font-semibold text-white">Frequência (Afastamentos)</p>
@@ -281,12 +281,23 @@
 
         <div class="flex w-full items-center justify-end mr-3 mb-3">
             <router-link to="/user/form">
-                <div class="flex flex-row items-center justify-center px-5 py-2 mt-10 gap-1 bg-tropical-blue-200 hover:bg-gray-400 ease-in-out duration-200 cursor-pointer rounded-[10px]">
+                <div id="tutorial-resource" class="flex flex-row items-center justify-center px-5 py-2 mt-10 gap-1 bg-tropical-blue-200 hover:bg-gray-400 ease-in-out duration-200 cursor-pointer rounded-[10px]">
                     <ExclamationCircleIcon class="w-6 h-auto" />
                     <p class="font-medium">Recurso</p>
                 </div>
             </router-link>
         </div>
+
+        <!-- Botão para iniciar tutorial -->
+        <button
+            @click="startTutorial"
+            class="fixed bottom-4 right-4 bg-azure-800 text-white p-3 rounded-full shadow-lg hover:bg-azure-900 transition-colors z-50"
+            title="Iniciar Tutorial"
+        >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+        </button>
       
     </Whiteboard>
 </template>
@@ -296,9 +307,182 @@ import { inject, ref, onMounted, onBeforeUnmount, computed } from 'vue';
 import { ChevronDownIcon, ExclamationCircleIcon, ArrowDownIcon } from "@heroicons/vue/24/outline";
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
+import { driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
 
 const isSidebarMinimized = inject('isSidebarMinimized');
 const savedData = ref([]);
+
+// Configuração do tutorial seguindo exatamente os mockups
+const driverObj = driver({
+    showProgress: true,
+    showButtons: ['next', 'previous', 'close'],
+    nextBtnText: 'Próximo',
+    prevBtnText: 'Anterior', 
+    doneBtnText: 'Fim',
+    closeBtnText: 'Voltar',
+    progressText: 'Previewing {{current}}/{{total}}',
+    popoverClass: 'userguiding-theme',
+    overlayColor: 'rgba(0, 0, 0, 0.5)',
+    allowClose: false,
+    steps: [
+        // Step 1/17 - Boas vindas
+        {
+            popover: {
+                title: '👋 Bem-vindo ao painel de gratificação',
+                description: 'Estamos felizes por você estar aqui! Este tutorial rápido vai te ajudar a entender todas as informações importantes sobre sua gratificação.<br><br><strong>Verifique se seus dados estão corretos.</strong>',
+                position: 'center'
+            }
+        },
+        // Step 2/17 - Nome do servidor
+        {
+            element: '#tutorial-server-name',
+            popover: {
+                title: 'Nome do servidor',
+                description: 'Este é o nome registrado no sistema para a gratificação.',
+                position: 'bottom'
+            }
+        },
+        // Step 3/17 - Valor
+        {
+            element: '#tutorial-value',
+            popover: {
+                title: 'Seu Valor de Gratificação',
+                description: 'Aqui você visualiza o valor bruto da sua gratificação. Lembre-se que este valor não inclui os descontos de impostos.',
+                position: 'bottom'
+            }
+        },
+        // Step 4/17 - Aviso
+        {
+            element: '#tutorial-warning',
+            popover: {
+                title: 'Os valores mostrados são brutos, sem os descontos de impostos que podem ser aplicados.',
+                description: '',
+                position: 'top'
+            }
+        },
+        // Step 5/17 - Clique aqui para ver mais
+        {
+            element: '#tutorial-details',
+            popover: {
+                title: 'Clique aqui para ver mais...',
+                description: '',
+                position: 'top'
+            }
+        },
+        // Step 6/17 - Matrículas ativas
+        {
+            element: '#tutorial-matricula-0',
+            popover: {
+                title: 'Visualize neste campo cada uma das suas matrículas que estão atualmente ativas no sistema.',
+                description: '',
+                position: 'top'
+            }
+        },
+        // Step 7/17 - Dados da matrícula
+        {
+            element: '#painel-infos',
+            popover: {
+                title: 'Aqui estão os seus dados da sua matrícula',
+                description: '',
+                position: 'top'
+            }
+        },
+        // Step 8/17 - Certifique dados
+        {
+            element: '#tutorial-table-dados',
+            popover: {
+                title: 'Nesse quadro mostra seus dados. Certifique que todos estão corretos!',
+                description: '',
+                position: 'top'
+            }
+        },
+        // Step 9/17 - Valor total da rede
+        {
+            element: '#tutorial-valor-rede',
+            popover: {
+                title: 'Aqui mostra o valor total da sua rede.',
+                description: '',
+                position: 'top'
+            }
+        },
+        // Step 10/17 - Valor máximo por unidade  
+        {
+            element: '#tutorial-valor-unidade',
+            popover: {
+                title: 'Aqui mostra o valor máximo recebido por unidade.',
+                description: '',
+                position: 'top'
+            }
+        },
+        // Step 11/17 - Desconto
+        {
+            element: '#tutorial-desconto',
+            popover: {
+                title: 'Nesse campo mostra o desconto.',
+                description: '',
+                position: 'top'
+            }
+        },
+        // Step 12/17 - Valor total que irá receber
+        {
+            element: '#tutorial-valor-total',
+            popover: {
+                title: 'É aqui, mostra o valor total que você ira receber.',
+                description: '',
+                position: 'top'
+            }
+        },
+        // Step 13/17 - Critérios  
+        {
+            element: '#tutorial-criteria',
+            popover: {
+                title: 'Esta tabela mostra os 4 critérios principais: frequência (mín. 96%), tempo de atuação (mín. 6 meses), Formação e Atividades. Cada um, mostra se você está "Apto" ou "Não Apto".',
+                description: '',
+                position: 'top'
+            }
+        },
+        // Step 14/17 - Alocações
+        {
+            element: '#tutorial-allocations',
+            popover: {
+                title: 'Aqui você vê onde trabalhou durante o período, incluindo: unidade escolar, período (início/fim), função exercida, carga horária e grupo de gratificação.',
+                description: '',
+                position: 'top'
+            }
+        },
+        // Step 15/17 - Frequência/Afastamentos
+        {
+            element: '#tutorial-frequency',
+            popover: {
+                title: 'Esta seção mostra todos os seus afastamentos registrados: licenças, faltas justificadas, etc. Mostra as datas, tipo de afastamento e se foram contabilizados para o cálculo.',
+                description: '',
+                position: 'top'
+            }
+        },
+        // Step 16/17 - Recurso
+        {
+            element: '#tutorial-resource',
+            popover: {
+                title: 'Se você acha que alguma informação está incorreta ou quer contestar algum critério, clique em "Recurso". Você pode anexar documentos para comprovar seu ponto de vista.',
+                description: '',
+                position: 'left'
+            }
+        },
+        // Step 17/17 - Conclusão
+        {
+            popover: {
+                title: 'Você concluiu o tutorial!',
+                description: 'Agora você está pronto para navegar pelo painel de gratificação e acompanhar as informações com facilidade.',
+                position: 'center'
+            }
+        }
+    ]
+});
+
+const startTutorial = () => {
+    driverObj.drive();
+};
 
 const processarDados = (rawData) => {
   const matriculaMap = {};
@@ -368,9 +552,122 @@ const formatCurrency = (value) => {
 
 onMounted(() => {
   carregarDados();
+  
+  // Verificar se é a primeira visita e iniciar tutorial automaticamente
+  const hasSeenTutorial = localStorage.getItem('hasSeenGratificationTutorial');
+  if (!hasSeenTutorial) {
+    setTimeout(() => {
+      startTutorial();
+      localStorage.setItem('hasSeenGratificationTutorial', 'true');
+    }, 1000);
+  }
 });
 
 onBeforeUnmount(() => {
   localStorage.removeItem('rowSave');
 });
 </script>
+
+<style>
+/* Tema UserGuiding mais fiel aos mockups */
+.userguiding-theme .driver-popover {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e2e8f0;
+  max-width: 360px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.userguiding-theme .driver-popover-title {
+  color: #2d3748;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.userguiding-theme .driver-popover-description {
+  color: #4a5568;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.userguiding-theme .driver-popover-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.userguiding-theme .driver-popover-next-btn,
+.userguiding-theme .driver-popover-prev-btn {
+  background: #2b6cb0;
+  color: white;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.userguiding-theme .driver-popover-next-btn:hover,
+.userguiding-theme .driver-popover-prev-btn:hover {
+  background: #2c5282;
+}
+
+.userguiding-theme .driver-popover-close-btn {
+  background: #718096;
+  color: white;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.userguiding-theme .driver-popover-close-btn:hover {
+  background: #4a5568;
+}
+
+.userguiding-theme .driver-popover-progress-text {
+  color: #68d391;
+  font-size: 12px;
+  font-weight: 500;
+  background: #f0fff4;
+  padding: 2px 8px;
+  border-radius: 12px;
+  border: 1px solid #68d391;
+}
+
+/* Powered by UserGuiding - exatamente como nos mockups */
+.userguiding-theme .driver-popover::after {
+  content: "🚀 Powered by UserGuiding";
+  display: block;
+  text-align: center;
+  font-size: 11px;
+  color: #a0aec0;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #f7fafc;
+  font-weight: 400;
+}
+
+/* Steps centralizados para primeira e última tela */
+.userguiding-theme .driver-popover[data-step="0"],
+.userguiding-theme .driver-popover[data-step="16"] {
+  max-width: 480px;
+}
+
+/* Destacar elementos com borda verde como nos mockups */
+.driver-highlighted-element {
+  border: 2px solid #68d391 !important;
+  border-radius: 4px;
+}
+</style>
