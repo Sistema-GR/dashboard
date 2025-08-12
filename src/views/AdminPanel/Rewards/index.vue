@@ -122,16 +122,7 @@
                                                     <tr class="hover:bg-gray-50 transition-shadow hover:shadow-md">
                                                         <td class="border border-gray-200 px-4 py-3 text-gray-700">Frequência</td>
                                                         <td class="border border-gray-200 px-4 py-3 text-gray-700">
-                                                            {{ item?.frequencia[0]?.percentual_frequencia ? Number(item.frequencia[0].percentual_frequencia).toFixed(2) + '%' : '100%' }}
-                                                        </td>
-                                                        <td 
-                                                            :class="{
-                                                                'text-red-600 font-semibold': item?.frequencia[0]?.percentual_frequencia !== undefined && Number(item.frequencia[0].percentual_frequencia) < 96,
-                                                                'text-green-600 font-semibold': !item?.frequencia[0]?.percentual_frequencia || Number(item.frequencia[0].percentual_frequencia) >= 96
-                                                            }"
-                                                            class="border border-gray-200 px-4 py-3"
-                                                        >
-                                                            {{ item?.frequencia[0]?.percentual_frequencia ? (Number(item.frequencia[0].percentual_frequencia) >= 96 ? 'Apto' : 'Não Apto') : 'Apto' }}
+                                                        <!-- ...existing code... -->
                                                         </td>
                                                     </tr>
 
@@ -300,6 +291,7 @@
         </button>
       
     </Whiteboard>
+    <Tutorial />
 </template>
 
 <script setup>
@@ -307,178 +299,11 @@ import { inject, ref, onMounted, onBeforeUnmount, computed } from 'vue';
 import { ChevronDownIcon, ExclamationCircleIcon, ArrowDownIcon } from "@heroicons/vue/24/outline";
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
-import { driver } from 'driver.js';
+import Tutorial from '@/components/Tutorial/Tutorial.vue';
 import 'driver.js/dist/driver.css';
 
 const isSidebarMinimized = inject('isSidebarMinimized');
 const savedData = ref([]);
-
-// Configuração do tutorial seguindo exatamente os mockups
-const driverObj = driver({
-    showProgress: true,
-    showButtons: ['next', 'previous', 'close'],
-    nextBtnText: 'Próximo',
-    prevBtnText: 'Anterior', 
-    doneBtnText: 'Fim',
-    closeBtnText: 'Voltar',
-    progressText: 'Previewing {{current}}/{{total}}',
-    popoverClass: 'userguiding-theme',
-    overlayColor: 'rgba(0, 0, 0, 0.5)',
-    allowClose: false,
-    steps: [
-        // Step 1/17 - Boas vindas
-        {
-            popover: {
-                title: '👋 Bem-vindo ao painel de gratificação',
-                description: 'Estamos felizes por você estar aqui! Este tutorial rápido vai te ajudar a entender todas as informações importantes sobre sua gratificação.<br><br><strong>Verifique se seus dados estão corretos.</strong>',
-                position: 'center'
-            }
-        },
-        // Step 2/17 - Nome do servidor
-        {
-            element: '#tutorial-server-name',
-            popover: {
-                title: 'Nome do servidor',
-                description: 'Este é o nome registrado no sistema para a gratificação.',
-                position: 'bottom'
-            }
-        },
-        // Step 3/17 - Valor
-        {
-            element: '#tutorial-value',
-            popover: {
-                title: 'Seu Valor de Gratificação',
-                description: 'Aqui você visualiza o valor bruto da sua gratificação. Lembre-se que este valor não inclui os descontos de impostos.',
-                position: 'bottom'
-            }
-        },
-        // Step 4/17 - Aviso
-        {
-            element: '#tutorial-warning',
-            popover: {
-                title: 'Os valores mostrados são brutos, sem os descontos de impostos que podem ser aplicados.',
-                description: '',
-                position: 'top'
-            }
-        },
-        // Step 5/17 - Clique aqui para ver mais
-        {
-            element: '#tutorial-details',
-            popover: {
-                title: 'Clique aqui para ver mais...',
-                description: '',
-                position: 'top'
-            }
-        },
-        // Step 6/17 - Matrículas ativas
-        {
-            element: '#tutorial-matricula-0',
-            popover: {
-                title: 'Visualize neste campo cada uma das suas matrículas que estão atualmente ativas no sistema.',
-                description: '',
-                position: 'top'
-            }
-        },
-        // Step 7/17 - Dados da matrícula
-        {
-            element: '#painel-infos',
-            popover: {
-                title: 'Aqui estão os seus dados da sua matrícula',
-                description: '',
-                position: 'top'
-            }
-        },
-        // Step 8/17 - Certifique dados
-        {
-            element: '#tutorial-table-dados',
-            popover: {
-                title: 'Nesse quadro mostra seus dados. Certifique que todos estão corretos!',
-                description: '',
-                position: 'top'
-            }
-        },
-        // Step 9/17 - Valor total da rede
-        {
-            element: '#tutorial-valor-rede',
-            popover: {
-                title: 'Aqui mostra o valor total da sua rede.',
-                description: '',
-                position: 'top'
-            }
-        },
-        // Step 10/17 - Valor máximo por unidade  
-        {
-            element: '#tutorial-valor-unidade',
-            popover: {
-                title: 'Aqui mostra o valor máximo recebido por unidade.',
-                description: '',
-                position: 'top'
-            }
-        },
-        // Step 11/17 - Desconto
-        {
-            element: '#tutorial-desconto',
-            popover: {
-                title: 'Nesse campo mostra o desconto.',
-                description: '',
-                position: 'top'
-            }
-        },
-        // Step 12/17 - Valor total que irá receber
-        {
-            element: '#tutorial-valor-total',
-            popover: {
-                title: 'É aqui, mostra o valor total que você ira receber.',
-                description: '',
-                position: 'top'
-            }
-        },
-        // Step 13/17 - Critérios  
-        {
-            element: '#tutorial-criteria',
-            popover: {
-                title: 'Esta tabela mostra os 4 critérios principais: frequência (mín. 96%), tempo de atuação (mín. 6 meses), Formação e Atividades. Cada um, mostra se você está "Apto" ou "Não Apto".',
-                description: '',
-                position: 'top'
-            }
-        },
-        // Step 14/17 - Alocações
-        {
-            element: '#tutorial-allocations',
-            popover: {
-                title: 'Aqui você vê onde trabalhou durante o período, incluindo: unidade escolar, período (início/fim), função exercida, carga horária e grupo de gratificação.',
-                description: '',
-                position: 'top'
-            }
-        },
-        // Step 15/17 - Frequência/Afastamentos
-        {
-            element: '#tutorial-frequency',
-            popover: {
-                title: 'Esta seção mostra todos os seus afastamentos registrados: licenças, faltas justificadas, etc. Mostra as datas, tipo de afastamento e se foram contabilizados para o cálculo.',
-                description: '',
-                position: 'top'
-            }
-        },
-        // Step 16/17 - Recurso
-        {
-            element: '#tutorial-resource',
-            popover: {
-                title: 'Se você acha que alguma informação está incorreta ou quer contestar algum critério, clique em "Recurso". Você pode anexar documentos para comprovar seu ponto de vista.',
-                description: '',
-                position: 'left'
-            }
-        },
-        // Step 17/17 - Conclusão
-        {
-            popover: {
-                title: 'Você concluiu o tutorial!',
-                description: 'Agora você está pronto para navegar pelo painel de gratificação e acompanhar as informações com facilidade.',
-                position: 'center'
-            }
-        }
-    ]
-});
 
 const startTutorial = () => {
     driverObj.drive();
