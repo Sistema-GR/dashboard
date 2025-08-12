@@ -1,6 +1,6 @@
 <template>
   <Whiteboard title="Importações" :isSidebarMinimized="isSidebarMinimized">     
-    <div class="w-full space-y-10">      
+    <div class="w-full py-5 px-10 space-y-10">      
       <!-- FileInput para upload dos arquivos em .csv -->
       <FileInput Label="Importar Arquivos em .CSV"
       @uploaded="onUnifiedUploaded"/>
