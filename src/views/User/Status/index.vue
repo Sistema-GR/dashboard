@@ -18,7 +18,7 @@
              </router-link>
         </div>
         
-        <div v-else class="flex flex-col w-full gap-5 px-10 py-5">
+        <div v-else class="flex flex-col w-full gap-5 py-8 px-10">
             <div v-for="resource in resource" :key="resource.id" class="flex flex-col items-center justify-start w-full bg-white border border-gray-200 rounded-[10px] p-4 shadow-md hover:shadow-lg transition-shadow duration-300">
                 <div class="w-full">
                     <div class="flex items-center justify-between w-full pb-3 border-b mb-4">

@@ -2,7 +2,7 @@
     <Sidebar :route="'admin'" @update:isSidebarMinimized="handleSidebarMinimized" class="z-50"/>
     <Whiteboard title="Recurso" class="!overflow-visible overflow-y-auto z-40 relative" :isSidebarMinimized="isSidebarMinimized">
 
-        <div class="w-full py-5 px-4 sm:px-10">
+        <div class="w-full py-8 px-4 sm:px-10">
           <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             <Block 
               title="Aguardando Resposta" 

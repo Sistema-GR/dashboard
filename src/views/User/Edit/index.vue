@@ -1,6 +1,6 @@
 <template>
     <Whiteboard title="Editar Recurso" :isSidebarMinimized="isSidebarMinimized">
-        <div class="flex flex-col w-full gap-5 px-4 sm:px-10 py-5 pb-10">
+        <div class="flex flex-col w-full gap-5 px-4 sm:px-10 py-8">
            
             <div v-if="isLoading" class="text-center p-10">
                 <p>Carregando dados do recurso para edição...</p>

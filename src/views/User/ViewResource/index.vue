@@ -13,7 +13,7 @@
         </div>
 
         
-        <div v-else class="flex flex-col w-full gap-5 px-4 sm:px-10 py-5 pb-10 relative z-0">
+        <div v-else class="flex flex-col w-full gap-5 px-4 sm:px-10 py-8 pb-10 relative z-0">
             
             
             <div class="flex justify-end">
