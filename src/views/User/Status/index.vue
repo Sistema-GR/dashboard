@@ -19,12 +19,17 @@
         </div>
         
         <div v-else class="flex flex-col w-full gap-4 px-4">
+            <div class="p-4 bg-blue-50 border border-blue-200 text-blue-800 rounded-lg text-center text-sm">
+                <p>Você já possui um recurso aberto. Acompanhe o status abaixo. Só é permitido um recurso por usuário.</p>
+            </div>
             <div v-for="resource in resources" :key="resource.id" class="flex flex-col items-center justify-start w-full bg-white border border-gray-200 rounded-lg p-4 shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <div class="w-full">
                     <div class="flex items-center justify-between w-full pb-3 border-b mb-4">
                         <p class="text-lg font-semibold text-gray-700 capitalize">{{ (resource.status || 'aguardando_resposta').replace('_', ' ') }}</p>
-                        <router-link class="w-full cursor-pointer" :to="{ name: 'edit', params: { id: resource.id } }">
-                        </router-link>
+                            <div v-if="resource.status === 'respondido'" class="flex items-center gap-2 text-sm font-semibold text-green-600 bg-green-100 px-3 py-1 rounded-full">
+                                <ChatBubbleBottomCenterTextIcon class="w-5 h-5"/>
+                                <span>Recurso Respondido</span>
+                            </div>
                     </div>
 
                     <router-link class="w-full cursor-pointer" :to="{ name: 'view', params: { id: resource.id } }">
@@ -60,7 +65,7 @@
 </template>
 
 <script>
-import { UserIcon, PencilSquareIcon } from "@heroicons/vue/24/outline";
+import { UserIcon, PencilSquareIcon, ChatBubbleBottomCenterTextIcon } from "@heroicons/vue/24/outline";
 import Whiteboard from "@/components/Whiteboard/Whiteboard.vue";
 
 import Badge from "@/components/Badges/Badges.vue";
@@ -70,7 +75,7 @@ import axios from 'axios';
 
 export default {
     name: "Status",
-    components: { UserIcon, Whiteboard, Badge, PencilSquareIcon },
+    components: { UserIcon, Whiteboard, Badge, PencilSquareIcon, ChatBubbleBottomCenterTextIcon },
     setup() {
         const isSidebarMinimized = inject('isSidebarMinimized');
 

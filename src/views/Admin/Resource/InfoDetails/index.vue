@@ -76,53 +76,82 @@
             </div>
 
 
-            <div class="flex flex-col items-center w-full mt-5 p-4 bg-white border rounded-[10px] shadow-lg">
-                <div class="flex flex-row w-full justify-between">
-                    <p class="text-15 font-bold">Responder Recurso</p>
-                    <button @click="isReportResponseOpen = !isReportResponseOpen" class="bg-blue-500 text-white py-2 px-4 rounded-md">Responder</button>
-                </div>
-                <div class="flex flex-col w-full py-2 mt-2" v-if="isReportResponseOpen">
-                    <textarea v-model="newResponseText" rows="5" class="w-full border rounded-md p-2 mb-4"></textarea>
-                    <button @click="submitReportResponse" class="bg-green-500 text-white py-2 px-4 rounded-md w-auto self-end">Enviar Resposta</button>
+            <div class="flex flex-col w-full mt-5 p-4 bg-white border rounded-[10px] shadow-lg">
+                <p class="text-15 font-bold mb-4">Gerar Resposta em PDF</p>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Selecione um Template</label>
+                        <select v-model="selectedTemplateId" class="mt-1 block w-full pl-3 pr-10 py-2 border rounded-md">
+                            <option :value="null" disabled>Escolha um template...</option>
+                            <option v-for="template in templates" :key="template.id" :value="template.id">{{ template.titulo }}</option>
+                        </select>
+                    </div>
+                    <div v-if="selectedTemplate">
+                        <p class="text-sm font-medium text-gray-700 mb-2">Preencha os campos diretamente no texto:</p>
+                        <RenderedTemplate
+                            :htmlContent="selectedTemplate.corpo_html"
+                            v-model="templateForm"
+                            :resourceData="recurso"
+                        />
+                        <div class="flex justify-end mt-4">
+                            <button @click="generateAndSendResponse" :disabled="!selectedTemplate || isGenerating" class="bg-green-600 text-white py-2 px-4 rounded-md disabled:bg-gray-400">
+                                {{ isGenerating ? 'Gerando...' : 'Gerar e Enviar Resposta' }}
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <div v-if="recurso.respostas && recurso.respostas.length" class="flex flex-col w-full mt-5 p-4 bg-white border rounded-[10px] shadow-lg">
-              <p class="text-15 font-bold mb-2">Histórico de Respostas</p>
-              <ul>
-                <li v-for="response in recurso.respostas" :key="response.id" class="border-b py-2">
-                  <p>{{ response.texto }}</p>
-                  <p class="text-xs text-gray-500 mt-1">Por: {{ response.autor_nome }} em {{ new Date(response.created_at).toLocaleString() }}</p>
-                    <button @click="deleteResponse(response.id)" 
-                            class="flex-shrink-0 p-2 rounded-full hover:bg-red-100 text-red-500 transition-colors"
-                            title="Deletar esta resposta">
-                    <TrashIcon class="w-5 h-5" />
-                    </button>
-                </li>
-              </ul>
+             <div v-if="recurso.respostas && recurso.respostas.length" class="flex flex-col w-full mt-5 p-4 bg-white border rounded-[10px] shadow-lg">
+                <p class="text-15 font-bold mb-2">Histórico de Respostas</p>
+                <ul class="space-y-3">
+                    <li v-for="response in recurso.respostas" :key="response.id" class="border-b pb-3 text-sm">
+                        <div class="flex justify-between items-start gap-4">
+                            <div class="flex-grow">
+                                <p v-if="response.texto">{{ response.texto }}</p>
+                                <div v-if="response.arquivo_pdf" class="mt-2">
+                                    <a :href="response.arquivo_pdf" download target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-blue-600 hover:underline font-medium">
+                                        <PaperClipIcon class="w-4 h-4" />
+                                        <span>Baixar Resposta em PDF</span>
+                                    </a>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-2">Por: {{ response.autor_nome }} em {{ new Date(response.created_at).toLocaleString() }}</p>
+                            </div>
+                            <button @click="deleteResponse(response.id)" class="flex-shrink-0 p-2 rounded-full hover:bg-red-100 text-red-500">
+                                <TrashIcon class="w-5 h-5" />
+                            </button>
+                        </div>
+                    </li>
+                </ul>
             </div>
         </div>
     </Whiteboard>
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { ref, onMounted, computed } from 'vue';
+
 import axios from 'axios';
 import Badges from '@/components/Badges/Badges.vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import { UserIcon, ChevronDownIcon, TrashIcon, ExclamationTriangleIcon, PaperClipIcon  } from "@heroicons/vue/24/outline";
 import { MOTIVOS_RECURSO } from '@/config/resourceConstants.js';
 import Sidebar from '@/components/Sidebar/Sidebar.vue';
+import RenderedTemplate from '@/views/Admin/Resource/components/RenderedTemplate/index.vue';
 
 export default {
     name: "InfoDetails",
-    components: { Whiteboard, UserIcon, Badges, ChevronDownIcon, Sidebar, TrashIcon, ExclamationTriangleIcon, PaperClipIcon },
-    
-    setup() {
+    components: { Whiteboard, UserIcon, Badges, ChevronDownIcon, Sidebar, TrashIcon, ExclamationTriangleIcon, PaperClipIcon, RenderedTemplate },
+    props: {
+      id: {
+        type: [String, Number],
+        required: true
+      }
+    },
+    setup(props) {
         const isSidebarMinimized = ref(false);
-        const route = useRoute();
-        const resourceId = route.params.id;
+
+        const resourceId = props.id;
 
         const recurso = ref(null);
         const isLoading = ref(true);
@@ -134,12 +163,21 @@ export default {
         const isReportResponseOpen = ref(false);
         const newResponseText = ref('');
 
+        const templates = ref([]);
+        const selectedTemplateId = ref(null);
+        const templateForm = ref({});
+        const isGenerating = ref(false);
+
+        const selectedTemplate = computed(() => templates.value.find(t => t.id === selectedTemplateId.value) || null);
+
         async function fetchData() {
             isLoading.value = true;
             try {
                 const response = await axios.get(`/recursos/${resourceId}/`, {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
                 });
+
+
                 recurso.value = response.data;
             } catch (err) {
                 console.error("Erro ao buscar detalhes do recurso:", err);
@@ -149,6 +187,37 @@ export default {
             }
         }
 
+        async function fetchTemplates() {
+            try {
+                const response = await axios.get('/recursos/templates/', { headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` } });
+                templates.value = response.data;
+            } catch (err) { console.error("Erro ao buscar templates:", err); }
+        }
+        
+        async function generateAndSendResponse() {
+            if (!selectedTemplateId.value) return alert("Por favor, selecione um template.");
+            isGenerating.value = true;
+            try {
+                const response = await axios.post(`/recursos/${resourceId}/gerar-resposta-pdf/`, {
+                    template_id: selectedTemplateId.value,
+                    contexto_variaveis: templateForm.value
+                }, { headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` } });
+                
+                recurso.value.respostas.unshift(response.data);
+                recurso.value.status = 'respondido';
+                
+                alert("Resposta em PDF gerada com sucesso!");
+                selectedTemplateId.value = null;
+                templateForm.value = {};
+            } catch (err) {
+                console.error("Erro ao gerar resposta em PDF:", err);
+                alert("Ocorreu um erro ao gerar a resposta.");
+            } finally {
+                isGenerating.value = false;
+            }
+        }
+
+        
         async function toggleCriterio(criterioText) {
             const currentCriterios = recurso.value.criterios_selecionados || [];
             const newCriterios = currentCriterios.includes(criterioText)
@@ -259,12 +328,15 @@ export default {
             return decodeURIComponent(url.split('/').pop());
         }
 
-        onMounted(fetchData);
+        onMounted(() => {
+            fetchData();
+            fetchTemplates();
+        });
+
 
         return {
             isSidebarMinimized,
             handleSidebarMinimized,
-            resourceId,
             recurso,
             isLoading,
             error,
@@ -274,9 +346,16 @@ export default {
             isReportResponseOpen,
             newResponseText,
             submitReportResponse,
-            deleteResponse,
             getFilename,
             downloadAuthenticatedFile,
+            templates,
+            selectedTemplateId,
+            templateForm,
+            isGenerating,
+            selectedTemplate,
+            generateAndSendResponse,
+            deleteResponse,
+            resourceId
         };
     }
 };
