@@ -122,7 +122,16 @@
                                                     <tr class="hover:bg-gray-50 transition-shadow hover:shadow-md">
                                                         <td class="border border-gray-200 px-4 py-3 text-gray-700">Frequência</td>
                                                         <td class="border border-gray-200 px-4 py-3 text-gray-700">
-                                                        <!-- ...existing code... -->
+                                                            {{ item?.frequencia[0]?.percentual_frequencia ? Number(item.frequencia[0].percentual_frequencia).toFixed(2) + '%' : '100%' }}
+                                                        </td>
+                                                        <td 
+                                                            :class="{
+                                                                'text-red-600 font-semibold': item?.frequencia[0]?.percentual_frequencia !== undefined && Number(item.frequencia[0].percentual_frequencia) < 96,
+                                                                'text-green-600 font-semibold': !item?.frequencia[0]?.percentual_frequencia || Number(item.frequencia[0].percentual_frequencia) >= 96
+                                                            }"
+                                                            class="border border-gray-200 px-4 py-3"
+                                                        >
+                                                            {{ item?.frequencia[0]?.percentual_frequencia ? (Number(item.frequencia[0].percentual_frequencia) >= 96 ? 'Apto' : 'Não Apto') : 'Apto' }}
                                                         </td>
                                                     </tr>
 
@@ -278,17 +287,6 @@
                 </div>
             </router-link>
         </div>
-
-        <!-- Botão para iniciar tutorial -->
-        <button
-            @click="startTutorial"
-            class="fixed bottom-4 right-4 bg-azure-800 text-white p-3 rounded-full shadow-lg hover:bg-azure-900 transition-colors z-50"
-            title="Iniciar Tutorial"
-        >
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-        </button>
       
     </Whiteboard>
     <Tutorial />
