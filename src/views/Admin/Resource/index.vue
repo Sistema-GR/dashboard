@@ -51,7 +51,7 @@
         </div>
 
 
-        <div class="mt-1 my-5 space-y-4 px-4 sm:px-10">
+        <div class="py-5 w-full space-y-4 px-4 sm:px-10">
             <infoCard 
               v-for="recurso in filteredRecursos" 
               :key="recurso.id" 

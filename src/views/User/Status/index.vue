@@ -18,13 +18,13 @@
              </router-link>
         </div>
         
-        <div v-else class="flex flex-col w-full gap-4 px-4">
-            <div v-for="resource in resource" :key="resource.id" class="flex flex-col items-center justify-start w-full bg-white border border-gray-200 rounded-[10px] p-4 shadow-lg hover:shadow-xl transition-shadow duration-300">
+        <div v-else class="flex flex-col w-full gap-5 px-10 py-5">
+            <div v-for="resource in resource" :key="resource.id" class="flex flex-col items-center justify-start w-full bg-white border border-gray-200 rounded-[10px] p-4 shadow-md hover:shadow-lg transition-shadow duration-300">
                 <div class="w-full">
                     <div class="flex items-center justify-between w-full pb-3 border-b mb-4">
-                        <p class="text-lg font-semibold text-gray-700 capitalize">{{ (resource.status || 'aguardando_resposta').replace('_', ' ') }}</p>
+                        <p class="text-20 font-semibold whitespace-nowrap text-black capitalize">{{ (resource.status || 'aguardando_resposta').replace('_', ' ') }}</p>
                         <router-link class="w-full cursor-pointer" :to="{ name: 'edit', params: { id: resource.id } }">
-                            <!-- <p class="group-hover:text-black text-sm">Editar</p>
+                            <!-- <p class="group-hover:text-black text-15">Editar</p>
                             <PencilSquareIcon class="w-5 h-auto stroke-black" /> -->
                         </router-link>
                     </div>
@@ -32,12 +32,12 @@
                     <router-link class="w-full cursor-pointer" :to="{ name: 'view', params: { id: resource.id } }">
                         <div class="flex w-full gap-4">
                             <div class="p-2 bg-gray-100 rounded-[10px]">
-                                <UserIcon class="w-16 h-16 text-gray-400"/>
+                                <UserIcon class="w-16 h-16"/>
                             </div>
                             <div class="flex flex-row items-center justify-between w-full">
                                 <div class="flex flex-col gap-2">
-                                    <p class="text-base font-medium text-gray-800">{{ resource.nome_completo }}</p>
-                                    <p class="text-sm text-gray-600">{{ resource.descricao }}</p>
+                                    <p class="text-base font-medium text-black">{{ resource.nome_completo }}</p>
+                                    <p class="text-15 text-black">{{ resource.descricao }}</p>
                                 </div>
                                 <div class="flex flex-col items-end gap-2.5">
                                     
@@ -48,7 +48,7 @@
                                             <Badge text="Geral"/>
                                             
                                         </div>
-                                        <p class="text-sm font-semibold text-gray-500">{{ formatDate(resource.created_at) }}</p>
+                                        <p class="text-15 font-semibold text-gray-500">{{ formatDate(resource.created_at) }}</p>
                                     </div>
                                 </div>
                             </div>

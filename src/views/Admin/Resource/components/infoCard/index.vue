@@ -1,50 +1,110 @@
 <template>
-    <div class="flex items-center justify-between w-full bg-[#e3f0ff] border rounded-[10px] p-4 shadow-sm hover:shadow-md transition-shadow duration-200">
-        <router-link class="flex-grow flex gap-4 items-center" :to="`/resource/info/${recurso.id}`">
-            <!-- ... seu conteúdo de card dinâmico ... -->
-            <div class="flex-shrink-0">
-                <div class="w-14 h-14 flex items-center justify-center">
-                    <UserIcon class="w-14 h-14 text-[#003965]"/>
+    <div class="w-full bg-[#e3f0ff] border rounded-[10px] p-3 sm:p-4 shadow-sm hover:shadow-md transition-shadow duration-200">
+        <!-- Layout Desktop/Tablet -->
+        <div class="hidden md:flex items-center justify-between w-full">
+            <router-link class="flex items-center justify-between w-full gap-4" :to="`/resource/info/${recurso.id}`">
+                <!-- Avatar e informações do usuário -->
+                <div class="flex items-center gap-4 flex-shrink-0">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 lg:w-14 lg:h-14 flex items-center justify-center">
+                            <UserIcon class="w-12 h-12 lg:w-14 lg:h-14 text-[#003965]"/>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col">
+                        <h3 class="text-sm lg:text-15 font-bold text-black mb-1">{{ recurso.nome_completo }}</h3>
+                        <p class="text-sm lg:text-15 text-black">Matrícula: {{ recurso.matricula }}</p>
+                    </div>
+                </div>
+
+                <!-- Motivo centralizado -->
+                <div class="flex flex-col items-center flex-grow">
+                    <p class="text-sm lg:text-15 font-bold text-black mb-1">Motivo</p>
+                    <Badges v-if="recurso.criterios_selecionados && recurso.criterios_selecionados.length" :text="recurso.criterios_selecionados[0]" />
+                    <span v-else class="text-sm lg:text-15 text-gray-500">-</span>
+                </div>
+
+                <!-- Data de abertura -->
+                <div class="flex flex-col items-end flex-shrink-0">
+                    <p class="text-sm lg:text-15 font-medium text-black mb-1">Aberto em</p>
+                    <p class="text-sm lg:text-15 text-black">{{ new Date(recurso.created_at).toLocaleDateString() }}</p>
+                </div>
+            </router-link>
+
+            <!-- Menu de ações -->
+            <div v-if="possibleStatuses.length > 0" class="relative ml-4 flex-shrink-0">
+                <button @click="isMenuOpen = !isMenuOpen" class="p-2 rounded-full hover:bg-black/10 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 lg:w-6 lg:h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
+                    </svg>
+                </button>
+                
+                <div v-if="isMenuOpen" class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg z-60 border">
+                    <p class="px-4 py-2 text-sm text-gray-500 border-b">Alterar status para:</p>
+                    
+                    <ul>
+                        <li v-for="status in possibleStatuses" :key="status.key" @click="changeStatus(status.key)" class="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm">
+                            {{ status.label }}
+                        </li>
+                    </ul>
                 </div>
             </div>
-            
-            <div class="flex flex-col">
-                <h3 class="text-15 font-bold text-black mb-1">{{ recurso.nome_completo }}</h3>
-                <p class="text-15 text-black">Matrícula: {{ recurso.matricula }}</p>
-            </div>
+        </div>
 
-            <div class="flex flex-col  items-center ml-auto">
-                <p class="text-15 justify-between font-bold text-black mb-1">Motivo</p>
-                
-                    <Badges v-if="recurso.criterios_selecionados && recurso.criterios_selecionados.length" :text="recurso.criterios_selecionados[0]" />
-                    <span v-else class="text-15 text-gray-500">-</span>
-                
-                
-            </div>
+        <!-- Layout Mobile -->
+        <div class="md:hidden">
+            <router-link :to="`/resource/info/${recurso.id}`" class="block">
+                <!-- Primeira linha: Avatar, Nome e Menu -->
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 flex items-center justify-center">
+                                <UserIcon class="w-12 h-12 text-[#003965]"/>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-col">
+                            <h3 class="text-sm font-bold text-black mb-1">{{ recurso.nome_completo }}</h3>
+                            <p class="text-xs text-black">Mat: {{ recurso.matricula }}</p>
+                        </div>
+                    </div>
 
-            <div class="flex flex-col items-end ml-4">
-                <p class="text-15 font-medium text-black mb-1">Aberto em</p>
-                <p class="text-15 text-black">{{ new Date(recurso.created_at).toLocaleDateString() }}</p>
-            </div>
-        </router-link>
+                    <!-- Menu de ações mobile -->
+                    <div v-if="possibleStatuses.length > 0" class="relative flex-shrink-0" @click.stop>
+                        <button @click="isMenuOpen = !isMenuOpen" class="p-2 rounded-full hover:bg-black/10 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
+                            </svg>
+                        </button>
+                        
+                        <div v-if="isMenuOpen" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-60 border">
+                            <p class="px-3 py-2 text-xs text-gray-500 border-b">Alterar status:</p>
+                            
+                            <ul>
+                                <li v-for="status in possibleStatuses" :key="status.key" @click="changeStatus(status.key)" class="px-3 py-2 hover:bg-gray-100 cursor-pointer text-xs">
+                                    {{ status.label }}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
 
+                <!-- Segunda linha: Motivo e Data -->
+                <div class="flex items-center justify-between">
+                    <div class="flex flex-col">
+                        <p class="text-xs font-bold text-black mb-1">Motivo</p>
+                        <div class="text-xs">
+                            <Badges v-if="recurso.criterios_selecionados && recurso.criterios_selecionados.length" :text="recurso.criterios_selecionados[0]" />
+                            <span v-else class="text-gray-500">-</span>
+                        </div>
+                    </div>
 
-        <div v-if="possibleStatuses.length > 0" class="relative ml-4 flex-shrink-0">
-            <button @click="isMenuOpen = !isMenuOpen" class="p-2 rounded-full hover:bg-black/10 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
-                </svg>
-            </button>
-            
-            <div v-if="isMenuOpen" class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg z-60 border">
-                <p class="px-4 py-2 text-sm text-gray-500 border-b">Alterar status para:</p>
-                
-                <ul>
-                    <li v-for="status in possibleStatuses" :key="status.key" @click="changeStatus(status.key)" class="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm">
-                        {{ status.label }}
-                    </li>
-                </ul>
-            </div>
+                    <div class="flex flex-col items-end">
+                        <p class="text-xs font-medium text-black mb-1">Aberto em</p>
+                        <p class="text-xs text-black">{{ new Date(recurso.created_at).toLocaleDateString() }}</p>
+                    </div>
+                </div>
+            </router-link>
         </div>
     </div>
 </template>
@@ -88,7 +148,6 @@ export default {
             console.log("Valor antigo:", oldVal);
             console.log("Novo valor:", newVal);
         }, { deep: true });
-
 
         function changeStatus(newStatus) {
             emit('status-updated', { recursoId: props.recurso.id, newStatus: newStatus });
