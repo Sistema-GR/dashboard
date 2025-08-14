@@ -2,8 +2,23 @@
     <Sidebar :route="'admin'" @update:isSidebarMinimized="handleSidebarMinimized" class="z-50"/>
     <Whiteboard title="Recurso" class="!overflow-visible overflow-y-auto z-40 relative" :isSidebarMinimized="isSidebarMinimized">
 
-        <div class="w-full py-5 px-4 sm:px-10">
-          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+
+<!-- Header com botão de relatórios -->
+        <div class="flex justify-end items-center px-4 sm:px-10 py-4">
+          <button 
+            @click="navigateToAnnualReports" 
+            class="bg-[#3459A2] hover:bg-[#2a4a8a] text-white px-4 py-2 rounded-[10px] transition-colors duration-200 flex items-center gap-2 font-medium shadow-md"
+          >
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"/>
+              <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"/>
+            </svg>
+            Relatórios Anuais
+          </button>
+        </div>
+
+        <div class="w-full py-8 pt-2 px-4 sm:px-10">
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             <Block 
               title="Aguardando Resposta" 
               :number="countByStatus('aguardando_resposta')" 
@@ -43,8 +58,7 @@
             </div>
         </div>
 
-
-        <div class="mt-1 my-5 space-y-4 px-4 sm:px-10">
+        <div class="py-5 w-full space-y-4 px-4 sm:px-10">
             <infoCard 
               v-for="recurso in filteredRecursos" 
               :key="recurso.id" 
@@ -64,6 +78,7 @@
   
 <script>
 import { ref, provide, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import Block from '@/views/Admin/Resource/components/Block/index.vue'
 import infoCard from '@/views/Admin/Resource/components/infoCard/index.vue'
@@ -77,17 +92,21 @@ export default {
     components: {Whiteboard, Block, infoCard, FunnelIcon, Sidebar},
 
     setup() {
-        const isSidebarMinimized = ref(false)
-        const recursos = ref([])
-        const selectedStatus = ref('aguardando_resposta')
-        const isLoading = ref(true)
+    const router = useRouter()
+    const isSidebarMinimized = ref(false)
+    const recursos = ref([])
+    const selectedStatus = ref('aguardando_resposta')
+    const isLoading = ref(true)
 
-        async function fetchRecursos() {
-            isLoading.value = true;
-            try {
-                const response = await axios.get('/recursos/admin/todos/', {
-                    headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-                });
+    async function fetchRecursos() {
+          isLoading.value = true;
+          try {
+            const response = await axios.get('/recursos/admin/todos/', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                }
+              });
+                console.log("--- DADOS RECEBIDOS DA API EM Resource.vue ---", response.data);
                 recursos.value = response.data;
             } catch (error) {
                 console.error('Erro ao buscar recursos:', error);
@@ -105,49 +124,48 @@ export default {
             isSidebarMinimized.value = value
         }
 
-        const filteredRecursos = computed(() => {
-            if (!recursos.value) return [];
-            return recursos.value.filter(r => r.status === selectedStatus.value);
-        });
-        
-        const countByStatus = (status) => {
-            if (!recursos.value) return 0;
-            return recursos.value.filter(r => r.status === status).length;
-        };
+    const filteredRecursos = computed(() => {
+        if (!recursos.value) return [];
+        return recursos.value.filter(r => r.status === selectedStatus.value);
+      });
+    
+    const countByStatus = (status) => {
+        if (!recursos.value) return 0;
+        return recursos.value.filter(r => r.status === status).length;
+      };
 
-        function setStatusFilter(status) {
-            selectedStatus.value = status;
-        }
-        
-        async function handleStatusUpdate({ recursoId, newStatus }) {
-            try {
-                const index = recursos.value.findIndex(r => r.id === recursoId);
-                if (index === -1) return;
-                
-                const response = await axios.patch(`/recursos/${recursoId}/`, { status: newStatus }, {
-                    headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-                });
+    function setStatusFilter(status) {
+        selectedStatus.value = status;
+      }
+    
+    async function handleStatusUpdate({ recursoId, newStatus }) {
+      try {
+          
+          const index = recursos.value.findIndex(r => r.id === recursoId);
 
-                recursos.value[index] = response.data;
-            } catch (error) {
-                console.error("Erro ao atualizar o status:", error);
-            }
-        }
+          if (index === -1) {
+              console.error("Recurso não encontrado na lista local.");
+              return;
+          }
+          
+          const response = await axios.patch(`/recursos/${recursoId}/`, { status: newStatus }, {
+              headers: {
+                  'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+              }
+          });
 
-        // [!code start]
-        // NOVO: Função para lidar com a atualização do responsável
-        function handleResponsavelUpdate(updatedRecurso) {
-            // Encontra o índice do recurso na lista principal de 'recursos'
-            const index = recursos.value.findIndex(r => r.id === updatedRecurso.id);
+          recursos.value[index] = response.data;
+          
+      } catch (error) {
+          console.error("Erro ao atualizar o status:", error);
+      }
+  }
 
-            // Se encontrou, substitui o objeto antigo pelo novo que veio do evento
-            if (index !== -1) {
-                recursos.value[index] = updatedRecurso;
-            }
-        }
-        // [!code end]
+    const navigateToAnnualReports = () => {
+      router.push('/admin/recursos/relatorios-anuais')
+    }
 
-        const activeStatusStyle = computed(() => {
+    const activeStatusStyle = computed(() => {
             return STATUS_DEFINITIONS[selectedStatus.value] || {};
         });
         
@@ -164,23 +182,23 @@ export default {
             return colorMap[colorKey] || colorMap['gray'];
         });
 
-        provide('isSidebarMinimized', isSidebarMinimized)
 
-        return {
-            isSidebarMinimized,
-            handleSidebarMinimized,
-            recursos,
-            isLoading,
-            selectedStatus,
-            filteredRecursos,
-            countByStatus,
-            setStatusFilter,
-            handleStatusUpdate,
-            activeStatusStyle,
-            STATUS_DEFINITIONS,
-            activeStatusColorClass,
-            handleResponsavelUpdate, // [!code ++]
-        }
+    provide('isSidebarMinimized', isSidebarMinimized)
+
+    return {
+      isSidebarMinimized,
+      handleSidebarMinimized,
+      recursos,
+      isLoading,
+      selectedStatus,
+      filteredRecursos,
+      countByStatus,
+      setStatusFilter,
+      handleStatusUpdate,
+      navigateToAnnualReports,
+      activeStatusStyle,
+      STATUS_DEFINITIONS,
+      activeStatusColorClass
     }
 }
 </script>

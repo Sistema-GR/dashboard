@@ -13,22 +13,22 @@
         </div>
 
         
-        <div v-else class="flex flex-col w-full gap-6 px-4 py-4 relative z-0">
+        <div v-else class="flex flex-col w-full gap-5 px-4 sm:px-10 py-8 pb-10 relative z-0">
             
             
             <div class="flex justify-end">
                 <router-link :to="{ name: 'edit', params: { id: resourceId } }">
-                    <PrimaryButton value="Editar Recurso" customColor="bg-blue-500 text-sm">
+                    <button class="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-600 transition-colors">
                         <PencilSquareIcon class="w-5 h-5 mr-2" />
                         Editar Recurso
-                    </PrimaryButton>
+                    </button>
                 </router-link>
             </div>
 
            
             <div class="bg-white p-4 rounded-[10px] shadow-sm border relative z-10">
-                <h2 class="text-xl font-bold mb-4 border-b pb-2">Informações do Recurso</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <h2 class="text-20 font-bold mb-4 border-b pb-2">Informações do Recurso</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-15">
                     <div><strong>Protocolo:</strong> #{{ resource.id }}</div>
                     <div><strong>Status:</strong> <span class="capitalize font-semibold">{{ (resource.status || '').replace('_', ' ') }}</span></div>
                     <div><strong>Nome Completo:</strong> {{ resource.nome_completo }}</div>
@@ -41,14 +41,17 @@
             </div>
             
             <div class="bg-white p-4 rounded-[10px] shadow-sm border">
-                <h3 class="text-lg font-bold mb-2">Descrição</h3>
+                <h3 class="text-20 font-bold mb-2">Descrição</h3>
                 <p class="text-gray-700 whitespace-pre-wrap">{{ resource.descricao }}</p>
             </div>
-
-
+            
+            <div class="bg-white p-4 rounded-[10px] shadow-sm border">
+                <h3 class="text-20 font-bold mb-2">Motivo do Recurso</h3>
+                <p class="text-15 text-gray-500">A ser categorizado pelo responsável.</p>
+            </div>
            
             <div class="bg-white p-4 rounded-[10px] shadow-sm border">
-                <h3 class="text-lg font-bold mb-2">Documentos Anexados</h3>
+                <h3 class="text-20 font-bold mb-2">Documentos Anexados</h3>
                 <div v-if="resource.documentos && resource.documentos.length > 0" class="space-y-2">
                     <a v-for="doc in resource.documentos" :key="doc.id" @click.prevent="downloadAuthenticatedFile(doc)" 
                     class="flex items-center gap-2 p-2 rounded-md bg-blue-50 hover:bg-blue-100 text-blue-700 transition-colors cursor-pointer">
@@ -56,7 +59,7 @@
                         <span class="underline">{{ doc.arquivo.split('/').pop() }}</span>
                     </a>
                 </div>
-                <p v-else class="text-sm text-gray-500">Nenhum documento foi anexado a este recurso.</p>
+                <p v-else class="text-15 text-gray-500">Nenhum documento foi anexado a este recurso.</p>
             </div>
 
         </div>
@@ -75,7 +78,13 @@ import { UserIcon, PencilSquareIcon, PaperClipIcon } from "@heroicons/vue/24/out
 
 export default {
     name: "ResourceView",
-    components: { Whiteboard, PrimaryButton, UserIcon, PencilSquareIcon, PaperClipIcon },
+    components: { 
+        Whiteboard, 
+        PrimaryButton, 
+        UserIcon, 
+        PencilSquareIcon, 
+        PaperClipIcon 
+    },
     
     setup() {
         const isSidebarMinimized = inject('isSidebarMinimized');

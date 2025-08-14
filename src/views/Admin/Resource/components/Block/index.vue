@@ -1,9 +1,9 @@
 <template>
-    <div :class="`flex flex-col w-full bg-[#e3f0ff] rounded-[10px] overflow-hidden border transition-all shadow-sm hover:shadow-md duration-300 ease-in-out transform hover:scale-105 cursor-pointer ${isActive ? 'ring-2 ring-offset-2 ring-black' : ''}`">
+    <div :class="`flex flex-col w-full bg-[#e3f0ff] rounded-[10px] overflow-hidden border transition-all shadow-sm hover:shadow-md duration-300 ease-in-out transform hover:scale-105 cursor-pointer ${isActive ? 'drop-shadow-lg scale-105' : ''}`">
         
         
         <div :class="`flex items-center justify-center px-4 py-3 text-white ${colorClass}`">
-            <span class="font-bold text-15">{{ title }}</span>
+            <span class="font-bold whitespace-nowrap text-15">{{ title }}</span>
         </div>
         
         
