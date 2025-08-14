@@ -2,10 +2,10 @@
   <!-- Botão fixo para iniciar tutorial -->
   <button
     @click="startTutorial"
-    class="fixed bottom-4 right-4 bg-azure-800 text-white p-3 rounded-full shadow-lg hover:bg-azure-900 transition-colors z-50"
+    class="fixed bottom-16 right-6 bg-azure-800 text-white p-3 rounded-full shadow-md hover:bg-azure-900 transition-colors z-50"
     title="Iniciar Tutorial"
   >
-    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg class="w-5 h-5 " fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path
         stroke-linecap="round"
         stroke-linejoin="round"
@@ -14,14 +14,6 @@
       />
     </svg>
   </button>
-  <!-- Botão para testar confete -->
-    <button
-    @click="startConfettiBurst"
-    class="fixed bottom-4 left-4 bg-pink-600 text-white p-3 rounded-full shadow-lg hover:bg-pink-700 transition-colors z-50"
-    title="Testar Confete"
-    >
-    🎉
-    </button>
  
   <!-- Botões dinâmicos animados -->
   <transition-group
@@ -33,7 +25,7 @@
       v-for="(btn) in dynamicButtons"
       :key="btn.label"
       @click="btn.action"
-      class="px-4 py-2 rounded-lg bg-green-600 text-white shadow hover:bg-green-700 transition"
+      class="tutorial-nav-btn"
     >
       {{ btn.label }}
     </button>
@@ -45,15 +37,7 @@
 </template>
 
 <script setup>
-import { driver } from "driver.js";
-import "driver.js/dist/driver.css";
-import confetti from "canvas-confetti";
-import { ref, onMounted, nextTick } from "vue";
-
-const dynamicButtons = ref([]);
-const confettiCanvas = ref(null);
-let confettiInstance = null;
-
+// Função para abrir accordions durante o tutorial
 const openAccordion = (selector) => {
   const accordion = document.querySelector(selector);
   if (accordion && typeof accordion.click === 'function') {
@@ -63,6 +47,16 @@ const openAccordion = (selector) => {
     accordion.dispatchEvent(new Event('change'));
   }
 };
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
+import confetti from "canvas-confetti";
+import { ref, onMounted } from "vue";
+
+const dynamicButtons = ref([]);
+const confettiCanvas = ref(null);
+let confettiInstance = null;
+
+
 
 const startConfettiBurst = () => {
   if (!confettiInstance) {
@@ -73,11 +67,11 @@ const startConfettiBurst = () => {
     });
   }
 
-  const count = 460;
+  const count = 1000;
   const defaults = {
-    origin: { y: 0.7 },
+    origin: { y: 0.9 },
     spread: 90,
-    ticks: 100,
+    ticks: 120,
     zIndex: 9999,
     resize: true
   };
@@ -99,6 +93,7 @@ const startConfettiBurst = () => {
 };
 
 const driverObj = driver({
+  popoverClass: 'custom-tooltip', // ← Esta linha é crucial
   showProgress: true,
   showButtons: ["next", "previous", "close"],
   nextBtnText: "Próximo",
@@ -117,8 +112,8 @@ const driverObj = driver({
     // Step 1
     {
       popover: {
-        title: '<img src="/src/assets/images/inicioTutorial.png" style="max-width:300px" />👋 Bem-vindo ao painel de gratificação',
-        description: "Estamos felizes por você estar aqui! Este tutorial rápido vai te ajudar a entender todas as informações importantes sobre sua gratificação.<br><br><strong>Verifique se seus dados estão corretos.</strong>",
+        title: '<div style="font-size:20px"><img src="/src/assets/images/inicioTutorial.png" style="max-width:300px" />👋 Bem-vindo ao painel de gratificação</div>',
+        description: '<div style="font-size:15px ">Estamos felizes por você estar aqui! Este tutorial rápido vai te ajudar a entender todas as informações importantes sobre sua gratificação.<br><br><strong>Verifique se seus dados estão corretos.</strong></div>',
         position: "center",
       },
       onNext: () => {
@@ -132,8 +127,8 @@ const driverObj = driver({
     {
       element: "#tutorial-server-name",
       popover: {
-        title: "Nome do servidor",
-        description: "Este é o nome registrado no sistema para a gratificação.",
+        title: '<div style="font-size:20px">Nome do servidor</div>',
+        description: '<div style="font-size:15px">Este é o nome registrado no sistema para a gratificação.</div>',
         position: "bottom",
       },
       onNext: () => {
@@ -144,8 +139,8 @@ const driverObj = driver({
     {
       element: "#tutorial-value",
       popover: {
-        title: "Seu Valor de Gratificação",
-        description: "Aqui você visualiza o valor bruto da sua gratificação. Lembre-se que este valor não inclui os descontos de impostos.",
+        title: '<div style="font-size:20px">Seu Valor de Gratificação</div>',
+        description: '<div style="font-size:15px">Aqui você visualiza o valor bruto da sua gratificação. Lembre-se que este valor não inclui os descontos de impostos.</div>',
         position: "bottom",
       },
       onNext: () => {
@@ -158,8 +153,8 @@ const driverObj = driver({
     {
       element: "#tutorial-warning",
       popover: {
-        title:"",
-        description: "Os valores mostrados são brutos, sem os descontos de impostos que podem ser aplicados.",
+        title: '',
+        description: '<div style="font-size:15px">Os valores mostrados são brutos, sem os descontos de impostos que podem ser aplicados.</div>',
         position: "top",
       },
     },
@@ -167,8 +162,8 @@ const driverObj = driver({
     {
       element: "#tutorial-details",
       popover: {
-        title: "",
-        description: "Aqui mostrar todas as suas matriculas ativas e os detalhes de cada uma.",
+        title: '',
+        description: '<div style="font-size:15px">Aqui mostrar todas as suas matriculas ativas e os detalhes de cada uma.</div>',
         position: "top",
       },
       onHighlightStarted: () => {
@@ -179,8 +174,8 @@ const driverObj = driver({
     {
       element: "#tutorial-matricula-0",
       popover: {
-        title: "Detalhamento por matrícula",
-        description: "Visualize neste campo uma das suas matrículas que estão atualmente ativas no sistema.",
+        title: '<div style="font-size:20px">Detalhamento por matrícula</div>',
+        description: '<div style="font-size:15px">Visualize neste campo uma das suas matrículas que estão atualmente ativas no sistema.</div>',
         position: "top",
       },
       onHighlightStarted: () => {
@@ -191,8 +186,8 @@ const driverObj = driver({
     {
       element: "#painel-infos",
       popover: {
-        title: "Matrícula",
-        description: "Aqui estão os seus dados da sua matrícula",
+        title: '<div style="font-size:20px">Matrícula</div>',
+        description: '<div style="font-size:15px">Aqui estão os seus dados da sua matrícula</div>',
         position: "top",
       },
     },
@@ -200,9 +195,8 @@ const driverObj = driver({
     {
       element: "#tutorial-table-dados",
       popover: {
-        title:
-          " Dados da Matrícula",
-        description: "Nesse quadro mostra seus dados. Certifique que todos estão corretos!",
+        title: '<div style="font-size:20px">Dados da Matrícula</div>',
+        description: '<div style="font-size:15px">Nesse quadro mostra seus dados. Certifique que todos estão corretos!</div>',
         position: "top",
       },
     },
@@ -210,8 +204,8 @@ const driverObj = driver({
     {
       element: "#tutorial-valor-rede",
       popover: {
-        title: "",
-        description: "Aqui mostra o valor total da sua rede.",
+        title: '',
+        description: '<div style="font-size:15px">Aqui mostra o valor total da sua rede.</div>',
         position: "top",
       },
     },
@@ -219,8 +213,8 @@ const driverObj = driver({
     {
       element: "#tutorial-valor-unidade",
       popover: {
-        title: "",
-        description: "Aqui mostra o valor máximo recebido por unidade.",
+        title: '',
+        description: '<div style="font-size:15px">Aqui mostra o valor máximo recebido por unidade.</div>',
         position: "top",
       },
     },
@@ -228,8 +222,8 @@ const driverObj = driver({
     {
       element: "#tutorial-desconto",
       popover: {
-        title: "",
-        description: "Nesse campo mostra o desconto.",
+        title: '',
+        description: '<div style="font-size:15px">Nesse campo mostra o desconto.</div>',
         position: "top",
       },
     },
@@ -237,8 +231,8 @@ const driverObj = driver({
     {
       element: "#tutorial-valor-total",
       popover: {
-        title: "",
-        description: "É aqui, mostra o valor total que você ira receber.",
+        title: '',
+        description: '<div style="font-size:15px">É aqui, mostra o valor total que você ira receber.</div>',
         position: "top",
       },
     },
@@ -246,9 +240,8 @@ const driverObj = driver({
     {
       element: "#tutorial-criteria",
       popover: {
-        title:
-          'Critérios de aptidão',
-        description: 'Esta tabela mostra os 4 critérios principais: frequência (mín. 96%), tempo de atuação (mín. 6 meses), Formação e Atividades. Cada um, mostra se você está "Apto" ou "Não Apto".',
+        title: '<div style="font-size:20px">Critérios de aptidão</div>',
+        description: '<div style="font-size:15px">Esta tabela mostra os 4 critérios principais: frequência (mín. 96%), tempo de atuação (mín. 6 meses), Formação e Atividades. Cada um, mostra se você está "Apto" ou "Não Apto".</div>',
         position: "top",
       },
     },
@@ -256,8 +249,8 @@ const driverObj = driver({
     {
       element: "#tutorial-allocations",
       popover: {
-        title:"Alocações",
-        description: "Aqui você vê onde trabalhou durante o período, incluindo: unidade escolar, período (início/fim), função exercida, carga horária e grupo de gratificação.",
+        title: '<div style="font-size:20px">Alocações</div>',
+        description: '<div style="font-size:15px">Aqui você vê onde trabalhou durante o período, incluindo: unidade escolar, período (início/fim), função exercida, carga horária e grupo de gratificação.</div>',
         position: "top",
       },
     },
@@ -265,8 +258,8 @@ const driverObj = driver({
     {
       element: "#tutorial-frequency",
       popover: {
-        title:"Frequência",
-        description:"Esta seção mostra todos os seus afastamentos registrados: licenças, faltas justificadas, etc. Mostra as datas, tipo de afastamento e se foram contabilizados para o cálculo.",
+        title: '<div style="font-size:20px">Frequência</div>',
+        description: '<div style="font-size:15px">Esta seção mostra todos os seus afastamentos registrados: licenças, faltas justificadas, etc. Mostra as datas, tipo de afastamento e se foram contabilizados para o cálculo.</div>',
         position: "top",
       },
     },
@@ -274,16 +267,16 @@ const driverObj = driver({
     {
       element: "#tutorial-resource",
       popover: {
-        title:"Recurso",
-        description: 'Se você acha que alguma informação está incorreta ou quer contestar algum critério, clique em "Recurso". Você pode anexar documentos para comprovar seu ponto de vista.',
+        title: '<div style="font-size:20px">Recurso</div>',
+        description: '<div style="font-size:15px">Se você acha que alguma informação está incorreta ou quer contestar algum critério, clique em "Recurso". Você pode anexar documentos para comprovar seu ponto de vista.</div>',
         position: "left",
       },
     },
- // Step 17 - Final
+    // Step 17 - Final
     {
       popover: {
-        title: '<img src="/src/assets/images/TutorialConcluido.png" style="max-width:300px" />Você concluiu o tutorial!',
-        description: "Agora você está pronto para navegar pelo painel de gratificação e acompanhar as informações com facilidade.",
+        title: '<div style="font-size:20px"><img src="/src/assets/images/TutorialConcluido.png" style="max-width:300px" />Você concluiu o tutorial!</div>',
+        description: '<div style="font-size:15px">Agora você está pronto para navegar pelo painel de gratificação e acompanhar as informações com facilidade.</div>',
         position: "center",
       }
     },
@@ -295,40 +288,81 @@ const startTutorial = () => {
 };
 
 onMounted(() => {
-  nextTick(() => {
-    confettiInstance = confetti.create(confettiCanvas.value, {
-      resize: true,
-      useWorker: true,
-      disableForReducedMotion: true
-    });
-    window.dispatchEvent(new Event('resize'));
+  confettiInstance = confetti.create(confettiCanvas.value, {
+    resize: true,
+    useWorker: true,
+    disableForReducedMotion: true
   });
+  window.dispatchEvent(new Event('resize'));
 });
 </script>
 
-<style scoped>
+<style>
+
+.driver-popover-descrition {
+  font-size: 15px !important;
+  line-height: 1.5 !important;
+  color: #f0f9ff !important;
+}
+
+/* Força os estilos dos botões do driver.js popover */
+.driver-popover-next-btn {
+  background: linear-gradient(135deg, #152656 0%, #5cabfe 100%) !important;
+  color: #fff !important;
+  border-radius: 12px !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  min-width: 120px !important;
+  min-height: 48px !important;
+  padding: 12px 32px !important;
+  text-shadow: none !important;
+  border: none !important;
+}
+.driver-popover-next-btn:hover {
+  background: #3b6cae !important; 
+  color: #fff !important;
+}
+.driver-popover-prev-btn {
+  background:  linear-gradient(135deg, #222b44c2 0%, #92b5e7b0 100%) !important;
+  color: #fff !important;
+  border-radius: 12px !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  min-width: 120px !important;
+  min-height: 48px !important;
+  padding: 12px 32px !important;
+  text-shadow: none !important;
+  border: none !important;
+
+}
+.driver-popover-prev-btn:hover {
+  background: linear-gradient(135deg, #152656 0%, #5cabfe 100%) !important;
+  color: #fff !important;
+}
+
 /* Tooltip customizado */
 .custom-tooltip {
-  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%) !important;
-  color: #f0f9ff !important;
+  background: white!important;
+  color: #000000 !important;
   border-radius: 16px !important;
   padding: 20px !important;
   border: none !important;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
   max-width: 500px !important;
   width: 90vw !important;
-  font-family: "Inter", sans-serif !important;
 }
 
+
 .custom-tooltip h3 {
-  font-size: 1.35rem !important;
+  font-size: 20px !important;
   font-weight: 700 !important;
   margin-bottom: 12px !important;
   color: white !important;
 }
 
+
 .custom-tooltip p {
-  font-size: 1.05rem !important;
+  font-size: 15px !important;
   margin-top: 12px !important;
   line-height: 1.5 !important;
   color: #e0f2fe !important;
@@ -338,30 +372,6 @@ onMounted(() => {
   margin-top: 16px !important;
 }
 
-.custom-tooltip .driver-popover-btn {
-  border-radius: 8px !important;
-  padding: 8px 16px !important;
-  font-weight: 600 !important;
-  transition: all 0.2s !important;
-}
-
-.custom-tooltip .driver-popover-next-btn {
-  background-color: #10b981 !important;
-  color: white !important;
-}
-
-.custom-tooltip .driver-popover-next-btn:hover {
-  background-color: #059669 !important;
-}
-
-.custom-tooltip .driver-popover-prev-btn {
-  background-color: #3b82f6 !important;
-  color: white !important;
-}
-
-.custom-tooltip .driver-popover-prev-btn:hover {
-  background-color: #2563eb !important;
-}
 
 .custom-tooltip .driver-popover-close-btn {
   background-color: #ef4444 !important;
@@ -388,19 +398,6 @@ onMounted(() => {
   }
 }
 
-/* Animação botões */
-.fade-slide-enter-active,
-.fade-slide-leave-active {
-  transition: all 1.5s ease;
-}
-.fade-slide-enter-from {
-  opacity: 0;
-  transform: translateY(10px);
-}
-.fade-slide-leave-to {
-  opacity: 0;
-  transform: translateY(-10px);
-}
 
 /* Highlight do elemento */
 .driver-highlighted-element {
