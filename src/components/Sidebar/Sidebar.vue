@@ -27,7 +27,7 @@
                                   <ul role="list" class="flex flex-1 flex-col gap-y-5">
                                       <li>
                                           <ul role="list" class="-mx-2 grid gap-1">
-                                              <li v-for="item in filteredNavigation" :key="item.name">
+                                              <li v-for="item in filteredNavigation" :key="item.name" class="cursor-pointer">
                                                   <!-- Mobile - Se tem filhos, renderizar como expansível -->
                                                   <div v-if="item.children" class="relative">
                                                     <div
@@ -43,14 +43,14 @@
                                                     <TransitionRoot as="template" :show="isCalcMenuOpen">
                                                       <ul class="ml-3 mt-1 space-y-0.5">
                                                         <li v-for="child in item.children" :key="child.name">
-                                                          <router-link
-                                                            :to="child.route"
+                                                          <div
+                                                            @click="selectRoute(child)"
                                                             class="group flex gap-x-2 rounded-[10px] p-1 text-13 font-medium leading-5 transition-all duration-200"
                                                             :class="{ 'bg-gray-800 text-white': $route.path === child.route, 'hover:bg-primary-900 hover:text-white text-white': $route.path !== child.route }"
                                                           >
                                                             <component :is="child.icon" class="h-4 w-4 shrink-0" aria-hidden="true" />
                                                             <span>{{ child.name }}</span>
-                                                          </router-link>
+                                                        </div>
                                                         </li>
                                                       </ul>
                                                     </TransitionRoot>
@@ -125,7 +125,7 @@
                   <ul role="list" class="flex flex-1 flex-col gap-y-5">
                       <li>
                           <ul role="list" class="-mx-2 grid gap-1">
-                              <li v-for="item in filteredNavigation" :key="item.name">
+                              <li v-for="item in filteredNavigation" :key="item.name" class="cursor-pointer">
                                 <!-- If item has children, render as expandable -->
                                 <div v-if="item.children" class="relative">
                                   <div
@@ -141,15 +141,15 @@
                                   </div>
                                   <TransitionRoot as="template" :show="isCalcMenuOpen && !isSidebarMinimized">
                                     <ul class="ml-5 mt-1 space-y-0.5 relative z-40">
-                                      <li v-for="child in item.children" :key="child.name">
-                                        <router-link
-                                          :to="child.route"
+                                      <li v-for="child in item.children" :key="child.name" @click="selectRoute(item.route)">
+                                        <div
+                                          @click="selectRoute(child.route)"
                                           class="group flex gap-x-2 rounded-[10px] p-1 text-13 font-medium leading-5 transition-all duration-200"
                                           :class="{ 'bg-white/30 text-white': $route.path === child.route, 'hover:bg-white/30 hover:text-white text-white': $route.path !== child.route }"
                                         >
                                           <component :is="child.icon" class="h-auto w-4 shrink-0 stroke-white" aria-hidden="true" />
                                           <span class="text-13">{{ child.name }}</span>
-                                        </router-link>
+                                      </div>
                                       </li>
                                     </ul>
                                   </TransitionRoot>
@@ -278,31 +278,35 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getUserType, clearUserType } from '@/service/userType'
 
+function selectRoute(route) {
+  if (route) {
+    emit('update:route', route)
+  }
+}
+
 const routes = {
   'admin': [
+    { name: 'Dashboard', route: '/admin/dashboard', icon: Squares2X2Icon, current: false },
     { name: 'Novo Cálculo', route: '/home/create/selector', icon: CalculatorIcon, current: false },
     { name: 'Cálcular Alocação', route: '/home/alloc', icon: RectangleStackIcon, current: false },
     { name: 'Cálculo Anteriores', route: '/home/previousresults', icon: ChartBarIcon, current: false },
     { name: 'Recurso', route: '/resource', icon: ExclamationCircleIcon, current: false },
     { name: 'Painel do Usuário', route: '/home/dataversions', icon: CircleStackIcon, current: false },
     { name: 'Permissões Acessos', route: '/home/permissionsaccess', icon: UsersIcon , current: false },
-    {
-      name: 'Selecionar Cálculo',
-      icon: RectangleStackIcon,
-      children: [
-        { name: 'Dashboard', route: '/admin/dashboard', icon: Squares2X2Icon, current: false },
-        { name: 'Resultados IDEM', route: '/admin/results', icon: CalculatorIcon, current: false },
-        { name: 'Calendario Escolar', route: '/admin/calendar', icon: CalendarIcon, current: false },
-        { name: 'Profissionais', route: '/admin/professional', icon: UsersIcon, current: false },
-        { name: 'Turmas', route: '/admin/groups', icon: UserGroupIcon, current: false },
-        { name: 'Etapas Ues', route: '/admin/steps', icon: Square3Stack3DIcon, current: false },
-        { name: 'Etapas Por Grupo', route: '/admin/stagegroup', icon: RectangleGroupIcon, current: false },
-        { name: 'Frequência', route: '/admin/frequency', icon: ChartBarSquareIcon, current: false },
-        { name: 'Demissão', route: '/admin/resignation', icon: BriefcaseIcon, current: false },
-        { name: 'Atividades', route: '/admin/activities', icon: DocumentCheckIcon, current: false },
-        { name: 'Tempo de Atuação', route: '/admin/service', icon: CalendarDaysIcon, current: false },
-        { name: 'Formação', route: '/admin/training', icon: AcademicCapIcon, current: false },
-        { name: 'Relatórios Finais', route: '/admin/report', icon: DocumentTextIcon, current: false },
+    { name: 'Relatórios Finais', route: '/admin/report', icon: DocumentTextIcon, current: false },
+    { name: 'Detalhes do Cálculo', icon: RectangleStackIcon,
+      children: [        
+        { name: 'Resultados IDEM', route: 'Results', icon: CalculatorIcon, current: false },
+        { name: 'Calendario Escolar', route: 'Calendar', icon: CalendarIcon, current: false },
+        { name: 'Profissionais', route: 'Profissional', icon: UsersIcon, current: false },
+        { name: 'Turmas', route: 'Groups', icon: UserGroupIcon, current: false },
+        { name: 'Etapas Ues', route: 'Steps', icon: Square3Stack3DIcon, current: false },
+        { name: 'Etapas Por Grupo', route: 'StageGroup', icon: RectangleGroupIcon, current: false },
+        { name: 'Frequência', route: 'Frequency', icon: ChartBarSquareIcon, current: false },
+        { name: 'Demissão', route: 'Resignation', icon: BriefcaseIcon, current: false },
+        { name: 'Atividades', route: 'Activities', icon: DocumentCheckIcon, current: false },
+        { name: 'Tempo de Atuação', route: 'Service', icon: CalendarDaysIcon, current: false },
+        { name: 'Formação', route: 'Training', icon: AcademicCapIcon, current: false },
       ]
     }
   ],
@@ -315,9 +319,9 @@ const routes = {
 
 const props = defineProps({
   route: {
-    type: String,
-    required: true
-  }
+      type: String,
+      default: ''
+  },
 })
 
 const sidebarOpen = ref(false)
@@ -350,7 +354,6 @@ async function fetchUserName() {
       }
     })
     .then(response => {
-      console.log(response.data);
 
       // Verifica se os dados foram retornados corretamente
       if (response.data && response.data.first_name && response.data.last_name) {
@@ -380,7 +383,7 @@ onMounted(() => {
 })
 
 
-const emit = defineEmits(['update:isSidebarMinimized'])
+const emit = defineEmits(['update:isSidebarMinimized'],['update:route'])
 
 const filteredNavigation = computed(() => {
   const userType = getUserType();
