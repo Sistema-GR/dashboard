@@ -88,24 +88,24 @@ import axios from 'axios';
 import { STATUS_DEFINITIONS } from '@/config/resourceConstants.js';
 
 export default {
-    name:"Recurso",
-    components: {Whiteboard, Block, infoCard, FunnelIcon, Sidebar},
+    name: "Recurso",
+    components: { Whiteboard, Block, infoCard, FunnelIcon, Sidebar },
 
     setup() {
-    const router = useRouter()
-    const isSidebarMinimized = ref(false)
-    const recursos = ref([])
-    const selectedStatus = ref('aguardando_resposta')
-    const isLoading = ref(true)
+        const router = useRouter()
+        const isSidebarMinimized = ref(false)
+        const recursos = ref([])
+        const selectedStatus = ref('aguardando_resposta')
+        const isLoading = ref(true)
 
-    async function fetchRecursos() {
-          isLoading.value = true;
-          try {
-            const response = await axios.get('/recursos/admin/todos/', {
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-                }
-              });
+        async function fetchRecursos() {
+            isLoading.value = true;
+            try {
+                const response = await axios.get('/recursos/admin/todos/', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                    }
+                });
                 console.log("--- DADOS RECEBIDOS DA API EM Resource.vue ---", response.data);
                 recursos.value = response.data;
             } catch (error) {
@@ -124,48 +124,45 @@ export default {
             isSidebarMinimized.value = value
         }
 
-    const filteredRecursos = computed(() => {
-        if (!recursos.value) return [];
-        return recursos.value.filter(r => r.status === selectedStatus.value);
-      });
-    
-    const countByStatus = (status) => {
-        if (!recursos.value) return 0;
-        return recursos.value.filter(r => r.status === status).length;
-      };
+        const filteredRecursos = computed(() => {
+            if (!recursos.value) return [];
+            return recursos.value.filter(r => r.status === selectedStatus.value);
+        });
+        
+        const countByStatus = (status) => {
+            if (!recursos.value) return 0;
+            return recursos.value.filter(r => r.status === status).length;
+        };
 
-    function setStatusFilter(status) {
-        selectedStatus.value = status;
-      }
-    
-    async function handleStatusUpdate({ recursoId, newStatus }) {
-      try {
-          
-          const index = recursos.value.findIndex(r => r.id === recursoId);
+        function setStatusFilter(status) {
+            selectedStatus.value = status;
+        }
+        
+        async function handleStatusUpdate({ recursoId, newStatus }) {
+            try {
+                const index = recursos.value.findIndex(r => r.id === recursoId);
+                if (index === -1) {
+                    console.error("Recurso não encontrado na lista local.");
+                    return;
+                }
+                
+                const response = await axios.patch(`/recursos/${recursoId}/`, { status: newStatus }, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                    }
+                });
 
-          if (index === -1) {
-              console.error("Recurso não encontrado na lista local.");
-              return;
-          }
-          
-          const response = await axios.patch(`/recursos/${recursoId}/`, { status: newStatus }, {
-              headers: {
-                  'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-              }
-          });
+                recursos.value[index] = response.data;
+            } catch (error) {
+                console.error("Erro ao atualizar o status:", error);
+            }
+        }
 
-          recursos.value[index] = response.data;
-          
-      } catch (error) {
-          console.error("Erro ao atualizar o status:", error);
-      }
-  }
+        const navigateToAnnualReports = () => {
+            router.push('/admin/recursos/relatorios-anuais')
+        }
 
-    const navigateToAnnualReports = () => {
-      router.push('/admin/recursos/relatorios-anuais')
-    }
-
-    const activeStatusStyle = computed(() => {
+        const activeStatusStyle = computed(() => {
             return STATUS_DEFINITIONS[selectedStatus.value] || {};
         });
         
@@ -182,23 +179,23 @@ export default {
             return colorMap[colorKey] || colorMap['gray'];
         });
 
+        provide('isSidebarMinimized', isSidebarMinimized)
 
-    provide('isSidebarMinimized', isSidebarMinimized)
-
-    return {
-      isSidebarMinimized,
-      handleSidebarMinimized,
-      recursos,
-      isLoading,
-      selectedStatus,
-      filteredRecursos,
-      countByStatus,
-      setStatusFilter,
-      handleStatusUpdate,
-      navigateToAnnualReports,
-      activeStatusStyle,
-      STATUS_DEFINITIONS,
-      activeStatusColorClass
-    }
+        return {
+            isSidebarMinimized,
+            handleSidebarMinimized,
+            recursos,
+            isLoading,
+            selectedStatus,
+            filteredRecursos,
+            countByStatus,
+            setStatusFilter,
+            handleStatusUpdate,
+            navigateToAnnualReports,
+            activeStatusStyle,
+            STATUS_DEFINITIONS,
+            activeStatusColorClass,
+        }
+    },
 }
 </script>
