@@ -2,6 +2,7 @@
     <Sidebar :route="'admin'" @update:isSidebarMinimized="handleSidebarMinimized" class="z-50"/>
     <Whiteboard title="Recurso" class="!overflow-visible overflow-y-auto z-40 relative" :isSidebarMinimized="isSidebarMinimized">
 
+
 <!-- Header com botão de relatórios -->
         <div class="flex justify-end items-center px-4 sm:px-10 py-4">
           <button 
@@ -40,13 +41,6 @@
               @click="setStatusFilter('aguardando_envio')" 
             />
             <Block 
-              title="Fora do Prazo" 
-              :number="countByStatus('fora_do_prazo')" 
-              :isActive="selectedStatus === 'fora_do_prazo'"
-              :colorKey="STATUS_DEFINITIONS['fora_do_prazo'].colorKey"
-              @click="setStatusFilter('fora_do_prazo')" 
-            />
-            <Block 
               title="Respondido" 
               :number="countByStatus('respondido')" 
               :isActive="selectedStatus === 'respondido'"
@@ -70,6 +64,7 @@
               :key="recurso.id" 
               :recurso="recurso"
               @status-updated="handleStatusUpdate"
+              @responsavel-updated="handleResponsavelUpdate"
             />
           <div v-if="!filteredRecursos.length && !isLoading" class="text-center text-gray-500 py-10">
             Nenhum recurso encontrado.
@@ -113,21 +108,21 @@ export default {
               });
                 console.log("--- DADOS RECEBIDOS DA API EM Resource.vue ---", response.data);
                 recursos.value = response.data;
-          } catch (error) {
+            } catch (error) {
                 console.error('Erro ao buscar recursos:', error);
                 if (error.response && error.response.status === 403) {
-                  alert("Você não tem permissão para visualizar esta página.");
+                    alert("Você não tem permissão para visualizar esta página.");
                 }
-          } finally {
+            } finally {
                 isLoading.value = false;
-          }
-    }
+            }
+        }
 
-    onMounted(fetchRecursos);
+        onMounted(fetchRecursos);
 
-    function handleSidebarMinimized(value) {
-        isSidebarMinimized.value = value
-    }
+        function handleSidebarMinimized(value) {
+            isSidebarMinimized.value = value
+        }
 
     const filteredRecursos = computed(() => {
         if (!recursos.value) return [];
@@ -173,8 +168,8 @@ export default {
     const activeStatusStyle = computed(() => {
             return STATUS_DEFINITIONS[selectedStatus.value] || {};
         });
-    
-     const activeStatusColorClass = computed(() => {
+        
+        const activeStatusColorClass = computed(() => {
             const colorKey = activeStatusStyle.value.colorKey;
             const colorMap = {
                 blue: 'bg-[#6fa3ef]',
@@ -186,6 +181,7 @@ export default {
             };
             return colorMap[colorKey] || colorMap['gray'];
         });
+
 
     provide('isSidebarMinimized', isSidebarMinimized)
 
@@ -204,7 +200,5 @@ export default {
       STATUS_DEFINITIONS,
       activeStatusColorClass
     }
-  }
 }
-
 </script>

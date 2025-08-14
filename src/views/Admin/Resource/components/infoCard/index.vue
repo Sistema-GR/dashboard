@@ -17,6 +17,7 @@
                     </div>
                 </div>
 
+
                 <!-- Motivo centralizado -->
                 <div class="flex flex-col items-center flex-grow">
                     <p class="text-sm lg:text-15 font-bold text-black mb-1">Motivo</p>
@@ -50,6 +51,7 @@
                 </div>
             </div>
         </div>
+
 
         <!-- Layout Mobile -->
         <div class="md:hidden">
@@ -106,27 +108,36 @@
                 </div>
             </router-link>
         </div>
-    </div>
+    
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue';
-import { UserIcon } from "@heroicons/vue/24/outline";
+import { ref, computed, onMounted, watch  } from 'vue';
+import { UserIcon, ExclamationTriangleIcon } from "@heroicons/vue/24/outline";
 import Badges from '@/components/Badges/Badges.vue';
 import { STATUS_DEFINITIONS } from '@/config/resourceConstants.js';
+import axios from 'axios';
 
 export default {
     name: "infoCard",
-    components: { UserIcon, Badges },
+    components: { UserIcon, Badges, ExclamationTriangleIcon },
     props: {
         recurso: {
             type: Object,
             required: true
         }
     },
-    emits: ['status-updated'],
+    emits: ['status-updated', 'responsavel-updated'],
     setup(props, { emit }) {
         const isMenuOpen = ref(false);
+        const isHoveringBadges = ref(false);
+
+        const remainingBadgesCount = computed(() => {
+            if (!props.recurso?.criterios_selecionados || props.recurso.criterios_selecionados.length <= 1) {
+                return 0;
+            }
+            return props.recurso.criterios_selecionados.length - 1;
+        });
 
         const allStatusesList = Object.entries(STATUS_DEFINITIONS).map(([key, value]) => ({
             key: key,
@@ -143,11 +154,45 @@ export default {
             return result;
         });
 
-        watch(() => props.recurso, (newVal, oldVal) => {
-            console.log(`--- WATCH: A prop 'recurso' para o ID ${newVal.id} mudou! ---`);
-            console.log("Valor antigo:", oldVal);
-            console.log("Novo valor:", newVal);
-        }, { deep: true });
+        const staffList = ref([]);
+        const selectedResponsavelId = ref(props.recurso.responsavel);
+        watch(() => props.recurso.responsavel, (newId) => {
+            selectedResponsavelId.value = newId;
+        });
+        
+        async function fetchStaffUsers() {
+            try {
+                const response = await axios.get('/auth/staff-users/', {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+                });
+                staffList.value = response.data;
+            } catch (err) {
+                console.error("Erro ao buscar lista de administradores:", err);
+            }
+        }
+
+        onMounted(() => {
+            fetchStaffUsers();
+        });
+
+ 
+        async function updateResponsavel() {
+
+            const userId = selectedResponsavelId.value;
+
+            try {
+                const response = await axios.patch(`/recursos/${props.recurso.id}/`, { responsavel: userId }, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+                });
+                emit('responsavel-updated', response.data);
+
+
+            } catch (err) {
+                console.error("Erro ao atribuir responsável:", err);
+                alert("Não foi possível atualizar o responsável.");
+                selectedResponsavelId.value = props.recurso.responsavel;
+            }
+        }
 
         function changeStatus(newStatus) {
             emit('status-updated', { recursoId: props.recurso.id, newStatus: newStatus });
@@ -157,7 +202,12 @@ export default {
         return {
             isMenuOpen,
             possibleStatuses,
-            changeStatus
+            changeStatus,
+            isHoveringBadges,
+            remainingBadgesCount,
+            selectedResponsavelId,
+            staffList,
+            updateResponsavel,
         };
     }
 }

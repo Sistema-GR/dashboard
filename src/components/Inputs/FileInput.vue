@@ -2,8 +2,8 @@
   <div class="space-y-5">
     <label class="text-15 font-medium">{{ Label }}</label>
     <!-- Drag & Drop / Click area -->
-    <div
-      class="border-2 border-dashed rounded-[10px] p-6 text-center cursor-pointer transition-colors duration-200"
+    <div class="border-2 border-dashed rounded-[10px] p-6 text-center cursor-pointer transition-colors duration-200"
+
       :class="isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300'"
       @click="openFileDialog"
       @dragover.prevent="onDragOver"

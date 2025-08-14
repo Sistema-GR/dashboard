@@ -90,8 +90,4 @@ export const STATUS_DEFINITIONS = {
         label: 'Respondido',
         colorKey: 'orange',
     },
-    'fora_do_prazo': {
-        label: 'Fora do Prazo',
-        colorKey: 'teal',
-    },
 };

@@ -2,6 +2,7 @@
     <Sidebar :route="'admin'" @update:isSidebarMinimized="handleSidebarMinimized" class="z-50"/>
     <Whiteboard :title="`Detalhes do Recurso #${resourceId}`" class="!overflow-visible overflow-y-auto z-40 relative" :isSidebarMinimized="isSidebarMinimized" >
 
+
         <div class="flex flex-col w-full gap-4 px-4 sm:px-6 lg:px-8 py-4">
             <div v-if="isLoading" class="text-center p-10">Carregando dados...</div>
             <div v-else-if="error" class="text-center p-10 text-red-500">{{ error }}</div>
@@ -36,6 +37,7 @@
                     </div>
                 </div>
 
+
                 <!-- CARD DE DADOS DO SERVIDOR -->
                 <div class="flex flex-col w-full p-4 bg-white border rounded-[10px] shadow-lg">
                     <p class="text-sm sm:text-15 font-bold mb-3">Dados do Servidor</p>
@@ -58,6 +60,7 @@
                     </div>
                     <p v-else class="text-xs sm:text-sm text-gray-500">Nenhuma categoria definida.</p>
                 </div>
+
 
                 <!-- CARD DE RESPOSTA -->
                 <div class="flex flex-col w-full p-4 bg-white border rounded-[10px] shadow-lg">
@@ -94,23 +97,38 @@
                     </div>
                 </div>
             </div>
+            
+            <div v-if="recurso.respostas && recurso.respostas.length" class="flex flex-col w-full mt-5 p-4 bg-white border rounded-[10px] shadow-lg">
+              <p class="text-15 font-bold mb-2">Histórico de Respostas</p>
+              <ul>
+                <li v-for="response in recurso.respostas" :key="response.id" class="border-b py-2">
+                  <p>{{ response.texto }}</p>
+                  <p class="text-xs text-gray-500 mt-1">Por: {{ response.autor_nome }} em {{ new Date(response.created_at).toLocaleString() }}</p>
+                    <button @click="deleteResponse(response.id)" 
+                            class="flex-shrink-0 p-2 rounded-full hover:bg-red-100 text-red-500 transition-colors"
+                            title="Deletar esta resposta">
+                    <TrashIcon class="w-5 h-5" />
+                    </button>
+                </li>
+              </ul>
+            </div>
         </div>
     </Whiteboard>
 </template>
 
 <script>
-import { ref, inject, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
 import Badges from '@/components/Badges/Badges.vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
-import { UserIcon, ChevronDownIcon } from "@heroicons/vue/24/outline";
+import { UserIcon, ChevronDownIcon, TrashIcon, ExclamationTriangleIcon, PaperClipIcon  } from "@heroicons/vue/24/outline";
 import { MOTIVOS_RECURSO } from '@/config/resourceConstants.js';
 import Sidebar from '@/components/Sidebar/Sidebar.vue';
 
 export default {
     name: "InfoDetails",
-    components: { Whiteboard, UserIcon, Badges, ChevronDownIcon, Sidebar },
+    components: { Whiteboard, UserIcon, Badges, ChevronDownIcon, Sidebar, TrashIcon, ExclamationTriangleIcon, PaperClipIcon },
     
     setup() {
         const isSidebarMinimized = ref(false);
@@ -174,8 +192,82 @@ export default {
             }
         }
         
+        async function deleteResponse(responseId) {
+
+            if (!window.confirm("Tem certeza que deseja deletar esta resposta? A ação não pode ser desfeita.")) {
+                return;
+            }
+
+            try {
+
+                await axios.delete(`/recursos/resposta/${responseId}/`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+                });
+
+
+                if (recurso.value && recurso.value.respostas) {
+                    recurso.value.respostas = recurso.value.respostas.filter(
+                        resp => resp.id !== responseId
+                    );
+                }
+
+            } catch (err) {
+                console.error("Erro ao deletar a resposta:", err);
+            
+                if (err.response && err.response.status === 403) {
+                    alert("Você não tem permissão para deletar esta resposta.");
+                } else {
+                    alert("Ocorreu um erro ao tentar deletar a resposta.");
+                }
+            }
+        }
+
+
+        
+        const downloadAuthenticatedFile = async (doc) => {
+            try {
+                const accessToken = localStorage.getItem('accessToken');
+                if (!accessToken) {
+                    console.error("Token de acesso não encontrado.");
+                    return;
+                }
+
+                const response = await axios({
+                    url: doc.download_url, 
+                    method: 'GET',
+                    responseType: 'blob',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                
+                const filename = doc.arquivo.split('/').pop();
+                link.setAttribute('download', filename);
+                
+                document.body.appendChild(link);
+                link.click();
+                
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+
+            } catch (error) {
+                console.error("Erro ao baixar o arquivo:", error);
+                alert("Não foi possível baixar o arquivo.");
+            }
+        };
+
+
+
         function handleSidebarMinimized(value) {
             isSidebarMinimized.value = value
+        }
+
+        function getFilename(url) {
+            if (!url) return 'Documento';
+            return decodeURIComponent(url.split('/').pop());
         }
 
         onMounted(fetchData);
@@ -193,6 +285,9 @@ export default {
             isReportResponseOpen,
             newResponseText,
             submitReportResponse,
+            deleteResponse,
+            getFilename,
+            downloadAuthenticatedFile,
         };
     }
 };

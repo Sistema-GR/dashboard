@@ -57,8 +57,8 @@ export const canAccessRoute = (route) => {
     '/user/faqs',
     '/user/criteria',
     '/user/form',
-    '/user/view',
-    '/user/edit',
+    '/user/view/',
+    '/user/edit/',
     '/user/sucess',
     '/user/config',
     '/home/overview',
@@ -78,7 +78,8 @@ export const canAccessRoute = (route) => {
     '/resource/info'
   ];
   
-  return regularUserAccessibleRoutes.includes(route);
+ return regularUserAccessibleRoutes.some(allowedPath => 
+  route.startsWith(allowedPath));
 };
 
 /**

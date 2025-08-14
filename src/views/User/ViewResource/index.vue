@@ -1,6 +1,6 @@
 <template>
 
-    <Whiteboard :title="`Detalhes do Recurso #${resourceId}`" :isSidebarMinimized="isSidebarMinimized">
+    <Whiteboard class="!overflow-visible overflow-y-auto z-40" :title="`Detalhes do Recurso #${resourceId}`" :isSidebarMinimized="isSidebarMinimized">
         
         
         <div v-if="isLoading" class="text-center p-10">
@@ -44,18 +44,17 @@
                 <h3 class="text-20 font-bold mb-2">Descrição</h3>
                 <p class="text-gray-700 whitespace-pre-wrap">{{ resource.descricao }}</p>
             </div>
-
             
             <div class="bg-white p-4 rounded-[10px] shadow-sm border">
                 <h3 class="text-20 font-bold mb-2">Motivo do Recurso</h3>
                 <p class="text-15 text-gray-500">A ser categorizado pelo responsável.</p>
             </div>
-
            
             <div class="bg-white p-4 rounded-[10px] shadow-sm border">
                 <h3 class="text-20 font-bold mb-2">Documentos Anexados</h3>
                 <div v-if="resource.documentos && resource.documentos.length > 0" class="space-y-2">
-                    <a v-for="doc in resource.documentos" :key="doc.id" :href="doc.arquivo_url" download @click.stop class="flex items-center gap-2 p-2 rounded-[10px] bg-blue-50 hover:bg-blue-100 text-blue-700 transition-colors">
+                    <a v-for="doc in resource.documentos" :key="doc.id" @click.prevent="downloadAuthenticatedFile(doc)" 
+                    class="flex items-center gap-2 p-2 rounded-md bg-blue-50 hover:bg-blue-100 text-blue-700 transition-colors cursor-pointer">
                         <PaperClipIcon class="w-5 h-5" />
                         <span class="underline">{{ doc.arquivo.split('/').pop() }}</span>
                     </a>
@@ -96,6 +95,42 @@ export default {
         const isLoading = ref(true);
         const error = ref(null);
 
+
+        const downloadAuthenticatedFile = async (doc) => {
+            try {
+                const accessToken = localStorage.getItem('accessToken');
+                if (!accessToken) {
+                    console.error("Token de acesso não encontrado.");
+                    return;
+                }
+
+                const response = await axios({
+                    url: doc.download_url, 
+                    method: 'GET',
+                    responseType: 'blob',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                
+                const filename = doc.arquivo.split('/').pop();
+                link.setAttribute('download', filename);
+                
+                document.body.appendChild(link);
+                link.click();
+                
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+
+            } catch (error) {
+                console.error("Erro ao baixar o arquivo:", error);
+                alert("Não foi possível baixar o arquivo.");
+            }
+        };
+
         const formatDate = (dateString) => {
             if (!dateString) return 'N/A';
             return new Date(dateString).toLocaleDateString('pt-BR', {
@@ -112,6 +147,7 @@ export default {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
                 });
                 resource.value = response.data;
+
             } catch (err) {
                 console.error("Erro ao buscar detalhes do recurso:", err);
                 error.value = "Não foi possível carregar os detalhes deste recurso. Verifique se ele existe e se você tem permissão para visualizá-lo.";
@@ -128,7 +164,8 @@ export default {
             resourceId,
             isLoading,
             error,
-            formatDate
+            formatDate,
+            downloadAuthenticatedFile 
         };
     }
 };
