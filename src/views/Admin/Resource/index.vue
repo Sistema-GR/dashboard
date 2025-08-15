@@ -17,8 +17,8 @@
           </button>
         </div>
 
-        <div class="w-full py-8 pt-2 px-4 sm:px-10">
-          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        <div class="w-full py-8 pt-2 px-6 sm:px-10">
+          <div class="grid grid-cols-1 gap-5 xl:gap-10 lg:grid-cols-2 xl:grid-cols-4">
             <Block 
               title="Aguardando Resposta" 
               :number="countByStatus('aguardando_resposta')" 
