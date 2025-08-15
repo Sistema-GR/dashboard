@@ -153,7 +153,6 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  
   const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
   const userType = getUserType();
 
@@ -178,6 +177,7 @@ router.beforeEach((to, from, next) => {
   if (!canAccessRoute(to.path)) {
     return next({ path: getDashboardRoute() });
   }
+
   next();
 });
 
