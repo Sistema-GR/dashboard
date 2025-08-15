@@ -10,13 +10,11 @@
                             <UserIcon class="w-12 h-12 lg:w-14 lg:h-14 text-[#003965]"/>
                         </div>
                     </div>
-                    
                     <div class="flex flex-col">
                         <h3 class="text-sm lg:text-15 font-bold text-black mb-1">{{ recurso.nome_completo }}</h3>
                         <p class="text-sm lg:text-15 text-black">Matrícula: {{ recurso.matricula }}</p>
                     </div>
                 </div>
-
 
                 <!-- Motivo centralizado -->
                 <div class="flex flex-col items-center flex-grow">
@@ -51,7 +49,6 @@
                 </div>
             </div>
         </div>
-
 
         <!-- Layout Mobile -->
         <div class="md:hidden">
@@ -108,7 +105,7 @@
                 </div>
             </router-link>
         </div>
-    
+    </div>
 </template>
 
 <script>
