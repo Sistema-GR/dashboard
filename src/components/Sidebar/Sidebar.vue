@@ -3,7 +3,7 @@
       <TransitionRoot as="template" :show="sidebarOpen">
           <Dialog class="relative z-50 lg:hidden" @close="sidebarOpen = false">
               <TransitionChild as="template" enter="transition-opacity ease-linear" enter-from="opacity-0" enter-to="opacity-100" leave="transition-opacity ease-linear duration-300" leave-from="opacity-100" leave-to="opacity-0">
-                  <div class="fixed inset-0 bg-gray-900/80" />
+                  <div class="fixed inset-0 bg-gray-900/80"/>
               </TransitionChild>
 
               <div class="fixed inset-0 flex">
@@ -44,7 +44,7 @@
                                                       <ul class="ml-3 mt-1 space-y-0.5">
                                                         <li v-for="child in item.children" :key="child.name">
                                                           <div
-                                                            @click="selectRoute(child)"
+                                                            @click="selectRoute(child.id)"
                                                             class="group flex gap-x-2 rounded-[10px] p-1 text-13 font-medium leading-5 transition-all duration-200"
                                                             :class="{ 'bg-gray-800 text-white': $route.path === child.route, 'hover:bg-primary-900 hover:text-white text-white': $route.path !== child.route }"
                                                           >
@@ -141,9 +141,9 @@
                                   </div>
                                   <TransitionRoot as="template" :show="isCalcMenuOpen && !isSidebarMinimized">
                                     <ul class="ml-5 mt-1 space-y-0.5 relative z-40">
-                                      <li v-for="child in item.children" :key="child.name" @click="selectRoute(item.route)">
+                                      <li v-for="child in item.children" :key="child.name">
                                         <div
-                                          @click="selectRoute(child.route)"
+                                          @click="selectRoute(child.id)"
                                           class="group flex gap-x-2 rounded-[10px] p-1 text-13 font-medium leading-5 transition-all duration-200"
                                           :class="{ 'bg-white/30 text-white': $route.path === child.route, 'hover:bg-white/30 hover:text-white text-white': $route.path !== child.route }"
                                         >
@@ -279,8 +279,10 @@ import { useRoute, useRouter } from 'vue-router'
 import { getUserType, clearUserType } from '@/service/userType'
 
 function selectRoute(route) {
-  if (route) {
+  if (route=='Report') {
     emit('update:route', route)
+  } else{
+    router.push('/admin/report')
   }
 }
 
@@ -293,20 +295,20 @@ const routes = {
     { name: 'Recurso', route: '/resource', icon: ExclamationCircleIcon, current: false },
     { name: 'Painel do Usuário', route: '/home/dataversions', icon: CircleStackIcon, current: false },
     { name: 'Permissões Acessos', route: '/home/permissionsaccess', icon: UsersIcon , current: false },
-    { name: 'Relatórios Finais', route: '/admin/report', icon: DocumentTextIcon, current: false },
     { name: 'Detalhes do Cálculo', icon: RectangleStackIcon,
       children: [        
-        { name: 'Resultados IDEM', route: 'Results', icon: CalculatorIcon, current: false },
-        { name: 'Calendario Escolar', route: 'Calendar', icon: CalendarIcon, current: false },
-        { name: 'Profissionais', route: 'Profissional', icon: UsersIcon, current: false },
-        { name: 'Turmas', route: 'Groups', icon: UserGroupIcon, current: false },
-        { name: 'Etapas Ues', route: 'Steps', icon: Square3Stack3DIcon, current: false },
-        { name: 'Etapas Por Grupo', route: 'StageGroup', icon: RectangleGroupIcon, current: false },
-        { name: 'Frequência', route: 'Frequency', icon: ChartBarSquareIcon, current: false },
-        { name: 'Demissão', route: 'Resignation', icon: BriefcaseIcon, current: false },
-        { name: 'Atividades', route: 'Activities', icon: DocumentCheckIcon, current: false },
-        { name: 'Tempo de Atuação', route: 'Service', icon: CalendarDaysIcon, current: false },
-        { name: 'Formação', route: 'Training', icon: AcademicCapIcon, current: false },
+        { name: 'Resultados IDEM', route: '/admin/report', id: 'Results', icon: CalculatorIcon, current: false },
+        { name: 'Calendario Escolar', route: '/admin/report', id: 'Calendar', icon: CalendarIcon, current: false },
+        { name: 'Profissionais', route: '/admin/report', id: 'Profissional', icon: UsersIcon, current: false },
+        { name: 'Turmas', route: '/admin/report', id: 'Groups', icon: UserGroupIcon, current: false },
+        { name: 'Etapas Ues', route: '/admin/report', id: 'Steps', icon: Square3Stack3DIcon, current: false },
+        { name: 'Etapas Por Grupo', route: '/admin/report', id: 'StageGroup', icon: RectangleGroupIcon, current: false },
+        { name: 'Frequência', route: '/admin/report', id: 'Frequency', icon: ChartBarSquareIcon, current: false },
+        { name: 'Demissão', route: '/admin/report', id: 'Resignation', icon: BriefcaseIcon, current: false },
+        { name: 'Atividades', route: '/admin/report', id: 'Activities', icon: DocumentCheckIcon, current: false },
+        { name: 'Tempo de Atuação', route: '/admin/report', id: 'Service', icon: CalendarDaysIcon, current: false },
+        { name: 'Formação', route: '/admin/report', id: 'Training', icon: AcademicCapIcon, current: false },
+        { name: 'Relatórios Finais', route: '/admin/report', id: 'Report', icon: DocumentTextIcon, current: false },
       ]
     }
   ],

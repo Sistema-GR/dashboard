@@ -88,10 +88,8 @@
 </template>
 
 <script>
-import { ref, onMounted, reactive } from 'vue'
-import Sidebar from '@/components/Sidebar/Sidebar.vue'
+import { ref, onMounted, reactive, inject } from 'vue'
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue'
-import { UserIcon } from '@heroicons/vue/24/outline'
 import { getAccessToken } from '@/service/token'
 
 export default {
@@ -100,7 +98,6 @@ export default {
     setup() {
         // Injetar o valor ou usar false como fallback
         const isSidebarMinimized = inject('isSidebarMinimized', ref(false))
-        
         const salvando = ref(false)
         const senhasNaoConferem = ref(false)
 
@@ -156,12 +153,9 @@ export default {
                 //userRole.value = data.role || 'Cargo não disponível';
                 formData.cpf = data.cpf || 'Não disponível';
                 formData.email = data.email || 'Não disponível';
-
-                console.error('Erro ao carregar dados:', error)
             }
             catch (error) {
                 console.error("Erro ao obter dados:", error);
-                console.error('Erro ao salvar:', error)
                 alert(`Erro ao salvar configurações: ${error.message}`)
             } finally {
                 salvando.value = false
@@ -173,7 +167,7 @@ export default {
             const token = localStorage.getItem('accessToken')
 
             try {
-                const response = await fetch('http://10.203.2.98:8000/auth/user-update/', {
+                const response = await fetch('http://127.0.0.1:8000/auth/user-update/', {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
