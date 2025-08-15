@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { getUserType, canAccessRoute, getDashboardRoute } from '@/service/userType'
 //Auth
 import login from '../views/Auth/Login/index.vue'
 import register from '../views/Auth/Register/index.vue'
@@ -18,15 +19,11 @@ import roles from '@/views/Admin/Roles/index.vue'
 import create from '@/views/Admin/Create/index.vue'
 import selector from '@/views/Admin/Create/Selector/Index.vue'
 import editversion from '@/views/Admin/Create/EditVersions/index.vue'
+import permissionsaccess from '@/views/Admin/PermissionsAccess/index.vue'
 //Resource
 import resource from '@/views/Admin/Resource/index.vue'
-import newResource from '@/views/Admin/Resource/NewResource/index.vue'
-import inprogress from '@/views/Admin/Resource/InProgress/index.vue'
-import awaiting from '@/views/Admin/Resource/Awaiting/index.vue'
-import reopened from '@/views/Admin/Resource/Reopened/index.vue'
-import completed from '@/views/Admin/Resource/Completed/index.vue'
-import cancel from '@/views/Admin/Resource/Cancel/index.vue'
 import infodetails from '@/views/Admin/Resource/InfoDetails/index.vue'
+import annualReports from '@/views/Admin/Resource/AnnualResource/AnnualReportsDashboard.vue'
 //AdminPanel
 import adminPanel from '@/views/AdminPanel/index.vue'
 import dash from '@/views/AdminPanel/Dashboard/index.vue'
@@ -76,6 +73,7 @@ const router = createRouter({
         { path: 'config', name: 'configs', component: config },
         { path: 'alloc', name: 'alloc', component: alloc },
         { path: 'dataversions', name: 'dataversions', component: dataversions },
+        { path: 'permissionsaccess', name: 'PermissionsAccess', component: permissionsaccess },
         {
           path: 'create',
           name: 'create',
@@ -124,8 +122,9 @@ const router = createRouter({
         { path: 'faqs', name: 'faqs', component: faqs },
         { path: 'criteria', name: 'criteria', component: criteria },
         { path: 'status', name: 'status', component: status },
-        { path: 'view', name: 'view', component: view }, 
-        { path: 'edit', name: 'edit', component: edit },
+        // { path: 'view', name: 'view', component: view }, 
+        { path: 'view/:id', name: 'view', component: view },
+        { path: 'edit/:id', name: 'edit', component: edit },
         { path: 'sucess', name: 'sucess', component: sucess },
         { path: 'config', name: 'config', component: config },
       ]
@@ -134,40 +133,52 @@ const router = createRouter({
       name: 'resource', 
       component: resource,
       children: [
-        { path: 'new', name: 'newResource', component: newResource },
-        { path: 'inprogress', name: 'inprogress', component: inprogress },
-        { path: 'awaiting', name: 'awaiting', component: awaiting },
-        { path: 'reopened', name: 'reopened', component: reopened },
-        { path: 'completed', name: 'completed', component: completed },
-        { path: 'canceled', name: 'cancel', component: cancel },
         { path: 'info', name: 'info', component: infodetails },
+        { path: 'relatorios-anuais', name: 'annual-reports', component: annualReports },
       ]
+    },
+    { 
+      path: '/resource/info/:id',
+      name: 'resource-details',
+      component: infodetails,
+      props: true
+    },
+    // Rota adicional para acessar diretamente os relatórios anuais
+    { 
+      path: '/admin/recursos/relatorios-anuais',
+      name: 'admin-annual-reports',
+      component: annualReports
     },
   ]
 })
 
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true'; // Verifica se o usuário está autenticado
-
-  if (
-    (
-      to.name !== 'login' &&
-      to.name !== 'register' &&
-      to.name !== 'forgotpassword' &&
-      to.name !== 'changepassword' &&
-      to.name !== 'insertcode'
-    ) &&
-    !isAuthenticated
-  ) {
-    return next({ name: '' });
-  }
   
-  // Se o usuário estiver autenticado e tentar acessar login ou registro, redireciona para a página principal
-  if (isAuthenticated && (to.name === 'login' || to.name === 'register')) {
-    return next({ name: 'home' }); // Ou para a página que você deseja
+  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+  const userType = getUserType();
+
+  // Public routes that don't require authentication
+  const publicRoutes = ['login', 'register', 'forgotpassword', 'changepassword', 'insertcode'];
+  
+  if (publicRoutes.includes(to.name)) {
+    // If user is authenticated and trying to access auth pages, redirect to appropriate dashboard
+    if (isAuthenticated) {
+      const redirectPath = getDashboardRoute();
+      return next({ path: redirectPath });
+    }
+    return next();
   }
 
-  next(); // Permite navegação
+  // Check if user is authenticated
+  if (!isAuthenticated) {
+    return next({ name: 'login' });
+  }
+
+  // Check if user can access the route
+  if (!canAccessRoute(to.path)) {
+    return next({ path: getDashboardRoute() });
+  }
+  next();
 });
 
 export default router;

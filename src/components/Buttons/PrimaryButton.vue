@@ -1,7 +1,7 @@
 <template>
      <button 
         v-bind="$attrs"
-        :class="`flex w-full items-center justify-center px-2 py-4 text-white rounded-xl font-bold ${customColor}`">
+        :class="`flex w-full items-center justify-center px-2 py-4 text-white rounded-[10px] font-bold ${customColor}`">
         {{ value }}
     </button>
 </template>
