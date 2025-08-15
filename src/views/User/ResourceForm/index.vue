@@ -95,7 +95,7 @@
                                 @change="handleFileUpload" 
                                 multiple 
                                 class="hidden" 
-                                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/png"
                             />
                             <label for="file-upload" class="cursor-pointer">
                                 <div class="space-y-2">
