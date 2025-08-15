@@ -44,11 +44,6 @@
                 <h3 class="text-20 font-bold mb-2">Descrição</h3>
                 <p class="text-gray-700 whitespace-pre-wrap">{{ resource.descricao }}</p>
             </div>
-            
-            <div class="bg-white p-4 rounded-[10px] shadow-sm border">
-                <h3 class="text-20 font-bold mb-2">Motivo do Recurso</h3>
-                <p class="text-15 text-gray-500">A ser categorizado pelo responsável.</p>
-            </div>
            
             <div class="bg-white p-4 rounded-[10px] shadow-sm border">
                 <h3 class="text-20 font-bold mb-2">Documentos Anexados</h3>
