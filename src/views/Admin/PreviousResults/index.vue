@@ -3,7 +3,7 @@
     <!-- Seção para exibir os anos -->
     <div v-for="category in categories" :key="category.name" class="mb-4 w-full">
       <!-- Exibindo o ano -->
-      <div class="flex flex-row items-center justify-between px-4 sm:px-10 p-5 shadow-ms cursor-pointer bg-[#e3f0ff]" @click="toggleDropdown(category)">
+      <div class="flex flex-row items-center justify-between px-4 sm:px-10 p-8 shadow-ms cursor-pointer bg-[#e3f0ff]" @click="toggleDropdown(category)">
         <p class="text-25 font-semibold text-black">
           {{ category.name }}  <!-- Exibindo o ano -->
         </p>

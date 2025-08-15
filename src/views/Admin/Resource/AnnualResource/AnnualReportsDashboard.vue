@@ -1,0 +1,318 @@
+<template>
+  <Whiteboard title="Relatórios Anuais" :isSidebarMinimized="isSidebarMinimized">
+    
+    <!-- Filtros -->
+    <ReportFilters 
+      v-model:filters="filters"
+      :availableUnits="availableUnits"
+      :availableAdmins="availableAdmins"
+      @filter-change="onFilterChange"
+      @clear-filters="clearFilters"
+      @export-data="exportData"
+    />
+
+    <!-- Resumo Geral -->
+    <ReportSummary :stats="filteredStats" />
+
+    <!-- Cards de Estatísticas -->
+    <StatsCards :stats="filteredStats" />
+
+    <!-- Gráficos de Pizza -->
+    <PieCharts 
+      ref="pieChartsRef"
+      :data="filteredResources"
+    />
+
+    <!-- Gráficos de Barras -->
+    <BarCharts 
+      ref="barChartsRef"
+      :data="filteredResources"
+      :availableUnits="availableUnits"
+    />
+
+    <!-- Tabela de Responsáveis -->
+    <ResponsibleTable :stats="responsibleStats" />
+
+  </Whiteboard>
+</template>
+
+<script>
+import Whiteboard from '@/components/Whiteboard/Whiteboard.vue'
+import ReportFilters from '@/views/Admin/Resource/AnnualResource/components/ReportFilters.vue'
+import ReportSummary from '@/views/Admin/Resource/AnnualResource/components/ReportSummary.vue'
+import StatsCards from '@/views/Admin/Resource/AnnualResource/components/StatsCards.vue'
+import PieCharts from '@/views/Admin/Resource/AnnualResource/components/PieCharts.vue'
+import BarCharts from '@/views/Admin/Resource/AnnualResource/components/BarCharts.vue'
+import ResponsibleTable from '@/views/Admin/Resource/AnnualResource/components/ResponsibleTable.vue'
+import { ref, inject, onMounted, computed, watch } from 'vue'
+import axios from 'axios'
+import { getAccessToken } from '@/service/token'
+
+export default {
+  name: 'AnnualReportsDashboard',
+  components: { 
+    Whiteboard, 
+    ReportFilters, 
+    ReportSummary, 
+    StatsCards, 
+    PieCharts, 
+    BarCharts, 
+    ResponsibleTable 
+  },
+  
+  setup() {
+    const isSidebarMinimized = inject('isSidebarMinimized')
+    
+    // Refs
+    const pieChartsRef = ref(null)
+    const barChartsRef = ref(null)
+    
+    const filters = ref({
+      year: new Date().getFullYear(),
+      unidade_atuacao: '',
+      categoria: '',
+      equipe_responsavel: '',
+      responsavel: '',
+      status: '',
+      conclusao: '',
+      periodo: ''
+    })
+    
+    const resourcesData = ref([])
+    const availableUnits = ref([])
+    const availableAdmins = ref([])
+    
+    // Computed
+    const filteredResources = computed(() => {
+      let filtered = resourcesData.value
+      
+      if (filters.value.year) {
+        filtered = filtered.filter(item => 
+          new Date(item.created_at).getFullYear() === parseInt(filters.value.year)
+        )
+      }
+      
+      if (filters.value.unidade_atuacao) {
+        filtered = filtered.filter(item => 
+          item.unidade_atuacao_id === parseInt(filters.value.unidade_atuacao)
+        )
+      }
+      
+      if (filters.value.categoria) {
+        filtered = filtered.filter(item => 
+          item.criterios_selecionados?.includes(filters.value.categoria)
+        )
+      }
+      
+      if (filters.value.equipe_responsavel) {
+        filtered = filtered.filter(item => 
+          item.equipe_responsavel === filters.value.equipe_responsavel
+        )
+      }
+      
+      if (filters.value.responsavel) {
+        filtered = filtered.filter(item => 
+          item.responsavel_id === parseInt(filters.value.responsavel)
+        )
+      }
+      
+      if (filters.value.status) {
+        filtered = filtered.filter(item => 
+          item.status === filters.value.status
+        )
+      }
+      
+      if (filters.value.conclusao) {
+        filtered = filtered.filter(item => 
+          item.conclusao === filters.value.conclusao
+        )
+      }
+      
+      if (filters.value.periodo) {
+        const now = new Date()
+        let startDate = new Date()
+        
+        switch (filters.value.periodo) {
+          case 'ultimo_mes':
+            startDate.setMonth(now.getMonth() - 1)
+            break
+          case 'ultimo_trimestre':
+            startDate.setMonth(now.getMonth() - 3)
+            break
+          case 'ultimo_semestre':
+            startDate.setMonth(now.getMonth() - 6)
+            break
+          case 'ultimo_ano':
+            startDate.setFullYear(now.getFullYear() - 1)
+            break
+        }
+        
+        filtered = filtered.filter(item => 
+          new Date(item.created_at) >= startDate
+        )
+      }
+      
+      return filtered
+    })
+    
+    const filteredStats = computed(() => {
+      const resources = filteredResources.value
+      return {
+        total: resources.length,
+        respondidos: resources.filter(r => r.status === 'respondido').length,
+        deferidos: resources.filter(r => r.conclusao === 'deferido').length,
+        indeferidos: resources.filter(r => r.conclusao === 'indeferido').length,
+        parcialmente_deferidos: resources.filter(r => r.conclusao === 'parcialmente_deferido').length
+      }
+    })
+    
+    const responsibleStats = computed(() => {
+      const stats = {}
+      const total = filteredResources.value.length
+      
+      filteredResources.value.forEach(resource => {
+        const responsibleId = resource.responsavel_id
+        const responsibleName = getResponsibleName(responsibleId)
+        
+        if (!stats[responsibleId]) {
+          stats[responsibleId] = {
+            id: responsibleId,
+            name: responsibleName,
+            total: 0,
+            deferidos: 0,
+            indeferidos: 0,
+            parcialmente_deferidos: 0,
+            percentage: 0
+          }
+        }
+        
+        stats[responsibleId].total++
+        
+        if (resource.conclusao) {
+          stats[responsibleId][resource.conclusao]++
+        }
+      })
+      
+      Object.values(stats).forEach(stat => {
+        stat.percentage = total > 0 ? ((stat.total / total) * 100).toFixed(1) : 0
+      })
+      
+      return Object.values(stats).sort((a, b) => b.total - a.total)
+    })
+    
+    // Methods
+    const onFilterChange = () => {
+      updateCharts()
+    }
+    
+    const clearFilters = () => {
+      filters.value = {
+        year: new Date().getFullYear(),
+        unidade_atuacao: '',
+        categoria: '',
+        equipe_responsavel: '',
+        responsavel: '',
+        status: '',
+        conclusao: '',
+        periodo: ''
+      }
+      updateCharts()
+    }
+    
+    const exportData = async () => {
+      try {
+        const token = await getAccessToken()
+        const queryParams = new URLSearchParams()
+        
+        Object.entries(filters.value).forEach(([key, value]) => {
+          if (value) queryParams.append(key, value)
+        })
+        
+        const response = await axios.get(`/recursos/export/?${queryParams.toString()}`, {
+          headers: { Authorization: `Bearer ${token}` },
+          responseType: 'blob'
+        })
+        
+        const url = window.URL.createObjectURL(new Blob([response.data]))
+        const link = document.createElement('a')
+        link.href = url
+        link.setAttribute('download', `relatorio_recursos_${filters.value.year}.xlsx`)
+        document.body.appendChild(link)
+        link.click()
+        link.remove()
+        window.URL.revokeObjectURL(url)
+      } catch (error) {
+        console.error('Erro ao exportar dados:', error)
+      }
+    }
+    
+    const getResponsibleName = (responsibleId) => {
+      const admin = availableAdmins.value.find(admin => admin.id === responsibleId)
+      return admin ? `${admin.first_name} ${admin.last_name}` : 'N/A'
+    }
+    
+    const updateCharts = () => {
+      if (pieChartsRef.value) {
+        pieChartsRef.value.updateCharts()
+      }
+      if (barChartsRef.value) {
+        barChartsRef.value.updateCharts()
+      }
+    }
+    
+    const fetchData = async () => {
+      try {
+        const token = await getAccessToken()
+        if (!token) return
+        
+        const queryParams = new URLSearchParams()
+        Object.entries(filters.value).forEach(([key, value]) => {
+          if (value) queryParams.append(key, value)
+        })
+        
+        const resourcesResponse = await axios.get(`/recursos/?${queryParams.toString()}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        resourcesData.value = resourcesResponse.data
+        
+        const unitsResponse = await axios.get('/unidades/', {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        availableUnits.value = unitsResponse.data
+        
+        const adminsResponse = await axios.get('/users/admin/', {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        availableAdmins.value = adminsResponse.data
+        
+        updateCharts()
+      } catch (error) {
+        console.error('Erro ao buscar dados:', error)
+      }
+    }
+    
+    watch(filters, () => {
+      fetchData()
+    }, { deep: true })
+    
+    onMounted(() => {
+      fetchData()
+    })
+    
+    return {
+      isSidebarMinimized,
+      pieChartsRef,
+      barChartsRef,
+      filters,
+      availableUnits,
+      availableAdmins,
+      filteredResources,
+      filteredStats,
+      responsibleStats,
+      onFilterChange,
+      clearFilters,
+      exportData
+    }
+  }
+}
+</script>
