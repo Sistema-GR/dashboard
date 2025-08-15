@@ -1,20 +1,20 @@
 <template>
   <Whiteboard title="Gerenciamento de Arquivos" :isSidebarMinimized="isSidebarMinimized">
-    <div class="flex w-full flex-col gap-5 my-3">
+    <div class="flex w-full flex-col gap-5 my-3 px-4 sm:px-10">
       <!-- Seção de Arquivos Processados -->
       <div>
-        <div class="flex items-center justify-between cursor-pointer bg-gray-100 p-3 rounded-lg" @click="toggleProcessed">
-          <h2 class="text-xl font-semibold text-gray-800">Arquivos Processados</h2>
+        <div class="flex items-center justify-between cursor-pointer bg-gray-100 p-3 rounded-[10px]" @click="toggleProcessed">
+          <h2 class="text-20 font-semibold text-gray-800">Arquivos Processados</h2>
           <ChevronDownIcon class="h-5 w-5 text-gray-500 transition-transform" :class="{ 'rotate-180': isProcessedOpen }" />
         </div>
         <transition name="fade">
           <div v-show="isProcessedOpen">
-            <div v-for="file in processedFiles" :key="file.id" class="bg-white border border-gray-200 rounded-lg shadow-md p-4 mt-2">
+            <div v-for="file in processedFiles" :key="file.id" class="bg-white border border-gray-200 rounded-[10px] shadow-md p-4 mt-2">
               <div class="flex flex-col">
                 <div class="flex items-center justify-between cursor-pointer" @click="toggleFile(file)">
                   <div class="flex items-center space-x-3">
                     <DocumentIcon class="h-6 w-6 text-gray-500" />
-                    <h3 class="text-lg font-semibold text-gray-700">{{ file.name }}</h3>
+                    <h3 class="text-15 font-semibold text-gray-700">{{ file.name }}</h3>
                   </div>
                   <ChevronDownIcon class="h-5 w-5 text-gray-500 transition-transform" :class="{ 'rotate-180': file.isOpen }" />
                 </div>
@@ -22,7 +22,7 @@
                   <div v-show="file.isOpen" class="ml-6 mt-2 space-y-2">
                     <p class="text-gray-500 text-md">{{ file.filename }}</p>
                     <div class="flex justify-end">
-                      <button class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition" @click="baixarArquivo(file.filename)">
+                      <button class="bg-blue-600 text-white px-4 py-2 rounded-[10px] hover:bg-blue-700 transition" @click="baixarArquivo(file.filename)">
                         <CloudArrowDownIcon class="h-5 w-5 inline mr-1" /> Download
                       </button>
                     </div>
@@ -36,18 +36,18 @@
 
       <!-- Seção de Arquivos Importados -->
       <div>
-        <div class="flex items-center justify-between cursor-pointer bg-gray-100 p-3 rounded-lg" @click="toggleImported">
-          <h2 class="text-xl font-semibold text-gray-800">Arquivos Importados</h2>
+        <div class="flex items-center justify-between cursor-pointer bg-gray-100 p-3 rounded-[10px]" @click="toggleImported">
+          <h2 class="text-20 font-semibold text-gray-800">Arquivos Importados</h2>
           <ChevronDownIcon class="h-5 w-5 text-gray-500 transition-transform" :class="{ 'rotate-180': isImportedOpen }" />
         </div>
         <transition name="fade">
           <div v-show="isImportedOpen">
-            <div v-for="file in importedFiles" :key="file.id" class="bg-white border border-gray-200 rounded-lg shadow-md p-4 mt-2">
+            <div v-for="file in importedFiles" :key="file.id" class="bg-white border border-gray-200 rounded-[10px] shadow-md p-4 mt-2">
               <div class="flex flex-col">
                 <div class="flex items-center justify-between cursor-pointer" @click="toggleFile(file)">
                   <div class="flex items-center space-x-3">
                     <DocumentIcon class="h-6 w-6 text-gray-500" />
-                    <h3 class="text-lg font-semibold text-gray-700">{{ file.name }}</h3>
+                    <h3 class="text-15 font-semibold text-gray-700">{{ file.name }}</h3>
                   </div>
                   <ChevronDownIcon class="h-5 w-5 text-gray-500 transition-transform" :class="{ 'rotate-180': file.isOpen }" />
                 </div>
@@ -55,11 +55,11 @@
                   <div v-show="file.isOpen" class="ml-6 mt-2 space-y-2">
                     <p class="text-gray-500 text-md">{{ file.filename }}</p>
                     <div class="flex justify-end space-x-3">
-                      <button class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition" @click="fazerEdicao">
+                      <button class="bg-blue-600 text-white px-4 py-2 rounded-[10px] hover:bg-blue-700 transition" @click="fazerEdicao">
                         <CloudArrowDownIcon class="h-5 w-5 inline mr-1" /> Download
                       </button>
                       <button 
-                        class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 transition"
+                        class="bg-yellow-600 text-white px-4 py-2 rounded-[10px] hover:bg-yellow-700 transition"
                         @click="fazerEdicao"
                       >
                         <PencilIcon class="h-5 w-5 inline mr-1" /> Editar
@@ -74,10 +74,10 @@
       </div>
         <!-- Botões de ação -->
         <div class="flex justify-end gap-4">
-          <button @click="$router.push('/admin/dashboard')" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition">
+          <button @click="$router.push('/admin/dashboard')" class="bg-blue-600 text-white px-4 py-2 rounded-[10px] hover:bg-blue-700 transition">
             Voltar
           </button>
-          <button class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition" @click="fazerRecalculo">
+          <button class="bg-red-600 text-white px-4 py-2 rounded-[10px] hover:bg-red-700 transition" @click="fazerRecalculo">
             Recalcular
           </button>
         </div>
@@ -212,7 +212,19 @@ export default {
       file.isOpen = !file.isOpen;
     };
 
-    return { isSidebarMinimized, importedFiles, processedFiles, isProcessedOpen, isImportedOpen, toggleProcessed, toggleImported, toggleFile, baixarArquivo, fazerEdicao, fazerRecalculo };
+    return { 
+      isSidebarMinimized,
+      importedFiles,
+      processedFiles,
+      isProcessedOpen,
+      isImportedOpen,
+      toggleProcessed,
+      toggleImported,
+      toggleFile,
+      baixarArquivo,
+      fazerEdicao,
+      fazerRecalculo
+    };
   }
 };
 </script>

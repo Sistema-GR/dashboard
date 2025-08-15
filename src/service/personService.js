@@ -53,6 +53,8 @@ export default function usePersonService(){
 
       const columns = Object.keys(data[0]).map(key => ({ key, label: key }));
       const people = data.map(item => ({ ...item, matricula: item.matricula }));
+      
+      // console.log(people);
 
       return { people, columns };
     } catch (error) {
