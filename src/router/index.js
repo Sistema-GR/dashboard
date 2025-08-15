@@ -23,6 +23,7 @@ import permissionsaccess from '@/views/Admin/PermissionsAccess/index.vue'
 //Resource
 import resource from '@/views/Admin/Resource/index.vue'
 import infodetails from '@/views/Admin/Resource/InfoDetails/index.vue'
+import annualReports from '@/views/Admin/Resource/AnnualResource/AnnualReportsDashboard.vue'
 //AdminPanel
 import adminPanel from '@/views/AdminPanel/index.vue'
 import dash from '@/views/AdminPanel/Dashboard/index.vue'
@@ -132,8 +133,8 @@ const router = createRouter({
       name: 'resource', 
       component: resource,
       children: [
-
         { path: 'info', name: 'info', component: infodetails },
+        { path: 'relatorios-anuais', name: 'annual-reports', component: annualReports },
       ]
     },
     { 
@@ -141,6 +142,12 @@ const router = createRouter({
       name: 'resource-details',
       component: infodetails,
       props: true
+    },
+    // Rota adicional para acessar diretamente os relatórios anuais
+    { 
+      path: '/admin/recursos/relatorios-anuais',
+      name: 'admin-annual-reports',
+      component: annualReports
     },
   ]
 })

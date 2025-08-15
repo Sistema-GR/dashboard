@@ -2,12 +2,12 @@
     <Whiteboard title="." :isSidebarMinimized="isSidebarMinimized">
 
         <div class="flex py-4 px-6 shadow-md w-full z-50 items-center justify-center bg-gradient-to-r from-azure-800 to-primary-900">
-            <h1 class="text-20 text-white text-center font-black uppercase tracking-wide sm:text-25 lg:text-30 whitespace-nowrap">Painel da Gratificação</h1>
+            <h1 id="tutorial-title" class="text-20 text-white text-center font-black uppercase tracking-wide sm:text-25 lg:text-30 whitespace-nowrap">Painel da Gratificação</h1>
         </div>
        
         <div class="flex flex-col items-center justify-center w-full gap-5 pt-8 pb-4 lg:px-10 lg:gap-10 lg:flex-row">
 
-            <div class="w-full px-10" v-if="savedData.length > 0">
+            <div id="tutorial-server-name" class="w-full px-10" v-if="savedData.length > 0">
                 <div :class="`flex flex-col items-center justify-center bg-transparent rounded-[10px]`">
                     <div class="flex items-center justify-center w-full py-3 rounded-[10px] bg-azure-800">
                         <p class="text-white text-20 font-semibold">Nome Do Servidor</p>
@@ -18,7 +18,7 @@
                 </div>
             </div>
 
-            <div class="w-full px-10" v-if="savedData.length > 0">
+            <div id="tutorial-value" class="w-full px-10" v-if="savedData.length > 0">
                 <div :class="`flex flex-col items-center justify-center bg-transparent rounded-[10px]`">
                     <div class="flex items-center justify-center w-full py-3 rounded-[10px] bg-azure-800">
                         <p class="text-white text-20 font-semibold">Valor</p>
@@ -31,7 +31,7 @@
 
         </div>
 
-        <div class="flex w-full items-center justify-center py-8 px-10">
+        <div id="tutorial-warning" class="flex w-full items-center justify-center py-8 px-10">
             <p class="text-red-600 text-20 lg:text-25 font-medium text-center">Aviso: os valores nesta página não consideram eventuais descontos de impostos.</p>
         </div>
 
@@ -51,7 +51,7 @@
 
         <Disclosure>
             <template #default="{ open }">
-                <DisclosureButton class="flex flex-row w-full items-center justify-between py-4 px-5 bg-azure-800 hover:bg-gray-400 ease-in-out duration-200 cursor-pointer">
+                <DisclosureButton id="tutorial-details" class="flex flex-row w-full items-center justify-between py-4 px-5 bg-azure-800 hover:bg-gray-400 ease-in-out duration-200 cursor-pointer">
                     <p class="text-20 font-bold text-white">Detalhamento por matrícula</p>
                     <ChevronDownIcon class="w-6 h-auto transform transition-transform text-white" :class="{ 'rotate-180': open }" />
                 </DisclosureButton>
@@ -59,7 +59,7 @@
 
                     <Disclosure v-for="(item, index) in savedData" :key="index">
                         <template #default="{open}">
-                            <DisclosureButton class="flex flex-row w-full items-center justify-between py-4 px-5 bg-[#7597da] text-black ease-in-out duration-200 cursor-pointer">
+                            <DisclosureButton :id="`tutorial-matricula-${index}`" class="flex flex-row w-full items-center justify-between py-4 px-5 bg-[#7597da] text-black ease-in-out duration-200 cursor-pointer">
                                 <p class="text-20 font-bold text-white">Matrícula {{ item?.dados?.matricula }}</p>
                                 <ChevronDownIcon class="w-6 h-auto transform text-white transition-transform " :class="{'rotate-180': open}" />
                             </DisclosureButton>
@@ -67,7 +67,7 @@
 
                                 <div class="w-full mt-10 min-w-[875px]">
                                     <div class="min-w-[875px]">
-                                        <table class="w-full border-collapse rounded-[10px] shadow-lg">
+                                        <table id="painel-infos" class="w-full border-collapse rounded-[10px] shadow-lg">
                                             <thead>
                                                 <tr class="bg-azure-800 text-gray-100 text-20">
                                                     <th v-for="(header, index) in ['Descrição', 'Dados', 'Valores a Receber', 'Total']" :key="index" class="p-4 font-semibold text-left whitespace-nowrap">{{ header }}</th>
@@ -80,7 +80,7 @@
                                                         <p v-for="(label, index) in ['Nome:', 'CPF:', 'Matrícula:', 'Cargo:']" :key="index">{{ label }}</p>
                                                     </td>
 
-                                                    <td class="p-4 border-r border-gray-200 text-gray-700 whitespace-nowrap">
+                                                    <td id="tutorial-table-dados" class="p-4 border-r border-gray-200 text-gray-700 whitespace-nowrap">
                                                         <p class="capitalize">{{ item?.dados?.nome }}</p>
                                                         <p>{{ item?.dados?.cpf }}</p>
                                                         <p>{{ item?.dados?.matricula }}</p>
@@ -92,10 +92,10 @@
                                                     </td>
 
                                                     <td class="p-4 text-gray-700 font-semibold whitespace-nowrap">
-                                                        <p>{{ formatCurrency(item?.profissionais[0]?.valor_gr_rede) }}</p>
-                                                        <p>{{ formatCurrency(item?.profissionais[0]?.valor_gr_unidade) }}</p>
-                                                        <p>{{ formatCurrency(item?.dados?.desconto) }}</p>
-                                                        <p>{{ formatCurrency(item?.dados?.valor_total) }}</p>
+                                                        <p id="tutorial-valor-rede">{{ formatCurrency(item?.profissionais[0]?.valor_gr_rede) }}</p>
+                                                        <p id="tutorial-valor-unidade">{{ formatCurrency(item?.profissionais[0]?.valor_gr_unidade) }}</p>
+                                                        <p id="tutorial-desconto">{{ formatCurrency(item?.dados?.desconto) }}</p>
+                                                        <p id="tutorial-valor-total">{{ formatCurrency(item?.dados?.valor_total) }}</p>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -103,7 +103,7 @@
                                     </div>
                                 </div>
 
-                                <div class="flex flex-col w-full items-center shadow-lg mt-10 min-w-[875px]  rounded-[10px] bg-white">
+                                <div id="tutorial-criteria" class="flex flex-col w-full items-center shadow-lg mt-10 min-w-[875px]  rounded-[10px] bg-white">
                                     <div class="flex w-full border-b items-center justify-center bg-azure-800 py-4 rounded-t-lg">
                                         <p class="text-25  text-center font-semibold text-white">Critérios de verificação para gratificação</p>
                                     </div>
@@ -182,7 +182,7 @@
                                     </div>
                                 </div>
 
-                                <div class="flex flex-col w-full items-center mt-10 shadow-lg rounded-[10px] bg-gray-50 min-w-[875px]">
+                                <div id="tutorial-allocations" class="flex flex-col w-full items-center mt-10 shadow-lg rounded-[10px] bg-gray-50 min-w-[875px]">
                                     <div class="flex w-full items-center justify-center bg-azure-800 py-4 rounded-t-lg border shadow-md">
                                         <p class="text-25 font-semibold text-white">Alocações em 2024</p>
                                     </div>
@@ -239,7 +239,7 @@
                                     </div>
                                 </div>
 
-                                <div class="flex flex-col w-full items-center normal-case overflow-hidden mt-10 min-w-[875px] shadow-lg mb-10 rounded-[10px] bg-gray-50">
+                                <div id="tutorial-frequency" class="flex flex-col w-full items-center normal-case overflow-hidden mt-10 min-w-[875px] shadow-lg mb-10 rounded-[10px] bg-gray-50">
 
                                     <div class="flex w-full border-b items-center justify-center bg-azure-800 py-3 rounded-t-lg">
                                         <p class="text-25 text-center font-semibold text-white">Frequência (Afastamentos)</p>
@@ -281,7 +281,7 @@
 
         <div class="flex w-full items-center justify-end mr-3 mb-3">
             <router-link to="/user/form">
-                <div class="flex flex-row items-center justify-center px-5 py-2 mt-10 gap-1 bg-tropical-blue-200 hover:bg-gray-400 ease-in-out duration-200 cursor-pointer rounded-[10px]">
+                <div id="tutorial-resource" class="flex flex-row items-center justify-center px-5 py-2 mt-10 gap-1 bg-tropical-blue-200 hover:bg-gray-400 ease-in-out duration-200 cursor-pointer rounded-[10px]">
                     <ExclamationCircleIcon class="w-6 h-auto" />
                     <p class="font-medium">Recurso</p>
                 </div>
@@ -289,6 +289,7 @@
         </div>
       
     </Whiteboard>
+    <Tutorial />
 </template>
 
 <script setup>
@@ -296,9 +297,15 @@ import { inject, ref, onMounted, onBeforeUnmount, computed } from 'vue';
 import { ChevronDownIcon, ExclamationCircleIcon, ArrowDownIcon } from "@heroicons/vue/24/outline";
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
+import Tutorial from '@/components/Tutorial/Tutorial.vue';
+import 'driver.js/dist/driver.css';
 
 const isSidebarMinimized = inject('isSidebarMinimized');
 const savedData = ref([]);
+
+const startTutorial = () => {
+    driverObj.drive();
+};
 
 const processarDados = (rawData) => {
   const matriculaMap = {};
@@ -368,6 +375,15 @@ const formatCurrency = (value) => {
 
 onMounted(() => {
   carregarDados();
+  
+  // Verificar se é a primeira visita e iniciar tutorial automaticamente
+  const hasSeenTutorial = localStorage.getItem('hasSeenGratificationTutorial');
+  if (!hasSeenTutorial) {
+    setTimeout(() => {
+      startTutorial();
+      localStorage.setItem('hasSeenGratificationTutorial', 'true');
+    }, 1000);
+  }
 });
 
 onBeforeUnmount(() => {
