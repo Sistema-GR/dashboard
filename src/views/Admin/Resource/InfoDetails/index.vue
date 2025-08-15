@@ -86,6 +86,24 @@
                         </div>
                     </div>
                 </div>
+
+                <div v-if="recurso.documentos && recurso.documentos.length > 0" 
+                class="flex flex-col w-full mt-5 p-4 bg-white border rounded-[10px] shadow-lg">
+                    <p class="text-15 font-bold mb-2">Documentos Anexados</p>
+                    <ul class="space-y-2">
+
+                        <li v-for="doc in recurso.documentos" :key="doc.id">
+
+                            <a @click.prevent="downloadAuthenticatedFile(doc)" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            class="flex items-center gap-2 text-blue-600 hover:text-blue-800 hover:underline transition-colors text-sm cursor-pointer">
+                            <PaperClipIcon class="w-4 h-4" />
+                            <span>{{ getFilename(doc.arquivo) }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
                 
                 <div v-if="recurso.respostas && recurso.respostas.length" class="flex flex-col w-full mt-5 p-4 bg-white border rounded-[10px] shadow-lg">
                     <p class="text-15 font-bold mb-2">Histórico de Respostas</p>

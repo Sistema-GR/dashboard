@@ -2,10 +2,10 @@
   <!-- Botão fixo para iniciar tutorial -->
   <button
     @click="startTutorial"
-    class="fixed bottom-16 right-6 bg-azure-800 text-white p-3 rounded-full shadow-md hover:bg-azure-900 transition-colors z-50"
+    class="fixed bottom-16 right-6 bg-azure-800 text-white p-3 rounded-full shadow-md hover:bg-azure-900 transition-colors z-50 sm:bottom-20 sm:right-8 md:p-4"
     title="Iniciar Tutorial"
   >
-    <svg class="w-5 h-5 " fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path
         stroke-linecap="round"
         stroke-linejoin="round"
@@ -19,13 +19,13 @@
   <transition-group
     name="fade-slide"
     tag="div"
-    class="fixed bottom-20 right-4 sm:bottom-28 sm:right-8 flex flex-col gap-2 z-50"
+    class="fixed bottom-20 right-4 sm:bottom-28 sm:right-8 md:bottom-32 md:right-12 flex flex-col gap-2 z-50"
   >
     <button
       v-for="(btn) in dynamicButtons"
       :key="btn.label"
       @click="btn.action"
-      class="tutorial-nav-btn"
+      class="tutorial-nav-btn px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-base md:px-6 md:py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap"
     >
       {{ btn.label }}
     </button>
@@ -93,7 +93,7 @@ const startConfettiBurst = () => {
 };
 
 const driverObj = driver({
-  popoverClass: 'custom-tooltip', // ← Esta linha é crucial
+  popoverClass: 'custom-tooltip',
   showProgress: true,
   showButtons: ["next", "previous", "close"],
   nextBtnText: "Próximo",
@@ -101,7 +101,6 @@ const driverObj = driver({
   doneBtnText: "Fim",
   closeBtnText: "Voltar",
   progressText: "Passo {{current}}/{{total}}",
-  popoverClass: "custom-tooltip",
   overlayColor: "rgba(0, 0, 0, 0.6)",
   allowClose: false,
   onDestroyed: () => {
@@ -112,8 +111,8 @@ const driverObj = driver({
     // Step 1
     {
       popover: {
-        title: '<div style="font-size:20px"><img src="/src/assets/images/inicioTutorial.png" style="max-width:300px" />👋 Bem-vindo ao painel de gratificação</div>',
-        description: '<div style="font-size:15px ">Estamos felizes por você estar aqui! Este tutorial rápido vai te ajudar a entender todas as informações importantes sobre sua gratificação.<br><br><strong>Verifique se seus dados estão corretos.</strong></div>',
+        title: '<div class="titulo-img"><img src="/src/assets/images/inicioTutorial.png" class="responsive-img" />👋 Bem-vindo ao painel de gratificação</div>',
+        description: '<div class="descricao">Estamos felizes por você estar aqui! Este tutorial rápido vai te ajudar a entender todas as informações importantes sobre sua gratificação.<br><br><strong>Verifique se seus dados estão corretos.</strong></div>',
         position: "center",
       },
       onNext: () => {
@@ -127,8 +126,8 @@ const driverObj = driver({
     {
       element: "#tutorial-server-name",
       popover: {
-        title: '<div style="font-size:20px">Nome do servidor</div>',
-        description: '<div style="font-size:15px">Este é o nome registrado no sistema para a gratificação.</div>',
+        title: '<div class="titulo-img">Nome do servidor</div>',
+        description: '<div class="descricao">Este é o nome registrado no sistema para a gratificação.</div>',
         position: "bottom",
       },
       onNext: () => {
@@ -139,8 +138,8 @@ const driverObj = driver({
     {
       element: "#tutorial-value",
       popover: {
-        title: '<div style="font-size:20px">Seu Valor de Gratificação</div>',
-        description: '<div style="font-size:15px">Aqui você visualiza o valor bruto da sua gratificação. Lembre-se que este valor não inclui os descontos de impostos.</div>',
+        title: '<div class="titulo-img">Seu Valor de Gratificação</div>',
+        description: '<div class="descricao">Aqui você visualiza o valor bruto da sua gratificação. Lembre-se que este valor não inclui os descontos de impostos.</div>',
         position: "bottom",
       },
       onNext: () => {
@@ -154,7 +153,7 @@ const driverObj = driver({
       element: "#tutorial-warning",
       popover: {
         title: '',
-        description: '<div style="font-size:15px">Os valores mostrados são brutos, sem os descontos de impostos que podem ser aplicados.</div>',
+        description: '<div class="descricao">Os valores mostrados são brutos, sem os descontos de impostos que podem ser aplicados.</div>',
         position: "top",
       },
     },
@@ -163,7 +162,7 @@ const driverObj = driver({
       element: "#tutorial-details",
       popover: {
         title: '',
-        description: '<div style="font-size:15px">Aqui mostrar todas as suas matriculas ativas e os detalhes de cada uma.</div>',
+        description: '<div class="descricao">Aqui mostrar todas as suas matriculas ativas e os detalhes de cada uma.</div>',
         position: "top",
       },
       onHighlightStarted: () => {
@@ -174,8 +173,8 @@ const driverObj = driver({
     {
       element: "#tutorial-matricula-0",
       popover: {
-        title: '<div style="font-size:20px">Detalhamento por matrícula</div>',
-        description: '<div style="font-size:15px">Visualize neste campo uma das suas matrículas que estão atualmente ativas no sistema.</div>',
+        title: '<div class="titulo-img">Detalhamento por matrícula</div>',
+        description: '<div class="descricao">Visualize neste campo uma das suas matrículas que estão atualmente ativas no sistema.</div>',
         position: "top",
       },
       onHighlightStarted: () => {
@@ -186,8 +185,8 @@ const driverObj = driver({
     {
       element: "#painel-infos",
       popover: {
-        title: '<div style="font-size:20px">Matrícula</div>',
-        description: '<div style="font-size:15px">Aqui estão os seus dados da sua matrícula</div>',
+        title: '<div class="titulo-img">Matrícula</div>',
+        description: '<div class="descricao">Aqui estão os seus dados da sua matrícula</div>',
         position: "top",
       },
     },
@@ -195,8 +194,8 @@ const driverObj = driver({
     {
       element: "#tutorial-table-dados",
       popover: {
-        title: '<div style="font-size:20px">Dados da Matrícula</div>',
-        description: '<div style="font-size:15px">Nesse quadro mostra seus dados. Certifique que todos estão corretos!</div>',
+        title: '<div class="titulo-img">Dados da Matrícula</div>',
+        description: '<div class="descricao">Nesse quadro mostra seus dados. Certifique que todos estão corretos!</div>',
         position: "top",
       },
     },
@@ -205,7 +204,7 @@ const driverObj = driver({
       element: "#tutorial-valor-rede",
       popover: {
         title: '',
-        description: '<div style="font-size:15px">Aqui mostra o valor total da sua rede.</div>',
+        description: '<div class="descricao">Aqui mostra o valor total da sua rede.</div>',
         position: "top",
       },
     },
@@ -214,7 +213,7 @@ const driverObj = driver({
       element: "#tutorial-valor-unidade",
       popover: {
         title: '',
-        description: '<div style="font-size:15px">Aqui mostra o valor máximo recebido por unidade.</div>',
+        description: '<div class="descricao">Aqui mostra o valor máximo recebido por unidade.</div>',
         position: "top",
       },
     },
@@ -223,7 +222,7 @@ const driverObj = driver({
       element: "#tutorial-desconto",
       popover: {
         title: '',
-        description: '<div style="font-size:15px">Nesse campo mostra o desconto.</div>',
+        description: '<div class="descricao">Nesse campo mostra o desconto.</div>',
         position: "top",
       },
     },
@@ -232,7 +231,7 @@ const driverObj = driver({
       element: "#tutorial-valor-total",
       popover: {
         title: '',
-        description: '<div style="font-size:15px">É aqui, mostra o valor total que você ira receber.</div>',
+        description: '<div class="descricao">É aqui, mostra o valor total que você ira receber.</div>',
         position: "top",
       },
     },
@@ -240,8 +239,8 @@ const driverObj = driver({
     {
       element: "#tutorial-criteria",
       popover: {
-        title: '<div style="font-size:20px">Critérios de aptidão</div>',
-        description: '<div style="font-size:15px">Esta tabela mostra os 4 critérios principais: frequência (mín. 96%), tempo de atuação (mín. 6 meses), Formação e Atividades. Cada um, mostra se você está "Apto" ou "Não Apto".</div>',
+        title: '<div class="titulo-img">Critérios de aptidão</div>',
+        description: '<div class="descricao">Esta tabela mostra os 4 critérios principais: frequência (mín. 96%), tempo de atuação (mín. 6 meses), Formação e Atividades. Cada um, mostra se você está "Apto" ou "Não Apto".</div>',
         position: "top",
       },
     },
@@ -249,8 +248,8 @@ const driverObj = driver({
     {
       element: "#tutorial-allocations",
       popover: {
-        title: '<div style="font-size:20px">Alocações</div>',
-        description: '<div style="font-size:15px">Aqui você vê onde trabalhou durante o período, incluindo: unidade escolar, período (início/fim), função exercida, carga horária e grupo de gratificação.</div>',
+        title: '<div class="titulo-img">Alocações</div>',
+        description: '<div class="descricao">Aqui você vê onde trabalhou durante o período, incluindo: unidade escolar, período (início/fim), função exercida, carga horária e grupo de gratificação.</div>',
         position: "top",
       },
     },
@@ -258,8 +257,8 @@ const driverObj = driver({
     {
       element: "#tutorial-frequency",
       popover: {
-        title: '<div style="font-size:20px">Frequência</div>',
-        description: '<div style="font-size:15px">Esta seção mostra todos os seus afastamentos registrados: licenças, faltas justificadas, etc. Mostra as datas, tipo de afastamento e se foram contabilizados para o cálculo.</div>',
+        title: '<div class="titulo-img">Frequência</div>',
+        description: '<div class="descricao">Esta seção mostra todos os seus afastamentos registrados: licenças, faltas justificadas, etc. Mostra as datas, tipo de afastamento e se foram contabilizados para o cálculo.</div>',
         position: "top",
       },
     },
@@ -267,16 +266,16 @@ const driverObj = driver({
     {
       element: "#tutorial-resource",
       popover: {
-        title: '<div style="font-size:20px">Recurso</div>',
-        description: '<div style="font-size:15px">Se você acha que alguma informação está incorreta ou quer contestar algum critério, clique em "Recurso". Você pode anexar documentos para comprovar seu ponto de vista.</div>',
+        title: '<div class="titulo-img">Recurso</div>',
+        description: '<div class="descricao">Se você acha que alguma informação está incorreta ou quer contestar algum critério, clique em "Recurso". Você pode anexar documentos para comprovar seu ponto de vista.</div>',
         position: "left",
       },
     },
     // Step 17 - Final
     {
       popover: {
-        title: '<div style="font-size:20px"><img src="/src/assets/images/TutorialConcluido.png" style="max-width:300px" />Você concluiu o tutorial!</div>',
-        description: '<div style="font-size:15px">Agora você está pronto para navegar pelo painel de gratificação e acompanhar as informações com facilidade.</div>',
+        title: '<div class="titulo-img"><img src="/src/assets/images/TutorialConcluido.png" class="responsive-img" />Você concluiu o tutorial!</div>',
+        description: '<div class="descricao">Agora você está pronto para navegar pelo painel de gratificação e acompanhar as informações com facilidade.</div>',
         position: "center",
       }
     },
@@ -312,11 +311,14 @@ onMounted(() => {
   border-radius: 12px !important;
   font-size: 15px !important;
   font-weight: 700 !important;
+  border-radius: 10px !important;
   min-width: 120px !important;
   min-height: 48px !important;
+  text-align: center !important;
   padding: 12px 32px !important;
   text-shadow: none !important;
   border: none !important;
+  margin-left: 5px !important;
 }
 .driver-popover-next-btn:hover {
   background: #3b6cae !important; 
@@ -328,13 +330,16 @@ onMounted(() => {
   border-radius: 12px !important;
   font-size: 15px !important;
   font-weight: 700 !important;
+  border-radius: 10px !important;
   min-width: 120px !important;
   min-height: 48px !important;
+  text-align: center !important;
   padding: 12px 32px !important;
   text-shadow: none !important;
   border: none !important;
-
+  margin-right: 5px !important;
 }
+
 .driver-popover-prev-btn:hover {
   background: linear-gradient(135deg, #152656 0%, #5cabfe 100%) !important;
   color: #fff !important;
@@ -344,8 +349,8 @@ onMounted(() => {
 .custom-tooltip {
   background: white!important;
   color: #000000 !important;
-  border-radius: 16px !important;
-  padding: 20px !important;
+  border-radius: 10px !important;
+  padding: 30px !important;
   border: none !important;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
   max-width: 500px !important;
@@ -360,6 +365,24 @@ onMounted(() => {
   color: white !important;
 }
 
+.titulo-img {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  font-size: 20px;
+  text-align: center;
+  color: black;
+  justify-items: center;
+}
+
+.descricao {
+  font-size: 15px !important;
+  color: black;
+  text-align: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
 
 .custom-tooltip p {
   font-size: 15px !important;
@@ -387,17 +410,136 @@ onMounted(() => {
   font-weight: 500 !important;
 }
 
+/* Responsividade para imagens */
+.responsive-img {
+  max-width: 380px;
+  width: 100%;
+  height: auto;
+}
+
+/* Tooltip customizado com melhor responsividade */
+.custom-tooltip {
+  background: white!important;
+  color: #000000 !important;
+  border-radius: 10px !important;
+  padding: 30px !important;
+  border: none !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
+  max-width: 500px !important;
+  width: 90vw !important;
+}
+
+/* Responsividade para título */
+.titulo-img {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  font-size: 20px;
+  text-align: center;
+  color: black;
+  justify-items: center;
+}
+
+/* Responsividade para descrição */
+.descricao {
+  font-size: 15px !important;
+  color: black;
+  text-align: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  line-height: 1.6 !important;
+}
+
+/* Responsividade para botões do driver */
+.driver-popover-next-btn {
+  background: linear-gradient(135deg, #152656 0%, #5cabfe 100%) !important;
+  color: #fff !important;
+  border-radius: 12px !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  border-radius: 10px !important;
+  min-width: 120px !important;
+  min-height: 48px !important;
+  padding: 12px 32px !important;
+  text-shadow: none !important;
+  border: none !important;
+  margin-left: 5px !important;
+}
+
+.driver-popover-prev-btn {
+  background: linear-gradient(135deg, #222b44c2 0%, #92b5e7b0 100%) !important;
+  color: #fff !important;
+  border-radius: 12px !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  border-radius: 10px !important;
+  min-width: 120px !important;
+  min-height: 48px !important;
+  padding: 12px 32px !important;
+  text-shadow: none !important;
+  border: none !important;
+  margin-right: 5px !important;
+}
+
+/* Media queries para responsividade */
 @media (max-width: 640px) {
   .custom-tooltip {
     max-width: 95vw !important;
-    padding: 12px !important;
+    padding: 20px !important;
     font-size: 0.95rem !important;
   }
-  .custom-tooltip h3 {
-    font-size: 1.1rem !important;
+  
+  .titulo-img {
+    font-size: 18px !important;
+    gap: 15px !important;
+  }
+  
+  .responsive-img {
+    max-width: 280px !important;
+  }
+  
+  .descricao {
+    font-size: 14px !important;
+    padding-top: 15px !important;
+    padding-bottom: 15px !important;
+  }
+  
+  .driver-popover-next-btn,
+  .driver-popover-prev-btn {
+    min-width: 100px !important;
+    min-height: 42px !important;
+    padding: 10px 20px !important;
+    font-size: 14px !important;
   }
 }
 
+@media (max-width: 480px) {
+  .custom-tooltip {
+    padding: 15px !important;
+  }
+  
+  .titulo-img {
+    font-size: 16px !important;
+    gap: 10px !important;
+  }
+  
+  .responsive-img {
+    max-width: 240px !important;
+  }
+  
+  .descricao {
+    font-size: 13px !important;
+  }
+  
+  .driver-popover-next-btn,
+  .driver-popover-prev-btn {
+    min-width: 80px !important;
+    min-height: 38px !important;
+    padding: 8px 16px !important;
+    font-size: 13px !important;
+  }
+}
 
 /* Highlight do elemento */
 .driver-highlighted-element {
