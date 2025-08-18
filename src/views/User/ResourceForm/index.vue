@@ -105,7 +105,7 @@
                                     <div class="text-15 text-gray-600">
                                         <span class="font-medium text-blue-600 hover:text-blue-500">Escolher arquivo</span>
                                     </div>
-                                    <p class="text-xs text-gray-500">PDF, DOC, DOCX, JPG, PNG</p>
+                                    <p class="text-xs text-gray-500">PDF, JPG, PNG</p>
                                 </div>
                             </label>
                         </div>
