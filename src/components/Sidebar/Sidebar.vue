@@ -44,7 +44,7 @@
                                                       <ul class="ml-3 mt-1 space-y-0.5">
                                                         <li v-for="child in item.children" :key="child.name">
                                                           <div
-                                                            @click="selectRoute(child.id)"
+                                                            @click="selectRoute(child)"
                                                             class="group flex gap-x-2 rounded-[10px] p-1 text-13 font-medium leading-5 transition-all duration-200"
                                                             :class="{ 'bg-gray-800 text-white': $route.path === child.route, 'hover:bg-primary-900 hover:text-white text-white': $route.path !== child.route }"
                                                           >
@@ -143,7 +143,7 @@
                                     <ul class="ml-5 mt-1 space-y-0.5 relative z-40">
                                       <li v-for="child in item.children" :key="child.name">
                                         <div
-                                          @click="selectRoute(child.id)"
+                                          @click="selectRoute(child)"
                                           class="group flex gap-x-2 rounded-[10px] p-1 text-13 font-medium leading-5 transition-all duration-200"
                                           :class="{ 'bg-white/30 text-white': $route.path === child.route, 'hover:bg-white/30 hover:text-white text-white': $route.path !== child.route }"
                                         >
@@ -279,9 +279,10 @@ import { useRoute, useRouter } from 'vue-router'
 import { getUserType, clearUserType } from '@/service/userType'
 
 function selectRoute(route) {
-  if (route=='Report') {
-    emit('update:route', route)
-  } else{
+  if (route.id) {
+    emit('update:route', route.id)
+  } 
+  if(router.currentRoute.value.path != '/admin/report'){
     router.push('/admin/report')
   }
 }
@@ -297,18 +298,18 @@ const routes = {
     { name: 'Permissões Acessos', route: '/home/permissionsaccess', icon: UsersIcon , current: false },
     { name: 'Detalhes do Cálculo', icon: RectangleStackIcon,
       children: [        
-        { name: 'Resultados IDEM', route: '/admin/report', id: 'Results', icon: CalculatorIcon, current: false },
-        { name: 'Calendario Escolar', route: '/admin/report', id: 'Calendar', icon: CalendarIcon, current: false },
-        { name: 'Profissionais', route: '/admin/report', id: 'Profissional', icon: UsersIcon, current: false },
-        { name: 'Turmas', route: '/admin/report', id: 'Groups', icon: UserGroupIcon, current: false },
-        { name: 'Etapas Ues', route: '/admin/report', id: 'Steps', icon: Square3Stack3DIcon, current: false },
-        { name: 'Etapas Por Grupo', route: '/admin/report', id: 'StageGroup', icon: RectangleGroupIcon, current: false },
-        { name: 'Frequência', route: '/admin/report', id: 'Frequency', icon: ChartBarSquareIcon, current: false },
-        { name: 'Demissão', route: '/admin/report', id: 'Resignation', icon: BriefcaseIcon, current: false },
-        { name: 'Atividades', route: '/admin/report', id: 'Activities', icon: DocumentCheckIcon, current: false },
-        { name: 'Tempo de Atuação', route: '/admin/report', id: 'Service', icon: CalendarDaysIcon, current: false },
-        { name: 'Formação', route: '/admin/report', id: 'Training', icon: AcademicCapIcon, current: false },
-        { name: 'Relatórios Finais', route: '/admin/report', id: 'Report', icon: DocumentTextIcon, current: false },
+        { name: 'Resultados IDEM', id: 'Results', icon: CalculatorIcon, current: false },
+        { name: 'Calendario Escolar', id: 'Calendar', icon: CalendarIcon, current: false },
+        { name: 'Profissionais', id: 'Profissional', icon: UsersIcon, current: false },
+        { name: 'Turmas', id: 'Groups', icon: UserGroupIcon, current: false },
+        { name: 'Etapas Ues', id: 'Steps', icon: Square3Stack3DIcon, current: false },
+        { name: 'Etapas Por Grupo', id: 'StageGroup', icon: RectangleGroupIcon, current: false },
+        { name: 'Frequência', id: 'Frequency', icon: ChartBarSquareIcon, current: false },
+        { name: 'Demissão', id: 'Resignation', icon: BriefcaseIcon, current: false },
+        { name: 'Atividades', id: 'Activities', icon: DocumentCheckIcon, current: false },
+        { name: 'Tempo de Atuação', id: 'Service', icon: CalendarDaysIcon, current: false },
+        { name: 'Formação', id: 'Training', icon: AcademicCapIcon, current: false },
+        { name: 'Relatórios Finais', id: 'Report', icon: DocumentTextIcon, current: false },
       ]
     }
   ],
