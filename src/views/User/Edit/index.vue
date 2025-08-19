@@ -74,7 +74,7 @@
                                     <span class="font-semibold text-blue-600">Clique para selecionar</span> ou arraste arquivos aqui
                                 </p>
                                 <p class="text-13 text-gray-500">
-                                    PDF, DOC, DOCX, JPG, PNG (máx. 10MB cada)
+                                    PDF, JPG, PNG (máx. 10MB cada)
                                 </p>
                             </label>
                         </div>
