@@ -106,7 +106,6 @@ export default {
                         'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                     }
                 });
-                console.log("--- DADOS RECEBIDOS DA API EM Resource.vue ---", response.data);
                 recursos.value = response.data;
             } catch (error) {
                 console.error('Erro ao buscar recursos:', error);

@@ -350,7 +350,6 @@ async function fetchUserName() {
       }
     })
     .then(response => {
-      console.log(response.data);
 
       // Verifica se os dados foram retornados corretamente
       if (response.data && response.data.first_name && response.data.last_name) {

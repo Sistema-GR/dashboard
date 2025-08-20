@@ -64,12 +64,11 @@
 </template>
 
 <script setup>
-import { getAccessToken } from '../../service/token';
 import { ref, computed, watch, onMounted } from 'vue';
 import { EyeIcon } from "@heroicons/vue/24/outline";
 import { debounce } from 'lodash';
 import { renameColumns } from '@/service/columnRenaming';
-import { useRouter, onBeforeRouteLeave  } from 'vue-router';
+import { useRouter } from 'vue-router';
 import Drawer from '../Drawer/Drawer.vue';
 import Pagination from '../Pagination/Pagination.vue';
 import Loading from '../Loading/Loading.vue';
@@ -93,10 +92,9 @@ const filteredColumns = ref([]);
 const filteredPeople = ref([]);
 const visiblePeople = ref([]);
 const selectedRowData = ref({});
-const isLoading = ref(false); 
-const savedRowData = ref({}); 
+const isLoading = ref(false);  
 const drawerRef = ref(null); 
-const { loadPeopleData, saveRowDataToStorage } = usePersonService(); 
+const { loadPeopleData } = usePersonService(); 
 const sortDirection = ref('asc'); 
 
 const drawerTitle = computed(() => {
@@ -131,7 +129,6 @@ const totalPages = computed(() => Math.ceil(filteredPeopleByQuery.value.length /
 
 onMounted(async () => {
   await fetchPeople();
-  loadSavedData(); 
 });
 
 watch(() => props.searchQuery, debounce(() => {
@@ -142,10 +139,8 @@ watch(() => props.searchQuery, debounce(() => {
 watch(currentPage, loadMore);
 
 function toggleFilterMenu(column) {
-  // Troca a direção de ordenação
   sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc';
 
-  // Ordena as pessoas de acordo com a coluna e a direção
   filteredPeople.value = [...filteredPeople.value].sort((a, b) => {
     const aValue = a[column.key];
     const bValue = b[column.key];
@@ -155,7 +150,6 @@ function toggleFilterMenu(column) {
     return 0;
   });
 
-  // Atualiza a exibição das pessoas
   loadMore();
 }
 
@@ -201,103 +195,19 @@ function handleDrawerClosed() {
 }
 
 async function saveRowData(person) {
-  try {
-    isLoading.value = true;  // Exibe o loading
+  const cpfDoUsuario = person.cpf;
 
-    const { routeJsonMapping } = usePersonService();  
-    const cpf = person.cpf; // Usando CPF como identificador único
-
-    // Obtém o token de acesso (garante que o token é válido ou renovado)
-    const token = await getAccessToken();
-    if (!token) {
-      throw new Error('Não foi possível obter um token válido.');
-    }
-
-    let dadosProfissional = [];
-    let dadosFrequencia = [];
-    let dadosCriterios = [];
-    const dadosUser = {}; 
-
-    // Cabeçalho com autenticação
-    const headers = {
-      'Authorization': `Bearer ${token}`, // Adiciona o token no cabeçalho
-      'Content-Type': 'application/json',
-    };
-
-    // Carrega os dados de Profissionais filtrados pelo CPF
-    const responseProfissional = await fetch(routeJsonMapping['Profissional'], { headers });
-    const responseProfissionalData = await responseProfissional.json();
-    dadosProfissional = Array.isArray(responseProfissionalData) ? responseProfissionalData.filter(prof => prof.cpf === cpf) : [];
-
-    // Carrega os dados de Frequência filtrados pelo CPF
-    const responseFrequencia = await fetch(routeJsonMapping['Frequency'], { headers });
-    const responseFrequenciaData = await responseFrequencia.json();
-    dadosFrequencia = Array.isArray(responseFrequenciaData) ? responseFrequenciaData.filter(frequencia => frequencia.cpf === cpf) : [];
-
-    // Carrega os dados de Critérios filtrados pelo CPF
-    const responseCriterios = await fetch(routeJsonMapping['Report'], { headers });
-    const responseCriteriosData = await responseCriterios.json();
-    dadosCriterios = Array.isArray(responseCriteriosData) ? responseCriteriosData.filter(criterio => criterio.cpf === cpf) : [];
-
-    // Processa os critérios e organiza os dados para salvar
-    for (let i = 0; i < dadosCriterios.length; i++) {
-      const criterio = dadosCriterios[i];
-      const id = `id${i + 1}`;
-
-      // Filtra as frequências associadas ao CPF
-      const frequenciasFiltradas = dadosFrequencia.filter(frequencia => frequencia.cpf === criterio.cpf);
-
-      // Monta o objeto com as informações de critérios, frequências e profissionais
-      dadosUser[id] = {
-        dados: criterio,
-        frequencia: frequenciasFiltradas,
-        profissionais: dadosProfissional,
-      };
-    }
-
-    // Carrega dados já salvos no localStorage ou inicia um objeto vazio
-    const savedRowData = JSON.parse(localStorage.getItem('rowSave')) || {};
-
-    // Se já existir uma entrada para o CPF, faz um merge dos dados
-    if (savedRowData[cpf]) {
-      savedRowData[cpf] = { ...savedRowData[cpf], ...dadosUser };
-    } else {
-      savedRowData[cpf] = dadosUser;
-    }
-
-    // Salva os dados no localStorage usando o CPF como chave
-    localStorage.setItem('rowSave', JSON.stringify(savedRowData));
-    console.log('Dados salvos:', savedRowData[cpf]);
-
-    // Esconde o loading após salvar os dados
-    isLoading.value = false;
-
-    // Redireciona para a página de "Rewards" após o carregamento dos dados
-    router.push({ path: '/admin/rewards' });
-
-  } catch (error) {
-    // Esconde o loading em caso de erro
-    isLoading.value = false;
-    console.error('Erro ao salvar os dados:', error);
-    alert(`Erro ao salvar dados: ${error.message}`);
+  if (!cpfDoUsuario) {
+    console.error("CPF não encontrado para a linha selecionada.");
+    alert("Não foi possível visualizar os detalhes: CPF ausente.");
+    return;
   }
+
+  localStorage.setItem('tempTargetCpf', cpfDoUsuario);
+
+  router.push({
+    name: 'admin-view-rewards',
+  });
 }
 
-onBeforeRouteLeave((to, from, next) => {
-  // Verifica se a rota atual é a de Rewards
-  if (from.path === '/admin/rewards') {
-    // Limpa os dados salvos no localStorage ao sair da rota
-    localStorage.removeItem('rowSave');
-    console.log('Dados salvos descartados ao sair da página de Rewards.');
-  }
-  next(); // Continue a navegação
-});
-
-function loadSavedData() {
-  const savedData = localStorage.getItem('rowSave');
-  if (savedData) {
-    savedRowData.value = JSON.parse(savedData);
-    console.log('Dados salvos carregados:', savedRowData.value);
-  }
-}
 </script>

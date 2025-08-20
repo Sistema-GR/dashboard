@@ -113,16 +113,13 @@ export default {
 
     // Manipula o clique no toggle (sem o parâmetro 'type')
     const handleToggle = (index) => {
-      console.log(`handleToggle chamado com o índice: ${index}`);
-      console.log(`O estado atual de 'ativa' é: ${versoesCalculo.value[index].ativa}`);
+
       
       if (!versoesCalculo.value[index].ativa) {
-        console.log("Condição satisfeita! Mostrando modal.");
+
         pendingVersion.value = { index };
         showConfirmation.value = true;
-      } else {
-        console.log("Condição NÃO satisfeita. O item já está ativo.");
-      }
+      } 
     };
 
     // Confirma a mudança e chama a API
@@ -146,7 +143,7 @@ export default {
           );
 
           if (response.status === 200) {
-            console.log(`Versão ${idParaAtivar} ativada com sucesso! Atualizando a interface.`);
+
 
             versoesCalculo.value = versoesCalculo.value.map((versao, i) => {
               return {

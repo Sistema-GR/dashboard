@@ -17,12 +17,12 @@ const props = defineProps({
 const formModel = defineModel({ type: Object, required: true });
 
 const templateHtmlStructure = computed(() => {
-  console.log("Calculando ESTRUTURA HTML (deve acontecer apenas uma vez por template)");
+
   if (!props.htmlContent) return '';
 
   const context = {
     nome_completo: `<strong>${props.resourceData.nome_completo || ''}</strong>`,
-    matricula: `<strong>${props.resourceData.matricula || ''}</strong>`,
+    matriculas: `<strong>${(props.resourceData.matriculas || []).join(', ')}</strong>`,
     cpf: `<strong>${props.resourceData.cpf || ''}</strong>`,
     descricao: `<div class="quote">"${props.resourceData.descricao || ''}"</div>`,
     created_at_formatado: `<strong>${new Date(props.resourceData.created_at).toLocaleDateString()}</strong>`,
@@ -47,7 +47,7 @@ const templateHtmlStructure = computed(() => {
 
 watch(() => templateHtmlStructure.value, async (html) => {
   await nextTick(); 
-  console.log("Estrutura HTML renderizada, preenchendo valores...");
+
   
   const textareas = document.querySelectorAll('textarea[data-variable-name]');
   textareas.forEach(textarea => {

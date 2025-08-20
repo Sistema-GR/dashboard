@@ -51,13 +51,21 @@
 
                     <!-- Matrícula -->
                     <div>
-                        <label class="block text-15 font-medium text-gray-700 mb-1">Matrícula</label>
-                        <input 
-                            v-model="form.matricula" 
-                            type="text" 
-                            readonly 
-                            class="w-full px-3 py-2 border border-gray-300 rounded-[10px] text-15 bg-gray-50 text-gray-500" 
-                        />
+                        <label for="matricula" class="block text-15 font-medium text-gray-700 mb-1">Matrícula</label>
+                        <select 
+                            id="matricula" 
+                            v-model="form.matricula"
+                            multiple
+                            :disabled="isLoadingMatriculas || matriculasDisponiveis.length === 0"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-[10px] text-15 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                        >
+                            <option disabled value="">
+                                {{ isLoadingMatriculas ? 'Buscando matrículas...' : 'Selecione uma matrícula' }}
+                            </option>
+                            <option v-for="mat in matriculasDisponiveis" :key="mat" :value="mat">
+                                {{ mat }}
+                            </option>
+                        </select>
                         <p v-if="errors.matricula" class="text-red-500 text-xs mt-1">{{ errors.matricula }}</p>
                     </div>
 
@@ -177,6 +185,7 @@ import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import TutorialRecurso from '@/components/Tutorial/TutorialRecurso.vue';
+import usePersonService from '@/service/personService.js';
 
 export default {
     name: "ResourceForm",
@@ -193,12 +202,15 @@ export default {
     setup() {
         const isSidebarMinimized = inject('isSidebarMinimized');
         const router = useRouter();
+        const { getMatriculasPorCPF } = usePersonService();
+        const matriculasDisponiveis = ref([]);
+        const isLoadingMatriculas = ref(false);
 
         const form = reactive({
             nome_completo: '',
             email: '',
             cpf: '',
-            matricula: '',
+            matricula: [],
             unidade: '',
             descricao: '',
             files: [],
@@ -225,6 +237,26 @@ export default {
                 form.email = userData.email || '';
                 form.cpf = userData.cpf || '';
                 form.matricula = userData.employeeCode || '';
+                
+                if (form.cpf) {
+                    isLoadingMatriculas.value = true;
+                    try {
+                        const referenceYear = new Date().getFullYear();
+
+                        const todasAsMatriculas = await getMatriculasPorCPF(form.cpf, referenceYear);
+                        
+                        matriculasDisponiveis.value = todasAsMatriculas;
+
+                        if (todasAsMatriculas.length > 0 && !todasAsMatriculas.includes(form.matricula)) {
+                            form.matricula = '';
+                        }
+                    } catch (e) {
+                        console.error("Erro ao buscar a lista de matrículas:", e);
+                        matriculasDisponiveis.value = [form.matricula].filter(Boolean);
+                    } finally {
+                        isLoadingMatriculas.value = false;
+                    }
+                }
 
             } catch (error) {
                 console.error("Erro ao buscar dados do usuário:", error);
@@ -249,7 +281,7 @@ export default {
             if (!form.nome_completo) errors.value.nome_completo = 'O nome completo é obrigatório.';
             if (!form.email) errors.value.email = 'O e-mail é obrigatório.';
             if (!form.cpf) errors.value.cpf = 'O CPF é obrigatório.';
-            if (!form.matricula) errors.value.matricula = 'A matrícula é obrigatória.';
+            if (form.matricula.length === 0) errors.value.matricula = 'Pelo menos uma matrícula deve ser selecionada.';
             if (!form.unidade) errors.value.unidade = 'A unidade de atuação é obrigatória.';
             if (!form.descricao) errors.value.descricao = 'A descrição é obrigatória.';
             if (!form.files.length) errors.value.files = 'É necessário anexar pelo menos um documento.';
@@ -264,7 +296,9 @@ export default {
                 formData.append('nome_completo', form.nome_completo);
                 formData.append('email', form.email);
                 formData.append('cpf', form.cpf);
-                formData.append('matricula', form.matricula);
+                form.matricula.forEach(mat => {
+                    formData.append('matriculas', mat);
+                });
                 formData.append('unidade_atuacao', form.unidade);
                 formData.append('descricao', form.descricao);
                 
@@ -316,7 +350,9 @@ export default {
             handleFileUpload, 
             removeFile, 
             submitForm,
-            startTutorial
+            startTutorial,
+            isLoadingMatriculas,
+            matriculasDisponiveis,
         };
     }
 };
