@@ -188,6 +188,10 @@ onMounted(() => {
   });
   window.dispatchEvent(new Event('resize'));
 });
+
+defineExpose({
+  startTutorial
+});
 </script>
 
 <style>
