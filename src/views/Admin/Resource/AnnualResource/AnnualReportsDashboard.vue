@@ -33,6 +33,10 @@
     <!-- Tabela de Responsáveis -->
     <ResponsibleTable :stats="responsibleStats" />
 
+    <BarUnidade :data="filteredResources" :availableUnits="availableUnits" />
+
+    <DadosCompletos :data="filteredResources" />
+
   </Whiteboard>
 </template>
 
@@ -44,9 +48,11 @@ import StatsCards from '@/views/Admin/Resource/AnnualResource/components/StatsCa
 import PieCharts from '@/views/Admin/Resource/AnnualResource/components/PieCharts.vue'
 import BarCharts from '@/views/Admin/Resource/AnnualResource/components/BarCharts.vue'
 import ResponsibleTable from '@/views/Admin/Resource/AnnualResource/components/ResponsibleTable.vue'
+import BarUnidade from '@/views/Admin/Resource/AnnualResource/components/BarUnidade.vue'
 import { ref, inject, onMounted, computed, watch } from 'vue'
 import axios from 'axios'
 import { getAccessToken } from '@/service/token'
+import DadosCompletos from './components/DadosCompletos.vue'
 
 export default {
   name: 'AnnualReportsDashboard',
@@ -57,7 +63,9 @@ export default {
     StatsCards, 
     PieCharts, 
     BarCharts, 
-    ResponsibleTable 
+    ResponsibleTable,
+    BarUnidade,
+    DadosCompletos
   },
   
   setup() {
