@@ -1,9 +1,8 @@
 <template>
   <div class="mb-6 w-full">
-    <!-- Accordion Header -->
-    <button @click="open = !open" class="w-full text-left px-6 py-3 justify-between bg-blue-50 rounded-t-[8px] focus:outline-none">
+    <button @click="open = !open" class="w-full text-left px-6 py-3 justify-between bg-blue-50 rounded-t-[8px] focus:outline-none flex items-center">
       <span class="text-2xl font-bold text-black">Valores pagos</span>
-      <ChevronDownIcon class="w-4 h-4 sm:w-5 sm:h-5 bg-black" />
+      <ChevronDownIcon class="w-4 h-4 sm:w-5 sm:h-5" :class="{ 'rotate-180': open }"/>
     </button>
     <div v-show="open" class="p-0">
       <div class="flex flex-col lg:flex-row gap-6 p-6 justify-center items-stretch">
@@ -39,14 +38,15 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
-// Importe Chart.js se ainda não estiver instalado: npm install chart.js
+import { ref, onMounted, watch, nextTick } from 'vue'
 import Chart from 'chart.js/auto'
-import {ChevronDownIcon} from "@heroicons/vue/24/outline";
-
+import { ChevronDownIcon } from '@heroicons/vue/24/outline'
 
 export default {
-  name: 'PieCharts',
+  name: 'StatsCards',
+  components: {
+    ChevronDownIcon
+  },
   props: {
     distribuicao: {
       type: Array,
@@ -72,7 +72,23 @@ export default {
     const chartDistribuicao = ref(null)
     let chartInstance = null
 
-    onMounted(() => {
+    const destroyChart = () => {
+      if (chartInstance) {
+        chartInstance.destroy()
+        chartInstance = null
+      }
+    }
+
+    const createChart = async () => {
+      await nextTick()
+      destroyChart()
+      
+      // Só criar se o painel estiver aberto
+      if (!open.value) return
+      
+      // Aguardar para garantir que o elemento esteja no DOM
+      await new Promise(resolve => setTimeout(resolve, 100))
+      
       if (chartDistribuicao.value) {
         chartInstance = new Chart(chartDistribuicao.value, {
           type: 'bar',
@@ -88,6 +104,8 @@ export default {
             }]
           },
           options: {
+            responsive: true,
+            maintainAspectRatio: false,
             plugins: {
               legend: { display: true, position: 'top' }
             },
@@ -105,6 +123,21 @@ export default {
           }
         })
       }
+    }
+
+    // Watch para recriar gráfico quando o painel abrir
+    watch(() => open.value, (newValue) => {
+      if (newValue) {
+        setTimeout(() => {
+          createChart()
+        }, 200)
+      }
+    })
+
+    onMounted(() => {
+      setTimeout(() => {
+        createChart()
+      }, 300)
     })
 
     return {

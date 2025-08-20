@@ -1,53 +1,67 @@
 <template>
-  <div class="w-full">
-    <div v-if="!data || data.length === 0" class="w-full text-center text-red-600 font-bold py-10">
-      Nenhum dado recebido para exibir os gráficos. Verifique a prop <code>data</code>.
-    </div>
-    <div v-else>
-    <!-- Título principal -->
-    <div class="bg-blue-100 px-6 py-4 rounded-t-lg mb-4">
-      <h2 class="text-2xl font-bold text-black">Quantidade de recursos</h2>
-    </div>
-    <!-- Card superior: Por unidade -->
-    <div class="bg-white border border-black rounded-lg mb-6 mx-2 md:mx-0">
-      <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-lg">
-        Por unidade
-      </div>
-      <div class="p-6">
-        <canvas ref="chartUnidades" class="w-full max-h-80 min-h-[300px]"></canvas>
-      </div>
-    </div>
-    <!-- Cards inferiores: Por categoria e Por equipe responsável -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mx-2 md:mx-0">
-      <div class="bg-white border border-black rounded-lg">
-        <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-lg">
-          Por categoria
+  <div class="mb-6 w-full">
+    <button @click="open = !open" class="w-full text-left px-6 py-3 justify-between bg-blue-50 rounded-t-[8px] focus:outline-none flex items-center">
+      <span class="text-2xl font-bold text-black">Quantidade de recursos</span>
+      <ChevronDownIcon class="w-4 h-4 sm:w-5 sm:h-5" :class="{ 'rotate-180': open }"/>
+    </button>
+    
+    <div v-show="open" class="p-0">
+      <div class="flex flex-wrap gap-6 p-6 justify-center items-stretch">
+
+        <!-- Gráfico principal - Por unidade -->
+        <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full max-w-full">
+            <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-[10px]">
+            Por unidade
+          </div>
+          <div class="flex-1 flex items-center justify-center p-4 min-h-[260px] overflow-hidden">
+            <div class="w-full h-[220px] flex items-center justify-center overflow-hidden relative">
+              <canvas ref="chartUnidades" class="w-full h-full !block relative z-10" style="max-width:100%;max-height:100%;display:block;"></canvas>
+            </div>
+          </div>
         </div>
-        <div class="p-6">
-          <canvas ref="chartCategorias" class="w-full max-h-80 min-h-[300px]"></canvas>
+
+        <div class="flex flex-col gap-4 flex-1 min-w-[340px] max-w-[600px] justify-center">
+          <div class="bg-white rounded-[8px] shadow-md flex flex-col h-full">
+            <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-[10px]">
+              Por categoria
+            </div>
+            <div class="flex-1 flex items-center justify-center p-4 min-h-[260px] overflow-hidden">
+              <div class="w-full h-[220px] flex items-center justify-center overflow-hidden relative">
+                <canvas ref="chartCategorias" class="w-full h-full !block relative z-10" style="max-width:100%;max-height:100%;display:block;"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-4 flex-1 min-w-[340px] max-w-[600px] justify-center">
+          <div class="bg-white rounded-[8px] shadow-md flex flex-col h-full">
+            <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-[10px]">
+              Por equipe responsável
+            </div>
+            <div class="flex-1 flex items-center justify-center p-4 min-h-[260px] overflow-hidden">
+              <div class="w-full h-[220px] flex items-center justify-center overflow-hidden relative">
+                <canvas ref="chartEquipes" class="w-full h-full !block relative z-10" style="max-width:100%;max-height:100%;display:block;"></canvas>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="bg-white border border-black rounded-lg">
-        <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-lg">
-          Por equipe responsável
-        </div>
-        <div class="p-6">
-          <canvas ref="chartEquipes" class="w-full max-h-80 min-h-[300px]"></canvas>
-        </div>
-      </div>
-    </div>
     </div>
   </div>
 </template>
 
 <script>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, nextTick } from 'vue'
 import { Chart, registerables } from 'chart.js'
+import { ChevronDownIcon } from '@heroicons/vue/24/outline'
 
 Chart.register(...registerables)
 
 export default {
   name: 'BarCharts',
+  components: {
+    ChevronDownIcon
+  },
   props: {
     data: {
       type: Array,
@@ -59,57 +73,20 @@ export default {
     }
   },
   setup(props) {
+    const open = ref(true) // Adicionei a variável open que estava faltando
     const chartUnidades = ref(null)
     const chartCategorias = ref(null)
     const chartEquipes = ref(null)
-
-    // Dados fictícios para visualização
-    const mockUnits = [
-      { id: 1, nome: 'Secretaria' },
-      { id: 2, nome: 'Rubem Berta' },
-      { id: 3, nome: 'Luiz Gonzaga' },
-      { id: 4, nome: 'Horta Diniz' },
-      { id: 5, nome: 'Osmarildo C.' },
-      { id: 6, nome: 'Pedro IV C.' },
-      { id: 7, nome: 'Marilene G.C.' },
-      { id: 8, nome: 'Adão Santi' },
-      { id: 9, nome: 'Laura A.' },
-      { id: 10, nome: 'Específico' }
-    ]
-    const mockData = [
-      { unidade_atuacao_id: 1, criterios_selecionados: ['formacao'], equipe_responsavel: 'UPL' },
-      { unidade_atuacao_id: 2, criterios_selecionados: ['faltas'], equipe_responsavel: 'UGP' },
-      { unidade_atuacao_id: 3, criterios_selecionados: ['formacao', 'faltas'], equipe_responsavel: 'Formação Juliano' },
-      { unidade_atuacao_id: 1, criterios_selecionados: ['formacao'], equipe_responsavel: 'UPL' },
-      { unidade_atuacao_id: 4, criterios_selecionados: ['tempo_atuacao'], equipe_responsavel: 'UGP' },
-      { unidade_atuacao_id: 5, criterios_selecionados: ['mais_criterios'], equipe_responsavel: 'Formação' },
-      { unidade_atuacao_id: 6, criterios_selecionados: ['esclarecimento'], equipe_responsavel: 'Formação' },
-      { unidade_atuacao_id: 7, criterios_selecionados: ['pagamento_indevido'], equipe_responsavel: 'Formação Juliano' },
-      { unidade_atuacao_id: 8, criterios_selecionados: ['grupo'], equipe_responsavel: 'Formação Juliano' },
-      { unidade_atuacao_id: 9, criterios_selecionados: ['atividades'], equipe_responsavel: 'Formação Aurea' },
-      { unidade_atuacao_id: 10, criterios_selecionados: ['alega_atuacao_outra_etapa'], equipe_responsavel: 'Formação Aurea' },
-      { unidade_atuacao_id: 1, criterios_selecionados: ['formacao'], equipe_responsavel: 'UPL' },
-      { unidade_atuacao_id: 2, criterios_selecionados: ['faltas'], equipe_responsavel: 'UGP' },
-      { unidade_atuacao_id: 3, criterios_selecionados: ['formacao', 'faltas'], equipe_responsavel: 'Formação Juliano' },
-      { unidade_atuacao_id: 1, criterios_selecionados: ['formacao'], equipe_responsavel: 'UPL' },
-      { unidade_atuacao_id: 4, criterios_selecionados: ['tempo_atuacao'], equipe_responsavel: 'UGP' },
-      { unidade_atuacao_id: 5, criterios_selecionados: ['mais_criterios'], equipe_responsavel: 'Formação' },
-      { unidade_atuacao_id: 6, criterios_selecionados: ['esclarecimento'], equipe_responsavel: 'Formação' },
-      { unidade_atuacao_id: 7, criterios_selecionados: ['pagamento_indevido'], equipe_responsavel: 'Formação Juliano' },
-      { unidade_atuacao_id: 8, criterios_selecionados: ['grupo'], equipe_responsavel: 'Formação Juliano' },
-      { unidade_atuacao_id: 9, criterios_selecionados: ['atividades'], equipe_responsavel: 'Formação Aurea' },
-      { unidade_atuacao_id: 10, criterios_selecionados: ['alega_atuacao_outra_etapa'], equipe_responsavel: 'Formação Aurea' }
-    ]
-
+    
     let chartsInstances = {}
-
+    
     const destroyCharts = () => {
       Object.values(chartsInstances).forEach(chart => {
         if (chart) chart.destroy()
       })
       chartsInstances = {}
     }
-
+    
     const getCategoryLabel = (category) => {
       const labels = {
         'formacao': 'Formação',
@@ -125,109 +102,185 @@ export default {
       }
       return labels[category] || category
     }
-
-    // Se não vier units, usa mockUnits
+    
     const getUnitName = (unitId) => {
-      const unit = (props.availableUnits && props.availableUnits.length > 0 ? props.availableUnits : mockUnits).find(u => u.id === unitId)
+      const unit = props.availableUnits.find(u => u.id === unitId)
       return unit ? unit.nome : 'N/A'
     }
-
-    const getDataToUse = () => {
-      return (props.data && props.data.length > 0) ? props.data : mockData
-    }
-
-    const createCharts = () => {
-      const dataToUse = getDataToUse()
-      console.log('Dados recebidos para os gráficos:', dataToUse)
+    
+    const createCharts = async () => {
+      await nextTick()
       destroyCharts()
-      const barOptions = {
-        responsive: true,
-        maintainAspectRatio: false,
-        indexAxis: 'y', // barras horizontais
-        scales: {
-          x: { beginAtZero: true },
-          y: { ticks: { font: { size: 12 } } }
-        },
-        plugins: {
-          legend: {
-            display: true,
-            position: 'top',
-            labels: { font: { size: 13 } }
+      
+      // Só criar se o painel estiver aberto
+      if (!open.value) return
+      
+      // Aguardar para garantir que os elementos estejam no DOM
+      await new Promise(resolve => setTimeout(resolve, 100))
+      
+      const hasRealData = props.data && props.data.length > 0
+      
+      // Gráfico de Unidades (vertical - principal)
+      if (chartUnidades.value) {
+        let unitsData, unitsLabels
+        
+        if (hasRealData) {
+          const unitsCount = {}
+          props.data.forEach(resource => {
+            const unitName = getUnitName(resource.unidade_atuacao_id)
+            unitsCount[unitName] = (unitsCount[unitName] || 0) + 1
+          })
+          const sortedUnits = Object.entries(unitsCount).sort(([,a], [,b]) => b - a).slice(0, 10)
+          unitsLabels = sortedUnits.map(([name]) => name)
+          unitsData = sortedUnits.map(([,count]) => count)
+        } else {
+          unitsLabels = ['Unidade A', 'Unidade B', 'Unidade C', 'Unidade D', 'Unidade E', 'Unidade F', 'Unidade G', 'Unidade H', 'Unidade I', 'Unidade J']
+          unitsData = [25, 20, 15, 12, 10, 8, 6, 5, 3, 2]
+        }
+        
+        chartsInstances.unidades = new Chart(chartUnidades.value, {
+          type: 'bar',
+          data: {
+            labels: unitsLabels,
+            datasets: [{
+              label: 'Quantidade de recursos',
+              data: unitsData,
+              backgroundColor: '#3b82f6',
+              borderColor: '#1d4ed8',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              y: { 
+                beginAtZero: true,
+                grid: { display: true },
+                ticks: { 
+                  font: { size: 12 },
+                  stepSize: 5
+                }
+              },
+              x: { 
+                grid: { display: false },
+                ticks: { 
+                  maxRotation: 45,
+                  font: { size: 10 }
+                }
+              }
+            }
           }
-        }
-      }
-      // Unidades
-      if (chartUnidades.value && dataToUse.length > 0) {
-        const unitsCount = {}
-        dataToUse.forEach(resource => {
-          const unitName = getUnitName(resource.unidade_atuacao_id)
-          unitsCount[unitName] = (unitsCount[unitName] || 0) + 1
         })
-        const sortedUnits = Object.entries(unitsCount)
-          .sort(([,a], [,b]) => b - a)
-          .slice(0, 10)
-        if (sortedUnits.length > 0) {
-          chartsInstances.unidades = new Chart(chartUnidades.value, {
-            type: 'bar',
-            data: {
-              labels: sortedUnits.map(([name]) => name),
-              datasets: [{
-                label: 'Unidade de atuação',
-                data: sortedUnits.map(([,count]) => count),
-                backgroundColor: '#3b82f6'
-              }]
-            },
-            options: barOptions
-          })
-        }
       }
-      // Categorias
-      if (chartCategorias.value && dataToUse.length > 0) {
-        const categories = {}
-        dataToUse.forEach(resource => {
-          const criterios = resource.criterios_selecionados || []
-          criterios.forEach(criterio => {
-            categories[criterio] = (categories[criterio] || 0) + 1
+      
+      // Gráfico de Categorias (horizontal)
+      if (chartCategorias.value) {
+        let categoriesData, categoriesLabels
+        
+        if (hasRealData) {
+          const categories = {}
+          props.data.forEach(resource => {
+            const criterios = resource.criterios_selecionados || []
+            criterios.forEach(criterio => {
+              categories[criterio] = (categories[criterio] || 0) + 1
+            })
           })
-        })
-        const sortedCategories = Object.entries(categories)
-          .sort(([,a], [,b]) => b - a)
-        if (sortedCategories.length > 0) {
-          chartsInstances.categorias = new Chart(chartCategorias.value, {
-            type: 'bar',
-            data: {
-              labels: sortedCategories.map(([cat]) => getCategoryLabel(cat)),
-              datasets: [{
-                label: 'Categoria',
-                data: sortedCategories.map(([,count]) => count),
-                backgroundColor: '#06b6d4'
-              }]
-            },
-            options: barOptions
-          })
+          const sortedCategories = Object.entries(categories).sort(([,a], [,b]) => a - b).slice(0, 8)
+          categoriesLabels = sortedCategories.map(([cat]) => getCategoryLabel(cat))
+          categoriesData = sortedCategories.map(([,count]) => count)
+        } else {
+          categoriesLabels = ['Formação', 'Faltas', 'Tempo de atuação', 'Esclarecimento', 'Atividades', 'Grupo', 'Pagamento indevido', 'Mais de um critério']
+          categoriesData = [5, 8, 12, 15, 18, 22, 25, 30]
         }
+        
+        chartsInstances.categorias = new Chart(chartCategorias.value, {
+          type: 'bar',
+          data: {
+            labels: categoriesLabels,
+            datasets: [{
+              label: 'Categoria',
+              data: categoriesData,
+              backgroundColor: '#06b6d4',
+              borderColor: '#0891b2',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              x: { 
+                beginAtZero: true,
+                grid: { display: true },
+                ticks: { font: { size: 10 } }
+              },
+              y: { 
+                grid: { display: false },
+                ticks: { font: { size: 10 } }
+              }
+            }
+          }
+        })
       }
-      // Equipes
-      if (chartEquipes.value && dataToUse.length > 0) {
-        const teamsCount = {}
-        dataToUse.forEach(resource => {
-          const team = resource.equipe_responsavel || 'Não definido'
-          teamsCount[team] = (teamsCount[team] || 0) + 1
-        })
-        if (Object.keys(teamsCount).length > 0) {
-          chartsInstances.equipes = new Chart(chartEquipes.value, {
-            type: 'bar',
-            data: {
-              labels: Object.keys(teamsCount),
-              datasets: [{
-                label: 'EquipeResponsável',
-                data: Object.values(teamsCount),
-                backgroundColor: '#ec4899'
-              }]
-            },
-            options: barOptions
+      
+      // Gráfico de Equipes (horizontal)
+      if (chartEquipes.value) {
+        let teamsData, teamsLabels
+        
+        if (hasRealData) {
+          const teamsCount = {}
+          props.data.forEach(resource => {
+            const team = resource.equipe_responsavel || 'Não definido'
+            teamsCount[team] = (teamsCount[team] || 0) + 1
           })
+          const sortedTeams = Object.entries(teamsCount).sort(([,a], [,b]) => a - b)
+          teamsLabels = sortedTeams.map(([team]) => team)
+          teamsData = sortedTeams.map(([,count]) => count)
+        } else {
+          teamsLabels = ['Equipe Alpha', 'Equipe Beta', 'Equipe Gamma', 'Equipe Delta', 'Equipe Epsilon']
+          teamsData = [10, 15, 25, 35, 40]
         }
+        
+        chartsInstances.equipes = new Chart(chartEquipes.value, {
+          type: 'bar',
+          data: {
+            labels: teamsLabels,
+            datasets: [{
+              label: 'Equipe responsável',
+              data: teamsData,
+              backgroundColor: '#ec4899',
+              borderColor: '#db2777',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              x: { 
+                beginAtZero: true,
+                grid: { display: true },
+                ticks: { font: { size: 10 } }
+              },
+              y: { 
+                grid: { display: false },
+                ticks: { font: { size: 10 } }
+              }
+            }
+          }
+        })
       }
     }
     
@@ -235,17 +288,27 @@ export default {
       createCharts()
     }
     
+    // Watch para recriar gráficos quando o painel abrir
+    watch(() => open.value, (newValue) => {
+      if (newValue) {
+        setTimeout(() => {
+          createCharts()
+        }, 200)
+      }
+    })
+    
     watch(() => props.data, () => {
-  console.log('Dados recebidos para os gráficos (watch):', props.data)
-  createCharts()
+      createCharts()
     }, { deep: true })
     
     onMounted(() => {
-  console.log('Dados recebidos para os gráficos (onMounted):', props.data)
-  createCharts()
+      setTimeout(() => {
+        createCharts()
+      }, 300)
     })
     
     return {
+      open, // Agora retornando a variável open
       chartUnidades,
       chartCategorias,
       chartEquipes,
