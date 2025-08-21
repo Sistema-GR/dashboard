@@ -1,108 +1,73 @@
-
-
 <template>
   <div class="mb-6 w-full">
-    <button @click="open = !open" class="w-full text-left px-6 py-3 justify-between bg-blue-50 rounded-t-[8px] focus:outline-none flex items-center">
+    <button @click="open = !open" class="w-full text-left px-6 py-3 justify-between bg-blue-50 rounded-[10px] focus:outline-none flex items-center">
       <span class="text-2xl font-bold text-black">Tipos de recurso</span>
       <ChevronDownIcon class="w-4 h-4 sm:w-5 sm:h-5" :class="{ 'rotate-180': open }" />
     </button>
     <div v-show="open" class="p-0">
-      <div class="flex flex-wrap gap-6 p-6 justify-center items-stretch">
+      <div class="flex flex-wrap gap-10 px-10 py-8 justify-center items-stretch">
         <!-- Card Gráfico Tipos -->
-        <div class="flex flex-col gap-4 flex-1 min-w-[340px] max-w-[600px] justify-center">
-          <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full max-w-full border border-black">
+          <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full max-w-full">
             <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-[10px]">
               Tipos de recurso
             </div>
             <div class="flex-1 flex items-center justify-center p-4 min-h-[260px] overflow-hidden">
-              <div class="w-full h-[220px] flex items-center justify-center overflow-hidden relative">
-                <canvas ref="chartTipos" class="w-full h-full !block relative z-10" style="max-width:100%;max-height:100%;display:block;"></canvas>
+              <div class="flex-1 flex items-center justify-center p-4 min-h-[260px] overflow-hidden">
+                <div class="w-full h-[220px] flex items-center justify-center overflow-hidden relative">
+                  <canvas ref="chartTipos" class="w-full h-full !block relative z-10" style="max-width:100%;max-height:100%;display:block;"></canvas>
+                </div>
               </div>
+              <ul class="text-sm px-6 pb-4">
+                <li v-for="(label, i) in tiposLabels" :key="label" class="flex items-center mb-1">
+                  <span :style="{background: tiposColors[i], display:'inline-block', width:'14px', height:'14px', borderRadius:'3px', marginRight:'8px'}"></span>
+                  <span class="mr-2">{{ label }}</span>
+                  <span class="ml-auto font-bold">{{ tiposData[i] }}%</span>
+                </li>
+              </ul>
             </div>
-            <ul class="text-sm px-6 pb-4">
-              <li v-for="(label, i) in tiposLabels" :key="label" class="flex items-center mb-1">
-                <span :style="{background: tiposColors[i], display:'inline-block', width:'14px', height:'14px', borderRadius:'3px', marginRight:'8px'}"></span>
-                <span class="mr-2">{{ label }}</span>
-                <span class="ml-auto font-bold">{{ tiposData[i] }}%</span>
-              </li>
-            </ul>
           </div>
-        </div>
         <!-- Card Gráfico Status -->
-        <div class="flex flex-col gap-4 flex-1 min-w-[340px] max-w-[400px] justify-center">
-          <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full max-w-full border border-black">
+        <div class="flex flex-col gap-4 flex-1 min-w-[340px] max-w-[600px] justify-center">
+          <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full h-full">
             <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-[10px]">
               Status
             </div>
             <div class="flex-1 flex items-center justify-center p-4 min-h-[260px] overflow-hidden">
-              <div class="w-full h-[220px] flex items-center justify-center overflow-hidden relative">
-                <canvas ref="chartStatus" class="w-full h-full !block relative z-10" style="max-width:100%;max-height:100%;display:block;"></canvas>
+              <div class="flex-1 flex items-center justify-center p-4 min-h-[260px] overflow-hidden">
+                <div class="w-full h-[220px] flex items-center justify-center overflow-hidden relative">
+                  <canvas ref="chartStatus" class="w-full h-full !block relative z-10" style="max-width:100%;max-height:100%;display:block;"></canvas>
+                </div>
               </div>
+              <ul class="text-sm px-6 pb-4">
+                <li v-for="(label, i) in statusLabels" :key="label" class="flex items-center mb-1">
+                  <span :style="{background: statusColors[i], display:'inline-block', width:'14px', height:'14px', borderRadius:'3px', marginRight:'8px'}"></span>
+                  <span class="mr-2">{{ label }}</span>
+                  <span class="ml-auto font-bold">{{ statusData[i] }}%</span>
+                </li>
+              </ul>
             </div>
-            <ul class="text-sm px-6 pb-4">
-              <li v-for="(label, i) in statusLabels" :key="label" class="flex items-center mb-1">
-                <span :style="{background: statusColors[i], display:'inline-block', width:'14px', height:'14px', borderRadius:'3px', marginRight:'8px'}"></span>
-                <span class="mr-2">{{ label }}</span>
-                <span class="ml-auto font-bold">{{ statusData[i] }}%</span>
-              </li>
-            </ul>
           </div>
         </div>
         <!-- Card Gráfico Conclusão -->
-        <div class="flex flex-col gap-4 flex-1 min-w-[340px] max-w-[400px] justify-center">
-          <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full max-w-full border border-black">
+        <div class="flex flex-col gap-4 flex-1 min-w-[340px] max-w-[600px] justify-center">
+          <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full h-full">
             <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-[10px]">
               Conclusão
             </div>
             <div class="flex-1 flex items-center justify-center p-4 min-h-[260px] overflow-hidden">
-              <div class="w-full h-[220px] flex items-center justify-center overflow-hidden relative">
-                <canvas ref="chartConclusao" class="w-full h-full !block relative z-10" style="max-width:100%;max-height:100%;display:block;"></canvas>
+              <div class="flex-1 flex items-center justify-center p-4 min-h-[260px] overflow-hidden">
+                <div class="w-full h-[220px] flex items-center justify-center overflow-hidden relative">
+                  <canvas ref="chartConclusao" class="w-full h-full !block relative z-10" style="max-width:100%;max-height:100%;display:block;"></canvas>
+                </div>
               </div>
+              <ul class="text-sm px-6 pb-4">
+                <li v-for="(label, i) in conclusaoLabels" :key="label" class="flex items-center mb-1">
+                  <span :style="{background: conclusaoColors[i], display:'inline-block', width:'14px', height:'14px', borderRadius:'3px', marginRight:'8px'}"></span>
+                  <span class="mr-2">{{ label }}</span>
+                  <span class="ml-auto font-bold">{{ conclusaoData[i] }}%</span>
+                </li>
+              </ul>
             </div>
-            <ul class="text-sm px-6 pb-4">
-              <li v-for="(label, i) in conclusaoLabels" :key="label" class="flex items-center mb-1">
-                <span :style="{background: conclusaoColors[i], display:'inline-block', width:'14px', height:'14px', borderRadius:'3px', marginRight:'8px'}"></span>
-                <span class="mr-2">{{ label }}</span>
-                <span class="ml-auto font-bold">{{ conclusaoData[i] }}%</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <!-- Tabela de responsáveis -->
-      <div class="flex flex-col gap-4 flex-1 min-w-[340px] max-w-[1200px] mx-auto mt-8">
-        <div class="bg-white shadow-md rounded-t-lg flex-1 min-w-[340px] max-w-[1200px] border border-black">
-          <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-[10px]">
-            Responsáveis por Recurso
-          </div>
-          <div class="p-6 overflow-x-auto">
-            <table class="min-w-full text-sm text-left border-separate border-spacing-y-1">
-              <thead>
-                <tr class="bg-[#2360a5] text-white">
-                  <th class="px-3 py-2 font-bold">Responsável</th>
-                  <th class="px-3 py-2 font-bold">Total</th>
-                  <th class="px-3 py-2 font-bold">Deferidos</th>
-                  <th class="px-3 py-2 font-bold">Indeferidos</th>
-                  <th class="px-3 py-2 font-bold">Parcialmente Deferidos</th>
-                  <th class="px-3 py-2 font-bold">% do Total</th>
-                </tr>
-              </thead>
-              <tbody class="bg-white text-black">
-                <tr v-for="responsible in responsaveis" :key="responsible.id">
-                  <td class="px-3 py-1">{{ responsible.name }}</td>
-                  <td class="px-3 py-1">{{ responsible.total }}</td>
-                  <td class="px-3 py-1">{{ responsible.deferidos }}</td>
-                  <td class="px-3 py-1">{{ responsible.indeferidos }}</td>
-                  <td class="px-3 py-1">{{ responsible.parcialmente_deferidos }}</td>
-                  <td class="px-3 py-1">{{ responsible.percentage }}%</td>
-                </tr>
-                <tr v-if="responsaveis.length === 0">
-                  <td colspan="6" class="px-4 py-8 text-center text-gray-500">
-                    Nenhum dado encontrado
-                  </td>
-                </tr>
-              </tbody>
-            </table>
           </div>
         </div>
       </div>
@@ -254,6 +219,11 @@ export default {
     })
 
     onMounted(() => {
+      console.log('Canvas elements:', {
+        tipos: chartTipos.value,
+        status: chartStatus.value,
+        conclusao: chartConclusao.value
+      })
       setTimeout(() => { createCharts() }, 500)
     })
 

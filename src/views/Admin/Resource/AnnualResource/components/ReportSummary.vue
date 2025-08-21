@@ -1,7 +1,7 @@
 <template>
-  <div class="flex flex-col w-full px-10">
-    <div class="flex flex-col w-full my-5 bg-blue-50 rounded-t-[10px] shadow-md">
-      <div class="bg-[#3459A2] text-white text-center font-bold text-[13px] py-1 rounded-t-[10px] mb-2">
+  <div class="flex flex-col w-full px-10 py-10">
+        <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full max-w-full">
+            <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-[10px]">
         Recursos respondidos
       </div>
       <div class="bg-blue-50 px-3 pt-2 pb-1 rounded-b-[8px]">

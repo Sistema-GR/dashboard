@@ -1,12 +1,12 @@
 <template>
   <div class="mb-6 w-full">
-    <button @click="open = !open" class="w-full text-left px-6 py-3 justify-between bg-blue-50 rounded-t-[8px] focus:outline-none flex items-center">
+    <button @click="open = !open" class="w-full text-left px-6 py-3 justify-between bg-blue-50 rounded-[10px] focus:outline-none flex items-center">
       <span class="text-2xl font-bold text-black">Quantidade de recursos</span>
       <ChevronDownIcon class="w-4 h-4 sm:w-5 sm:h-5" :class="{ 'rotate-180': open }"/>
     </button>
     
     <div v-show="open" class="p-0">
-      <div class="flex flex-wrap gap-6 p-6 justify-center items-stretch">
+      <div class="flex flex-wrap gap-10 px-10 py-8 justify-center items-stretch">
 
         <!-- Gráfico principal - Por unidade -->
         <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full max-w-full">
@@ -20,7 +20,7 @@
           </div>
         </div>
 
-        <div class="flex flex-col gap-4 flex-1 min-w-[340px] max-w-[600px] justify-center">
+        <div class="flex flex-col gap-10 flex-1 min-w-[340px] max-w-[600px] justify-center">
           <div class="bg-white rounded-[8px] shadow-md flex flex-col h-full">
             <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-[10px]">
               Por categoria
@@ -33,7 +33,7 @@
           </div>
         </div>
 
-        <div class="flex flex-col gap-4 flex-1 min-w-[340px] max-w-[600px] justify-center">
+        <div class="flex flex-col gap-10 flex-1 min-w-[340px] max-w-[600px] justify-center">
           <div class="bg-white rounded-[8px] shadow-md flex flex-col h-full">
             <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-[10px]">
               Por equipe responsável

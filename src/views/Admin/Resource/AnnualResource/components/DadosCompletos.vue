@@ -1,12 +1,12 @@
 <template>
   <div class="mb-6 w-full">
-    <button @click="open = !open" class="w-full text-left px-6 py-3 justify-between bg-blue-50 rounded-t-[8px] focus:outline-none flex items-center">
+    <button @click="open = !open" class="w-full text-left px-6 py-3 justify-between bg-blue-50 rounded-[10px] focus:outline-none flex items-center">
       <span class="text-2xl font-bold text-black">Dados Completos</span>
       <ChevronDownIcon class="w-4 h-4 sm:w-5 sm:h-5" :class="{ 'rotate-180': open }"/>
     </button>
     
     <div v-show="open" class="p-0">
-      <div class="p-6">
+      <div class="px-10 py-8">
         <div class="bg-white shadow-md rounded-lg overflow-hidden">
           <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3">
             Dados Completos dos Recursos
