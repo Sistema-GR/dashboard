@@ -3,11 +3,13 @@
     class="p-4 border rounded-md bg-white prose max-w-none"
     v-html="templateHtmlStructure"
     @input="handleInput"
+    @click.stop
   ></div>
 </template>
 
 <script setup>
 import { computed, defineProps, defineModel, watch, nextTick } from 'vue';
+import logoUrl from '@/assets/images/logo_prefeitura.png';
 
 const props = defineProps({
   htmlContent: { type: String, required: true },
@@ -26,6 +28,7 @@ const templateHtmlStructure = computed(() => {
     cpf: `<strong>${props.resourceData.cpf || ''}</strong>`,
     descricao: `<div class="quote">"${props.resourceData.descricao || ''}"</div>`,
     created_at_formatado: `<strong>${new Date(props.resourceData.created_at).toLocaleDateString()}</strong>`,
+    url_logo: logoUrl,
   };
 
   const regex = /{{\s*(\w+)\s*}}/g;
