@@ -71,7 +71,7 @@
 import TextInput from '@/components/Inputs/TextInput.vue'
 
 export default {
-  name: 'ReportFilters',
+  name: 'Filtro',
   components: { TextInput },
   props: {
     filters: {

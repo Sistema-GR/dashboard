@@ -59,7 +59,7 @@ import { ChevronDownIcon } from '@heroicons/vue/24/outline'
 Chart.register(...registerables)
 
 export default {
-  name: 'BarUnidade',
+  name: 'RecursosUnidades',
   components: {
     ChevronDownIcon
   },

@@ -81,7 +81,7 @@ import Chart from 'chart.js/auto'
 import { ChevronDownIcon } from '@heroicons/vue/24/outline'
 
 export default {
-  name: 'ResponsibleTable',
+  name: 'TipoRecurso',
   components: {
     ChevronDownIcon
   },
