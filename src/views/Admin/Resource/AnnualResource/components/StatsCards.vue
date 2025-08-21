@@ -1,214 +1,148 @@
 <template>
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 px-4 sm:px-10 mb-6">
-    <!-- Tipos de Recurso -->
-    <div class="bg-white rounded-[10px] shadow-md">
-      <div class="bg-[#3459A2] text-white text-center font-bold text-15 p-3 rounded-t-[10px]">
-        Tipos de recurso
-      </div>
-      <div class="p-6">
-        <canvas ref="chartTipos" class="w-full max-h-80"></canvas>
-      </div>
-    </div>
-
-    <!-- Status -->
-    <div class="bg-white rounded-[10px] shadow-md">
-      <div class="bg-[#3459A2] text-white text-center font-bold text-15 p-3 rounded-t-[10px]">
-        Status
-      </div>
-      <div class="p-6">
-        <canvas ref="chartStatus" class="w-full max-h-80"></canvas>
-      </div>
-    </div>
-
-    <!-- Conclusão -->
-    <div class="bg-white rounded-[10px] shadow-md">
-      <div class="bg-[#3459A2] text-white text-center font-bold text-15 p-3 rounded-t-[10px]">
-        Conclusão
-      </div>
-      <div class="p-6">
-        <canvas ref="chartConclusao" class="w-full max-h-80"></canvas>
+  <div class="mb-6 w-full">
+    <button @click="open = !open" class="w-full text-left px-6 py-3 justify-between bg-blue-50 rounded-[10px] focus:outline-none flex items-center">
+      <span class="text-2xl font-bold text-black">Valores pagos</span>
+      <ChevronDownIcon class="w-4 h-4 sm:w-5 sm:h-5" :class="{ 'rotate-180': open }"/>
+    </button>
+    <div v-show="open" class="p-0">
+      <div class="flex flex-col lg:flex-row gap-10 px-10 py-8 justify-center items-stretch">
+        <!-- Gráfico -->
+        <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full max-w-full">
+            <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-[10px]">
+            Distribuição de pessoas pagas conforme valor
+          </div>
+          <div class="flex-1 flex items-center justify-center p-4 min-h-[260px] overflow-hidden">
+            <div class="w-full h-[220px] flex items-center justify-center overflow-hidden relative">
+              <canvas ref="chartDistribuicao" class="w-full h-full !block relative z-10" style="max-width:100%;max-height:100%;display:block;"></canvas>
+            </div>
+          </div>
+        </div>
+        <!-- Cards -->
+        <div class="flex flex-col gap-10 flex-1 min-w-[220px] max-w-[320px] justify-center">
+        <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full max-w-full">
+            <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-[10px]">
+              Nº de pessoas pagas pós recursos
+            </div>
+            <div class="flex items-center justify-center py-8 text-3xl font-bold">{{ pessoasPagas }}</div>
+          </div>
+        <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full max-w-full">
+            <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-[10px]">
+              Valor pago em recursos
+            </div>
+            <div class="flex items-center justify-center py-8 text-2xl font-bold">R$ {{ valorPago }}</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { ref, onMounted, watch } from 'vue'
-import { Chart, registerables } from 'chart.js'
-
-Chart.register(...registerables)
+import { ref, onMounted, watch, nextTick } from 'vue'
+import Chart from 'chart.js/auto'
+import { ChevronDownIcon } from '@heroicons/vue/24/outline'
 
 export default {
-  name: 'PieCharts',
+  name: 'StatsCards',
+  components: {
+    ChevronDownIcon
+  },
   props: {
-    data: {
+    distribuicao: {
       type: Array,
-      required: true
+      default: () => [
+        { label: 'Até R$ 1500', value: 28 },
+        { label: 'De R$ 1500 até R$ 3000', value: 35 },
+        { label: 'De R$ 3000 até R$ 4500', value: 44 },
+        { label: 'De R$ 4500 até R$ 6000', value: 22 },
+        { label: 'Mais que R$ 6000', value: 58 }
+      ]
+    },
+    pessoasPagas: {
+      type: [Number, String],
+      default: 187
+    },
+    valorPago: {
+      type: [Number, String],
+      default: '851.253,25'
     }
   },
   setup(props) {
-    const chartTipos = ref(null)
-    const chartStatus = ref(null)
-    const chartConclusao = ref(null)
-    
-    let chartsInstances = {}
-    
-    const destroyCharts = () => {
-      Object.values(chartsInstances).forEach(chart => {
-        if (chart) chart.destroy()
-      })
-      chartsInstances = {}
-    }
-    
-    const getCategoryLabel = (category) => {
-      const labels = {
-        'formacao': 'Formação',
-        'discordancia_regras': 'Discordância das regras',
-        'faltas': 'Faltas',
-        'tempo_atuacao': 'Tempo de atuação',
-        'mais_criterios': 'Mais de um critério',
-        'esclarecimento': 'Esclarecimento',
-        'pagamento_indevido': 'Pagamento indevido',
-        'grupo': 'Grupo',
-        'atividades': 'Atividades',
-        'alega_atuacao_outra_etapa': 'Alega atuação em outra etapa'
+    const open = ref(true)
+    const chartDistribuicao = ref(null)
+    let chartInstance = null
+
+    const destroyChart = () => {
+      if (chartInstance) {
+        chartInstance.destroy()
+        chartInstance = null
       }
-      return labels[category] || category
     }
-    
-    const generateColors = (count) => {
-      const colors = ['#3b82f6', '#ef4444', '#f97316', '#06b6d4', '#8b5cf6', '#10b981', '#f59e0b', '#84cc16', '#ec4899', '#6b7280']
-      return Array.from({ length: count }, (_, i) => colors[i % colors.length])
-    }
-    
-    const createCharts = () => {
-      destroyCharts()
+
+    const createChart = async () => {
+      await nextTick()
+      destroyChart()
       
-      // Tipos de Recurso
-      if (chartTipos.value && props.data.length > 0) {
-        const categories = {}
-        props.data.forEach(resource => {
-          const criterios = resource.criterios_selecionados || []
-          criterios.forEach(criterio => {
-            categories[criterio] = (categories[criterio] || 0) + 1
-          })
-        })
-        
-        const labels = Object.keys(categories)
-        const data = Object.values(categories)
-        
-        if (labels.length > 0) {
-          chartsInstances.tipos = new Chart(chartTipos.value, {
-            type: 'pie',
-            data: {
-              labels: labels.map(getCategoryLabel),
-              datasets: [{
-                data: data,
-                backgroundColor: generateColors(labels.length)
-              }]
+      // Só criar se o painel estiver aberto
+      if (!open.value) return
+      
+      // Aguardar para garantir que o elemento esteja no DOM
+      await new Promise(resolve => setTimeout(resolve, 100))
+      
+      if (chartDistribuicao.value) {
+        chartInstance = new Chart(chartDistribuicao.value, {
+          type: 'bar',
+          data: {
+            labels: props.distribuicao.map(d => d.label),
+            datasets: [{
+              label: 'Nº de pessoas',
+              data: props.distribuicao.map(d => d.value),
+              backgroundColor: '#1976D2',
+              borderRadius: 6,
+              barPercentage: 0.7,
+              categoryPercentage: 0.7
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: true, position: 'top' }
             },
-            options: {
-              responsive: true,
-              maintainAspectRatio: false,
-              plugins: {
-                legend: {
-                  position: 'bottom',
-                  labels: { boxWidth: 12, padding: 8, font: { size: 10 } }
-                }
-              }
-            }
-          })
-        }
-      }
-      
-      // Status
-      if (chartStatus.value && props.data.length > 0) {
-        const statusCount = {
-          'pendente': 0,
-          'em_analise': 0,
-          'respondido': 0
-        }
-        
-        props.data.forEach(resource => {
-          statusCount[resource.status] = (statusCount[resource.status] || 0) + 1
-        })
-        
-        chartsInstances.status = new Chart(chartStatus.value, {
-          type: 'pie',
-          data: {
-            labels: ['Pendente', 'Em Análise', 'Respondido'],
-            datasets: [{
-              data: [statusCount.pendente, statusCount.em_analise, statusCount.respondido],
-              backgroundColor: ['#f59e0b', '#3b82f6', '#10b981']
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                position: 'bottom',
-                labels: { boxWidth: 12, padding: 8 }
-              }
-            }
-          }
-        })
-      }
-      
-      // Conclusão
-      if (chartConclusao.value && props.data.length > 0) {
-        const conclusionCount = {
-          'deferido': 0,
-          'indeferido': 0,
-          'parcialmente_deferido': 0
-        }
-        
-        props.data.forEach(resource => {
-          if (resource.conclusao) {
-            conclusionCount[resource.conclusao] = (conclusionCount[resource.conclusao] || 0) + 1
-          }
-        })
-        
-        chartsInstances.conclusao = new Chart(chartConclusao.value, {
-          type: 'pie',
-          data: {
-            labels: ['Deferido', 'Indeferido', 'Parcialmente Deferido'],
-            datasets: [{
-              data: [conclusionCount.deferido, conclusionCount.indeferido, conclusionCount.parcialmente_deferido],
-              backgroundColor: ['#10b981', '#ef4444', '#f59e0b']
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                position: 'bottom',
-                labels: { boxWidth: 12, padding: 8 }
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: { font: { size: 12 } }
+              },
+              y: {
+                beginAtZero: true,
+                grid: { color: '#e5e7eb' },
+                ticks: { font: { size: 12 }, stepSize: 10 }
               }
             }
           }
         })
       }
     }
-    
-    const updateCharts = () => {
-      createCharts()
-    }
-    
-    watch(() => props.data, () => {
-      createCharts()
-    }, { deep: true })
-    
-    onMounted(() => {
-      createCharts()
+
+    // Watch para recriar gráfico quando o painel abrir
+    watch(() => open.value, (newValue) => {
+      if (newValue) {
+        setTimeout(() => {
+          createChart()
+        }, 200)
+      }
     })
-    
+
+    onMounted(() => {
+      setTimeout(() => {
+        createChart()
+      }, 300)
+    })
+
     return {
-      chartTipos,
-      chartStatus,
-      chartConclusao,
-      updateCharts
+      open,
+      chartDistribuicao
     }
   }
 }

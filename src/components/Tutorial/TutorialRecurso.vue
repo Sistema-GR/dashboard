@@ -111,8 +111,8 @@ const driverObj = driver({
     // Step 1
     {
       popover: {
-        title: '<div class="titulo-img"><img src="/src/assets/images/inicioTutorial.png" class="responsive-img" />👋 Bem-vindo ao painel de gratificação</div>',
-        description: '<div class="descricao">Estamos felizes por você estar aqui! Este tutorial rápido vai te ajudar a entender todas as informações importantes sobre sua gratificação.<br><br><strong>Verifique se seus dados estão corretos.</strong></div>',
+        title: '<div class="titulo-img"><img src="/src/assets/images/inicioTutorial.png" class="responsive-img" />Bem-vindo ao formulário de recurso</div>',
+        description: '<div class="descricao">Este tutorial te guiará através do Formulário de Recurso. <br><br><strong>Para que serve esta tela?</strong> <br><br> Esta tela permite que você conteste formalmente informações relacionadas à sua gratificação por resultados quando: <br>❌ Há dados incorretos em seu cadastro. <br>❌ Discorda dos critérios aplicados. <br>❌Possui documentos que comprovam situação diferente.</div>',
         position: "center",
       },
       onNext: () => {
@@ -124,158 +124,52 @@ const driverObj = driver({
     },
     // Step 2
     {
-      element: "#tutorial-server-name",
+      element: "#tutorial-detalhes",
       popover: {
-        title: '<div class="titulo-img">Nome do servidor</div>',
-        description: '<div class="descricao">Este é o nome registrado no sistema para a gratificação.</div>',
+        description: '<div class="descricao-2">DICA: Antes de preencher o recurso, clique em "Clique aqui e veja o detalhamento" para: <br><br> ✅ Ver seus critérios de avaliação. <br>✅ Entender por que não recebeu. <br>✅ Verificar se realmente precisa contestar.</div>',
         position: "bottom",
-      },
-      onNext: () => {
-        dynamicButtons.value = [];
       },
     },
     // Step 3
     {
-      element: "#tutorial-value",
+      element: "#tutorial-formulario",
       popover: {
-        title: '<div class="titulo-img">Seu Valor de Gratificação</div>',
-        description: '<div class="descricao">Aqui você visualiza o valor bruto da sua gratificação. Lembre-se que este valor não inclui os descontos de impostos.</div>',
+        description: '<div class="descricao">No preenchimento do formulário, os dados pessoais são inseridos automaticamente.<br> Esses campos aparecem em cinza e não podem ser editados. <br><br> <strong>Certifique que seus dados estão corretos!</strong></div>',
         position: "bottom",
-      },
-      onNext: () => {
-        dynamicButtons.value = [
-          { label: "Ver Detalhes", action: () => driverObj.moveNext(3) }
-        ];
       },
     },
     // Step 4
     {
-      element: "#tutorial-warning",
+      element: "#tutorial-unidade",
       popover: {
         title: '',
-        description: '<div class="descricao">Os valores mostrados são brutos, sem os descontos de impostos que podem ser aplicados.</div>',
+        description: '<div class="descricao">Digite o nome completo da sua unidade. <br><br> Exemplo: "EMEI Profª Maria Silva" ou "Escola Municipal João Santos". <br><br> Campo obrigatório - aparecerá erro se não preenchido.</div>',
         position: "top",
       },
     },
     // Step 5
     {
-      element: "#tutorial-details",
+      element: "#tutorial-descricao",
       popover: {
-        title: '',
-        description: '<div class="descricao">Aqui mostrar todas as suas matriculas ativas e os detalhes de cada uma.</div>',
+        title: '<div class="titulo-img-2">Descrição do recurso (obrigatório).<br></div>',
+        description: '<div class="descricao-2"><strong>Como escrever uma boa descrição:</strong> <br><br> ✅ Faça: <br> • Seja específico ao explicar o problema. <br> • Informe datas e períodos relevantes. <br> • Cite documentos que possui. <br> • Utilize linguagem formal e respeitosa. <br><br> ❌ Não faça: <br> • Usar palavras ofensivas ou desrespeitosas. <br> • Fornecer informações vagas ou incompletas. <br> • Deixar de mencionar documentos importantes.</div>',
         position: "top",
       },
-      onHighlightStarted: () => {
-        openAccordion("#tutorial-details");
-      }
     },
     // Step 6
     {
-      element: "#tutorial-matricula-0",
+      element: "#tutorial-documentos",
       popover: {
-        title: '<div class="titulo-img">Detalhamento por matrícula</div>',
-        description: '<div class="descricao">Visualize neste campo uma das suas matrículas que estão atualmente ativas no sistema.</div>',
-        position: "top",
-      },
-      onHighlightStarted: () => {
-        openAccordion("#tutorial-matricula-0");
-      }
-    },
-    // Step 7
-    {
-      element: "#painel-infos",
-      popover: {
-        title: '<div class="titulo-img">Matrícula</div>',
-        description: '<div class="descricao">Aqui estão os seus dados da sua matrícula</div>',
+        title: '<div class="titulo-img-2">Upload de Documentos</div>',
+        description: '<div class="descricao-2"><strong>Como anexar documentos(passo a passo):</strong> <br> 1. Clique na área pontilhada ou no texto "Escolher Arquivo". <br> 2. Selecione os arquivos no seu computador. <br> • <strong>Formatos aceitos:</strong> PDF, JPG e PNG <br> • <strong>Multiplos arquivos:</strong> É possível anexar mais de um arquivo de uma vez. <br> • Os arquivos selecionados aparecerão listados logo abaixo. <br> • Para remover um arquivo, clique no ❌ ao lado do nome. <br><br> <strong>Analise bem o documento antes de encaminhar!</strong></div>',
         position: "top",
       },
     },
-    // Step 8
-    {
-      element: "#tutorial-table-dados",
-      popover: {
-        title: '<div class="titulo-img">Dados da Matrícula</div>',
-        description: '<div class="descricao">Nesse quadro mostra seus dados. Certifique que todos estão corretos!</div>',
-        position: "top",
-      },
-    },
-    // Step 9
-    {
-      element: "#tutorial-valor-rede",
-      popover: {
-        title: '',
-        description: '<div class="descricao">Aqui mostra o valor total da sua rede.</div>',
-        position: "top",
-      },
-    },
-    // Step 10
-    {
-      element: "#tutorial-valor-unidade",
-      popover: {
-        title: '',
-        description: '<div class="descricao">Aqui mostra o valor máximo recebido por unidade.</div>',
-        position: "top",
-      },
-    },
-    // Step 11
-    {
-      element: "#tutorial-desconto",
-      popover: {
-        title: '',
-        description: '<div class="descricao">Nesse campo mostra o desconto.</div>',
-        position: "top",
-      },
-    },
-    // Step 12
-    {
-      element: "#tutorial-valor-total",
-      popover: {
-        title: '',
-        description: '<div class="descricao">É aqui, mostra o valor total que você ira receber.</div>',
-        position: "top",
-      },
-    },
-    // Step 13
-    {
-      element: "#tutorial-criteria",
-      popover: {
-        title: '<div class="titulo-img">Critérios de aptidão</div>',
-        description: '<div class="descricao">Esta tabela mostra os 4 critérios principais: frequência (mín. 96%), tempo de atuação (mín. 6 meses), Formação e Atividades. Cada um, mostra se você está "Apto" ou "Não Apto".</div>',
-        position: "top",
-      },
-    },
-    // Step 14
-    {
-      element: "#tutorial-allocations",
-      popover: {
-        title: '<div class="titulo-img">Alocações</div>',
-        description: '<div class="descricao">Aqui você vê onde trabalhou durante o período, incluindo: unidade escolar, período (início/fim), função exercida, carga horária e grupo de gratificação.</div>',
-        position: "top",
-      },
-    },
-    // Step 15
-    {
-      element: "#tutorial-frequency",
-      popover: {
-        title: '<div class="titulo-img">Frequência</div>',
-        description: '<div class="descricao">Esta seção mostra todos os seus afastamentos registrados: licenças, faltas justificadas, etc. Mostra as datas, tipo de afastamento e se foram contabilizados para o cálculo.</div>',
-        position: "top",
-      },
-    },
-    // Step 16
-    {
-      element: "#tutorial-resource",
-      popover: {
-        title: '<div class="titulo-img">Recurso</div>',
-        description: '<div class="descricao">Se você acha que alguma informação está incorreta ou quer contestar algum critério, clique em "Recurso". Você pode anexar documentos para comprovar seu ponto de vista.</div>',
-        position: "left",
-      },
-    },
-    // Step 17 - Final
+    // Step 7 - Final
     {
       popover: {
         title: '<div class="titulo-img"><img src="/src/assets/images/TutorialConcluido.png" class="responsive-img" />Você concluiu o tutorial!</div>',
-        description: '<div class="descricao">Agora você está pronto para navegar pelo painel de gratificação e acompanhar as informações com facilidade.</div>',
+        description: '<div class="descricao">Antes de enviar, verifique se a unidade de atuação está preenchida, a descrição está clara e detalhada, há pelo menos um documento anexado, os termos foram aceitos e os arquivos estão corretos e legíveis. Clique em <strong>Enviar</strong> e aguarde a validação do sistema. Caso haja erros, eles aparecerão em vermelho para correção. <br><br> O sistema aceita arquivos PDF, JPG e PNG, com tamanho dentro do limite permitido. <strong>Evite documentos ilegíveis, linguagem inadequada, informações desatualizadas ou recursos duplicados.</strong> <br><br> Após o envio, você será redirecionado para a página de status, onde poderá acompanhar o andamento e prazos.</div>',
         position: "center",
       }
     },
@@ -293,6 +187,10 @@ onMounted(() => {
     disableForReducedMotion: true
   });
   window.dispatchEvent(new Event('resize'));
+});
+
+defineExpose({
+  startTutorial
 });
 </script>
 

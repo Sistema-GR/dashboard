@@ -62,6 +62,24 @@
                 <p v-else class="text-15 text-gray-500">Nenhum documento foi anexado a este recurso.</p>
             </div>
 
+             <div v-if="resource.respostas && resource.respostas.length > 0" class="bg-white p-4 rounded-[10px] shadow-sm border">
+                <h3 class="text-lg font-bold mb-2">Respostas</h3>
+                <div class="space-y-3">
+                    <div v-for="resposta in resource.respostas" :key="resposta.id" class="p-3 bg-gray-50 rounded-md border">
+
+                        <div v-if="resposta.arquivo_pdf">
+                            <a :href="resposta.arquivo_pdf" download target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 hover:underline transition-colors font-medium">
+                                <PaperClipIcon class="w-5 h-5" />
+                                <span>Baixar Resposta Oficial</span>
+                            </a>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2 pt-2 border-t">
+                            Respondido por: {{ resposta.autor_nome }} em {{ formatDate(resposta.created_at) }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </Whiteboard>
 </template>

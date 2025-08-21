@@ -1,7 +1,7 @@
 <template>
     <Whiteboard title="Formulário de Recurso" :isSidebarMinimized="isSidebarMinimized">
         <!-- Header com ícone de alerta - largura total -->
-        <div class="w-full bg-blue-50 border-b border-blue-200 mb-6">
+        <div id="tutorial-detalhes" class="w-full bg-blue-50 border-b border-blue-200 mb-6">
             <div class="max-w-2xl mx-auto px-6 py-4">
                 <div class="flex items-center gap-3">
                         <InformationCircleIcon class="w-20 h-20 text-black items-center" />
@@ -23,7 +23,7 @@
             <div v-else class="space-y-6">
 
                 <!-- Formulário -->
-                <form @submit.prevent="submitForm" class="space-y-4">
+                <form id="tutorial-formulario" @submit.prevent="submitForm" class="space-y-4">
                     
                     <!-- Nome completo -->
                     <div>
@@ -62,7 +62,7 @@
                     </div>
 
                     <!-- Unidade de atuação -->
-                    <div>
+                    <div id="tutorial-unidade">
                         <label class="block text-15 font-medium text-gray-700 mb-1">Unidade de atuação</label>
                         <input 
                             v-model="form.unidade" 
@@ -74,7 +74,7 @@
                     </div>
 
                     <!-- Descrição -->
-                    <div>
+                    <div id="tutorial-descricao">
                         <label class="block text-15 font-medium text-gray-700 mb-1">Descrição</label>
                         <textarea 
                             v-model="form.descricao" 
@@ -86,7 +86,7 @@
                     </div>
                     
                     <!-- Documentos -->
-                    <div>
+                    <div id="tutorial-documentos">
                         <label class="block text-15 font-medium text-gray-700 mb-1">Documentos</label>
                         <div class="border-2 border-dashed border-gray-300 rounded-[10px] p-6 text-center hover:border-gray-400 transition-colors">
                             <input 
@@ -105,7 +105,7 @@
                                     <div class="text-15 text-gray-600">
                                         <span class="font-medium text-blue-600 hover:text-blue-500">Escolher arquivo</span>
                                     </div>
-                                    <p class="text-xs text-gray-500">PDF, DOC, DOCX, JPG, PNG</p>
+                                    <p class="text-xs text-gray-500">PDF, JPG, PNG</p>
                                 </div>
                             </label>
                         </div>
@@ -166,6 +166,7 @@
             </div>
         </div>
     </Whiteboard>
+    <TutorialRecurso @start-tutorial="startTutorial" />
 </template>
 
 <script>
@@ -175,6 +176,7 @@ import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import TutorialRecurso from '@/components/Tutorial/TutorialRecurso.vue';
 
 export default {
     name: "ResourceForm",
@@ -184,7 +186,8 @@ export default {
         ArrowDownTrayIcon, 
         PaperClipIcon, 
         XMarkIcon,
-        InformationCircleIcon 
+        InformationCircleIcon,
+        TutorialRecurso
     },
 
     setup() {
@@ -205,6 +208,7 @@ export default {
         const errors = ref({});
         const isSubmitting = ref(false);
         const isLoadingUserData = ref(true);
+        const tutorialComponent = ref(null);
 
         const fetchUserData = async () => {
             isLoadingUserData.value = true;
@@ -227,7 +231,20 @@ export default {
             }
         };
 
-        onMounted(fetchUserData);
+        onMounted(() => {
+            fetchUserData();
+            
+            // Verificar se é a primeira vez que o usuário acessa esta página
+            const hasSeenTutorial = localStorage.getItem('hasSeenResourceTutorial');
+            if (!hasSeenTutorial) {
+                setTimeout(() => {
+                    if (tutorialComponent.value) {
+                        tutorialComponent.value.startTutorial();
+                    }
+                    localStorage.setItem('hasSeenResourceTutorial', 'true');
+                }, 1000);
+            }
+        });
 
         const handleFileUpload = (event) => {
             form.files = Array.from(event.target.files);
@@ -274,18 +291,15 @@ export default {
                     });
                     router.push({ name: 'status' });
                 } catch (error) {
-    console.error("Erro ao criar recurso:", error.response ? error.response.data : error.message);
-    
-                   
+                    console.error("Erro ao criar recurso:", error.response ? error.response.data : error.message);
+                    
                     if (error.response && error.response.data) {
                         const errorData = error.response.data;
                         let errorMessage;
 
                         if (typeof errorData.detail === 'string') {
                             errorMessage = errorData.detail;
-                        } 
-
-                        else {
+                        } else {
                             errorMessage = Object.entries(errorData)
                                 .map(([field, messages]) => {
                                     const messageText = Array.isArray(messages) ? messages.join(', ') : messages;
@@ -294,12 +308,9 @@ export default {
                                 .join('\n');
                         }
                         alert(`Ocorreram os seguintes erros:\n${errorMessage}`);
-
                     } else {
                         alert('Ocorreu um erro desconhecido ao enviar seu recurso. Tente novamente.');
                     }
-                    // =============================================================
-
                 } finally {
                     isSubmitting.value = false;
                 }
@@ -315,6 +326,7 @@ export default {
             handleFileUpload, 
             removeFile, 
             submitForm,
+        
         };
     }
 };
