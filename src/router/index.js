@@ -20,27 +20,15 @@ import create from '@/views/Admin/Create/index.vue'
 import selector from '@/views/Admin/Create/Selector/Index.vue'
 import editversion from '@/views/Admin/Create/EditVersions/index.vue'
 import permissionsaccess from '@/views/Admin/PermissionsAccess/index.vue'
+import AnnualReportsDashboard from '@/views/Admin/Resource/AnnualResource/AnnualReportsDashboard.vue'
 //Resource
 import resource from '@/views/Admin/Resource/index.vue'
 import infodetails from '@/views/Admin/Resource/InfoDetails/index.vue'
-import annualReports from '@/views/Admin/Resource/AnnualResource/AnnualReportsDashboard.vue'
 //AdminPanel
 import adminPanel from '@/views/AdminPanel/index.vue'
 import dash from '@/views/AdminPanel/Dashboard/index.vue'
-import result from '@/views/AdminPanel/Results/index.vue'
-import professional from '@/views/AdminPanel/Professional/index.vue'
-import steps from '@/views/AdminPanel/Steps/index.vue'
-import frequency from '@/views/AdminPanel/Frequency/index.vue'
-import infrequency from '@/views/AdminPanel/InfrequencyReason/index.vue'
-import resignation from '@/views/AdminPanel/Resignation/index.vue'
-import activities from '@/views/AdminPanel/Activities/index.vue'
-import service from '@/views/AdminPanel/Service/index.vue'
-import training from '@/views/AdminPanel/Training/index.vue'
 import report from '@/views/AdminPanel/Report/index.vue'
-import groups from '@/views/AdminPanel/Groups/index.vue'
-import stagegroup from '@/views/AdminPanel/StageGroup/index.vue'
 import rewards from '@/views/AdminPanel/Rewards/index.vue'
-import calendar from "@/views/AdminPanel/Calendar/index.vue"
 import FileManager from '@/views/AdminPanel/FileManager/index.vue'
 //user
 import user from '@/views/User/index.vue'
@@ -91,25 +79,21 @@ const router = createRouter({
     
     {
       path: '/admin',
-      name: 'adminPanel',
-      component: adminPanel,
+      name: 'admin',
+      component: admin,
       children: [
         { path: 'dashboard', name: 'dash', component: dash },
-        { path: 'results', name: 'results', component: result },
-        { path: 'professional', name: 'professional', component: professional },
-        { path: 'groups', name: 'groups', component: groups },
-        { path: 'steps', name: 'steps', component: steps },
-        { path: 'stagegroup', name: 'stagegroup', component: stagegroup },
-        { path: 'frequency', name: 'frequency', component: frequency },
-        { path: 'infrequency', name: 'infrequency', component: infrequency },
-        { path: 'resignation', name: 'resignation', component: resignation },
-        { path: 'activities', name: 'activities', component: activities },
-        { path: 'service', name: 'service', component: service },
-        { path: 'training', name: 'training', component: training },
         { path: 'report', name: 'report', component: report },
+
         { path: 'calendar', name: 'calendar', component: calendar },
+
         { path: 'files-manager', name: 'files-manager', component: FileManager },
         { path: 'roles', name: 'roles', component: roles },
+        {
+          path: 'recursos/relatorios-anuais',
+          name: 'annual-reports',
+          component: AnnualReportsDashboard
+        },
       ]
     },
     { path: '/user', 
@@ -130,8 +114,8 @@ const router = createRouter({
       name: 'resource', 
       component: resource,
       children: [
+
         { path: 'info', name: 'info', component: infodetails },
-        { path: 'relatorios-anuais', name: 'annual-reports', component: annualReports },
       ]
     },
     { 
@@ -140,6 +124,7 @@ const router = createRouter({
       component: infodetails,
       props: true
     },
+
     { 
       path: '/admin/recursos/relatorios-anuais',
       name: 'admin-annual-reports',
@@ -151,10 +136,12 @@ const router = createRouter({
       component: rewards,
       meta: { requiresAdmin: true } 
     },
+
   ]
 })
 
 router.beforeEach((to, from, next) => {
+
   
   if (from.name === 'admin-view-rewards') {
     if (to.name !== 'admin-view-rewards') {
@@ -162,6 +149,7 @@ router.beforeEach((to, from, next) => {
       localStorage.removeItem('tempTargetCpf');
     }
   }
+
 
   const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
   const userType = getUserType();
@@ -183,6 +171,7 @@ router.beforeEach((to, from, next) => {
   if (!canAccessRoute(to.path)) {
     return next({ path: getDashboardRoute() });
   }
+
   next();
 
   

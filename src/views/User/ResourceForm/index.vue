@@ -220,10 +220,7 @@ export default {
         const errors = ref({});
         const isSubmitting = ref(false);
         const isLoadingUserData = ref(true);
-
-        const startTutorial = () => {
-            console.log('Tutorial iniciado do componente pai');
-        };
+        const tutorialComponent = ref(null);
 
         const fetchUserData = async () => {
             isLoadingUserData.value = true;
@@ -266,7 +263,20 @@ export default {
             }
         };
 
-        onMounted(fetchUserData);
+        onMounted(() => {
+            fetchUserData();
+            
+            // Verificar se é a primeira vez que o usuário acessa esta página
+            const hasSeenTutorial = localStorage.getItem('hasSeenResourceTutorial');
+            if (!hasSeenTutorial) {
+                setTimeout(() => {
+                    if (tutorialComponent.value) {
+                        tutorialComponent.value.startTutorial();
+                    }
+                    localStorage.setItem('hasSeenResourceTutorial', 'true');
+                }, 1000);
+            }
+        });
 
         const handleFileUpload = (event) => {
             form.files = Array.from(event.target.files);
@@ -353,6 +363,7 @@ export default {
             startTutorial,
             isLoadingMatriculas,
             matriculasDisponiveis,
+
         };
     }
 };

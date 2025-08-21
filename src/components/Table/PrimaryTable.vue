@@ -127,9 +127,17 @@ const filteredPeopleByQuery = computed(() => {
 
 const totalPages = computed(() => Math.ceil(filteredPeopleByQuery.value.length / itemsPerPage));
 
+
 onMounted(async () => {
   await fetchPeople();
+
 });
+
+watch(() => props.route, (newRoute) => {
+  if (newRoute) {
+    fetchPeople();
+  }
+}, { immediate: true });
 
 watch(() => props.searchQuery, debounce(() => {
   currentPage.value = 1; 
@@ -154,6 +162,8 @@ function toggleFilterMenu(column) {
 }
 
 async function fetchPeople() {
+  currentPage.value = 1;
+
   isLoading.value = true; 
   try {
     const { people, columns } = await loadPeopleData(props.route);

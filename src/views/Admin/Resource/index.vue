@@ -83,13 +83,14 @@ import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import Block from '@/views/Admin/Resource/components/Block/index.vue'
 import infoCard from '@/views/Admin/Resource/components/infoCard/index.vue'
 import Sidebar from '@/components/Sidebar/Sidebar.vue';
+import AnnualReportsDashboard from '@/views/Admin/Resource/AnnualResource/AnnualReportsDashboard.vue'
 import { FunnelIcon } from "@heroicons/vue/24/outline";
 import axios from 'axios';
 import { STATUS_DEFINITIONS } from '@/config/resourceConstants.js';
 
 export default {
     name: "Recurso",
-    components: { Whiteboard, Block, infoCard, FunnelIcon, Sidebar },
+    components: { Whiteboard, Block, infoCard, FunnelIcon, Sidebar, AnnualReportsDashboard },
 
     setup() {
         const router = useRouter()

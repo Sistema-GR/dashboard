@@ -1,6 +1,6 @@
 <template>
-  <Whiteboard title="Relatórios Anuais" :isSidebarMinimized="isSidebarMinimized">
-    
+  <Sidebar :route="'admin'" @update:isSidebarMinimized="handleSidebarMinimized" class="z-50"/>
+  <Whiteboard title="Relatórios Anuais" class="!overflow-visible overflow-y-auto z-40 relative" :isSidebarMinimized="isSidebarMinimized">
     <!-- Filtros -->
     <ReportFilters 
       v-model:filters="filters"
@@ -33,20 +33,27 @@
     <!-- Tabela de Responsáveis -->
     <ResponsibleTable :stats="responsibleStats" />
 
+    <BarUnidade :data="filteredResources" :availableUnits="availableUnits" />
+
+    <DadosCompletos :data="filteredResources" />
+
   </Whiteboard>
 </template>
 
 <script>
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue'
+import Sidebar from '@/components/Sidebar/Sidebar.vue';
 import ReportFilters from '@/views/Admin/Resource/AnnualResource/components/ReportFilters.vue'
 import ReportSummary from '@/views/Admin/Resource/AnnualResource/components/ReportSummary.vue'
 import StatsCards from '@/views/Admin/Resource/AnnualResource/components/StatsCards.vue'
 import PieCharts from '@/views/Admin/Resource/AnnualResource/components/PieCharts.vue'
 import BarCharts from '@/views/Admin/Resource/AnnualResource/components/BarCharts.vue'
 import ResponsibleTable from '@/views/Admin/Resource/AnnualResource/components/ResponsibleTable.vue'
+import BarUnidade from '@/views/Admin/Resource/AnnualResource/components/BarUnidade.vue'
 import { ref, inject, onMounted, computed, watch } from 'vue'
 import axios from 'axios'
 import { getAccessToken } from '@/service/token'
+import DadosCompletos from './components/DadosCompletos.vue'
 
 export default {
   name: 'AnnualReportsDashboard',
@@ -57,11 +64,13 @@ export default {
     StatsCards, 
     PieCharts, 
     BarCharts, 
-    ResponsibleTable 
+    ResponsibleTable,
+    BarUnidade,
+    DadosCompletos
   },
   
   setup() {
-    const isSidebarMinimized = inject('isSidebarMinimized')
+    const isSidebarMinimized = inject('isSidebarMinimized', ref(false)) // Valor padrão se inject falhar
     
     // Refs
     const pieChartsRef = ref(null)
@@ -299,8 +308,16 @@ export default {
       fetchData()
     })
     
+    // ADICIONAR este método:
+    const handleSidebarMinimized = (value) => {
+      if (isSidebarMinimized && isSidebarMinimized.value !== undefined) {
+        isSidebarMinimized.value = value
+      }
+    }
+    
     return {
       isSidebarMinimized,
+      handleSidebarMinimized, // ADICIONAR no return
       pieChartsRef,
       barChartsRef,
       filters,
