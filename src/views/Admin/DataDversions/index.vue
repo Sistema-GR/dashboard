@@ -30,7 +30,7 @@
                   <Toggle
                     class="scale-75"
                     :modelValue="versao.ativa"
-                    @update:modelValue="() => handleToggle('calculo', index)"
+                    @update:modelValue="() => handleToggle(index)"
                   />
                   <span class="text-15">{{ versao.data }}</span>
                 </div>
@@ -40,37 +40,7 @@
         </div>
       </Disclosure>
 
-      <!-- Recurso -->
-      <Disclosure v-slot="{ open }">
-        <div>
-          <DisclosureButton class="w-full flex justify-left items-center bg-[#4168b5] text-white px-4 py-4 sm:pl-8 text-20 font-semibold gap-2">
-            <span class="text-20">Recurso</span>
-            <ChevronDownIcon class="w-8 h-8 transition-transform" :class="{ 'rotate-180': open }" />
-          </DisclosureButton>
-          <DisclosurePanel class="bg-white px-4 sm:px-10 py-4">
-            <div
-              v-for="(versao, index) in versoesRecurso"
-              :key="versao.id"
-              class="border-b last:border-b-0 border-black py-3"
-            >
-              <div class="flex justify-between items-center">
-                <div class="flex flex-col">
-                  <span class="font-semibold text-15">{{ versao.nome }}</span>
-                  <span class="text-15 leading-4">{{ versao.descricao }}</span>
-                </div>
-                <div class="flex flex-col items-end space-y-1">
-                  <Toggle
-                    class="scale-75"
-                    :modelValue="versao.ativa"
-                    @update:modelValue="() => handleToggle('recurso', index)"
-                  />
-                  <span class="text-15">{{ versao.data }}</span>
-                </div>
-              </div>
-            </div>
-          </DisclosurePanel>
-        </div>
-      </Disclosure>
+      
     </div>
 
     <!-- Modal de Confirmação -->
@@ -101,19 +71,18 @@
 
 <script>
 import { ref, inject, onMounted } from 'vue'
-import { FolderIcon } from '@heroicons/vue/24/outline'
 import { ChevronDownIcon } from '@heroicons/vue/20/solid'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue'
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue'
 import Toggle from '@/components/Toggle/Toggle.vue'
-// import axios from 'axios' // Descomente quando for usar a API real
+import axios from 'axios'
+import { getAccessToken } from '@/service/token'
 
 export default {
   name: 'Ativos',
   components: {
     Whiteboard,
     Toggle,
-    FolderIcon,
     ChevronDownIcon,
     Disclosure,
     DisclosureButton,
@@ -121,75 +90,92 @@ export default {
   },
   setup() {
     const isSidebarMinimized = inject('isSidebarMinimized')
-    const versoesCalculo = ref([])
-    const versoesRecurso = ref([])
+    const versoesCalculo = ref([]) // Apenas uma lista é necessária agora
 
     const showConfirmation = ref(false)
-    const pendingVersion = ref({ type: null, index: null })
+    const pendingVersion = ref({ index: null }) // Estado de pendência simplificado
 
-    // 🔹 MOCK: Dados locais para visualização (remova quando tiver a API)
-    const dadosMockados = {
-      calculo: [
-        { id: 1, nome: 'Versão 1', descricao: 'Cálculo de janeiro', data: '01/01/2025', ativa: false },
-        { id: 2, nome: 'Versão 2', descricao: 'Cálculo de fevereiro', data: '01/02/2025', ativa: true },
-        { id: 3, nome: 'Versão 3', descricao: 'Cálculo de março', data: '01/03/2025', ativa: false }
-      ],
-      recurso: [
-        { id: 11, nome: 'Recurso A', descricao: 'Recurso de avaliação', ativa: false },
-        { id: 12, nome: 'Recurso B', descricao: 'Recurso de revisão', ativa: true }
-      ]
-    }
-
-    const carregarMock = () => {
-      versoesCalculo.value = dadosMockados.calculo
-      versoesRecurso.value = dadosMockados.recurso
-    }
-
-    // 🔗 Quando tiver a API, substitua por esta função:
-    /*
+    // Busca os dados da API
     const fetchData = async () => {
-      const [respCalculo, respRecurso] = await Promise.all([
-        axios.get('/api/versoes/calculo'),
-        axios.get('/api/versoes/recurso')
-      ])
-      versoesCalculo.value = respCalculo.data
-      versoesRecurso.value = respRecurso.data
-    }
-    */
+      try {
+        const token = await getAccessToken();
+        const response = await axios.get('http://127.0.0.1:8000/csv/opencalc/list-opencalc/', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        
+        // A resposta da API agora é uma lista direta
+        versoesCalculo.value = response.data;
 
-    const handleToggle = (type, index) => {
-      const lista = type === 'calculo' ? versoesCalculo : versoesRecurso
-      if (!lista.value[index].ativa) {
-        pendingVersion.value = { type, index }
-        showConfirmation.value = true
+      } catch (error) {
+        console.error("Erro ao buscar as versões de cálculo:", error);
       }
-    }
+    };
 
+    // Manipula o clique no toggle (sem o parâmetro 'type')
+    const handleToggle = (index) => {
+
+      
+      if (!versoesCalculo.value[index].ativa) {
+
+        pendingVersion.value = { index };
+        showConfirmation.value = true;
+      } 
+    };
+
+    // Confirma a mudança e chama a API
     const confirmToggle = async () => {
-      const { type, index } = pendingVersion.value
-      const lista = type === 'calculo' ? versoesCalculo : versoesRecurso
-      const id = lista.value[index].id
+        const { index } = pendingVersion.value;
+        if (index === null || versoesCalculo.value[index] === undefined) {
+          console.error("Tentativa de confirmar sem uma versão pendente válida.");
+          showConfirmation.value = false;
+          pendingVersion.value = { index: null };
+          return;
+        }
 
-      // 🔗 Quando for usar API:
-      // await axios.patch(`/api/versoes/${id}/ativar`)
+        const idParaAtivar = versoesCalculo.value[index].id;
 
-      lista.value.forEach((v, i) => (v.ativa = i === index))
-      showConfirmation.value = false
-    }
+        try {
+          const token = await getAccessToken();
+          
+          const response = await axios.post('http://127.0.0.1:8000/csv/opencalc/activate-opencalc/', 
+            { calc_id: idParaAtivar },
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+
+          if (response.status === 200) {
+
+
+            versoesCalculo.value = versoesCalculo.value.map((versao, i) => {
+              return {
+                ...versao,
+                ativa: i === index 
+              };
+            });
+          } else {
+            console.warn(`API retornou um status inesperado: ${response.status}`);
+            alert("A operação foi concluída, mas com um status inesperado.");
+          }
+
+        } catch (error) {
+          console.error("Erro detalhado ao ativar a versão:", error.response || error);
+          alert("Falha ao ativar a versão. A interface não foi alterada. Verifique o console para mais detalhes.");
+          
+        } finally {
+          showConfirmation.value = false;
+          pendingVersion.value = { index: null };
+        }
+      };
 
     const cancelToggle = () => {
-      showConfirmation.value = false
-      pendingVersion.value = { type: null, index: null }
-    }
+      showConfirmation.value = false;
+      pendingVersion.value = { index: null };
+    };
 
-    onMounted(() => {
-      carregarMock() // ➕ Troque para fetchData() quando conectar API
-    })
+    onMounted(fetchData);
 
     return {
       isSidebarMinimized,
       versoesCalculo,
-      versoesRecurso,
       showConfirmation,
       handleToggle,
       confirmToggle,

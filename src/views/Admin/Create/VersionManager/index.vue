@@ -126,7 +126,7 @@ export default {
           idem_network_step_3: parseFloat(editableVersionDetails.value.idem_network_step_3),  // Convertendo para número
         };
 
-        console.log("Payload enviado para general-data:", payload);
+        
 
         // Enviar o payload para a API e criar o general data
         const response = await createGeneralData(payload);
@@ -137,7 +137,6 @@ export default {
           throw new Error(`Erro: Nenhum general_data_id foi retornado pela API.`);
         }
 
-        console.log("General Data ID retornado:", generalDataId);
 
         // Criar dataset com o ID do general data
         await createDataset(generalDataId);

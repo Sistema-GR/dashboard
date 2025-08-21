@@ -20,7 +20,6 @@ export default {
   methods: {
     async fetchUserInfo() {
         const token = localStorage.getItem("accessToken"); // ou "access_token", conforme necessário
-        console.log("Token:", token); // Verifique o valor do token no console
         if (!token) {
             console.error("Token de autenticação não encontrado");
             return;
@@ -38,7 +37,6 @@ export default {
             }
 
             const data = await response.json();
-            console.log("Dados do usuário:", data); // Verifique o que está sendo retornado
 
             if (data && data.first_name && data.last_name) {
                 const capitalizeWords = (str) => {

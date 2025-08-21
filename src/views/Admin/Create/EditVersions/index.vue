@@ -33,7 +33,7 @@ export default {
         const data = await fetchEmployeeData();  // Puxa os dados da API
         if (Array.isArray(data)) {
           employeeData.value = data;
-          console.log('Dados recebidos:', data);  // Exibe os dados no console
+          
         } else {
           employeeData.value = [];  // Limpa os dados se não for um array
           errorMessage.value = 'Os dados recebidos não estão no formato esperado.';

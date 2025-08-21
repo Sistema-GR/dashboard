@@ -226,7 +226,6 @@ export default {
           idem_network_step_3: parseFloat(formData.idem_network_step_3),
         };
 
-        console.log("Payload enviado para general-data:", payload);
 
         // Enviar para criar o general data
         const generalData = await createGeneralData(payload);
@@ -241,7 +240,6 @@ export default {
           );
         }
 
-        console.log("General Data ID retornado:", generalDataId);
 
         // Criar dataset
         await createDataset(generalDataId);
