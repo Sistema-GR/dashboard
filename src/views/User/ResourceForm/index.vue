@@ -235,13 +235,13 @@ export default {
             fetchUserData();
             
             // Verificar se é a primeira vez que o usuário acessa esta página
-            const hasSeenTutorial = localStorage.getItem('hasSeenGratificationTutorial');
+            const hasSeenTutorial = localStorage.getItem('hasSeenResourceTutorial');
             if (!hasSeenTutorial) {
                 setTimeout(() => {
                     if (tutorialComponent.value) {
                         tutorialComponent.value.startTutorial();
                     }
-                    localStorage.setItem('hasSeenGratificationTutorial', 'true');
+                    localStorage.setItem('hasSeenResourceTutorial', 'true');
                 }, 1000);
             }
         });
@@ -326,7 +326,7 @@ export default {
             handleFileUpload, 
             removeFile, 
             submitForm,
-            startTutorial
+        
         };
     }
 };
