@@ -20,6 +20,7 @@ import create from '@/views/Admin/Create/index.vue'
 import selector from '@/views/Admin/Create/Selector/Index.vue'
 import editversion from '@/views/Admin/Create/EditVersions/index.vue'
 import permissionsaccess from '@/views/Admin/PermissionsAccess/index.vue'
+import AnnualReportsDashboard from '@/views/Admin/Resource/AnnualResource/AnnualReportsDashboard.vue'
 //Resource
 import resource from '@/views/Admin/Resource/index.vue'
 import infodetails from '@/views/Admin/Resource/InfoDetails/index.vue'
@@ -78,14 +79,19 @@ const router = createRouter({
     
     {
       path: '/admin',
-      name: 'adminPanel',
-      component: adminPanel,
+      name: 'admin',
+      component: admin,
       children: [
         { path: 'dashboard', name: 'dash', component: dash },
         { path: 'report', name: 'report', component: report },
         { path: 'rewards', name: 'reward', component: rewards },
         { path: 'files-manager', name: 'files-manager', component: FileManager },
         { path: 'roles', name: 'roles', component: roles },
+        {
+          path: 'recursos/relatorios-anuais',
+          name: 'annual-reports',
+          component: AnnualReportsDashboard
+        },
       ]
     },
     { path: '/user', 
