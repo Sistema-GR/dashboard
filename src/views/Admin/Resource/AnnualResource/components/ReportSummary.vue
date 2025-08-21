@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col w-full px-10 py-10">
         <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full max-w-full">
-            <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-[10px]">
+            <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
         Recursos respondidos
       </div>
       <div class="bg-blue-50 px-3 pt-2 pb-1 rounded-b-[8px]">
@@ -11,11 +11,11 @@
         </div>
         <div class="relative w-full h-[4px] bg-[#B7E0E7] rounded-full">
           <div
-            class="absolute left-0 top-0 h-[4px] bg-[#5DBB63] rounded-full"
+            class="absolute left-0 top-0 h-[4px] bg-[#D9534F] rounded-full"
             :style="`width: calc(${getPercentage(stats.respondidos, stats.total)}% - 8px); min-width:0; max-width:100%;`"
           ></div>
           <div
-            class="absolute top-0 h-[4px] bg-[#D9534F] rounded-r-full"
+            class="absolute top-0 h-[4px] bg-[#5DBB63] rounded-r-full"
             :style="`right:0; width:8px; left:calc(${getPercentage(stats.respondidos, stats.total)}% - 8px); min-width:0; max-width:8px;`"
           ></div>
         </div>

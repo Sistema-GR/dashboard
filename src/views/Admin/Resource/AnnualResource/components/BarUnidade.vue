@@ -1,7 +1,7 @@
 <template>
   <div class="mb-6 w-full">
     <button @click="open = !open" class="w-full text-left px-6 py-3 justify-between bg-blue-50 rounded-[10px] focus:outline-none flex items-center">
-      <span class="text-2xl font-bold text-black">Quantidade de recursos por unidade</span>
+      <span class="text-25 font-bold text-black">Quantidade de recursos por unidade</span>
       <ChevronDownIcon class="w-4 h-4 sm:w-5 sm:h-5" :class="{ 'rotate-180': open }"/>
     </button>
     
@@ -10,7 +10,7 @@
 
         <!-- Gráfico principal - Por unidade -->
         <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full max-w-full">
-          <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-[10px]">
+          <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
             Quantidade de recursos por unidade
           </div>
           <div class="flex-1 flex items-center justify-center p-4 min-h-[260px] overflow-hidden">
@@ -21,8 +21,8 @@
         </div>
 
         <div class="flex flex-col gap-4 flex-1 min-w-[340px] max-w-[600px] justify-center">
-          <div class="bg-white rounded-[8px] shadow-md flex flex-col h-full">
-            <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-[10px]">
+          <div class="bg-white rounded-[10px] shadow-md flex flex-col h-full">
+            <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
               Categorias
             </div>
             <div class="flex-1 flex items-center justify-center p-4 min-h-[260px] overflow-hidden">
@@ -34,8 +34,8 @@
         </div>
 
         <div class="flex flex-col gap-4 flex-1 min-w-[340px] max-w-[600px] justify-center">
-          <div class="bg-white rounded-[8px] shadow-md flex flex-col h-full">
-            <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-[10px]">
+          <div class="bg-white rounded-[10px] shadow-md flex flex-col h-full">
+            <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
               Equipe responsável
             </div>
             <div class="flex-1 flex items-center justify-center p-4 min-h-[260px] overflow-hidden">

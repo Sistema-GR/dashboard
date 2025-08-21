@@ -1,7 +1,7 @@
 <template>
   <div class="mb-6 w-full">
     <button @click="open = !open" class="w-full text-left px-6 py-3 justify-between bg-blue-50 rounded-[10px] focus:outline-none flex items-center">
-      <span class="text-2xl font-bold text-black">Status por Equipe | Pessoa</span>
+      <span class="text-25 font-bold text-black">Status por Equipe | Pessoa</span>
       <ChevronDownIcon class="w-4 h-4 sm:w-5 sm:h-5" :class="{ 'rotate-180': open }"/>
     </button>
     
@@ -10,7 +10,7 @@
         <!-- Card Gráfico -->
         <div class="flex flex-col gap-4 flex-1 w-full justify-center">
           <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full max-w-full">
-            <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-[10px]">
+            <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
               Grafico
             </div>
             <div class="flex-1 flex items-center justify-center p-4 min-h-[260px] overflow-hidden">
@@ -24,11 +24,11 @@
               <!-- Tabela de responsáveis -->
         <div class="flex flex-col gap-4 flex-1 w-full">
           <div class="bg-white shadow-md rounded-t-lg flex-1 min-w-[340px] max-w-[1200px]">
-            <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-[10px]">
+            <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
               Responsáveis por Recurso
             </div>
             <div class="p-6 overflow-x-auto">
-              <table class="min-w-full text-sm text-center border-separate border-spacing-y-1">
+              <table class="min-w-full text-15 text-center border-separate border-spacing-y-1">
                 <thead>
                   <tr class="bg-[#2360a5] text-white">
                     <th class="px-3 py-2 font-bold">Responsável</th>
