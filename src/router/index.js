@@ -85,8 +85,6 @@ const router = createRouter({
         { path: 'dashboard', name: 'dash', component: dash },
         { path: 'report', name: 'report', component: report },
 
-        { path: 'calendar', name: 'calendar', component: calendar },
-
         { path: 'files-manager', name: 'files-manager', component: FileManager },
         { path: 'roles', name: 'roles', component: roles },
         {
@@ -125,11 +123,6 @@ const router = createRouter({
       props: true
     },
 
-    { 
-      path: '/admin/recursos/relatorios-anuais',
-      name: 'admin-annual-reports',
-      component: annualReports
-    },
     { 
       path: '/rewards/view',
       name: 'admin-view-rewards',
