@@ -23,13 +23,21 @@
       />
     </div>
     <!-- Preview list -->
-    <ul v-if="previewFiles.length" class="mt-4 space-y-1 text-sm text-gray-700">
+   <ul v-if="previewFiles.length" class="mt-4 space-y-1 text-sm text-gray-700">
       <li
         v-for="(file, index) in previewFiles"
         :key="index"
         class="flex items-center justify-between bg-gray-100 p-2 rounded"
       >
-        <span>{{ file.name }} ({{ formatSize(file.size) }})</span>
+        <span>
+          {{ file.name }} ({{ formatSize(file.size) }}) -
+          <span
+            :class="file.mappedKey ? 'text-blue-700' : 'text-orange-600'"
+            class="font-semibold"
+          >
+            {{ getMappedLabel(file.mappedKey) }}
+          </span>
+        </span>
         <button
           class="text-red-500 hover:text-red-700 text-xs font-bold ml-2"
           @click="removeFile(index)"
@@ -170,15 +178,18 @@ export default {
         };
         this.previewFiles.push(entry);
 
-        // compute hash asynchronously, don't block UI
         this.computeHash(f)
           .then(h => {
             const idx = this.previewFiles.findIndex(x => x.id === id);
-            if (idx !== -1) this.$set(this.previewFiles[idx], 'hash', h);
+            if (idx !== -1) {
+              this.previewFiles[idx].hash = h;
+            }
           })
           .catch(err => {
             const idx = this.previewFiles.findIndex(x => x.id === id);
-            if (idx !== -1) this.$set(this.previewFiles[idx], 'error', 'Hash failed');
+            if (idx !== -1) {
+              this.previewFiles[idx].error = 'Hash failed';
+            }
             console.error('hash error', err);
           });
       }
@@ -335,6 +346,13 @@ export default {
         this.isUploading = false;
         this.$emit('taUpando', false);
       }
+    },
+    getMappedLabel(mappedKey) {
+      if (!mappedKey) {
+        return 'Não mapeado';
+      }
+      const mapping = this.expectedFiles.find(ef => ef.key === mappedKey);
+      return mapping ? mapping.label : 'Mapeamento desconhecido';
     },
   },
 };

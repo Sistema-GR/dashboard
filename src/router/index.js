@@ -138,7 +138,6 @@ router.beforeEach((to, from, next) => {
   
   if (from.name === 'admin-view-rewards') {
     if (to.name !== 'admin-view-rewards') {
-      console.log("Saindo do modo de visualização do admin. Limpando CPF temporário.");
       localStorage.removeItem('tempTargetCpf');
     }
   }

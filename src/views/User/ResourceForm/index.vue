@@ -360,7 +360,7 @@ export default {
             handleFileUpload, 
             removeFile, 
             submitForm,
-            startTutorial,
+
             isLoadingMatriculas,
             matriculasDisponiveis,
 

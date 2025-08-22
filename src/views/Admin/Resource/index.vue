@@ -63,8 +63,7 @@
               v-for="recurso in filteredRecursos" 
               :key="recurso.id" 
               :recurso="recurso"
-              @status-updated="handleStatusUpdate"
-              @responsavel-updated="handleResponsavelUpdate"
+              @status-updated="handleStatusUpdate"              
             />
           <div v-if="!filteredRecursos.length && !isLoading" class="text-center text-gray-500 py-10">
             Nenhum recurso encontrado.
