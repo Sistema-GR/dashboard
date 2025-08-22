@@ -20,7 +20,7 @@
           </div>
         </div>
 
-        <div class="flex flex-col gap-4 flex-1 min-w-[340px] max-w-[600px] justify-center">
+        <div class="flex flex-col gap-4 flex-1 min-w-[340px] max-w-[850px] w-full justify-center">
           <div class="bg-white rounded-[10px] shadow-md flex flex-col h-full">
             <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
               Categorias
@@ -33,7 +33,7 @@
           </div>
         </div>
 
-        <div class="flex flex-col gap-4 flex-1 min-w-[340px] max-w-[600px] justify-center">
+        <div class="flex flex-col gap-4 flex-1 min-w-[340px] max-w-[850px] w-full justify-center">
           <div class="bg-white rounded-[10px] shadow-md flex flex-col h-full">
             <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
               Equipe responsável
@@ -147,22 +147,22 @@ export default {
               {
                 label: 'Deferido',
                 data: unitsData.map(val => Math.floor(val * 0.4)),
-                backgroundColor: '#3b82f6',
-                borderColor: '#1d4ed8',
+                backgroundColor: '#3459a2',
+                borderColor: '#3459a2',
                 borderWidth: 1
               },
               {
                 label: 'Indeferido',
                 data: unitsData.map(val => Math.floor(val * 0.35)),
-                backgroundColor: '#06b6d4',
-                borderColor: '#0891b2',
+                backgroundColor: '#7597da',
+                borderColor: '#7597da',
                 borderWidth: 1
               },
               {
                 label: 'Parcialmente deferido',
                 data: unitsData.map(val => Math.floor(val * 0.25)),
-                backgroundColor: '#ec4899',
-                borderColor: '#db2777',
+                backgroundColor: '#c2ddfd',
+                borderColor: '#c2ddfd',
                 borderWidth: 1
               }
             ]
@@ -224,22 +224,22 @@ export default {
               {
                 label: 'Deferido',
                 data: categoriesData.map(val => Math.floor(val * 0.4)),
-                backgroundColor: '#3b82f6',
-                borderColor: '#1d4ed8',
+                backgroundColor: '#3459a2',
+                borderColor: '#3459a2',
                 borderWidth: 1
               },
               {
                 label: 'Indeferido',
                 data: categoriesData.map(val => Math.floor(val * 0.35)),
-                backgroundColor: '#06b6d4',
-                borderColor: '#0891b2',
+                backgroundColor: '#7597da',
+                borderColor: '#7597da',
                 borderWidth: 1
               },
               {
                 label: 'Parcialmente deferido',
                 data: categoriesData.map(val => Math.floor(val * 0.25)),
-                backgroundColor: '#ec4899',
-                borderColor: '#db2777',
+                backgroundColor: '#c2ddfd',
+                borderColor: '#c2ddfd',
                 borderWidth: 1
               }
             ]
@@ -294,22 +294,22 @@ export default {
               {
                 label: 'Deferido',
                 data: teamsData.map(val => Math.floor(val * 0.4)),
-                backgroundColor: '#3b82f6',
-                borderColor: '#1d4ed8',
+                backgroundColor: '#3459a2',
+                borderColor: '#3459a2',
                 borderWidth: 1
               },
               {
                 label: 'Indeferido',
                 data: teamsData.map(val => Math.floor(val * 0.35)),
-                backgroundColor: '#06b6d4',
-                borderColor: '#0891b2',
+                backgroundColor: '#7597da',
+                borderColor: '#7597da',
                 borderWidth: 1
               },
               {
                 label: 'Parcialmente deferido',
                 data: teamsData.map(val => Math.floor(val * 0.25)),
-                backgroundColor: '#ec4899',
-                borderColor: '#db2777',
+                backgroundColor: '#c2ddfd',
+                borderColor: '#c2ddfd',
                 borderWidth: 1
               }
             ]

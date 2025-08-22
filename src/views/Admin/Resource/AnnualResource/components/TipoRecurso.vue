@@ -27,7 +27,7 @@
             </div>
           </div>
         <!-- Card Gráfico Status -->
-        <div class="flex flex-col gap-4 flex-1 min-w-[340px] max-w-[600px] justify-center">
+        <div class="flex flex-col gap-4 flex-1 min-w-[340px] max-w-[850px] w-full justify-center">
           <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full h-full">
             <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
               Status
@@ -49,7 +49,7 @@
           </div>
         </div>
         <!-- Card Gráfico Conclusão -->
-        <div class="flex flex-col gap-4 flex-1 min-w-[340px] max-w-[600px] justify-center">
+        <div class="flex flex-col gap-4 flex-1 min-w-[340px] max-w-[850px] w-full justify-center">
           <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full h-full">
             <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
               Conclusão

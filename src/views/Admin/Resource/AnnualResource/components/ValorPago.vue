@@ -18,7 +18,7 @@
           </div>
         </div>
         <!-- Cards -->
-        <div class="flex flex-col gap-10 flex-1 min-w-[220px] max-w-[320px] justify-center">
+        <div class="flex flex-col gap-10 flex-1 min-w-[300px] max-w-[320px] justify-center">
         <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full max-w-full">
             <div class="bg-[#3459A2] text-white text-center font-bold text-15 p-3 rounded-t-[10px]">
               Nº de pessoas pagas pós recursos
