@@ -113,7 +113,7 @@ export default {
         }
 
         // Redireciona para a próxima etapa em caso de sucesso
-        this.$router.push("/insertcode");
+        this.$router.push("/auth/insertcode");
       } catch (error) {
         // Exibe a mensagem de erro global
         this.errors.global = error.message;

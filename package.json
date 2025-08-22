@@ -20,6 +20,7 @@
     "fernet": "^0.3.2",
     "lodash": "^4.17.21",
     "nth-check": "^2.1.1",
+    "pinia": "^3.0.3",
     "prefixes": "^1.0.1",
     "serialize-javascript": "^6.0.2",
     "vue": "^3.4.29",

@@ -1,6 +1,5 @@
 <template>
-    <Sidebar :route="'admin'" @update:isSidebarMinimized="handleSidebarMinimized" class="z-50"/>
-    <Whiteboard title="Recurso" class="!overflow-visible overflow-y-auto z-40 relative" :isSidebarMinimized="isSidebarMinimized">
+    <Whiteboard title="Recurso" class="!overflow-visible overflow-y-auto z-40 relative" >
 
 
 <!-- Header com botão de relatórios -->

@@ -1,7 +1,5 @@
 <template>
-    <Sidebar :route="'admin'" @update:isSidebarMinimized="handleSidebarMinimized" class="z-50"/>
-    <Whiteboard :title="`Detalhes do Recurso #${resourceId}`" class="!overflow-visible overflow-y-auto z-40 relative" :isSidebarMinimized="isSidebarMinimized" >
-
+   <Whiteboard :title="`Detalhes do Recurso #${resourceId}`" class="!overflow-visible overflow-y-auto z-40 relative"  >
 
         <div class="flex flex-col w-full gap-4 px-4 sm:px-6 lg:px-8 py-4">
             <div v-if="isLoading" class="text-center p-10">Carregando dados...</div>

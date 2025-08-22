@@ -1,5 +1,5 @@
 <template>
-  <Whiteboard title="Configurações" :isSidebarMinimized="isSidebarMinimized">
+  <Whiteboard title="Configurações" >
         <div class="flex flex-col w-full lg:flex-row">
             <div class="flex-1 rounded-[10px] shadow-lg">
                 <div class="bg-white p-8 rounded-[10px]">

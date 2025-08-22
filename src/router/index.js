@@ -44,10 +44,16 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     { path: '/', name: 'login', component: login },
-    { path: '/register', name: 'register', component: register },
-    { path: '/changepassword', name: 'changepassword', component: changepassword },
-    { path: '/forgotpassword', name: 'forgotpassword', component: forgotpassword },
-    { path: '/insertcode', name: 'insertcode', component: insertcode },
+    {
+      path: '/auth',
+      name: 'auth',
+      children: [
+        { path: 'register', name: 'register', component: register },
+        { path: 'changepassword', name: 'changepassword', component: changepassword },
+        { path: 'forgotpassword', name: 'forgotpassword', component: forgotpassword },
+        { path: 'insertcode', name: 'insertcode', component: insertcode },        
+      ]
+    },
     {
       path: '/home',
       name: 'home',

@@ -1,6 +1,5 @@
 <template>
     <div class="bg-white">
-      <Sidebar route="user" @update:isSidebarMinimized="handleSidebarMinimized" />
       <div class="h-screen">
         <router-view />
       </div>

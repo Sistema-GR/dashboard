@@ -85,7 +85,7 @@ export default {
       type: String,
       default: window.__VUE__API_BASE_URL || 'http://127.0.0.1:8000',
     },
-    taUpando: {
+    isUploading: {
       type: Boolean,
       default: false,
     },
@@ -262,7 +262,7 @@ export default {
       }
 
       this.isUploading = true;
-      this.$emit('taUpando', true);
+      this.$emit('isUploading', true);
       this.uploadResult = '';
       // reset progress
       this.previewFiles.forEach(f => (f.progress = 0));
@@ -333,7 +333,7 @@ export default {
         }
       } finally {
         this.isUploading = false;
-        this.$emit('taUpando', false);
+        this.$emit('isUploading', false);
       }
     },
   },

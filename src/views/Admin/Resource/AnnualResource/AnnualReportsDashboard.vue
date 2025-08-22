@@ -1,5 +1,5 @@
 <template>
-  <Whiteboard title="Relatórios Anuais" :isSidebarMinimized="isSidebarMinimized">
+  <Whiteboard title="Relatórios Anuais" >
     
     <!-- Filtros -->
     <ReportFilters 

@@ -1,5 +1,5 @@
 <template>
-    <Whiteboard title="Calcular Alocação" :isSidebarMinimized="isSidebarMinimized">
+    <Whiteboard title="Calcular Alocação" >
         <div class="flex flex-col w-full items-center justify-center">
 
             <div class="flex w-full p-5 pt-8">

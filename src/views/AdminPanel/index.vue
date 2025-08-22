@@ -1,5 +1,4 @@
 <template>
-    <Sidebar route="admin-panel" @update:isSidebarMinimized="handleSidebarMinimized" />
     <RouterView></RouterView>
 </template>
 

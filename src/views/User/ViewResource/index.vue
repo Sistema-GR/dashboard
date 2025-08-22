@@ -1,6 +1,6 @@
 <template>
 
-    <Whiteboard class="!overflow-visible overflow-y-auto z-40" :title="`Detalhes do Recurso #${resourceId}`" :isSidebarMinimized="isSidebarMinimized">
+    <Whiteboard class="!overflow-visible overflow-y-auto z-40" :title="`Detalhes do Recurso #${resourceId}`" >
         
         
         <div v-if="isLoading" class="text-center p-10">

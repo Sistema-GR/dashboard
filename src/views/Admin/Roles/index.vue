@@ -1,5 +1,5 @@
 <template>
-    <Whiteboard title="Permissões" :isSidebarMinimized="isSidebarMinimized">
+    <Whiteboard title="Permissões" >
 
     </Whiteboard>
 </template>

@@ -1,5 +1,5 @@
 <template>
-    <Whiteboard title="Formulário de Recurso" :isSidebarMinimized="isSidebarMinimized">
+    <Whiteboard title="Formulário de Recurso" >
         <!-- Header com ícone de alerta - largura total -->
         <div class="w-full bg-blue-50 border-b border-blue-200 mb-6">
             <div class="max-w-2xl mx-auto px-6 py-4">

@@ -1,5 +1,5 @@
 <template>
-    <Whiteboard title="Editar Recurso" :isSidebarMinimized="isSidebarMinimized">
+    <Whiteboard title="Editar Recurso" >
         <div class="flex flex-col w-full gap-5 px-4 sm:px-10 py-8">
            
             <div v-if="isLoading" class="text-center p-10">
