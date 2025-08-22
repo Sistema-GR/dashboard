@@ -108,7 +108,6 @@ export default {
     let chartTiposInstance = null
     let chartStatusInstance = null
     let chartConclusaoInstance = null
-
     // Paleta de cores personalizada
     const customColors = [
       '#3459a2',
@@ -137,15 +136,12 @@ export default {
     ]
     const tiposData = [34.6, 19.1, 14.2, 12.5, 5.3, 4.8, 3.0, 2.5, 2.0, 2.0]
     const tiposColors = customColors.slice(0, tiposLabels.length)
-
     const statusLabels = ["Respondido"]
     const statusData = [100]
     const statusColors = [customColors[0]]
-
     const conclusaoLabels = ["Indeferido", "Deferido", "Parcialmente deferido"]
     const conclusaoData = [49.6, 44.5, 5.9]
     const conclusaoColors = customColors.slice(0, 3)
-
     const destroyCharts = () => {
       if (chartTiposInstance) { chartTiposInstance.destroy(); chartTiposInstance = null }
       if (chartStatusInstance) { chartStatusInstance.destroy(); chartStatusInstance = null }
@@ -157,7 +153,7 @@ export default {
       destroyCharts()
       if (!open.value) return
       await new Promise(resolve => setTimeout(resolve, 200))
-      
+     
       // Configuração simplificada de tooltip que funciona
       const tooltipConfig = {
         enabled: true,

@@ -141,7 +141,6 @@ export default {
     const createChart = async () => {
       await nextTick()
       destroyChart()
-      
       if (!open.value) return
       
       await new Promise(resolve => setTimeout(resolve, 200))
@@ -160,7 +159,6 @@ export default {
 
         // Gerar cores azuis baseadas na quantidade de barras
         const blueColors = generateBlueColorPalette(chartLabels.length)
-
         chartInstance = new Chart(chartStatus.value, {
           type: 'bar',
           data: {
