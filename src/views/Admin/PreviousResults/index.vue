@@ -68,7 +68,6 @@ export default {
   },
   methods: {
     handleVisualizarClick(item) {
-      console.log('Item clicado:', item); 
       this.verCalculo(item.id);
     },
     
@@ -84,7 +83,6 @@ export default {
           headers: { Authorization: `Bearer ${token}` }
         });
 
-        console.log('🔹 Dados recebidos da API:', response.data);
         
         if (!response.data) {
           console.error('❌ Estrutura inesperada na resposta da API:', response.data);
@@ -100,7 +98,6 @@ export default {
 
     processCalculusData(calculusData) {
       const formattedCategories = [];
-      console.log('📌 Processando dados:', calculusData);
 
       for (const year in calculusData) {
         const category = {
@@ -124,7 +121,6 @@ export default {
         formattedCategories.push(category);
       }
 
-      console.log('✅ Categorias formatadas:', formattedCategories);
       this.categories = formattedCategories;
     },
 
@@ -154,7 +150,6 @@ export default {
 
 
     async verCalculo(id) {
-      console.log('ID do cálculo:', id);  // Verificar se o ID é correto
       try {
         const token = await getAccessToken();
         if (!token) {
@@ -170,7 +165,6 @@ export default {
           }
         );
 
-        console.log('Resposta da API:', response.data);  // Verificar a resposta da API
         this.$router.push({ path: '/admin/dashboard' });
 
       } catch (error) {
@@ -207,8 +201,6 @@ export default {
                 headers: { Authorization: `Bearer ${token}` }
               }
             );
-
-            console.log('🗑️ Cálculo excluído com sucesso:', response.data);
 
             // Atualiza a lista de cálculos após a exclusão
             await this.fetchCalculus();

@@ -289,104 +289,100 @@
         </div>
       
     </Whiteboard>
-    <Tutorial />
+    <Tutorial ref="tutorialComponent"/>
 </template>
 
 <script setup>
-import { inject, ref, onMounted, onBeforeUnmount, computed } from 'vue';
+import { inject, ref, onMounted, watch } from 'vue';
 import { ChevronDownIcon, ExclamationCircleIcon, ArrowDownIcon } from "@heroicons/vue/24/outline";
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import Tutorial from '@/components/Tutorial/Tutorial.vue';
-import 'driver.js/dist/driver.css';
+import axios from 'axios'; 
+import { getAccessToken } from '@/service/token';
+import { useRoute } from 'vue-router';
 
-const isSidebarMinimized = inject('isSidebarMinimized');
+
+const isSidebarMinimized = inject('isSidebarMinimized', ref(false));
 const savedData = ref([]);
+const isLoading = ref(true); 
+const errorMessage = ref(null);
+const route = useRoute();
+const tutorialComponent = ref(null);
 
-const startTutorial = () => {
-    driverObj.drive();
-};
 
-const processarDados = (rawData) => {
-  const matriculaMap = {};
 
-  rawData.forEach(item => {
-    const matricula = item.dados?.matricula; 
-    const cpf = item.dados?.cpf; 
-    if (item.dados && matricula && cpf) {
-      if (!matriculaMap[matricula]) {
-        matriculaMap[matricula] = {
-          cpf,
-          dados: item.dados,
-          frequencia: [],
-          profissionais: []
-        };
-      }
 
-      const frequenciasFiltradas = (item.frequencia || []).filter(freq => freq.matricula === matricula);
-      const profissionaisFiltrados = (item.profissionais || []).filter(prof => prof.matricula === matricula);
+const fetchRewardsData = async () => {
+    
+    const targetCpfFromStorage = localStorage.getItem('tempTargetCpf');
 
-      matriculaMap[matricula].frequencia.push(...frequenciasFiltradas);
-      matriculaMap[matricula].profissionais.push(...profissionaisFiltrados);
+    try {
+        isLoading.value = true;
+        errorMessage.value = null;
+        
+        const token = await getAccessToken();
+        if (!token) {
+            throw new Error("Token de autenticação não encontrado.");
+        }
+
+        const referenceYear = new Date().getFullYear();
+        
+        let payload = { reference: referenceYear };
+
+        if (targetCpfFromStorage) {
+            payload.cpf = targetCpfFromStorage;
+        }
+
+        const response = await axios.post('http://127.0.0.1:8000/csv/user-get/', 
+            payload,
+            {
+                headers: { Authorization: `Bearer ${token}` } 
+            }
+        );
+        
+        savedData.value = response.data;
+
+    } catch (error) {
+        console.error('Erro ao buscar dados da gratificação:', error);
+        if (error.response && error.response.data && error.response.data.error) {
+        errorMessage.value = error.response.data.error;
+        } else {
+        errorMessage.value = "Não foi possível carregar seus dados. Tente novamente mais tarde.";
+        }
+    } finally {
+        isLoading.value = false;
     }
-  });
-
-  return removerDuplicatas(Object.entries(matriculaMap).map(([matricula, data]) => ({
-    matricula,
-    ...data
-  })));
-};
-
-const props = defineProps({
-  item: {
-    type: Object,
-    required: true
-  },
-});
-
-const removerDuplicatas = (dados) => {
-  const seen = new Set();
-  return dados.filter(item => {
-    const key = `${item.matricula}-${item.cpf}`;
-    if (seen.has(key)) {
-      return false; 
-    }
-    seen.add(key); 
-    return true; 
-  });
-};
-
-const carregarDados = () => {
-  try {
-    const savedRowData = JSON.parse(localStorage.getItem('rowSave')) || {};
-    let rawData = Object.values(savedRowData).flatMap(item => Object.values(item));
-
-    savedData.value = processarDados(rawData);
-
-    console.log('Dados organizados:', savedData.value);
-  } catch (error) {
-    console.error('Erro ao recuperar dados do localStorage:', error);
-  }
 };
 
 const formatCurrency = (value) => {
+  if (value === null || value === undefined) return 'R$ 0,00';
   return parseFloat(value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
+
 onMounted(() => {
-  carregarDados();
-  
-  // Verificar se é a primeira visita e iniciar tutorial automaticamente
+  fetchRewardsData();
+
   const hasSeenTutorial = localStorage.getItem('hasSeenGratificationTutorial');
   if (!hasSeenTutorial) {
     setTimeout(() => {
-      startTutorial();
+      if (tutorialComponent.value) {
+        tutorialComponent.value.startTutorial();
+      }
       localStorage.setItem('hasSeenGratificationTutorial', 'true');
     }, 1000);
   }
 });
 
-onBeforeUnmount(() => {
-  localStorage.removeItem('rowSave');
-});
+watch(
+  () => route.params.cpf, 
+  (newCpf, oldCpf) => {
+    if (newCpf !== oldCpf) {
+      console.log(`Parâmetro CPF mudou para ${newCpf}. Buscando novos dados...`);
+      fetchRewardsData();
+    }
+  }
+);
+
 </script>

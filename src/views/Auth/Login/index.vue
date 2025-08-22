@@ -128,11 +128,9 @@ export default {
       this.errors.global = null;
 
       try {
-        console.log('Enviando dados de login:', { email: this.email, password: this.senha });
 
         const data = await login(this.email, this.senha);
 
-        console.log('Resposta de login:', data);
 
         localStorage.setItem('accessToken', data.access);
         localStorage.setItem('refreshToken', data.refresh);
@@ -143,11 +141,6 @@ export default {
           setUserType(data.user);
         }
         
-        console.log('Tokens armazenados:', {
-          accessToken: localStorage.getItem('accessToken'),
-          refreshToken: localStorage.getItem('refreshToken'),
-          userType: localStorage.getItem('userType'),
-        });
 
         // Determine redirect based on user type
         let redirectTo = this.$route.query.redirect;
@@ -155,10 +148,8 @@ export default {
           redirectTo = getDashboardRoute();
         }
         
-        console.log('Redirecionando para:', redirectTo);
         this.$router.push(redirectTo);
       } catch (error) {
-        console.log('Erro no login:', error);
         this.errors.global = error.message || 'Erro desconhecido. Tente novamente.';
       } finally {
         this.loading = false;

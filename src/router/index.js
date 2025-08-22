@@ -39,7 +39,7 @@ import status from '@/views/User/Status/index.vue'
 import edit from '@/views/User/Edit/index.vue'
 import sucess from '@/views/User/Sucess/index.vue'
 import config from '@/views/User/Config/index.vue'
-import view from '@/views/User/ViewResource/index.vue'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -84,7 +84,7 @@ const router = createRouter({
       children: [
         { path: 'dashboard', name: 'dash', component: dash },
         { path: 'report', name: 'report', component: report },
-        { path: 'rewards', name: 'reward', component: rewards },
+
         { path: 'files-manager', name: 'files-manager', component: FileManager },
         { path: 'roles', name: 'roles', component: roles },
         {
@@ -98,13 +98,11 @@ const router = createRouter({
       name: 'user', 
       component: user,
       children: [
-        { path: 'rewards', name: 'rewards', component: rewards },
+        { path: 'rewards', name: 'user-rewards', component: rewards },
         { path: 'form', name: 'form', component: form },
         { path: 'faqs', name: 'faqs', component: faqs },
         { path: 'criteria', name: 'criteria', component: criteria },
         { path: 'status', name: 'status', component: status },
-        // { path: 'view', name: 'view', component: view }, 
-        { path: 'view/:id', name: 'view', component: view },
         { path: 'edit/:id', name: 'edit', component: edit },
         { path: 'sucess', name: 'sucess', component: sucess },
         { path: 'config', name: 'config', component: config },
@@ -124,18 +122,34 @@ const router = createRouter({
       component: infodetails,
       props: true
     },
+
+    { 
+      path: '/rewards/view',
+      name: 'admin-view-rewards',
+      component: rewards,
+      meta: { requiresAdmin: true } 
+    },
+
   ]
 })
 
 router.beforeEach((to, from, next) => {
+
+  
+  if (from.name === 'admin-view-rewards') {
+    if (to.name !== 'admin-view-rewards') {
+      console.log("Saindo do modo de visualização do admin. Limpando CPF temporário.");
+      localStorage.removeItem('tempTargetCpf');
+    }
+  }
+
+
   const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
   const userType = getUserType();
 
-  // Public routes that don't require authentication
   const publicRoutes = ['login', 'register', 'forgotpassword', 'changepassword', 'insertcode'];
   
   if (publicRoutes.includes(to.name)) {
-    // If user is authenticated and trying to access auth pages, redirect to appropriate dashboard
     if (isAuthenticated) {
       const redirectPath = getDashboardRoute();
       return next({ path: redirectPath });
@@ -143,17 +157,17 @@ router.beforeEach((to, from, next) => {
     return next();
   }
 
-  // Check if user is authenticated
   if (!isAuthenticated) {
     return next({ name: 'login' });
   }
 
-  // Check if user can access the route
   if (!canAccessRoute(to.path)) {
     return next({ path: getDashboardRoute() });
   }
 
   next();
+
+  
 });
 
 export default router;
