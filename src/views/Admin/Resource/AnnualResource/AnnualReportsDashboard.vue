@@ -42,7 +42,7 @@
 
 <script>
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue'
-import Sidebar from '@/components/Sidebar/Sidebar.vue';
+import Sidebar from '@/components/Sidebar/Sidebar.vue' // Adicione esta linha
 import Filtro from '@/views/Admin/Resource/AnnualResource/components/Filtro.vue'
 import RecursosRespondidos from '@/views/Admin/Resource/AnnualResource/components/RecursosRespondidos.vue'
 import ValorPago from '@/views/Admin/Resource/AnnualResource/components/ValorPago.vue'
@@ -58,7 +58,8 @@ import DadosCompletos from './components/DadosCompletos.vue'
 export default {
   name: 'AnnualReportsDashboard',
   components: { 
-    Whiteboard, 
+    Whiteboard,
+    Sidebar, // Adicione esta linha
     Filtro, 
     RecursosRespondidos, 
     ValorPago, 
@@ -70,7 +71,12 @@ export default {
   },
   
   setup() {
-    const isSidebarMinimized = inject('isSidebarMinimized', ref(false)) // Valor padrão se inject falhar
+    const isSidebarMinimized = ref(false) // Mude para ref normal ao invés de inject
+    
+    // Adicione a função handleSidebarMinimized
+    function handleSidebarMinimized(value) {
+      isSidebarMinimized.value = value
+    }
     
     // Refs
     const StatusEquipeRef = ref(null)
@@ -308,16 +314,9 @@ export default {
       fetchData()
     })
     
-    // ADICIONAR este método:
-    const handleSidebarMinimized = (value) => {
-      if (isSidebarMinimized && isSidebarMinimized.value !== undefined) {
-        isSidebarMinimized.value = value
-      }
-    }
-    
     return {
       isSidebarMinimized,
-      handleSidebarMinimized, // ADICIONAR no return
+      handleSidebarMinimized,
       StatusEquipeRef,
       RecursosTotaisRef,
       filters,

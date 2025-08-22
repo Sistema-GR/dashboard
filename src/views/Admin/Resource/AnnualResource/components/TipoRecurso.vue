@@ -89,7 +89,7 @@ export default {
     responsaveis: {
       type: Array,
       required: false,
-      default: () => ([
+      default: () => ( [
         { id: 1, name: 'Tamires', total: 11, deferidos: 3, indeferidos: 5, parcialmente_deferidos: 3, percentage: 1.75 },
         { id: 2, name: 'Kamila Nunes', total: 35, deferidos: 5, indeferidos: 7, parcialmente_deferidos: 23, percentage: 5.56 },
         { id: 3, name: 'José Gonçalves', total: 102, deferidos: 21, indeferidos: 60, parcialmente_deferidos: 21, percentage: 16.22 },
@@ -109,6 +109,20 @@ export default {
     let chartStatusInstance = null
     let chartConclusaoInstance = null
 
+    // Paleta de cores personalizada
+    const customColors = [
+      '#3459a2',
+      '#6668d4', 
+      '#6fa3ef',
+      '#00b6cb',
+      '#418b6a',
+      '#6cc69d',
+      '#e44949',
+      '#f16d91',
+      '#f48e2f',
+      '#f4b72f'
+    ]
+
     const tiposLabels = [
       "Formação",
       "Discordância das regras estabelecidas",
@@ -122,26 +136,15 @@ export default {
       "Alega atuação em outra etapa",
     ]
     const tiposData = [34.6, 19.1, 14.2, 12.5, 5.3, 4.8, 3.0, 2.5, 2.0, 2.0]
-    const tiposColors = [
-      "#2E75B6",
-      "#E91E63",
-      "#F7B500",
-      "#5DADE2",
-      "#EC7063",
-      "#48C9B0",
-      "#7D3C98",
-      "#95A5A6",
-      "#27AE60",
-      "#D35400",
-    ]
+    const tiposColors = customColors.slice(0, tiposLabels.length)
 
     const statusLabels = ["Respondido"]
     const statusData = [100]
-    const statusColors = ["#2E75B6"]
+    const statusColors = [customColors[0]]
 
     const conclusaoLabels = ["Indeferido", "Deferido", "Parcialmente deferido"]
     const conclusaoData = [49.6, 44.5, 5.9]
-    const conclusaoColors = ["#2E75B6", "#1ABC9C", "#E91E63"]
+    const conclusaoColors = customColors.slice(0, 3)
 
     const destroyCharts = () => {
       if (chartTiposInstance) { chartTiposInstance.destroy(); chartTiposInstance = null }
@@ -154,60 +157,125 @@ export default {
       destroyCharts()
       if (!open.value) return
       await new Promise(resolve => setTimeout(resolve, 200))
+      
+      // Configuração simplificada de tooltip que funciona
+      const tooltipConfig = {
+        enabled: true,
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        titleColor: '#ffffff',
+        bodyColor: '#ffffff',
+        borderColor: '#ffffff',
+        borderWidth: 1,
+        cornerRadius: 8,
+        displayColors: true,
+        padding: 10,
+        callbacks: {
+          label: function(context) {
+            const label = context.label || '';
+            const value = context.parsed;
+            return `${label}: ${value}%`;
+          }
+        }
+      }
+      
       if (chartTipos.value) {
+        console.log('Criando gráfico Tipos...')
         chartTiposInstance = new Chart(chartTipos.value, {
           type: "pie",
           data: {
             labels: tiposLabels,
-            datasets: [
-              {
-                data: tiposData,
-                backgroundColor: tiposColors,
-              },
-            ],
+            datasets: [{
+              data: tiposData,
+              backgroundColor: tiposColors,
+              borderWidth: 2,
+              borderColor: '#ffffff',
+              hoverBorderWidth: 3,
+              hoverBorderColor: '#ffffff'
+            }],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
+            plugins: { 
+              legend: { display: false },
+              tooltip: tooltipConfig
+            },
+            hover: {
+              mode: 'nearest',
+              intersect: true
+            },
+            animation: {
+              animateRotate: true,
+              duration: 1000
+            }
           },
         })
       }
+      
       if (chartStatus.value) {
+        console.log('Criando gráfico Status...')
         chartStatusInstance = new Chart(chartStatus.value, {
           type: "pie",
           data: {
             labels: statusLabels,
-            datasets: [
-              {
-                data: statusData,
-                backgroundColor: statusColors,
-              },
-            ],
+            datasets: [{
+              data: statusData,
+              backgroundColor: statusColors,
+              borderWidth: 2,
+              borderColor: '#ffffff',
+              hoverBorderWidth: 3,
+              hoverBorderColor: '#ffffff'
+            }],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
+            plugins: { 
+              legend: { display: false },
+              tooltip: tooltipConfig
+            },
+            hover: {
+              mode: 'nearest',
+              intersect: true
+            },
+            animation: {
+              animateRotate: true,
+              duration: 1000
+            }
           },
         })
       }
+      
       if (chartConclusao.value) {
+        console.log('Criando gráfico Conclusão...')
         chartConclusaoInstance = new Chart(chartConclusao.value, {
           type: "pie",
           data: {
             labels: conclusaoLabels,
-            datasets: [
-              {
-                data: conclusaoData,
-                backgroundColor: conclusaoColors,
-              },
-            ],
+            datasets: [{
+              data: conclusaoData,
+              backgroundColor: conclusaoColors,
+              borderWidth: 2,
+              borderColor: '#ffffff',
+              hoverBorderWidth: 3,
+              hoverBorderColor: '#ffffff'
+            }],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
+            plugins: { 
+              legend: { display: false },
+              tooltip: tooltipConfig
+            },
+            hover: {
+              mode: 'nearest',
+              intersect: true
+            },
+            animation: {
+              animateRotate: true,
+              duration: 1000
+            }
           },
         })
       }
@@ -219,11 +287,6 @@ export default {
     })
 
     onMounted(() => {
-      console.log('Canvas elements:', {
-        tipos: chartTipos.value,
-        status: chartStatus.value,
-        conclusao: chartConclusao.value
-      })
       setTimeout(() => { createCharts() }, 500)
     })
 

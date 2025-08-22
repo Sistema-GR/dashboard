@@ -72,6 +72,38 @@ export default {
     const chartDistribuicao = ref(null)
     let chartInstance = null
 
+    // Função para gerar paleta de cores azul
+    const generateBlueColorPalette = (count) => {
+      const darkest = '#1e3a8a'  // blue-900
+      const lightest = '#dbeafe' // blue-100
+      
+      const hexToRgb = (hex) => {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+        return result ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16)
+        } : null
+      }
+      
+      const darkRgb = hexToRgb(darkest)
+      const lightRgb = hexToRgb(lightest)
+      
+      const colors = []
+      
+      for (let i = 0; i < count; i++) {
+        const ratio = count === 1 ? 0 : i / (count - 1)
+        
+        const r = Math.round(darkRgb.r + (lightRgb.r - darkRgb.r) * ratio)
+        const g = Math.round(darkRgb.g + (lightRgb.g - darkRgb.g) * ratio)
+        const b = Math.round(darkRgb.b + (lightRgb.b - darkRgb.b) * ratio)
+        
+        colors.push(`rgb(${r}, ${g}, ${b})`)
+      }
+      
+      return colors
+    }
+
     const destroyChart = () => {
       if (chartInstance) {
         chartInstance.destroy()
@@ -83,13 +115,14 @@ export default {
       await nextTick()
       destroyChart()
       
-      // Só criar se o painel estiver aberto
       if (!open.value) return
       
-      // Aguardar para garantir que o elemento esteja no DOM
       await new Promise(resolve => setTimeout(resolve, 100))
       
       if (chartDistribuicao.value) {
+        // Gerar cores azuis baseadas na quantidade de barras
+        const blueColors = generateBlueColorPalette(props.distribuicao.length)
+
         chartInstance = new Chart(chartDistribuicao.value, {
           type: 'bar',
           data: {
@@ -97,7 +130,9 @@ export default {
             datasets: [{
               label: 'Nº de pessoas',
               data: props.distribuicao.map(d => d.value),
-              backgroundColor: '#1976D2',
+              backgroundColor: blueColors,
+              borderColor: blueColors.map(color => color.replace('rgb', 'rgba').replace(')', ', 0.8)')),
+              borderWidth: 1,
               borderRadius: 6,
               barPercentage: 0.7,
               categoryPercentage: 0.7
@@ -125,7 +160,6 @@ export default {
       }
     }
 
-    // Watch para recriar gráfico quando o painel abrir
     watch(() => open.value, (newValue) => {
       if (newValue) {
         setTimeout(() => {

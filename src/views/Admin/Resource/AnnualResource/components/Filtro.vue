@@ -5,7 +5,7 @@
       @input="updateFilter('year', $event.target.value)"
       placeholder="Ano"
       type="number"
-      class="border border-gray-300 rounded-full px-4 py-1 bg-white focus:outline-none max-w-[220px] h-8"
+      class="border border-gray-300 rounded-[10px] px-4 py-1 bg-white focus:outline-none max-w-[220px] h-8"
     /> -->
     <select
       :value="filters.unidade_atuacao"

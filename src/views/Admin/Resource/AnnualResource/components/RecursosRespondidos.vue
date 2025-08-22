@@ -4,7 +4,7 @@
             <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
         Recursos respondidos
       </div>
-      <div class="bg-blue-50 px-3 pt-2 pb-1 rounded-b-[8px]">
+      <div class="bg-blue-50 p-4 rounded-b-[10px]">
         <div class="flex flex-row items-center justify-between mb-1">
           <span class="text-[22px] font-bold text-gray-800 leading-none">{{ stats.respondidos }}</span>
           <span class="text-[12px] text-gray-600">{{ getPercentage(stats.respondidos, stats.total) }}% dos recursos respondidos</span>

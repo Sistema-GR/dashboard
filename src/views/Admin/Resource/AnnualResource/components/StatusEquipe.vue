@@ -98,6 +98,39 @@ export default {
     const chartStatus = ref(null)
     let chartInstance = null
 
+    // Função para gerar paleta de cores azul
+    const generateBlueColorPalette = (count) => {
+      const darkest = '#1e3a8a'  // blue-900
+      const lightest = '#dbeafe' // blue-100
+      
+      // Converter hex para RGB
+      const hexToRgb = (hex) => {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+        return result ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16)
+        } : null
+      }
+      
+      const darkRgb = hexToRgb(darkest)
+      const lightRgb = hexToRgb(lightest)
+      
+      const colors = []
+      
+      for (let i = 0; i < count; i++) {
+        const ratio = count === 1 ? 0 : i / (count - 1)
+        
+        const r = Math.round(darkRgb.r + (lightRgb.r - darkRgb.r) * ratio)
+        const g = Math.round(darkRgb.g + (lightRgb.g - darkRgb.g) * ratio)
+        const b = Math.round(darkRgb.b + (lightRgb.b - darkRgb.b) * ratio)
+        
+        colors.push(`rgb(${r}, ${g}, ${b})`)
+      }
+      
+      return colors
+    }
+
     const destroyChart = () => {
       if (chartInstance) {
         chartInstance.destroy()
@@ -109,14 +142,11 @@ export default {
       await nextTick()
       destroyChart()
       
-      // Só criar se o painel estiver aberto
       if (!open.value) return
       
-      // Aguardar para garantir que o elemento esteja no DOM
       await new Promise(resolve => setTimeout(resolve, 200))
       
       if (chartStatus.value) {
-        // Dados de exemplo se não houver dados reais
         const hasRealData = props.data && props.data.length > 0
         let chartData, chartLabels
         
@@ -124,10 +154,12 @@ export default {
           chartLabels = props.data.map(d => d.label || d.name || 'N/A')
           chartData = props.data.map(d => d.value || d.count || 0)
         } else {
-          // Dados de exemplo baseados na tabela
           chartLabels = ['Tamires', 'Kamila Nunes', 'José Gonçalves', 'Janis Ellye', 'Geovani', 'Carlos Daniel', 'Aurea Vieira']
           chartData = [11, 35, 102, 73, 107, 121, 182]
         }
+
+        // Gerar cores azuis baseadas na quantidade de barras
+        const blueColors = generateBlueColorPalette(chartLabels.length)
 
         chartInstance = new Chart(chartStatus.value, {
           type: 'bar',
@@ -136,16 +168,8 @@ export default {
             datasets: [{
               label: 'Quantidade de Recursos',
               data: chartData,
-              backgroundColor: [
-                '#3b82f6',
-                '#06b6d4', 
-                '#10b981',
-                '#f59e0b',
-                '#ef4444',
-                '#8b5cf6',
-                '#ec4899'
-              ],
-              borderColor: '#1d4ed8',
+              backgroundColor: blueColors,
+              borderColor: blueColors.map(color => color.replace('rgb', 'rgba').replace(')', ', 0.8)')),
               borderWidth: 1,
               borderRadius: 4
             }]
@@ -187,7 +211,6 @@ export default {
       }
     }
 
-    // Watch para recriar gráfico quando o painel abrir
     watch(() => open.value, (newValue) => {
       if (newValue) {
         setTimeout(() => {

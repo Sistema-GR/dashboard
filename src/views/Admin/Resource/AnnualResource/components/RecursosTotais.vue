@@ -73,12 +73,52 @@ export default {
     }
   },
   setup(props) {
-    const open = ref(true) // Adicionei a variável open que estava faltando
+    const open = ref(true)
     const chartUnidades = ref(null)
     const chartCategorias = ref(null)
     const chartEquipes = ref(null)
     
     let chartsInstances = {}
+    
+    // Função para gerar paleta de cores do escuro para o claro
+    const generateColorPalette = (count, baseColor = 'blue') => {
+      const palettes = {
+        blue: {
+          darkest: '#3459a2',  // blue-900
+          lightest: '#eaeef6'   // blue-100
+        }
+      }
+      
+      const palette = palettes[baseColor] || palettes.blue
+      
+      // Converter hex para RGB
+      const hexToRgb = (hex) => {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+        return result ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16)
+        } : null
+      }
+      
+      const darkRgb = hexToRgb(palette.darkest)
+      const lightRgb = hexToRgb(palette.lightest)
+      
+      const colors = []
+      
+      for (let i = 0; i < count; i++) {
+        // Calcular a interpolação (0 = mais escuro, 1 = mais claro)
+        const ratio = count === 1 ? 0 : i / (count - 1)
+        
+        const r = Math.round(darkRgb.r + (lightRgb.r - darkRgb.r) * ratio)
+        const g = Math.round(darkRgb.g + (lightRgb.g - darkRgb.g) * ratio)
+        const b = Math.round(darkRgb.b + (lightRgb.b - darkRgb.b) * ratio)
+        
+        colors.push(`rgb(${r}, ${g}, ${b})`)
+      }
+      
+      return colors
+    }
     
     const destroyCharts = () => {
       Object.values(chartsInstances).forEach(chart => {
@@ -112,15 +152,13 @@ export default {
       await nextTick()
       destroyCharts()
       
-      // Só criar se o painel estiver aberto
       if (!open.value) return
       
-      // Aguardar para garantir que os elementos estejam no DOM
       await new Promise(resolve => setTimeout(resolve, 100))
       
       const hasRealData = props.data && props.data.length > 0
       
-      // Gráfico de Unidades (vertical - principal)
+      // Gráfico de Unidades
       if (chartUnidades.value) {
         let unitsData, unitsLabels
         
@@ -138,6 +176,9 @@ export default {
           unitsData = [25, 20, 15, 12, 10, 8, 6, 5, 3, 2]
         }
         
+        // Gerar cores azuis baseadas na quantidade de barras
+        const unitsColors = generateColorPalette(unitsLabels.length, 'blue')
+        
         chartsInstances.unidades = new Chart(chartUnidades.value, {
           type: 'bar',
           data: {
@@ -145,8 +186,8 @@ export default {
             datasets: [{
               label: 'Quantidade de recursos',
               data: unitsData,
-              backgroundColor: '#3b82f6',
-              borderColor: '#1d4ed8',
+              backgroundColor: unitsColors,
+              borderColor: unitsColors.map(color => color.replace('rgb', 'rgba').replace(')', ', 0.8)')),
               borderWidth: 1
             }]
           },
@@ -177,7 +218,7 @@ export default {
         })
       }
       
-      // Gráfico de Categorias (horizontal)
+      // Gráfico de Categorias
       if (chartCategorias.value) {
         let categoriesData, categoriesLabels
         
@@ -197,6 +238,9 @@ export default {
           categoriesData = [5, 8, 12, 15, 18, 22, 25, 30]
         }
         
+        // Gerar cores azuis baseadas na quantidade de barras
+        const categoriesColors = generateColorPalette(categoriesLabels.length, 'blue')
+        
         chartsInstances.categorias = new Chart(chartCategorias.value, {
           type: 'bar',
           data: {
@@ -204,8 +248,8 @@ export default {
             datasets: [{
               label: 'Categoria',
               data: categoriesData,
-              backgroundColor: '#06b6d4',
-              borderColor: '#0891b2',
+              backgroundColor: categoriesColors,
+              borderColor: categoriesColors.map(color => color.replace('rgb', 'rgba').replace(')', ', 0.8)')),
               borderWidth: 1
             }]
           },
@@ -231,7 +275,7 @@ export default {
         })
       }
       
-      // Gráfico de Equipes (horizontal)
+      // Gráfico de Equipes
       if (chartEquipes.value) {
         let teamsData, teamsLabels
         
@@ -249,6 +293,9 @@ export default {
           teamsData = [10, 15, 25, 35, 40]
         }
         
+        // Gerar cores azuis baseadas na quantidade de barras
+        const teamsColors = generateColorPalette(teamsLabels.length, 'blue')
+        
         chartsInstances.equipes = new Chart(chartEquipes.value, {
           type: 'bar',
           data: {
@@ -256,8 +303,8 @@ export default {
             datasets: [{
               label: 'Equipe responsável',
               data: teamsData,
-              backgroundColor: '#ec4899',
-              borderColor: '#db2777',
+              backgroundColor: teamsColors,
+              borderColor: teamsColors.map(color => color.replace('rgb', 'rgba').replace(')', ', 0.8)')),
               borderWidth: 1
             }]
           },
@@ -308,7 +355,7 @@ export default {
     })
     
     return {
-      open, // Agora retornando a variável open
+      open,
       chartUnidades,
       chartCategorias,
       chartEquipes,
