@@ -42,7 +42,6 @@
 
 <script>
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue'
-import Sidebar from '@/components/Sidebar/Sidebar.vue' // Adicione esta linha
 import Filtro from '@/views/Admin/Resource/AnnualResource/components/Filtro.vue'
 import RecursosRespondidos from '@/views/Admin/Resource/AnnualResource/components/RecursosRespondidos.vue'
 import ValorPago from '@/views/Admin/Resource/AnnualResource/components/ValorPago.vue'
@@ -316,7 +315,6 @@ export default {
     
     return {
       isSidebarMinimized,
-      handleSidebarMinimized,
       StatusEquipeRef,
       RecursosTotaisRef,
       filters,
