@@ -75,7 +75,7 @@ import DadosCompletos from './components/DadosCompletos.vue'
 export default {
   name: 'AnnualReportsDashboard',
   components: { 
-    Whiteboard, 
+    Whiteboard,
     Filtro, 
     RecursosRespondidos, 
     ValorPago, 
@@ -87,8 +87,8 @@ export default {
   },
   
   setup() {
-    const isSidebarMinimized = inject('isSidebarMinimized', ref(false)) // Valor padrão se inject falhar
-    
+    const isSidebarMinimized = inject('isSidebarMinimized', ref(false)) // Mude para ref normal ao invés de inject
+      
     // Refs
     const StatusEquipeRef = ref(null)
     const RecursosTotaisRef = ref(null)
