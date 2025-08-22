@@ -1,39 +1,57 @@
 <template>
-  <Sidebar :route="'admin'" @update:isSidebarMinimized="handleSidebarMinimized" class="z-50"/>
   <Whiteboard title="Relatórios Anuais" class="!overflow-visible overflow-y-auto z-40 relative" :isSidebarMinimized="isSidebarMinimized">
+    
     <!-- Filtros -->
-    <ReportFilters 
-      v-model:filters="filters"
-      :availableUnits="availableUnits"
-      :availableAdmins="availableAdmins"
-      @filter-change="onFilterChange"
-      @clear-filters="clearFilters"
-      @export-data="exportData"
+    <Filtro 
+    v-model:filters="filters"
+    :availableUnits="availableUnits"
+    :availableAdmins="availableAdmins"
+    @filter-change="onFilterChange"
+    @clear-filters="clearFilters"
+    @export-data="exportData"
     />
-
+    
+    <!-- Tabs de Anos -->
+    <div class="flex space-x-4 pt-3 border-b border-[#c2ddfd]">
+      <button
+        v-for="year in [2024, 2025, 2026]"
+        :key="year"
+        @click="filters.year = year"
+        :class="[
+          'px-4 py-2 text-25 font-semibold focus:outline-none transition',
+          filters.year == year
+            ? 'border-b-2 border-[#3459A2] text-[#3459A2]'
+            : 'text-[#c2ddfd] hover:text-[#7597da]'
+        ]"
+        type="button"
+      >
+        {{ year }}
+      </button>
+    </div>
+    
     <!-- Resumo Geral -->
-    <ReportSummary :stats="filteredStats" />
+    <RecursosRespondidos :stats="filteredStats" />
 
     <!-- Cards de Estatísticas -->
-    <StatsCards :stats="filteredStats" />
+    <ValorPago :stats="filteredStats" />
 
     <!-- Gráficos de Pizza -->
-    <PieCharts 
-      ref="pieChartsRef"
+    <StatusEquipe 
+      ref="StatusEquipeRef"
       :data="filteredResources"
     />
 
     <!-- Gráficos de Barras -->
-    <BarCharts 
-      ref="barChartsRef"
+    <RecursosTotais 
+      ref="RecursosTotaisRef"
       :data="filteredResources"
       :availableUnits="availableUnits"
     />
 
     <!-- Tabela de Responsáveis -->
-    <ResponsibleTable :stats="responsibleStats" />
+    <TipoRecurso :stats="responsibleStats" />
 
-    <BarUnidade :data="filteredResources" :availableUnits="availableUnits" />
+    <RecursosUnidades :data="filteredResources" :availableUnits="availableUnits" />
 
     <DadosCompletos :data="filteredResources" />
 
@@ -42,14 +60,13 @@
 
 <script>
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue'
-import Sidebar from '@/components/Sidebar/Sidebar.vue';
-import ReportFilters from '@/views/Admin/Resource/AnnualResource/components/ReportFilters.vue'
-import ReportSummary from '@/views/Admin/Resource/AnnualResource/components/ReportSummary.vue'
-import StatsCards from '@/views/Admin/Resource/AnnualResource/components/StatsCards.vue'
-import PieCharts from '@/views/Admin/Resource/AnnualResource/components/PieCharts.vue'
-import BarCharts from '@/views/Admin/Resource/AnnualResource/components/BarCharts.vue'
-import ResponsibleTable from '@/views/Admin/Resource/AnnualResource/components/ResponsibleTable.vue'
-import BarUnidade from '@/views/Admin/Resource/AnnualResource/components/BarUnidade.vue'
+import Filtro from '@/views/Admin/Resource/AnnualResource/components/Filtro.vue'
+import RecursosRespondidos from '@/views/Admin/Resource/AnnualResource/components/RecursosRespondidos.vue'
+import ValorPago from '@/views/Admin/Resource/AnnualResource/components/ValorPago.vue'
+import StatusEquipe from '@/views/Admin/Resource/AnnualResource/components/StatusEquipe.vue'
+import RecursosTotais from '@/views/Admin/Resource/AnnualResource/components/RecursosTotais.vue'
+import TipoRecurso from '@/views/Admin/Resource/AnnualResource/components/TipoRecurso.vue'
+import RecursosUnidades from '@/views/Admin/Resource/AnnualResource/components/RecursosUnidades.vue'
 import { ref, inject, onMounted, computed, watch } from 'vue'
 import axios from 'axios'
 import { getAccessToken } from '@/service/token'
@@ -58,23 +75,23 @@ import DadosCompletos from './components/DadosCompletos.vue'
 export default {
   name: 'AnnualReportsDashboard',
   components: { 
-    Whiteboard, 
-    ReportFilters, 
-    ReportSummary, 
-    StatsCards, 
-    PieCharts, 
-    BarCharts, 
-    ResponsibleTable,
-    BarUnidade,
+    Whiteboard,
+    Filtro, 
+    RecursosRespondidos, 
+    ValorPago, 
+    StatusEquipe, 
+    RecursosTotais, 
+    TipoRecurso,
+    RecursosUnidades,
     DadosCompletos
   },
   
   setup() {
-    const isSidebarMinimized = inject('isSidebarMinimized', ref(false)) // Valor padrão se inject falhar
-    
+    const isSidebarMinimized = inject('isSidebarMinimized', ref(false)) // Mude para ref normal ao invés de inject
+      
     // Refs
-    const pieChartsRef = ref(null)
-    const barChartsRef = ref(null)
+    const StatusEquipeRef = ref(null)
+    const RecursosTotaisRef = ref(null)
     
     const filters = ref({
       year: new Date().getFullYear(),
@@ -261,11 +278,11 @@ export default {
     }
     
     const updateCharts = () => {
-      if (pieChartsRef.value) {
-        pieChartsRef.value.updateCharts()
+      if (StatusEquipeRef.value) {
+        StatusEquipeRef.value.updateCharts()
       }
-      if (barChartsRef.value) {
-        barChartsRef.value.updateCharts()
+      if (RecursosTotaisRef.value) {
+        RecursosTotaisRef.value.updateCharts()
       }
     }
     
@@ -308,18 +325,10 @@ export default {
       fetchData()
     })
     
-    // ADICIONAR este método:
-    const handleSidebarMinimized = (value) => {
-      if (isSidebarMinimized && isSidebarMinimized.value !== undefined) {
-        isSidebarMinimized.value = value
-      }
-    }
-    
     return {
       isSidebarMinimized,
-      handleSidebarMinimized, // ADICIONAR no return
-      pieChartsRef,
-      barChartsRef,
+      StatusEquipeRef,
+      RecursosTotaisRef,
       filters,
       availableUnits,
       availableAdmins,

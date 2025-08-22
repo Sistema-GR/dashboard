@@ -1,7 +1,7 @@
 <template>
   <div class="mb-6 w-full">
     <button @click="open = !open" class="w-full text-left px-6 py-3 justify-between bg-blue-50 rounded-[10px] focus:outline-none flex items-center">
-      <span class="text-2xl font-bold text-black">Quantidade de recursos</span>
+      <span class="text-25 font-bold text-black">Quantidade de recursos por unidade</span>
       <ChevronDownIcon class="w-4 h-4 sm:w-5 sm:h-5" :class="{ 'rotate-180': open }"/>
     </button>
     
@@ -10,8 +10,8 @@
 
         <!-- Gráfico principal - Por unidade -->
         <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full max-w-full">
-            <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-[10px]">
-            Por unidade
+          <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
+            Quantidade de recursos por unidade
           </div>
           <div class="flex-1 flex items-center justify-center p-4 min-h-[260px] overflow-hidden">
             <div class="w-full h-[220px] flex items-center justify-center overflow-hidden relative">
@@ -20,10 +20,10 @@
           </div>
         </div>
 
-        <div class="flex flex-col gap-10 flex-1 min-w-[340px] max-w-[600px] justify-center">
-          <div class="bg-white rounded-[8px] shadow-md flex flex-col h-full">
-            <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-[10px]">
-              Por categoria
+        <div class="flex flex-col gap-4 flex-1 min-w-[340px] max-w-[850px] w-full justify-center">
+          <div class="bg-white rounded-[10px] shadow-md flex flex-col h-full">
+            <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
+              Categorias
             </div>
             <div class="flex-1 flex items-center justify-center p-4 min-h-[260px] overflow-hidden">
               <div class="w-full h-[220px] flex items-center justify-center overflow-hidden relative">
@@ -33,10 +33,10 @@
           </div>
         </div>
 
-        <div class="flex flex-col gap-10 flex-1 min-w-[340px] max-w-[600px] justify-center">
-          <div class="bg-white rounded-[8px] shadow-md flex flex-col h-full">
-            <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-[10px]">
-              Por equipe responsável
+        <div class="flex flex-col gap-4 flex-1 min-w-[340px] max-w-[850px] w-full justify-center">
+          <div class="bg-white rounded-[10px] shadow-md flex flex-col h-full">
+            <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
+              Equipe responsável
             </div>
             <div class="flex-1 flex items-center justify-center p-4 min-h-[260px] overflow-hidden">
               <div class="w-full h-[220px] flex items-center justify-center overflow-hidden relative">
@@ -45,6 +45,7 @@
             </div>
           </div>
         </div>
+
       </div>
     </div>
   </div>
@@ -58,7 +59,7 @@ import { ChevronDownIcon } from '@heroicons/vue/24/outline'
 Chart.register(...registerables)
 
 export default {
-  name: 'BarCharts',
+  name: 'RecursosUnidades',
   components: {
     ChevronDownIcon
   },
@@ -73,7 +74,7 @@ export default {
     }
   },
   setup(props) {
-    const open = ref(true) // Adicionei a variável open que estava faltando
+    const open = ref(true)
     const chartUnidades = ref(null)
     const chartCategorias = ref(null)
     const chartEquipes = ref(null)
@@ -142,19 +143,37 @@ export default {
           type: 'bar',
           data: {
             labels: unitsLabels,
-            datasets: [{
-              label: 'Quantidade de recursos',
-              data: unitsData,
-              backgroundColor: '#3b82f6',
-              borderColor: '#1d4ed8',
-              borderWidth: 1
-            }]
+            datasets: [
+              {
+                label: 'Deferido',
+                data: unitsData.map(val => Math.floor(val * 0.4)),
+                backgroundColor: '#3459a2',
+                borderColor: '#3459a2',
+                borderWidth: 1
+              },
+              {
+                label: 'Indeferido',
+                data: unitsData.map(val => Math.floor(val * 0.35)),
+                backgroundColor: '#7597da',
+                borderColor: '#7597da',
+                borderWidth: 1
+              },
+              {
+                label: 'Parcialmente deferido',
+                data: unitsData.map(val => Math.floor(val * 0.25)),
+                backgroundColor: '#c2ddfd',
+                borderColor: '#c2ddfd',
+                borderWidth: 1
+              }
+            ]
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: { display: false }
+              legend: {
+                position: 'top',
+              }
             },
             scales: {
               y: { 
@@ -201,20 +220,38 @@ export default {
           type: 'bar',
           data: {
             labels: categoriesLabels,
-            datasets: [{
-              label: 'Categoria',
-              data: categoriesData,
-              backgroundColor: '#06b6d4',
-              borderColor: '#0891b2',
-              borderWidth: 1
-            }]
+            datasets: [
+              {
+                label: 'Deferido',
+                data: categoriesData.map(val => Math.floor(val * 0.4)),
+                backgroundColor: '#3459a2',
+                borderColor: '#3459a2',
+                borderWidth: 1
+              },
+              {
+                label: 'Indeferido',
+                data: categoriesData.map(val => Math.floor(val * 0.35)),
+                backgroundColor: '#7597da',
+                borderColor: '#7597da',
+                borderWidth: 1
+              },
+              {
+                label: 'Parcialmente deferido',
+                data: categoriesData.map(val => Math.floor(val * 0.25)),
+                backgroundColor: '#c2ddfd',
+                borderColor: '#c2ddfd',
+                borderWidth: 1
+              }
+            ]
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             indexAxis: 'y',
             plugins: {
-              legend: { display: false }
+              legend: {
+                position: 'top',
+              }
             },
             scales: {
               x: { 
@@ -253,20 +290,38 @@ export default {
           type: 'bar',
           data: {
             labels: teamsLabels,
-            datasets: [{
-              label: 'Equipe responsável',
-              data: teamsData,
-              backgroundColor: '#ec4899',
-              borderColor: '#db2777',
-              borderWidth: 1
-            }]
+            datasets: [
+              {
+                label: 'Deferido',
+                data: teamsData.map(val => Math.floor(val * 0.4)),
+                backgroundColor: '#3459a2',
+                borderColor: '#3459a2',
+                borderWidth: 1
+              },
+              {
+                label: 'Indeferido',
+                data: teamsData.map(val => Math.floor(val * 0.35)),
+                backgroundColor: '#7597da',
+                borderColor: '#7597da',
+                borderWidth: 1
+              },
+              {
+                label: 'Parcialmente deferido',
+                data: teamsData.map(val => Math.floor(val * 0.25)),
+                backgroundColor: '#c2ddfd',
+                borderColor: '#c2ddfd',
+                borderWidth: 1
+              }
+            ]
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             indexAxis: 'y',
             plugins: {
-              legend: { display: false }
+              legend: {
+                position: 'top',
+              }
             },
             scales: {
               x: { 
@@ -308,7 +363,7 @@ export default {
     })
     
     return {
-      open, // Agora retornando a variável open
+      open,
       chartUnidades,
       chartCategorias,
       chartEquipes,
@@ -317,3 +372,7 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+/* Estilos adicionais, se necessário */
+</style>

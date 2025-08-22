@@ -1,7 +1,7 @@
 <template>
   <div class="mb-6 w-full">
     <button @click="open = !open" class="w-full text-left px-6 py-3 justify-between bg-blue-50 rounded-[10px] focus:outline-none flex items-center">
-      <span class="text-2xl font-bold text-black">Quantidade de recursos por unidade</span>
+      <span class="text-25 font-bold text-black">Quantidade de recursos</span>
       <ChevronDownIcon class="w-4 h-4 sm:w-5 sm:h-5" :class="{ 'rotate-180': open }"/>
     </button>
     
@@ -10,8 +10,8 @@
 
         <!-- Gráfico principal - Por unidade -->
         <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full max-w-full">
-          <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-[10px]">
-            Quantidade de recursos por unidade
+            <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
+            Por unidade
           </div>
           <div class="flex-1 flex items-center justify-center p-4 min-h-[260px] overflow-hidden">
             <div class="w-full h-[220px] flex items-center justify-center overflow-hidden relative">
@@ -20,10 +20,10 @@
           </div>
         </div>
 
-        <div class="flex flex-col gap-4 flex-1 min-w-[340px] max-w-[600px] justify-center">
-          <div class="bg-white rounded-[8px] shadow-md flex flex-col h-full">
-            <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-[10px]">
-              Categorias
+        <div class="flex flex-col gap-10 flex-1 min-w-[340px] max-w-[850px] w-full justify-center">
+          <div class="bg-white rounded-[10px] shadow-md flex flex-col h-full">
+            <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
+              Por categoria
             </div>
             <div class="flex-1 flex items-center justify-center p-4 min-h-[260px] overflow-hidden">
               <div class="w-full h-[220px] flex items-center justify-center overflow-hidden relative">
@@ -33,10 +33,10 @@
           </div>
         </div>
 
-        <div class="flex flex-col gap-4 flex-1 min-w-[340px] max-w-[600px] justify-center">
-          <div class="bg-white rounded-[8px] shadow-md flex flex-col h-full">
-            <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-[10px]">
-              Equipe responsável
+        <div class="flex flex-col gap-10 flex-1 min-w-[340px] max-w-[850px] w-full justify-center">
+          <div class="bg-white rounded-[10px] shadow-md flex flex-col h-full">
+            <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
+              Por equipe responsável
             </div>
             <div class="flex-1 flex items-center justify-center p-4 min-h-[260px] overflow-hidden">
               <div class="w-full h-[220px] flex items-center justify-center overflow-hidden relative">
@@ -45,7 +45,6 @@
             </div>
           </div>
         </div>
-
       </div>
     </div>
   </div>
@@ -59,7 +58,7 @@ import { ChevronDownIcon } from '@heroicons/vue/24/outline'
 Chart.register(...registerables)
 
 export default {
-  name: 'BarUnidade',
+  name: 'RecursosTotais',
   components: {
     ChevronDownIcon
   },
@@ -80,6 +79,46 @@ export default {
     const chartEquipes = ref(null)
     
     let chartsInstances = {}
+    
+    // Função para gerar paleta de cores do escuro para o claro
+    const generateColorPalette = (count, baseColor = 'blue') => {
+      const palettes = {
+        blue: {
+          darkest: '#3459a2',  // blue-900
+          lightest: '#eaeef6'   // blue-100
+        }
+      }
+      
+      const palette = palettes[baseColor] || palettes.blue
+      
+      // Converter hex para RGB
+      const hexToRgb = (hex) => {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+        return result ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16)
+        } : null
+      }
+      
+      const darkRgb = hexToRgb(palette.darkest)
+      const lightRgb = hexToRgb(palette.lightest)
+      
+      const colors = []
+      
+      for (let i = 0; i < count; i++) {
+        // Calcular a interpolação (0 = mais escuro, 1 = mais claro)
+        const ratio = count === 1 ? 0 : i / (count - 1)
+        
+        const r = Math.round(darkRgb.r + (lightRgb.r - darkRgb.r) * ratio)
+        const g = Math.round(darkRgb.g + (lightRgb.g - darkRgb.g) * ratio)
+        const b = Math.round(darkRgb.b + (lightRgb.b - darkRgb.b) * ratio)
+        
+        colors.push(`rgb(${r}, ${g}, ${b})`)
+      }
+      
+      return colors
+    }
     
     const destroyCharts = () => {
       Object.values(chartsInstances).forEach(chart => {
@@ -113,15 +152,13 @@ export default {
       await nextTick()
       destroyCharts()
       
-      // Só criar se o painel estiver aberto
       if (!open.value) return
       
-      // Aguardar para garantir que os elementos estejam no DOM
       await new Promise(resolve => setTimeout(resolve, 100))
       
       const hasRealData = props.data && props.data.length > 0
       
-      // Gráfico de Unidades (vertical - principal)
+      // Gráfico de Unidades
       if (chartUnidades.value) {
         let unitsData, unitsLabels
         
@@ -139,41 +176,26 @@ export default {
           unitsData = [25, 20, 15, 12, 10, 8, 6, 5, 3, 2]
         }
         
+        // Gerar cores azuis baseadas na quantidade de barras
+        const unitsColors = generateColorPalette(unitsLabels.length, 'blue')
+        
         chartsInstances.unidades = new Chart(chartUnidades.value, {
           type: 'bar',
           data: {
             labels: unitsLabels,
-            datasets: [
-              {
-                label: 'Deferido',
-                data: unitsData.map(val => Math.floor(val * 0.4)),
-                backgroundColor: '#3b82f6',
-                borderColor: '#1d4ed8',
-                borderWidth: 1
-              },
-              {
-                label: 'Indeferido',
-                data: unitsData.map(val => Math.floor(val * 0.35)),
-                backgroundColor: '#06b6d4',
-                borderColor: '#0891b2',
-                borderWidth: 1
-              },
-              {
-                label: 'Parcialmente deferido',
-                data: unitsData.map(val => Math.floor(val * 0.25)),
-                backgroundColor: '#ec4899',
-                borderColor: '#db2777',
-                borderWidth: 1
-              }
-            ]
+            datasets: [{
+              label: 'Quantidade de recursos',
+              data: unitsData,
+              backgroundColor: unitsColors,
+              borderColor: unitsColors.map(color => color.replace('rgb', 'rgba').replace(')', ', 0.8)')),
+              borderWidth: 1
+            }]
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: {
-                position: 'top',
-              }
+              legend: { display: false }
             },
             scales: {
               y: { 
@@ -196,7 +218,7 @@ export default {
         })
       }
       
-      // Gráfico de Categorias (horizontal)
+      // Gráfico de Categorias
       if (chartCategorias.value) {
         let categoriesData, categoriesLabels
         
@@ -216,42 +238,27 @@ export default {
           categoriesData = [5, 8, 12, 15, 18, 22, 25, 30]
         }
         
+        // Gerar cores azuis baseadas na quantidade de barras
+        const categoriesColors = generateColorPalette(categoriesLabels.length, 'blue')
+        
         chartsInstances.categorias = new Chart(chartCategorias.value, {
           type: 'bar',
           data: {
             labels: categoriesLabels,
-            datasets: [
-              {
-                label: 'Deferido',
-                data: categoriesData.map(val => Math.floor(val * 0.4)),
-                backgroundColor: '#3b82f6',
-                borderColor: '#1d4ed8',
-                borderWidth: 1
-              },
-              {
-                label: 'Indeferido',
-                data: categoriesData.map(val => Math.floor(val * 0.35)),
-                backgroundColor: '#06b6d4',
-                borderColor: '#0891b2',
-                borderWidth: 1
-              },
-              {
-                label: 'Parcialmente deferido',
-                data: categoriesData.map(val => Math.floor(val * 0.25)),
-                backgroundColor: '#ec4899',
-                borderColor: '#db2777',
-                borderWidth: 1
-              }
-            ]
+            datasets: [{
+              label: 'Categoria',
+              data: categoriesData,
+              backgroundColor: categoriesColors,
+              borderColor: categoriesColors.map(color => color.replace('rgb', 'rgba').replace(')', ', 0.8)')),
+              borderWidth: 1
+            }]
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             indexAxis: 'y',
             plugins: {
-              legend: {
-                position: 'top',
-              }
+              legend: { display: false }
             },
             scales: {
               x: { 
@@ -268,7 +275,7 @@ export default {
         })
       }
       
-      // Gráfico de Equipes (horizontal)
+      // Gráfico de Equipes
       if (chartEquipes.value) {
         let teamsData, teamsLabels
         
@@ -286,42 +293,27 @@ export default {
           teamsData = [10, 15, 25, 35, 40]
         }
         
+        // Gerar cores azuis baseadas na quantidade de barras
+        const teamsColors = generateColorPalette(teamsLabels.length, 'blue')
+        
         chartsInstances.equipes = new Chart(chartEquipes.value, {
           type: 'bar',
           data: {
             labels: teamsLabels,
-            datasets: [
-              {
-                label: 'Deferido',
-                data: teamsData.map(val => Math.floor(val * 0.4)),
-                backgroundColor: '#3b82f6',
-                borderColor: '#1d4ed8',
-                borderWidth: 1
-              },
-              {
-                label: 'Indeferido',
-                data: teamsData.map(val => Math.floor(val * 0.35)),
-                backgroundColor: '#06b6d4',
-                borderColor: '#0891b2',
-                borderWidth: 1
-              },
-              {
-                label: 'Parcialmente deferido',
-                data: teamsData.map(val => Math.floor(val * 0.25)),
-                backgroundColor: '#ec4899',
-                borderColor: '#db2777',
-                borderWidth: 1
-              }
-            ]
+            datasets: [{
+              label: 'Equipe responsável',
+              data: teamsData,
+              backgroundColor: teamsColors,
+              borderColor: teamsColors.map(color => color.replace('rgb', 'rgba').replace(')', ', 0.8)')),
+              borderWidth: 1
+            }]
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
             indexAxis: 'y',
             plugins: {
-              legend: {
-                position: 'top',
-              }
+              legend: { display: false }
             },
             scales: {
               x: { 
@@ -372,7 +364,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-/* Estilos adicionais, se necessário */
-</style>
