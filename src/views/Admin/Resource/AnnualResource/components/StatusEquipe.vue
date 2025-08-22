@@ -6,7 +6,7 @@
     </button>
     
     <div v-show="open" class="px-10">
-      <div class="flex flex-col gap-10 px-10 py-8 justify-center items-stretch">
+      <div class="flex flex-col gap-10 py-8 justify-center items-stretch">
         <!-- Card Gráfico -->
         <div class="flex flex-col gap-4 flex-1 w-full justify-center">
           <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full max-w-full">
@@ -23,7 +23,7 @@
         
               <!-- Tabela de responsáveis -->
         <div class="flex flex-col gap-4 flex-1 w-full">
-          <div class="bg-white shadow-md rounded-t-lg flex-1 min-w-[340px] max-w-[1200px]">
+          <div class="bg-white rounded-[10px]  shadow-md rounded-t-lg flex-1 w-full">
             <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
               Responsáveis por Recurso
             </div>

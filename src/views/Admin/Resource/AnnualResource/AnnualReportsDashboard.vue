@@ -1,16 +1,34 @@
 <template>
-  <Sidebar :route="'admin'" @update:isSidebarMinimized="handleSidebarMinimized" class="z-50"/>
   <Whiteboard title="Relatórios Anuais" class="!overflow-visible overflow-y-auto z-40 relative" :isSidebarMinimized="isSidebarMinimized">
+    
     <!-- Filtros -->
     <Filtro 
-      v-model:filters="filters"
-      :availableUnits="availableUnits"
-      :availableAdmins="availableAdmins"
-      @filter-change="onFilterChange"
-      @clear-filters="clearFilters"
-      @export-data="exportData"
+    v-model:filters="filters"
+    :availableUnits="availableUnits"
+    :availableAdmins="availableAdmins"
+    @filter-change="onFilterChange"
+    @clear-filters="clearFilters"
+    @export-data="exportData"
     />
-
+    
+    <!-- Tabs de Anos -->
+    <div class="flex space-x-4 pt-3 border-b border-[#c2ddfd]">
+      <button
+        v-for="year in [2024, 2025, 2026]"
+        :key="year"
+        @click="filters.year = year"
+        :class="[
+          'px-4 py-2 text-25 font-semibold focus:outline-none transition',
+          filters.year == year
+            ? 'border-b-2 border-[#3459A2] text-[#3459A2]'
+            : 'text-[#c2ddfd] hover:text-[#7597da]'
+        ]"
+        type="button"
+      >
+        {{ year }}
+      </button>
+    </div>
+    
     <!-- Resumo Geral -->
     <RecursosRespondidos :stats="filteredStats" />
 
@@ -57,8 +75,7 @@ import DadosCompletos from './components/DadosCompletos.vue'
 export default {
   name: 'AnnualReportsDashboard',
   components: { 
-    Whiteboard,
-    Sidebar, // Adicione esta linha
+    Whiteboard, 
     Filtro, 
     RecursosRespondidos, 
     ValorPago, 
@@ -70,12 +87,7 @@ export default {
   },
   
   setup() {
-    const isSidebarMinimized = ref(false) // Mude para ref normal ao invés de inject
-    
-    // Adicione a função handleSidebarMinimized
-    function handleSidebarMinimized(value) {
-      isSidebarMinimized.value = value
-    }
+    const isSidebarMinimized = inject('isSidebarMinimized', ref(false)) // Valor padrão se inject falhar
     
     // Refs
     const StatusEquipeRef = ref(null)
