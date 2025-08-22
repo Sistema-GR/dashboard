@@ -1,14 +1,14 @@
 <template>
   <div class="mb-6 w-full">
     <button @click="open = !open" class="w-full text-left px-6 py-3 justify-between bg-blue-50 rounded-[10px] focus:outline-none flex items-center">
-      <span class="text-2xl font-bold text-black">Tipos de recurso</span>
+      <span class="text-25 font-bold text-black">Tipos de recurso</span>
       <ChevronDownIcon class="w-4 h-4 sm:w-5 sm:h-5" :class="{ 'rotate-180': open }" />
     </button>
     <div v-show="open" class="p-0">
       <div class="flex flex-wrap gap-10 px-10 py-8 justify-center items-stretch">
         <!-- Card Gráfico Tipos -->
           <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full max-w-full">
-            <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-[10px]">
+            <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
               Tipos de recurso
             </div>
             <div class="flex-1 flex items-center justify-center p-4 min-h-[260px] overflow-hidden">
@@ -17,7 +17,7 @@
                   <canvas ref="chartTipos" class="w-full h-full !block relative z-10" style="max-width:100%;max-height:100%;display:block;"></canvas>
                 </div>
               </div>
-              <ul class="text-sm px-6 pb-4">
+              <ul class="text-15 px-6 pb-4">
                 <li v-for="(label, i) in tiposLabels" :key="label" class="flex items-center mb-1">
                   <span :style="{background: tiposColors[i], display:'inline-block', width:'14px', height:'14px', borderRadius:'3px', marginRight:'8px'}"></span>
                   <span class="mr-2">{{ label }}</span>
@@ -29,7 +29,7 @@
         <!-- Card Gráfico Status -->
         <div class="flex flex-col gap-4 flex-1 min-w-[340px] max-w-[600px] justify-center">
           <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full h-full">
-            <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-[10px]">
+            <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
               Status
             </div>
             <div class="flex-1 flex items-center justify-center p-4 min-h-[260px] overflow-hidden">
@@ -38,7 +38,7 @@
                   <canvas ref="chartStatus" class="w-full h-full !block relative z-10" style="max-width:100%;max-height:100%;display:block;"></canvas>
                 </div>
               </div>
-              <ul class="text-sm px-6 pb-4">
+              <ul class="text-15 px-6 pb-4">
                 <li v-for="(label, i) in statusLabels" :key="label" class="flex items-center mb-1">
                   <span :style="{background: statusColors[i], display:'inline-block', width:'14px', height:'14px', borderRadius:'3px', marginRight:'8px'}"></span>
                   <span class="mr-2">{{ label }}</span>
@@ -51,7 +51,7 @@
         <!-- Card Gráfico Conclusão -->
         <div class="flex flex-col gap-4 flex-1 min-w-[340px] max-w-[600px] justify-center">
           <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full h-full">
-            <div class="bg-[#3459A2] text-white text-center font-bold text-lg p-3 rounded-t-[10px]">
+            <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
               Conclusão
             </div>
             <div class="flex-1 flex items-center justify-center p-4 min-h-[260px] overflow-hidden">
@@ -60,7 +60,7 @@
                   <canvas ref="chartConclusao" class="w-full h-full !block relative z-10" style="max-width:100%;max-height:100%;display:block;"></canvas>
                 </div>
               </div>
-              <ul class="text-sm px-6 pb-4">
+              <ul class="text-15 px-6 pb-4">
                 <li v-for="(label, i) in conclusaoLabels" :key="label" class="flex items-center mb-1">
                   <span :style="{background: conclusaoColors[i], display:'inline-block', width:'14px', height:'14px', borderRadius:'3px', marginRight:'8px'}"></span>
                   <span class="mr-2">{{ label }}</span>
@@ -81,7 +81,7 @@ import Chart from 'chart.js/auto'
 import { ChevronDownIcon } from '@heroicons/vue/24/outline'
 
 export default {
-  name: 'ResponsibleTable',
+  name: 'TipoRecurso',
   components: {
     ChevronDownIcon
   },
@@ -89,7 +89,7 @@ export default {
     responsaveis: {
       type: Array,
       required: false,
-      default: () => ([
+      default: () => ( [
         { id: 1, name: 'Tamires', total: 11, deferidos: 3, indeferidos: 5, parcialmente_deferidos: 3, percentage: 1.75 },
         { id: 2, name: 'Kamila Nunes', total: 35, deferidos: 5, indeferidos: 7, parcialmente_deferidos: 23, percentage: 5.56 },
         { id: 3, name: 'José Gonçalves', total: 102, deferidos: 21, indeferidos: 60, parcialmente_deferidos: 21, percentage: 16.22 },
@@ -108,6 +108,19 @@ export default {
     let chartTiposInstance = null
     let chartStatusInstance = null
     let chartConclusaoInstance = null
+    // Paleta de cores personalizada
+    const customColors = [
+      '#3459a2',
+      '#6668d4', 
+      '#6fa3ef',
+      '#00b6cb',
+      '#418b6a',
+      '#6cc69d',
+      '#e44949',
+      '#f16d91',
+      '#f48e2f',
+      '#f4b72f'
+    ]
 
     const tiposLabels = [
       "Formação",
@@ -122,27 +135,13 @@ export default {
       "Alega atuação em outra etapa",
     ]
     const tiposData = [34.6, 19.1, 14.2, 12.5, 5.3, 4.8, 3.0, 2.5, 2.0, 2.0]
-    const tiposColors = [
-      "#2E75B6",
-      "#E91E63",
-      "#F7B500",
-      "#5DADE2",
-      "#EC7063",
-      "#48C9B0",
-      "#7D3C98",
-      "#95A5A6",
-      "#27AE60",
-      "#D35400",
-    ]
-
+    const tiposColors = customColors.slice(0, tiposLabels.length)
     const statusLabels = ["Respondido"]
     const statusData = [100]
-    const statusColors = ["#2E75B6"]
-
+    const statusColors = [customColors[0]]
     const conclusaoLabels = ["Indeferido", "Deferido", "Parcialmente deferido"]
     const conclusaoData = [49.6, 44.5, 5.9]
-    const conclusaoColors = ["#2E75B6", "#1ABC9C", "#E91E63"]
-
+    const conclusaoColors = customColors.slice(0, 3)
     const destroyCharts = () => {
       if (chartTiposInstance) { chartTiposInstance.destroy(); chartTiposInstance = null }
       if (chartStatusInstance) { chartStatusInstance.destroy(); chartStatusInstance = null }
@@ -154,60 +153,125 @@ export default {
       destroyCharts()
       if (!open.value) return
       await new Promise(resolve => setTimeout(resolve, 200))
+     
+      // Configuração simplificada de tooltip que funciona
+      const tooltipConfig = {
+        enabled: true,
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        titleColor: '#ffffff',
+        bodyColor: '#ffffff',
+        borderColor: '#ffffff',
+        borderWidth: 1,
+        cornerRadius: 8,
+        displayColors: true,
+        padding: 10,
+        callbacks: {
+          label: function(context) {
+            const label = context.label || '';
+            const value = context.parsed;
+            return `${label}: ${value}%`;
+          }
+        }
+      }
+      
       if (chartTipos.value) {
+        console.log('Criando gráfico Tipos...')
         chartTiposInstance = new Chart(chartTipos.value, {
           type: "pie",
           data: {
             labels: tiposLabels,
-            datasets: [
-              {
-                data: tiposData,
-                backgroundColor: tiposColors,
-              },
-            ],
+            datasets: [{
+              data: tiposData,
+              backgroundColor: tiposColors,
+              borderWidth: 2,
+              borderColor: '#ffffff',
+              hoverBorderWidth: 3,
+              hoverBorderColor: '#ffffff'
+            }],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
+            plugins: { 
+              legend: { display: false },
+              tooltip: tooltipConfig
+            },
+            hover: {
+              mode: 'nearest',
+              intersect: true
+            },
+            animation: {
+              animateRotate: true,
+              duration: 1000
+            }
           },
         })
       }
+      
       if (chartStatus.value) {
+        console.log('Criando gráfico Status...')
         chartStatusInstance = new Chart(chartStatus.value, {
           type: "pie",
           data: {
             labels: statusLabels,
-            datasets: [
-              {
-                data: statusData,
-                backgroundColor: statusColors,
-              },
-            ],
+            datasets: [{
+              data: statusData,
+              backgroundColor: statusColors,
+              borderWidth: 2,
+              borderColor: '#ffffff',
+              hoverBorderWidth: 3,
+              hoverBorderColor: '#ffffff'
+            }],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
+            plugins: { 
+              legend: { display: false },
+              tooltip: tooltipConfig
+            },
+            hover: {
+              mode: 'nearest',
+              intersect: true
+            },
+            animation: {
+              animateRotate: true,
+              duration: 1000
+            }
           },
         })
       }
+      
       if (chartConclusao.value) {
+        console.log('Criando gráfico Conclusão...')
         chartConclusaoInstance = new Chart(chartConclusao.value, {
           type: "pie",
           data: {
             labels: conclusaoLabels,
-            datasets: [
-              {
-                data: conclusaoData,
-                backgroundColor: conclusaoColors,
-              },
-            ],
+            datasets: [{
+              data: conclusaoData,
+              backgroundColor: conclusaoColors,
+              borderWidth: 2,
+              borderColor: '#ffffff',
+              hoverBorderWidth: 3,
+              hoverBorderColor: '#ffffff'
+            }],
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
+            plugins: { 
+              legend: { display: false },
+              tooltip: tooltipConfig
+            },
+            hover: {
+              mode: 'nearest',
+              intersect: true
+            },
+            animation: {
+              animateRotate: true,
+              duration: 1000
+            }
           },
         })
       }
@@ -219,11 +283,6 @@ export default {
     })
 
     onMounted(() => {
-      console.log('Canvas elements:', {
-        tipos: chartTipos.value,
-        status: chartStatus.value,
-        conclusao: chartConclusao.value
-      })
       setTimeout(() => { createCharts() }, 500)
     })
 
