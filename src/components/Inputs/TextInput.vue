@@ -16,7 +16,7 @@
       />
     </div>
 
-    <div v-if="error" class="text-sm font-medium text-label text-red-600 truncate">{{ error }}</div>
+    <div v-if="error" class="text-15 font-medium text-label text-red-600 truncate">{{ error }}</div>
   </div>
 </template>
 
@@ -63,7 +63,7 @@ const inputId = computed(() => props.id || `${props.type}-${Math.random()}`);
 
 const inputContainerClass = computed(() => {
   return `${props.disabled ? 'disabledClass' : 'enabledClass'}
-    flex flex-row items-center justify-between bg-white space-x-2 px-2 py-3 w-full rounded-lg border border-neutral-cold-100
+    flex flex-row items-center justify-between bg-white space-x-2 px-2 py-3 w-full rounded-[10px] border border-neutral-cold-100
     ${props.error ? 'border-2 border-red-600' : ''}
     ${props.success ? 'border-2 border-green-600' : ''}
     ${props.info ? 'border-2 border-blue-600' : ''}

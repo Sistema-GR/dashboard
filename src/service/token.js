@@ -122,7 +122,6 @@ export const setupAxiosInterceptors = (axiosInstance) => {
 const synchronizeTokensAcrossTabs = () => {
   window.addEventListener('storage', (event) => {
     if (event.key === 'accessToken' || event.key === 'refreshToken') {
-      console.log("Tokens sincronizados entre abas.");
     }
   });
 };
