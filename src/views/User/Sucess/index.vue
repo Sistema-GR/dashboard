@@ -3,12 +3,12 @@
             <CheckCircleIcon class="w-24 h-auto" />
 
             <h1 class="text-4xl font-semibold text-gray-800 mb-4">Recurso enviado com sucesso!</h1>
-            <p class="text-lg text-gray-600 mb-2">Sua solicitação foi realizada com sucesso.</p>
+            <p class="text-20 text-gray-600 mb-2">Sua solicitação foi realizada com sucesso.</p>
             <p class="text-md text-gray-500 mb-8">Você pode acompanhar o status da sua solicitação no painel de status.</p>
 
             <button 
                 @click="goToStatus" 
-                class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-green-600 transition duration-300">
+                class="bg-blue-500 text-white px-6 py-2 rounded-[10px] hover:bg-green-600 transition duration-300">
                 Acompanhar Status
             </button>
         </div>

@@ -1,7 +1,7 @@
 <template>
     <main class="flex flex-row items-center h-screen justify-center py-10 lg:pl-72">
         <div class="px-4 sm:px-6 lg:px-8">
-            <h3 class="text-lg font-medium leading-6 text-gray-400">
+            <h3 class="text-20 text-center font-medium leading-6 text-gray-400">
                 Bem Vindo(a) {{ userFullName }}
             </h3>
         </div>
@@ -20,7 +20,6 @@ export default {
   methods: {
     async fetchUserInfo() {
         const token = localStorage.getItem("accessToken"); // ou "access_token", conforme necessário
-        console.log("Token:", token); // Verifique o valor do token no console
         if (!token) {
             console.error("Token de autenticação não encontrado");
             return;
@@ -38,7 +37,6 @@ export default {
             }
 
             const data = await response.json();
-            console.log("Dados do usuário:", data); // Verifique o que está sendo retornado
 
             if (data && data.first_name && data.last_name) {
                 const capitalizeWords = (str) => {
