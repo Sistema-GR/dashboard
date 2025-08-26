@@ -222,7 +222,7 @@ const driverObj = driver({
       element: "#tutorial-desconto",
       popover: {
         title: '',
-        description: '<div class="descricao">Nesse campo mostra o desconto.</div>',
+        description: '<div class="descricao">Nesse campo mostra o desconto caso não tenha completado 100% dos critérios.</div>',
         position: "top",
       },
     },
@@ -240,7 +240,19 @@ const driverObj = driver({
       element: "#tutorial-criteria",
       popover: {
         title: '<div class="titulo-img">Critérios de aptidão</div>',
-        description: '<div class="descricao">Esta tabela mostra os 4 critérios principais: frequência (mín. 96%), tempo de atuação (mín. 6 meses), Formação e Atividades. Cada um, mostra se você está "Apto" ou "Não Apto".</div>',
+        description: `
+          <div class="descricao">
+            A tabela apresenta quatro critérios principais de avaliação:
+            <ul>
+              <li><strong>Frequência</strong> – exige no mínimo 96% de presença.</li>
+              <li><strong>Tempo de atuação</strong> – requer no mínimo 6 meses de experiência.</li>
+              <li><strong>Formação</strong> – considera a escolaridade ou cursos exigidos para a função.</li>
+              <li><strong>Atividades</strong> – avalia se todas as atividades previstas foram cumpridas.</li>
+            </ul>
+            Para cada critério, a tabela indica se o participante está 
+            <strong>“Apto”</strong> (quando o requisito foi atendido) ou 
+            <strong>“Não Apto”</strong> (quando não alcançou o mínimo necessário).
+          </div>`,
         position: "top",
       },
     },
