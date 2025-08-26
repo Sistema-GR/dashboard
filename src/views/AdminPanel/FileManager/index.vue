@@ -1,5 +1,5 @@
 <template>
-  <Whiteboard title="Gerenciamento de Arquivos" :isSidebarMinimized="isSidebarMinimized">
+  <Whiteboard title="Gerenciamento de Arquivos" >
     <div class="flex w-full flex-col gap-5 my-3 px-4 sm:px-10">
       <!-- Seção de Arquivos Processados -->
       <div>

@@ -1,5 +1,5 @@
 <template>
-  <Whiteboard title="Dashboard" :isSidebarMinimized="isSidebarMinimized">
+  <Whiteboard title="Dashboard" >
     <!-- Total Recebe, Total Não Recebe e Total a Pagar -->
     <div class="grid w-full py-8">
       <div class="flex flex-wrap justify-center gap-6 sm:gap-8 xl:justify-between px-4 sm:px-10">
@@ -145,6 +145,7 @@ export default {
     const fetchDashboardData = async () => {
       try {
         const token = await getAccessToken();
+        console.log(token)
         if (!token) {
           console.error("Erro: Token de acesso não encontrado.");
           return;
@@ -252,14 +253,14 @@ export default {
             {
                 title: "Motivo de Não Recebimento",
                 data: [
-                    { label: "Estagiário", value: motivoCombinadoCounts["Estagiário"] || 0 },
-                    { label: "Atividade", value: motivoCombinadoCounts["Atividade"] || 0 },
-                    { label: "Formações", value: motivoCombinadoCounts["Formações"] || 0 },
-                    { label: "Frequência", value: motivoCombinadoCounts["Frequência"] || 0 },
-                    { label: "Tempo de Atuação", value: motivoCombinadoCounts["Tempo de atuação"] || 0 },
-                    { label: "Mais de um critério", value: motivoCombinadoCounts["Mais de um critério"] || 0 },
-                    { label: "Mais de dois critérios", value: motivoCombinadoCounts["Mais de dois critérios"] || 0 },
-                ]
+                  { label: "Estagiário", value: motivoCombinadoCounts["Estagiário"] || 0 },
+                  { label: "Atividade", value: motivoCombinadoCounts["Atividade"] || 0 },
+                  { label: "Formações", value: motivoCombinadoCounts["Formações"] || 0 },
+                  { label: "Frequência", value: motivoCombinadoCounts["Frequência"] || 0 },
+                  { label: "Tempo de Atuação", value: motivoCombinadoCounts["Tempo de atuação"] || 0 },
+                  { label: "Mais de um critério", value: motivoCombinadoCounts["Mais de um critério"] || 0 },
+                  { label: "Mais de dois critérios", value: motivoCombinadoCounts["Mais de dois critérios"] || 0 },
+                ].sort((a, b) => b.value - a.value)
             },
             {
                 title: "Faixa de Pagamento",

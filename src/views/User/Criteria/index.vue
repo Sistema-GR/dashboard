@@ -1,5 +1,5 @@
 <template>
-    <Whiteboard title="Critérios" :isSidebarMinimized="isSidebarMinimized">
+    <Whiteboard title="Critérios" >
       <div class="flex flex-col w-full p-4 sm:px-10">
         <p class="font-semibold text-20 mb-10 text-center">
           Abaixo estão os dados dos critérios a serem verificados para o recebimento da gratificação.

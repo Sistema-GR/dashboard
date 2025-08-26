@@ -41,7 +41,7 @@
             </div>
 
             <div class="w-full flex justify-end mt-2">
-              <router-link to="/forgotpassword" class="text-15 text-amber-50 hover:underline mt-0">Esqueceu sua senha?</router-link>
+              <router-link to="/auth/forgotpassword" class="text-15 text-amber-50 hover:underline mt-0">Esqueceu sua senha?</router-link>
             </div>
 
             <PrimaryButton
@@ -56,7 +56,7 @@
             <p v-if="errors.global" class="text-red-500 text-15 mt-1">{{ errors.global }}</p>
 
             <div class="w-full flex justify-center pt-3">
-              <router-link to="/register" class="text-15 text-amber-50 hover:underline mt-0 -translate-y-5">Não possui cadastro? Clique aqui</router-link>
+              <router-link to="/auth/register" class="text-15 text-amber-50 hover:underline mt-0 -translate-y-5">Não possui cadastro? Clique aqui</router-link>
             </div>
           </div>
         </div>

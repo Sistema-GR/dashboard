@@ -1,5 +1,5 @@
 <template>
-    <Whiteboard title="Status do Meu Recurso" :isSidebarMinimized="isSidebarMinimized">
+    <Whiteboard title="Status dos Meus Recursos" >
 
         <div v-if="isLoading" class="text-center p-10">
             <p class="text-gray-600">Buscando seu recurso...</p>

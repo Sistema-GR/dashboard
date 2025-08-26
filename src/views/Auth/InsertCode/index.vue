@@ -109,7 +109,7 @@ export default {
         });
 
         // Se o código for correto, redireciona para a página de alteração de senha
-        this.$router.push('/changepassword');
+        this.$router.push('/auth/changepassword');
       } catch (error) {
         // Exibir erro global caso o código esteja incorreto
         this.errors.global = error.message;

@@ -1,5 +1,5 @@
 <template>
-  <Whiteboard title="Novo Cálculo" :isSidebarMinimized="isSidebarMinimized">
+  <Whiteboard title="Novo Cálculo" >
     <div class="w-full px-10 py-8">
       <div class="flex flex-col py-5 border border-gray-200 rounded-[10px] bg-white shadow-md w-full">
         <div class="flex flex-col w-full lg:flex-row">

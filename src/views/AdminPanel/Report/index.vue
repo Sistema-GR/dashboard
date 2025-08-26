@@ -1,5 +1,5 @@
 <template>
-    <Whiteboard :title="titulo" :isSidebarMinimized="isSidebarMinimized">
+    <Whiteboard :title="titulo" >
         <div class="flex flex-row w-full items-center gap-3 justify-between px-4 sm:px-10 mt-4">
             <Search @search="handleSearch" />
             <div v-if="selectedRoute == 'Frequency'" class="flex flex-row items-center  gap-1 w-full max-w-64 cursor-pointer">
@@ -10,9 +10,7 @@
             <PrimaryTable :route="selectedRoute" :searchQuery="searchQuery" />
         </div>
     </Whiteboard>
-
     <Sidebar :route="selectedRoute"
-             @update:isSidebarMinimized="handleSidebarMinimized"
              @update:route="handleRouteUpdate" />
 </template>
 

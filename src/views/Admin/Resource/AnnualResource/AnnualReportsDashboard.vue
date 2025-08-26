@@ -1,5 +1,5 @@
 <template>
-  <Whiteboard title="Relatórios Anuais" class="!overflow-visible overflow-y-auto z-40 relative" :isSidebarMinimized="isSidebarMinimized">
+  <Whiteboard title="Relatórios Anuais" >
     
     <!-- Filtros -->
     <Filtro 

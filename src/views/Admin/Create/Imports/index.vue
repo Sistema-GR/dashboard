@@ -1,9 +1,9 @@
 <template>
-  <Whiteboard title="Importações" :isSidebarMinimized="isSidebarMinimized">     
+  <Whiteboard title="Importações" >     
     <div class="w-full py-5 px-10 space-y-10">      
       <!-- FileInput para upload dos arquivos em .csv -->
       <FileInput Label="Importar Arquivos em .CSV"
-      @taUpando="loadingUpdate"
+      @isUploading="loadingUpdate"
       @uploaded="onUnifiedUploaded"/>
     </div>
     <Loading v-if="isUploading" />
