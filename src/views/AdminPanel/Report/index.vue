@@ -10,7 +10,8 @@
             <PrimaryTable :route="selectedRoute" :searchQuery="searchQuery" />
         </div>
     </Whiteboard>
-
+    <Sidebar :route="selectedRoute"
+             @update:route="handleRouteUpdate" />
 </template>
 
 <script>

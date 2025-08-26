@@ -1,7 +1,7 @@
 <template>
   <div>
-      <TransitionRoot as="template" :show="sidebarStore.isSidebarMinimized">
-          <Dialog class="relative z-50 lg:hidden" @close="sidebarStore.setSidebarMinimized(false)">
+      <TransitionRoot as="template" :show="mobileSidebarOpen">
+          <Dialog class="relative z-50 lg:hidden" @close="mobileSidebarOpen = false">
               <TransitionChild as="template" enter="transition-opacity ease-linear" enter-from="opacity-0" enter-to="opacity-100" leave="transition-opacity ease-linear duration-300" leave-from="opacity-100" leave-to="opacity-0">
                   <div class="fixed inset-0 bg-gray-900/80"/>
               </TransitionChild>
@@ -11,7 +11,7 @@
                       <DialogPanel class="relative flex w-full max-w-xs flex-1 bg-[#003965]">
                           <TransitionChild as="template" enter="ease-in-out duration-300" enter-from="opacity-0" enter-to="opacity-100" leave="ease-in-out duration-300" leave-from="opacity-100" leave-to="opacity-0">
                               <div class="absolute left-full top-0 flex w-16 justify-center pt-5">
-                                  <button type="button" class="-m-2.5 p-2.5" @click="sidebarStore.setSidebarMinimized(false)">
+                                  <button type="button" class="-m-2.5 p-2.5" @click="mobileSidebarOpen = false">
                                       <span class="sr-only">Close sidebar</span>
                                       <XMarkIcon class="h-6 w-6 text-white" aria-hidden="true" />
                                   </button>
@@ -224,14 +224,14 @@
       </div>
 
       <div class="sticky top-0 z-40 flex items-center gap-x-6 bg-[#003965] px-4 py-4 shadow-sm sm:px-6 lg:hidden">
-        <button type="button" class="-m-2.5 p-2.5 text-gray-400 lg:hidden" @click="sidebarStore.setSidebarMinimized(true)">
+        <button type="button" class="-m-2.5 p-2.5 text-gray-400 lg:hidden" @click="mobileSidebarOpen = true">
           <span class="sr-only">Open sidebar</span>
           <Bars3Icon class="h-6 w-6 text-white" aria-hidden="true" />
         </button>
 
         <div class="flex-1 text-15 font-semibold leading-6 text-white"></div>
 
-        <a href="#" @click="sidebarStore.setSidebarMinimized(true)">
+        <a href="#" @click="mobileSidebarOpen = true">
             <span class="sr-only">Your profile</span>
             <div class="flex text-15 font-medium items-center gap-2 text-white">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-7 h-auto text-white">
@@ -319,7 +319,7 @@ const props = defineProps({
       default: ''
   },
 })
-
+const mobileSidebarOpen = ref(false)
 const userName = ref('')  // Variável para armazenar o nome do usuário
 
 // Função para emitir ou redirecionar a rota dos componentes filhos
@@ -387,7 +387,7 @@ onMounted(() => {
 })
 
 
-const emit = defineEmits(['update:isSidebarMinimized'],['update:route'])
+const emit = defineEmits(['update:route'])
 
 const filteredNavigation = computed(() => {
   const userType = getUserType();
@@ -455,12 +455,12 @@ function goBack() {
   router.push('/home/overview');
 }
 
-//watch(sidebarStore.isSidebarMinimized, (minimized) => {
-//  if (minimized) {
-//    isProfileMenuOpen.value = false
-//    isCalcMenuOpen.value = false
-//  }
-//})
+watch(() => sidebarStore.isSidebarMinimized, (minimized) => {
+  if (minimized) {
+    isProfileMenuOpen.value = false
+    isCalcMenuOpen.value = false
+  }
+})
 
 </script>
 
