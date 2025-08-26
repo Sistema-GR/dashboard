@@ -16,7 +16,6 @@
   </template>
   
   <script>
-  import { inject } from 'vue';
   import { useRouter } from 'vue-router';
   import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
   import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
@@ -25,7 +24,6 @@
     name: "Selector",
     components: { Whiteboard, PrimaryButton },
     setup() {
-      const isSidebarMinimized = inject('isSidebarMinimized');
       const router = useRouter();
   
       const navigateTo = (route) => {
@@ -33,7 +31,6 @@
       };
   
       return {
-        isSidebarMinimized,
         navigateTo
       };
     }

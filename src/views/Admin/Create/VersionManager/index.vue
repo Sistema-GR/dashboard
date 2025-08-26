@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import { ref, inject, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { fetchVersions, createDataset, createGeneralData } from '../../../../service/apiService';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
@@ -63,7 +63,6 @@ export default {
   name: "VersionManager",
   components: { Whiteboard, TextInput },
   setup() {
-    const isSidebarMinimized = inject('isSidebarMinimized');
     const router = useRouter();
     const versions = ref([]);
     const selectedVersionId = ref(null); // Armazenar apenas o ID da versão selecionada
@@ -155,7 +154,6 @@ export default {
     onMounted(fetchVersionsData);
 
     return {
-      isSidebarMinimized,
       versions,
       selectedVersionId,
       selectedVersionDetails,

@@ -124,7 +124,7 @@ import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import { downloadCriteriosCSV } from '@/service/download';
 import { ArrowDownTrayIcon, BanknotesIcon, DocumentDuplicateIcon, UsersIcon } from "@heroicons/vue/24/outline";
 import axios from 'axios';
-import { computed, inject, onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { getAccessToken } from '../../../service/token';
 import { useRouter } from 'vue-router';
 
@@ -133,7 +133,6 @@ export default {
   components: { Whiteboard, UsersIcon, BanknotesIcon, DocumentDuplicateIcon, ArrowDownTrayIcon },
 
   setup() {
-    const isSidebarMinimized = inject('isSidebarMinimized', ref(false));
     const dashboardData = ref(null); // Iniciar como nulo para verificações mais fáceis
     const dashboardMotivos = ref(null);
     const totalRecebem = ref(0);
@@ -322,7 +321,6 @@ export default {
     });
 
     return {
-      isSidebarMinimized,
       updatedChartSections,
       files,
       version,

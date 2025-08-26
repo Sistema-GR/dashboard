@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { ref, provide } from 'vue'
+import { ref } from 'vue'
 import Sidebar from '@/components/Sidebar/Sidebar.vue';
 import TextInput from '@/components/Inputs/TextInput.vue';
 import PrimaryTable from '@/components/Table/PrimaryTable.vue';
@@ -28,15 +28,11 @@ export default {
     components: {Sidebar, Whiteboard, PrimaryTable, TextInput, Search, Pagination},
 
     setup() {
-    const isSidebarMinimized = ref(false)
     const searchQuery = ref('');
     const selectedRoute = ref('Report') // default
     const titulo = ref('Admin Panel') // default
     const handleSearch = (query) => {
         searchQuery.value = query
-    }
-    function handleSidebarMinimized(value) {
-      isSidebarMinimized.value = value
     }
     function handleRouteUpdate(newRoute) {
       selectedRoute.value = newRoute
@@ -61,11 +57,8 @@ export default {
       }
       return map[route] || 'Page'
     }
-    provide('isSidebarMinimized', isSidebarMinimized)
 
     return {
-      handleSidebarMinimized,
-      isSidebarMinimized,
       searchQuery,
       handleSearch,
       selectedRoute,

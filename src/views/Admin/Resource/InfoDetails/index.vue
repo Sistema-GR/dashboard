@@ -136,18 +136,16 @@
 
 <script>
 import { ref, onMounted, computed } from 'vue';
-
 import axios from 'axios';
 import Badges from '@/components/Badges/Badges.vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import { UserIcon, ChevronDownIcon, TrashIcon, ExclamationTriangleIcon, PaperClipIcon  } from "@heroicons/vue/24/outline";
 import { MOTIVOS_RECURSO } from '@/config/resourceConstants.js';
-import Sidebar from '@/components/Sidebar/Sidebar.vue';
 import RenderedTemplate from '@/views/Admin/Resource/components/RenderedTemplate/index.vue';
 
 export default {
     name: "InfoDetails",
-    components: { Whiteboard, UserIcon, Badges, ChevronDownIcon, Sidebar, TrashIcon, ExclamationTriangleIcon, PaperClipIcon, RenderedTemplate },
+    components: { Whiteboard, UserIcon, Badges, ChevronDownIcon, TrashIcon, ExclamationTriangleIcon, PaperClipIcon, RenderedTemplate },
     props: {
       id: {
         type: [String, Number],
@@ -155,8 +153,6 @@ export default {
       }
     },
     setup(props) {
-        const isSidebarMinimized = ref(false);
-
         const resourceId = props.id;
 
         const recurso = ref(null);
@@ -323,12 +319,6 @@ export default {
             }
         };
 
-
-
-        function handleSidebarMinimized(value) {
-        isSidebarMinimized.value = value
-        }
-
         function getFilename(url) {
             if (!url) return 'Documento';
             return decodeURIComponent(url.split('/').pop());
@@ -341,8 +331,6 @@ export default {
 
 
         return {
-            isSidebarMinimized,
-            handleSidebarMinimized,
             recurso,
             isLoading,
             error,

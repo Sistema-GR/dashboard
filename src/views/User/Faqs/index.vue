@@ -29,7 +29,6 @@
   </template>
   
   <script>
-  import { inject } from 'vue';
   import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
   import { MinusSmallIcon, PlusSmallIcon } from '@heroicons/vue/24/outline';
   import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
@@ -67,10 +66,6 @@
         ]
       }
     },
-    setup() {
-      const isSidebarMinimized = inject('isSidebarMinimized');
-      return { isSidebarMinimized };
-    }
   }
   </script>
   

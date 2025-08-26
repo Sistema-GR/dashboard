@@ -40,7 +40,6 @@
   <script>
   import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
   import { QuestionMarkCircleIcon } from "@heroicons/vue/24/outline";
-  import { inject } from 'vue';
   
   export default {
     name: "CritériosDoUsuario",
@@ -58,10 +57,6 @@
     },
     created() {
       this.updateAptitude(); 
-    },
-    setup() {
-      const isSidebarMinimized = inject('isSidebarMinimized');
-      return { isSidebarMinimized };
     },
     methods: {
       updateAptitude() {

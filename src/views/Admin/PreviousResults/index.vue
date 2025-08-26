@@ -48,7 +48,6 @@
 
 <script>
 import axios from 'axios';
-import { inject } from 'vue';
 import { ChevronDownIcon, FolderIcon } from '@heroicons/vue/24/outline';
 import SecondaryButton from '@/components/Buttons/SecondaryButton.vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
@@ -219,9 +218,5 @@ export default {
     await this.fetchCalculus();
   },
 
-  setup() {
-    const isSidebarMinimized = inject('isSidebarMinimized');
-    return { isSidebarMinimized };
-  }
 };
 </script>

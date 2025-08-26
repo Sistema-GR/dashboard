@@ -125,7 +125,7 @@
 </template>
 
 <script>
-import { inject, ref, reactive } from "vue";
+import { ref, reactive } from "vue";
 import { useRouter } from "vue-router";
 import { createGeneralData, createDataset } from "../../../../service/apiService"; 
 import PrimaryButton from "@/components/Buttons/PrimaryButton.vue";
@@ -139,7 +139,6 @@ export default {
 
   setup() {
     const router = useRouter();
-    const isSidebarMinimized = inject("isSidebarMinimized");
     const errorMessage = ref("");
 
     // Dados do formulário reativos
@@ -253,7 +252,6 @@ export default {
     };
 
     return {
-      isSidebarMinimized,
       formData,
       errorMessage,
       validateInputs,

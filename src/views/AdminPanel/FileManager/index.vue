@@ -109,13 +109,12 @@ import {
 } from '@/service/download';
 import { ChevronDownIcon, CloudArrowDownIcon, PencilIcon } from "@heroicons/vue/24/outline";
 import { DocumentIcon } from '@heroicons/vue/24/solid';
-import { computed, inject, ref } from 'vue';
+import { computed, ref } from 'vue';
 
 export default {
   components: { Whiteboard, ChevronDownIcon, CloudArrowDownIcon, PencilIcon, DocumentIcon },
 
   setup() {
-    const isSidebarMinimized = inject('isSidebarMinimized');
     const isProcessedOpen = ref(true);
     const isImportedOpen = ref(true);
 
@@ -212,8 +211,7 @@ export default {
       file.isOpen = !file.isOpen;
     };
 
-    return { 
-      isSidebarMinimized,
+    return {
       importedFiles,
       processedFiles,
       isProcessedOpen,

@@ -179,8 +179,6 @@ export default {
   name: 'PermissionsAccess',
   components: { Whiteboard, TrashIcon, PlusCircleIcon },
   setup() {
-    const isSidebarMinimized = inject('isSidebarMinimized')
-
     const novoCPFPerfil = ref('')
     const novoCPFExemplo = ref('')
     const mostrarSugestoesPerfil = ref(false)
@@ -257,7 +255,6 @@ export default {
     }
 
     return {
-      isSidebarMinimized,
       novoCPFPerfil,
       novoCPFExemplo,
       mostrarSugestoesPerfil,

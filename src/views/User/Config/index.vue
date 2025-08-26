@@ -88,7 +88,7 @@
 </template>
 
 <script>
-import { ref, onMounted, reactive, inject } from 'vue'
+import { ref, onMounted, reactive } from 'vue'
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue'
 import { getAccessToken } from '@/service/token'
 
@@ -96,8 +96,6 @@ export default {
     name: 'Configuracoes',
     components: { Whiteboard },
     setup() {
-        // Injetar o valor ou usar false como fallback
-        const isSidebarMinimized = inject('isSidebarMinimized', ref(false))
         const salvando = ref(false)
         const senhasNaoConferem = ref(false)
 
@@ -202,7 +200,6 @@ export default {
         })
 
         return {
-            isSidebarMinimized,
             formData,
             formatarCPF,
             validarSenhas,

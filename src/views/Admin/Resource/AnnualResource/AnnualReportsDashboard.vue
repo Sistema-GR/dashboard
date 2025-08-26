@@ -67,7 +67,7 @@ import StatusEquipe from '@/views/Admin/Resource/AnnualResource/components/Statu
 import RecursosTotais from '@/views/Admin/Resource/AnnualResource/components/RecursosTotais.vue'
 import TipoRecurso from '@/views/Admin/Resource/AnnualResource/components/TipoRecurso.vue'
 import RecursosUnidades from '@/views/Admin/Resource/AnnualResource/components/RecursosUnidades.vue'
-import { ref, inject, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import axios from 'axios'
 import { getAccessToken } from '@/service/token'
 import DadosCompletos from './components/DadosCompletos.vue'
@@ -87,8 +87,6 @@ export default {
   },
   
   setup() {
-    const isSidebarMinimized = inject('isSidebarMinimized', ref(false)) // Mude para ref normal ao invés de inject
-      
     // Refs
     const StatusEquipeRef = ref(null)
     const RecursosTotaisRef = ref(null)
@@ -326,7 +324,6 @@ export default {
     })
     
     return {
-      isSidebarMinimized,
       StatusEquipeRef,
       RecursosTotaisRef,
       filters,

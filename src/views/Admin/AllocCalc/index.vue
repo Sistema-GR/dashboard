@@ -17,21 +17,11 @@
 </template>
 
 <script>
-import { inject } from 'vue'
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
 
 export default {
     name: "AllocCalc",
     components: {Whiteboard, PrimaryButton},
-
-
-    setup() {
-    const isSidebarMinimized = inject('isSidebarMinimized')
-
-    return {
-      isSidebarMinimized,  
-    }
-  }
 }
 </script>

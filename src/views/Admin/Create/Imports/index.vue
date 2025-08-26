@@ -11,7 +11,6 @@
 </template>
 
 <script>
-import { inject } from 'vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import FileInput from '@/components/Inputs/FileInput.vue';
 import Loading from '@/components/Loading/Loading.vue';
@@ -21,13 +20,8 @@ export default {
   
   data() {
     return {     
-      isSidebarMinimized: null,
       isUploading: false,
     };
-  },
-
-  created() {
-    this.isSidebarMinimized = inject('isSidebarMinimized');
   },
 
   methods: {

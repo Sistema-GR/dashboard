@@ -104,14 +104,13 @@ import Whiteboard from "@/components/Whiteboard/Whiteboard.vue";
 
 import Badge from "@/components/Badges/Badges.vue";
 
-import { inject, ref, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
 
 export default {
     name: "Status",
     components: { UserIcon, Whiteboard, Badge, PencilSquareIcon, ChatBubbleBottomCenterTextIcon, PaperClipIcon, ChevronDownIcon },
     setup() {
-        const isSidebarMinimized = inject('isSidebarMinimized');
         const resources = ref([]);
         const isLoading = ref(true);
         const error = ref(null);
@@ -159,8 +158,6 @@ export default {
             isLoading.value = true;
             error.value = null;
             try {
-
-
                 const response = await axios.get('/recursos/meu-status/', {
                      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
                 });
@@ -181,7 +178,6 @@ export default {
         onMounted(fetchResourceStatus);
 
         return {
-            isSidebarMinimized,
             resources,
             isLoading,
             error,

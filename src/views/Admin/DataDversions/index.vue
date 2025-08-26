@@ -89,7 +89,6 @@ export default {
     DisclosurePanel
   },
   setup() {
-    const isSidebarMinimized = inject('isSidebarMinimized')
     const versoesCalculo = ref([]) // Apenas uma lista é necessária agora
 
     const showConfirmation = ref(false)
@@ -174,7 +173,6 @@ export default {
     onMounted(fetchData);
 
     return {
-      isSidebarMinimized,
       versoesCalculo,
       showConfirmation,
       handleToggle,

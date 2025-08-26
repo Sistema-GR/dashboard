@@ -15,7 +15,6 @@
 </template>
 
 <script>
-import { inject } from 'vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import { useRouter } from 'vue-router';
 import { CheckCircleIcon } from "@heroicons/vue/24/outline";
@@ -25,7 +24,6 @@ export default {
     components: { Whiteboard, CheckCircleIcon },
 
     setup() {
-        const isSidebarMinimized = inject('isSidebarMinimized');
         const router = useRouter();
 
         const goToStatus = () => {
@@ -33,7 +31,6 @@ export default {
         };
 
         return {
-            isSidebarMinimized,
             goToStatus
         };
     }
