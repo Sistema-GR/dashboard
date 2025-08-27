@@ -204,11 +204,23 @@ export default {
         
         async function generateAndSendResponse() {
             if (!selectedTemplateId.value) return alert("Por favor, selecione um template.");
+
+            console.log("--- ENVIANDO PARA A API ---");
+            const payload = {
+                template_id: selectedTemplateId.value,
+                contexto_variaveis: templateForm.value,
+                decisao: templateForm.value.decisao,
+                unidade_responsavel: templateForm.value.unidade_responsavel
+            };
+            console.log(payload);
+
             isGenerating.value = true;
             try {
                 const response = await axios.post(`/recursos/${resourceId}/gerar-resposta-pdf/`, {
                     template_id: selectedTemplateId.value,
-                    contexto_variaveis: templateForm.value
+                    contexto_variaveis: templateForm.value,
+                    decisao: templateForm.value.decisao,
+                    unidade_responsavel: templateForm.value.unidade_responsavel
                 }, { headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` } });
                 
                 recurso.value.respostas.unshift(response.data);
