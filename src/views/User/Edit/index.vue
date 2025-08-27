@@ -1,5 +1,5 @@
 <template>
-    <Whiteboard title="Editar Recurso" :isSidebarMinimized="isSidebarMinimized">
+    <Whiteboard title="Editar Recurso" >
         <div class="flex flex-col w-full gap-5 px-4 sm:px-10 py-8">
            
             <div v-if="isLoading" class="text-center p-10">
@@ -127,7 +127,7 @@
 </template>
 
 <script>
-import { inject, ref, onMounted, reactive, computed } from 'vue';
+import { ref, onMounted, reactive, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios'; 
 
@@ -139,7 +139,6 @@ export default {
     components: { Whiteboard, PrimaryButton },
     
     setup() {
-        const isSidebarMinimized = inject('isSidebarMinimized');
         const route = useRoute();
         const router = useRouter();
         const resourceId = route.params.id;
@@ -221,8 +220,7 @@ export default {
             }
         };
 
-        return { 
-            isSidebarMinimized,
+        return {
             form, 
             resource,
             newFiles,

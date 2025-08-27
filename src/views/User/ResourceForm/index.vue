@@ -1,5 +1,5 @@
 <template>
-    <Whiteboard title="Formulário de Recurso" :isSidebarMinimized="isSidebarMinimized">
+    <Whiteboard title="Formulário de Recurso" >
         <!-- Header com ícone de alerta - largura total -->
         <div id="tutorial-detalhes" class="w-full bg-blue-50 border-b border-blue-200 mb-6">
             <div class="max-w-2xl mx-auto px-6 py-4">
@@ -178,7 +178,7 @@
 </template>
 
 <script>
-import { inject, ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { ArrowDownTrayIcon, PaperClipIcon, XMarkIcon, InformationCircleIcon } from "@heroicons/vue/24/outline";
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
@@ -200,7 +200,6 @@ export default {
     },
 
     setup() {
-        const isSidebarMinimized = inject('isSidebarMinimized');
         const router = useRouter();
         const { getMatriculasPorCPF } = usePersonService();
         const matriculasDisponiveis = ref([]);
@@ -352,7 +351,6 @@ export default {
         };
 
         return {
-            isSidebarMinimized, 
             form, 
             errors,
             isSubmitting, 

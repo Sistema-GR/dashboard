@@ -1,5 +1,5 @@
 <template>
-    <Whiteboard title="." :isSidebarMinimized="isSidebarMinimized">
+    <Whiteboard title="." >
 
         <div class="flex py-4 px-6 shadow-md w-full z-50 items-center justify-center bg-gradient-to-r from-azure-800 to-primary-900">
             <h1 id="tutorial-title" class="text-20 text-white text-center font-black uppercase tracking-wide sm:text-25 lg:text-30 whitespace-nowrap">Painel da Gratificação</h1>
@@ -293,7 +293,7 @@
 </template>
 
 <script setup>
-import { inject, ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { ChevronDownIcon, ExclamationCircleIcon, ArrowDownIcon } from "@heroicons/vue/24/outline";
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
@@ -302,15 +302,11 @@ import axios from 'axios';
 import { getAccessToken } from '@/service/token';
 import { useRoute } from 'vue-router';
 
-
-const isSidebarMinimized = inject('isSidebarMinimized', ref(false));
 const savedData = ref([]);
 const isLoading = ref(true); 
 const errorMessage = ref(null);
 const route = useRoute();
 const tutorialComponent = ref(null);
-
-
 
 
 const fetchRewardsData = async () => {

@@ -1,5 +1,5 @@
 <template>
-    <Whiteboard title="Calcular Alocação" :isSidebarMinimized="isSidebarMinimized">
+    <Whiteboard title="Calcular Alocação" >
         <div class="flex flex-col w-full items-center justify-center">
 
             <div class="flex w-full p-5 pt-8">
@@ -17,21 +17,11 @@
 </template>
 
 <script>
-import { inject } from 'vue'
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
 
 export default {
     name: "AllocCalc",
     components: {Whiteboard, PrimaryButton},
-
-
-    setup() {
-    const isSidebarMinimized = inject('isSidebarMinimized')
-
-    return {
-      isSidebarMinimized,  
-    }
-  }
 }
 </script>

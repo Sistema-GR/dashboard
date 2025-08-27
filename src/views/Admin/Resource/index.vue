@@ -1,6 +1,5 @@
 <template>
-    <Sidebar :route="'admin'" @update:isSidebarMinimized="handleSidebarMinimized" class="z-50"/>
-    <Whiteboard title="Recurso" class="!overflow-visible overflow-y-auto z-40 relative" :isSidebarMinimized="isSidebarMinimized">
+    <Whiteboard title="Recurso" class="!overflow-visible overflow-y-auto z-40 relative" >
 
 
 <!-- Header com botão de relatórios -->
@@ -76,12 +75,11 @@
   </template>
   
 <script>
-import { ref, provide, computed, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import Block from '@/views/Admin/Resource/components/Block/index.vue'
 import infoCard from '@/views/Admin/Resource/components/infoCard/index.vue'
-import Sidebar from '@/components/Sidebar/Sidebar.vue';
 import AnnualReportsDashboard from '@/views/Admin/Resource/AnnualResource/AnnualReportsDashboard.vue'
 import { FunnelIcon } from "@heroicons/vue/24/outline";
 import axios from 'axios';
@@ -89,11 +87,10 @@ import { STATUS_DEFINITIONS } from '@/config/resourceConstants.js';
 
 export default {
     name: "Recurso",
-    components: { Whiteboard, Block, infoCard, FunnelIcon, Sidebar, AnnualReportsDashboard },
+    components: { Whiteboard, Block, infoCard, FunnelIcon, AnnualReportsDashboard },
 
     setup() {
         const router = useRouter()
-        const isSidebarMinimized = ref(false)
         const recursos = ref([])
         const selectedStatus = ref('aguardando_resposta')
         const isLoading = ref(true)
@@ -118,10 +115,6 @@ export default {
         }
 
         onMounted(fetchRecursos);
-
-        function handleSidebarMinimized(value) {
-            isSidebarMinimized.value = value
-        }
 
         const filteredRecursos = computed(() => {
             if (!recursos.value) return [];
@@ -178,11 +171,7 @@ export default {
             return colorMap[colorKey] || colorMap['gray'];
         });
 
-        provide('isSidebarMinimized', isSidebarMinimized)
-
         return {
-            isSidebarMinimized,
-            handleSidebarMinimized,
             recursos,
             isLoading,
             selectedStatus,

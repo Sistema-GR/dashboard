@@ -1,5 +1,5 @@
 <template>
-    <Whiteboard title="Critérios" :isSidebarMinimized="isSidebarMinimized">
+    <Whiteboard title="Critérios" >
       <div class="flex flex-col w-full p-4 sm:px-10">
         <p class="font-semibold text-20 mb-10 text-center">
           Abaixo estão os dados dos critérios a serem verificados para o recebimento da gratificação.
@@ -40,7 +40,6 @@
   <script>
   import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
   import { QuestionMarkCircleIcon } from "@heroicons/vue/24/outline";
-  import { inject } from 'vue';
   
   export default {
     name: "CritériosDoUsuario",
@@ -58,10 +57,6 @@
     },
     created() {
       this.updateAptitude(); 
-    },
-    setup() {
-      const isSidebarMinimized = inject('isSidebarMinimized');
-      return { isSidebarMinimized };
     },
     methods: {
       updateAptitude() {

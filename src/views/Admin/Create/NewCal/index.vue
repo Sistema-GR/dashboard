@@ -1,5 +1,5 @@
 <template>
-  <Whiteboard title="Novo Cálculo" :isSidebarMinimized="isSidebarMinimized">
+  <Whiteboard title="Novo Cálculo" >
     <div class="w-full px-10 py-8">
       <div class="flex flex-col py-5 border border-gray-200 rounded-[10px] bg-white shadow-md w-full">
         <div class="flex flex-col w-full lg:flex-row">
@@ -125,7 +125,7 @@
 </template>
 
 <script>
-import { inject, ref, reactive } from "vue";
+import { ref, reactive } from "vue";
 import { useRouter } from "vue-router";
 import { createGeneralData, createDataset } from "../../../../service/apiService"; 
 import PrimaryButton from "@/components/Buttons/PrimaryButton.vue";
@@ -139,7 +139,6 @@ export default {
 
   setup() {
     const router = useRouter();
-    const isSidebarMinimized = inject("isSidebarMinimized");
     const errorMessage = ref("");
 
     // Dados do formulário reativos
@@ -253,7 +252,6 @@ export default {
     };
 
     return {
-      isSidebarMinimized,
       formData,
       errorMessage,
       validateInputs,

@@ -1,7 +1,5 @@
 <template>
-    <Sidebar :route="'admin'" @update:isSidebarMinimized="handleSidebarMinimized" class="z-50"/>
-    <Whiteboard :title="`Detalhes do Recurso #${resourceId}`" class="!overflow-visible overflow-y-auto z-40 relative" :isSidebarMinimized="isSidebarMinimized" >
-
+   <Whiteboard :title="`Detalhes do Recurso #${resourceId}`" class="!overflow-visible overflow-y-auto z-40 relative"  >
 
         <div class="flex flex-col w-full gap-4 px-4 sm:px-6 lg:px-8 py-4">
             <div v-if="isLoading" class="text-center p-10">Carregando dados...</div>
@@ -138,18 +136,16 @@
 
 <script>
 import { ref, onMounted, computed } from 'vue';
-
 import axios from 'axios';
 import Badges from '@/components/Badges/Badges.vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import { UserIcon, ChevronDownIcon, TrashIcon, ExclamationTriangleIcon, PaperClipIcon  } from "@heroicons/vue/24/outline";
 import { MOTIVOS_RECURSO } from '@/config/resourceConstants.js';
-import Sidebar from '@/components/Sidebar/Sidebar.vue';
 import RenderedTemplate from '@/views/Admin/Resource/components/RenderedTemplate/index.vue';
 
 export default {
     name: "InfoDetails",
-    components: { Whiteboard, UserIcon, Badges, ChevronDownIcon, Sidebar, TrashIcon, ExclamationTriangleIcon, PaperClipIcon, RenderedTemplate },
+    components: { Whiteboard, UserIcon, Badges, ChevronDownIcon, TrashIcon, ExclamationTriangleIcon, PaperClipIcon, RenderedTemplate },
     props: {
       id: {
         type: [String, Number],
@@ -157,8 +153,6 @@ export default {
       }
     },
     setup(props) {
-        const isSidebarMinimized = ref(false);
-
         const resourceId = props.id;
 
         const recurso = ref(null);
@@ -337,12 +331,6 @@ export default {
             }
         };
 
-
-
-        function handleSidebarMinimized(value) {
-        isSidebarMinimized.value = value
-        }
-
         function getFilename(url) {
             if (!url) return 'Documento';
             return decodeURIComponent(url.split('/').pop());
@@ -355,8 +343,6 @@ export default {
 
 
         return {
-            isSidebarMinimized,
-            handleSidebarMinimized,
             recurso,
             isLoading,
             error,

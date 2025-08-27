@@ -1,5 +1,5 @@
 <template>
-  <Whiteboard title="PERMISSÕES PARA ADMINISTRADORES" :isSidebarMinimized="isSidebarMinimized">
+  <Whiteboard title="PERMISSÕES PARA ADMINISTRADORES" >
     <!-- Bloco 1 -->
     <section class="flex flex-row items-center justify-between shadow-ms w-full mb-5 bg-[#c2ddfd] text-black px-4 lg:px-10 p-5">
       <h2 class="text-25 font-semibold text-black">Perfil do administrador</h2>
@@ -179,8 +179,6 @@ export default {
   name: 'PermissionsAccess',
   components: { Whiteboard, TrashIcon, PlusCircleIcon },
   setup() {
-    const isSidebarMinimized = inject('isSidebarMinimized')
-
     const novoCPFPerfil = ref('')
     const novoCPFExemplo = ref('')
     const mostrarSugestoesPerfil = ref(false)
@@ -257,7 +255,6 @@ export default {
     }
 
     return {
-      isSidebarMinimized,
       novoCPFPerfil,
       novoCPFExemplo,
       mostrarSugestoesPerfil,

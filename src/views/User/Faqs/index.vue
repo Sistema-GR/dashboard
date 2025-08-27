@@ -1,5 +1,5 @@
 <template>
-    <Whiteboard title="" :isSidebarMinimized="isSidebarMinimized">
+    <Whiteboard title="" >
         <div class="flex items-center justify-center w-full py-24 sm:py-32 lg:px-8 lg:py-12">
           <div class="w-full px-10 divide-y divide-gray-900/10">
             <h2 class="text-2xl font-bold leading-10 tracking-tight text-gray-900 whitespace-nowrap">
@@ -29,7 +29,6 @@
   </template>
   
   <script>
-  import { inject } from 'vue';
   import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
   import { MinusSmallIcon, PlusSmallIcon } from '@heroicons/vue/24/outline';
   import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
@@ -67,10 +66,6 @@
         ]
       }
     },
-    setup() {
-      const isSidebarMinimized = inject('isSidebarMinimized');
-      return { isSidebarMinimized };
-    }
   }
   </script>
   

@@ -1,9 +1,9 @@
 <template>
-  <Whiteboard title="Importações" :isSidebarMinimized="isSidebarMinimized">     
+  <Whiteboard title="Importações" >     
     <div class="w-full py-5 px-10 space-y-10">      
       <!-- FileInput para upload dos arquivos em .csv -->
       <FileInput Label="Importar Arquivos em .CSV"
-      @taUpando="loadingUpdate"
+      @isUploading="loadingUpdate"
       @uploaded="onUnifiedUploaded"/>
     </div>
     <Loading v-if="isUploading" />
@@ -11,7 +11,6 @@
 </template>
 
 <script>
-import { inject } from 'vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import FileInput from '@/components/Inputs/FileInput.vue';
 import Loading from '@/components/Loading/Loading.vue';
@@ -21,13 +20,8 @@ export default {
   
   data() {
     return {     
-      isSidebarMinimized: null,
       isUploading: false,
     };
-  },
-
-  created() {
-    this.isSidebarMinimized = inject('isSidebarMinimized');
   },
 
   methods: {
