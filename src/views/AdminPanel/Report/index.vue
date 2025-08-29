@@ -2,21 +2,19 @@
     <Whiteboard :title="titulo" >
         <div class="flex flex-row w-full items-center gap-3 justify-between px-4 sm:px-10 mt-4">
             <Search @search="handleSearch" />
-            <div v-if="selectedRoute == 'Frequency'" class="flex flex-row items-center  gap-1 w-full max-w-64 cursor-pointer">
-               <p class="text-gray-800 font-medium hover:text-blue-900" @click="handleRouteUpdate('Infrequency')">Dados de Infrequência</p>
+            <div v-if=" sidebarStore.reportPage == 'Frequency'" class="flex flex-row items-center  gap-1 w-full max-w-64 cursor-pointer">
+               <p class="text-gray-800 font-medium hover:text-blue-900" @click="sidebarStore.setReportPage('Infrequency')">Dados de Infrequência</p>
             </div>
         </div>   
         <div class="w-full pb-5 capitalize">        
-            <PrimaryTable :route="selectedRoute" :searchQuery="searchQuery" />
+            <PrimaryTable :route="sidebarStore.reportPage" :searchQuery="searchQuery" />
         </div>
     </Whiteboard>
-    <Sidebar :route="selectedRoute"
-             @update:route="handleRouteUpdate" />
 </template>
 
 <script>
-import { ref } from 'vue'
-import Sidebar from '@/components/Sidebar/Sidebar.vue';
+import { ref, computed } from 'vue'
+import { useSidebarStore } from '@/stores/sidebarStore';
 import TextInput from '@/components/Inputs/TextInput.vue';
 import PrimaryTable from '@/components/Table/PrimaryTable.vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
@@ -25,22 +23,12 @@ import Pagination from '@/components/Pagination/Pagination.vue';
 
 export default {
     name: "AdminPanel",
-    components: {Sidebar, Whiteboard, PrimaryTable, TextInput, Search, Pagination},
+    components: { Whiteboard, PrimaryTable, TextInput, Search, Pagination},
 
     setup() {
+    const sidebarStore = useSidebarStore();
     const searchQuery = ref('');
-    const selectedRoute = ref('Report') // default
-    const titulo = ref('Admin Panel') // default
-    const handleSearch = (query) => {
-        searchQuery.value = query
-    }
-    function handleRouteUpdate(newRoute) {
-      selectedRoute.value = newRoute
-      // Optionally map route to page title
-      titulo.value = routeToTitle(newRoute)
-    }
-    function routeToTitle(route) {
-      const map = {
+    const map = {
         'Results': 'Resultados IDEM',
         'Calendar': 'Calendário Escolar',
         'Profissional': 'Profissionais',
@@ -54,16 +42,16 @@ export default {
         'Service': 'Tempo de Atuação',
         'Training': 'Formação',
         'Report': 'Relatórios Finais',
-      }
-      return map[route] || 'Page'
     }
-
+    const titulo = computed(() => map[sidebarStore.reportPage] || 'Page')
+    const handleSearch = (query) => {
+        searchQuery.value = query
+    }
     return {
       searchQuery,
       handleSearch,
-      selectedRoute,
       titulo,
-      handleRouteUpdate,
+      sidebarStore,
     }
   }
 }  
