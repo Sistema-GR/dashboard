@@ -73,25 +73,8 @@ export default {
   components: {
     ChevronDownIcon
   },
-  props: {
-    data: {
-      type: Array,
-      required: false,
-      default: () => []
-    },
-    responsaveis: {
-      type: Array,
-      required: false,
-      default: () => ([
-        { id: 1, name: 'Tamires', total: 11, deferidos: 3, indeferidos: 5, parcialmente_deferidos: 3, percentage: 1.75 },
-        { id: 2, name: 'Kamila Nunes', total: 35, deferidos: 5, indeferidos: 7, parcialmente_deferidos: 23, percentage: 5.56 },
-        { id: 3, name: 'José Gonçalves', total: 102, deferidos: 21, indeferidos: 60, parcialmente_deferidos: 21, percentage: 16.22 },
-        { id: 4, name: 'Janis Ellye', total: 73, deferidos: 12, indeferidos: 46, parcialmente_deferidos: 15, percentage: 11.61 },
-        { id: 5, name: 'Geovani', total: 107, deferidos: 35, indeferidos: 40, parcialmente_deferidos: 32, percentage: 17.01 },
-        { id: 6, name: 'Carlos Daniel', total: 121, deferidos: 13, indeferidos: 58, parcialmente_deferidos: 50, percentage: 19.24 },
-        { id: 7, name: 'Aurea Vieira', total: 182, deferidos: 25, indeferidos: 102, parcialmente_deferidos: 55, percentage: 28.93 },
-      ])
-    }
+   props: {
+    responsaveis: { type: Array, default: () => [] }
   },
   setup(props) {
     const open = ref(true)
@@ -145,20 +128,23 @@ export default {
       
       await new Promise(resolve => setTimeout(resolve, 200))
       
-      if (chartStatus.value) {
-        const hasRealData = props.data && props.data.length > 0
-        let chartData, chartLabels
+      if (chartStatus.value && props.responsaveis.length > 0) {
+        const sortedData = [...props.responsaveis].sort((a, b) => b.total - a.total);
         
-        if (hasRealData) {
-          chartLabels = props.data.map(d => d.label || d.name || 'N/A')
-          chartData = props.data.map(d => d.value || d.count || 0)
-        } else {
-          chartLabels = ['Tamires', 'Kamila Nunes', 'José Gonçalves', 'Janis Ellye', 'Geovani', 'Carlos Daniel', 'Aurea Vieira']
-          chartData = [11, 35, 102, 73, 107, 121, 182]
-        }
-
+        const chartLabels = sortedData.map(d => d.name);
+        const chartData = sortedData.map(d => d.total);
         // Gerar cores azuis baseadas na quantidade de barras
         const blueColors = generateBlueColorPalette(chartLabels.length)
+        
+        // if (hasRealData) {
+        //   chartLabels = props.data.map(d => d.label || d.name || 'N/A')
+        //   chartData = props.data.map(d => d.value || d.count || 0)
+        // } else {
+        //   chartLabels = ['Tamires', 'Kamila Nunes', 'José Gonçalves', 'Janis Ellye', 'Geovani', 'Carlos Daniel', 'Aurea Vieira']
+        //   chartData = [11, 35, 102, 73, 107, 121, 182]
+        // }
+
+        
         chartInstance = new Chart(chartStatus.value, {
           type: 'bar',
           data: {
@@ -209,6 +195,10 @@ export default {
       }
     }
 
+    watch(() => props.responsaveis, () => {
+      if(open.value) createChart();
+    }, { deep: true });
+    
     watch(() => open.value, (newValue) => {
       if (newValue) {
         setTimeout(() => {

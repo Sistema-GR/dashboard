@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import { computed, defineProps, defineModel, watch, nextTick } from 'vue';
+import { computed, watch, nextTick } from 'vue';
 import logoUrl from '@/assets/images/logo_prefeitura.png'; 
 
 const props = defineProps({

@@ -3,12 +3,9 @@
     
     <!-- Filtros -->
     <Filtro 
-    v-model:filters="filters"
-    :availableUnits="availableUnits"
-    :availableAdmins="availableAdmins"
-    @filter-change="onFilterChange"
-    @clear-filters="clearFilters"
-    @export-data="exportData"
+      v-model:filters="filters"
+      :availableUnits="availableUnits"
+      :availableAdmins="availableAdmins"
     />
     
     <!-- Tabs de Anos -->
@@ -28,33 +25,40 @@
         {{ year }}
       </button>
     </div>
-    
+
+    <div v-if="loading" class="text-center py-10">Carregando dados...</div>
+    <div v-else-if="error" class="text-center py-10 text-red-500">{{ error }}</div>
+
+    <div v-else-if="dashboardData">
     <!-- Resumo Geral -->
-    <RecursosRespondidos :stats="filteredStats" />
+      <RecursosRespondidos :stats="dashboardData.stats" />
 
-    <!-- Cards de Estatísticas -->
-    <ValorPago :stats="filteredStats" />
+      <!-- Cards de Estatísticas -->
+      <ValorPago />
 
-    <!-- Gráficos de Pizza -->
-    <StatusEquipe 
-      ref="StatusEquipeRef"
-      :data="filteredResources"
-    />
+      <!-- Gráficos de Pizza -->
+      <TipoRecurso 
+        :tipos-data="dashboardData.recursos_por_categoria"
+        :status-data="dashboardData.status_counts"
+        :conclusao-data="dashboardData.conclusao_counts"
+      />
 
-    <!-- Gráficos de Barras -->
-    <RecursosTotais 
-      ref="RecursosTotaisRef"
-      :data="filteredResources"
-      :availableUnits="availableUnits"
-    />
+      <!-- Gráficos de Barras -->
+      <RecursosTotais 
+        :recursos-por-unidade="dashboardData.recursos_por_unidade"
+        :recursos-por-categoria="dashboardData.recursos_por_categoria"
+        :recursos-por-equipe="dashboardData.recursos_por_equipe"
+      />
 
-    <!-- Tabela de Responsáveis -->
-    <TipoRecurso :stats="responsibleStats" />
+      <!-- Tabela de Responsáveis -->
+      <StatusEquipe 
+        :responsaveis="dashboardData.responsaveis_stats"
+      />
 
-    <RecursosUnidades :data="filteredResources" :availableUnits="availableUnits" />
+      <!-- <RecursosUnidades :data="filteredResources" :availableUnits="availableUnits" /> -->
 
-    <DadosCompletos :data="filteredResources" />
-
+      <DadosCompletos :data="dashboardData.dados_completos" />
+    </div>
   </Whiteboard>
 </template>
 
@@ -66,11 +70,10 @@ import ValorPago from '@/views/Admin/Resource/AnnualResource/components/ValorPag
 import StatusEquipe from '@/views/Admin/Resource/AnnualResource/components/StatusEquipe.vue'
 import RecursosTotais from '@/views/Admin/Resource/AnnualResource/components/RecursosTotais.vue'
 import TipoRecurso from '@/views/Admin/Resource/AnnualResource/components/TipoRecurso.vue'
-import RecursosUnidades from '@/views/Admin/Resource/AnnualResource/components/RecursosUnidades.vue'
-import { ref, onMounted, computed, watch } from 'vue'
+import DadosCompletos from './components/DadosCompletos.vue'
+import { ref, watch } from 'vue'
 import axios from 'axios'
 import { getAccessToken } from '@/service/token'
-import DadosCompletos from './components/DadosCompletos.vue'
 
 export default {
   name: 'AnnualReportsDashboard',
@@ -82,259 +85,76 @@ export default {
     StatusEquipe, 
     RecursosTotais, 
     TipoRecurso,
-    RecursosUnidades,
     DadosCompletos
   },
   
   setup() {
-    // Refs
-    const StatusEquipeRef = ref(null)
-    const RecursosTotaisRef = ref(null)
+    const loading = ref(true)
+    const error = ref(null)
     
     const filters = ref({
       year: new Date().getFullYear(),
       unidade_atuacao: '',
       categoria: '',
       equipe_responsavel: '',
-      responsavel: '',
-      status: '',
+      responsavel_id: '', 
       conclusao: '',
-      periodo: ''
     })
     
-    const resourcesData = ref([])
+    const dashboardData = ref(null)
     const availableUnits = ref([])
     const availableAdmins = ref([])
     
-    // Computed
-    const filteredResources = computed(() => {
-      let filtered = resourcesData.value
-      
-      if (filters.value.year) {
-        filtered = filtered.filter(item => 
-          new Date(item.created_at).getFullYear() === parseInt(filters.value.year)
-        )
-      }
-      
-      if (filters.value.unidade_atuacao) {
-        filtered = filtered.filter(item => 
-          item.unidade_atuacao_id === parseInt(filters.value.unidade_atuacao)
-        )
-      }
-      
-      if (filters.value.categoria) {
-        filtered = filtered.filter(item => 
-          item.criterios_selecionados?.includes(filters.value.categoria)
-        )
-      }
-      
-      if (filters.value.equipe_responsavel) {
-        filtered = filtered.filter(item => 
-          item.equipe_responsavel === filters.value.equipe_responsavel
-        )
-      }
-      
-      if (filters.value.responsavel) {
-        filtered = filtered.filter(item => 
-          item.responsavel_id === parseInt(filters.value.responsavel)
-        )
-      }
-      
-      if (filters.value.status) {
-        filtered = filtered.filter(item => 
-          item.status === filters.value.status
-        )
-      }
-      
-      if (filters.value.conclusao) {
-        filtered = filtered.filter(item => 
-          item.conclusao === filters.value.conclusao
-        )
-      }
-      
-      if (filters.value.periodo) {
-        const now = new Date()
-        let startDate = new Date()
-        
-        switch (filters.value.periodo) {
-          case 'ultimo_mes':
-            startDate.setMonth(now.getMonth() - 1)
-            break
-          case 'ultimo_trimestre':
-            startDate.setMonth(now.getMonth() - 3)
-            break
-          case 'ultimo_semestre':
-            startDate.setMonth(now.getMonth() - 6)
-            break
-          case 'ultimo_ano':
-            startDate.setFullYear(now.getFullYear() - 1)
-            break
+    const fetchDashboardData = async () => {
+      loading.value = true
+      error.value = null
+      try {
+        const token = await getAccessToken()
+        if (!token) {
+          error.value = "Autenticação necessária."
+          loading.value = false
+          return
         }
         
-        filtered = filtered.filter(item => 
-          new Date(item.created_at) >= startDate
-        )
-      }
-      
-      return filtered
-    })
-    
-    const filteredStats = computed(() => {
-      const resources = filteredResources.value
-      return {
-        total: resources.length,
-        respondidos: resources.filter(r => r.status === 'respondido').length,
-        deferidos: resources.filter(r => r.conclusao === 'deferido').length,
-        indeferidos: resources.filter(r => r.conclusao === 'indeferido').length,
-        parcialmente_deferidos: resources.filter(r => r.conclusao === 'parcialmente_deferido').length
-      }
-    })
-    
-    const responsibleStats = computed(() => {
-      const stats = {}
-      const total = filteredResources.value.length
-      
-      filteredResources.value.forEach(resource => {
-        const responsibleId = resource.responsavel_id
-        const responsibleName = getResponsibleName(responsibleId)
-        
-        if (!stats[responsibleId]) {
-          stats[responsibleId] = {
-            id: responsibleId,
-            name: responsibleName,
-            total: 0,
-            deferidos: 0,
-            indeferidos: 0,
-            parcialmente_deferidos: 0,
-            percentage: 0
+        const queryParams = new URLSearchParams()
+        Object.entries(filters.value).forEach(([key, value]) => {
+          if (value) {
+            const queryKey = key === 'responsavel' ? 'responsavel_id' : key;
+            queryParams.append(queryKey, value)
           }
+        })
+        
+        const response = await axios.get(`/recursos/dashboard/?${queryParams.toString()}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+
+        dashboardData.value = response.data
+        
+        if (availableUnits.value.length === 0) {
+            availableUnits.value = response.data.available_units
         }
-        
-        stats[responsibleId].total++
-        
-        if (resource.conclusao) {
-          stats[responsibleId][resource.conclusao]++
+        if (availableAdmins.value.length === 0) {
+            availableAdmins.value = response.data.available_admins
         }
-      })
-      
-      Object.values(stats).forEach(stat => {
-        stat.percentage = total > 0 ? ((stat.total / total) * 100).toFixed(1) : 0
-      })
-      
-      return Object.values(stats).sort((a, b) => b.total - a.total)
-    })
-    
-    // Methods
-    const onFilterChange = () => {
-      updateCharts()
-    }
-    
-    const clearFilters = () => {
-      filters.value = {
-        year: new Date().getFullYear(),
-        unidade_atuacao: '',
-        categoria: '',
-        equipe_responsavel: '',
-        responsavel: '',
-        status: '',
-        conclusao: '',
-        periodo: ''
-      }
-      updateCharts()
-    }
-    
-    const exportData = async () => {
-      try {
-        const token = await getAccessToken()
-        const queryParams = new URLSearchParams()
-        
-        Object.entries(filters.value).forEach(([key, value]) => {
-          if (value) queryParams.append(key, value)
-        })
-        
-        const response = await axios.get(`/recursos/export/?${queryParams.toString()}`, {
-          headers: { Authorization: `Bearer ${token}` },
-          responseType: 'blob'
-        })
-        
-        const url = window.URL.createObjectURL(new Blob([response.data]))
-        const link = document.createElement('a')
-        link.href = url
-        link.setAttribute('download', `relatorio_recursos_${filters.value.year}.xlsx`)
-        document.body.appendChild(link)
-        link.click()
-        link.remove()
-        window.URL.revokeObjectURL(url)
-      } catch (error) {
-        console.error('Erro ao exportar dados:', error)
+
+      } catch (err) {
+        console.error('Erro ao buscar dados do dashboard:', err)
+        error.value = 'Não foi possível carregar os dados do dashboard.'
+      } finally {
+        loading.value = false
       }
     }
     
-    const getResponsibleName = (responsibleId) => {
-      const admin = availableAdmins.value.find(admin => admin.id === responsibleId)
-      return admin ? `${admin.first_name} ${admin.last_name}` : 'N/A'
-    }
+    watch(filters, fetchDashboardData, { deep: true, immediate: true })
     
-    const updateCharts = () => {
-      if (StatusEquipeRef.value) {
-        StatusEquipeRef.value.updateCharts()
-      }
-      if (RecursosTotaisRef.value) {
-        RecursosTotaisRef.value.updateCharts()
-      }
-    }
-    
-    const fetchData = async () => {
-      try {
-        const token = await getAccessToken()
-        if (!token) return
-        
-        const queryParams = new URLSearchParams()
-        Object.entries(filters.value).forEach(([key, value]) => {
-          if (value) queryParams.append(key, value)
-        })
-        
-        const resourcesResponse = await axios.get(`/recursos/?${queryParams.toString()}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        })
-        resourcesData.value = resourcesResponse.data
-        
-        const unitsResponse = await axios.get('/unidades/', {
-          headers: { Authorization: `Bearer ${token}` }
-        })
-        availableUnits.value = unitsResponse.data
-        
-        const adminsResponse = await axios.get('/users/admin/', {
-          headers: { Authorization: `Bearer ${token}` }
-        })
-        availableAdmins.value = adminsResponse.data
-        
-        updateCharts()
-      } catch (error) {
-        console.error('Erro ao buscar dados:', error)
-      }
-    }
-    
-    watch(filters, () => {
-      fetchData()
-    }, { deep: true })
-    
-    onMounted(() => {
-      fetchData()
-    })
     
     return {
-      StatusEquipeRef,
-      RecursosTotaisRef,
       filters,
       availableUnits,
       availableAdmins,
-      filteredResources,
-      filteredStats,
-      responsibleStats,
-      onFilterChange,
-      clearFilters,
-      exportData
+      dashboardData,
+      loading,
+      error
     }
   }
 }

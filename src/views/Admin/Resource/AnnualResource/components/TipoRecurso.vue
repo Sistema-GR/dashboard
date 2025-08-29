@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import { ref, onMounted, watch, nextTick } from 'vue'
+import { ref, onMounted, watch, nextTick, computed } from 'vue'
 import Chart from 'chart.js/auto'
 import { ChevronDownIcon } from '@heroicons/vue/24/outline'
 
@@ -86,19 +86,9 @@ export default {
     ChevronDownIcon
   },
   props: {
-    responsaveis: {
-      type: Array,
-      required: false,
-      default: () => ( [
-        { id: 1, name: 'Tamires', total: 11, deferidos: 3, indeferidos: 5, parcialmente_deferidos: 3, percentage: 1.75 },
-        { id: 2, name: 'Kamila Nunes', total: 35, deferidos: 5, indeferidos: 7, parcialmente_deferidos: 23, percentage: 5.56 },
-        { id: 3, name: 'José Gonçalves', total: 102, deferidos: 21, indeferidos: 60, parcialmente_deferidos: 21, percentage: 16.22 },
-        { id: 4, name: 'Janis Ellye', total: 73, deferidos: 12, indeferidos: 46, parcialmente_deferidos: 15, percentage: 11.61 },
-        { id: 5, name: 'Geovani', total: 107, deferidos: 35, indeferidos: 40, parcialmente_deferidos: 32, percentage: 17.01 },
-        { id: 6, name: 'Carlos Daniel', total: 121, deferidos: 13, indeferidos: 58, parcialmente_deferidos: 50, percentage: 19.24 },
-        { id: 7, name: 'Aurea Vieira', total: 182, deferidos: 25, indeferidos: 102, parcialmente_deferidos: 55, percentage: 28.93 },
-      ])
-    }
+    tiposData: { type: Array, default: () => [] },
+    statusData: { type: Array, default: () => [] },
+    conclusaoData: { type: Array, default: () => [] }
   },
   setup(props) {
     const open = ref(true)
@@ -121,32 +111,28 @@ export default {
       '#f48e2f',
       '#f4b72f'
     ]
-
-    const tiposLabels = [
-      "Formação",
-      "Discordância das regras estabelecidas",
-      "Faltas",
-      "Tempo de atuação",
-      "Mais de um critério",
-      "Esclarecimento",
-      "Pagamento indevido",
-      "Grupo",
-      "Atividades",
-      "Alega atuação em outra etapa",
-    ]
-    const tiposData = [34.6, 19.1, 14.2, 12.5, 5.3, 4.8, 3.0, 2.5, 2.0, 2.0]
-    const tiposColors = customColors.slice(0, tiposLabels.length)
-    const statusLabels = ["Respondido"]
-    const statusData = [100]
-    const statusColors = [customColors[0]]
-    const conclusaoLabels = ["Indeferido", "Deferido", "Parcialmente deferido"]
-    const conclusaoData = [49.6, 44.5, 5.9]
-    const conclusaoColors = customColors.slice(0, 3)
     const destroyCharts = () => {
       if (chartTiposInstance) { chartTiposInstance.destroy(); chartTiposInstance = null }
       if (chartStatusInstance) { chartStatusInstance.destroy(); chartStatusInstance = null }
       if (chartConclusaoInstance) { chartConclusaoInstance.destroy(); chartConclusaoInstance = null }
     }
+    
+    const processChartData = (data) => {
+      const total = data.reduce((sum, item) => sum + item.value, 0);
+      if (total === 0) {
+        return { labels: [], data: [], percentages: [], colors: [] };
+      }
+      const labels = data.map(item => item.name);
+      const values = data.map(item => item.value);
+      const percentages = values.map(val => ((val / total) * 100).toFixed(1));
+      const colors = customColors.slice(0, data.length);
+      return { labels, data: values, percentages, colors };
+    };
+
+    const tiposChart = computed(() => processChartData(props.tiposData));
+    const statusChart = computed(() => processChartData(props.statusData));
+    const conclusaoChart = computed(() => processChartData(props.conclusaoData));
+
 
     const createCharts = async () => {
       await nextTick()
@@ -174,15 +160,14 @@ export default {
         }
       }
       
-      if (chartTipos.value) {
-        console.log('Criando gráfico Tipos...')
+      if (chartTipos.value && tiposChart.value.labels.length > 0) {
         chartTiposInstance = new Chart(chartTipos.value, {
           type: "pie",
           data: {
-            labels: tiposLabels,
+            labels:  tiposChart.value.labels,
             datasets: [{
-              data: tiposData,
-              backgroundColor: tiposColors,
+              data: tiposChart.value.percentages,
+              backgroundColor: tiposChart.value.colors,
               borderWidth: 2,
               borderColor: '#ffffff',
               hoverBorderWidth: 3,
@@ -208,15 +193,14 @@ export default {
         })
       }
       
-      if (chartStatus.value) {
-        console.log('Criando gráfico Status...')
+      if (chartStatus.value && statusChart.value.labels.length > 0) {
         chartStatusInstance = new Chart(chartStatus.value, {
           type: "pie",
           data: {
-            labels: statusLabels,
+            labels: statusChart.value.labels,
             datasets: [{
-              data: statusData,
-              backgroundColor: statusColors,
+              data: statusChart.value.percentages,
+              backgroundColor: statusChart.value.colors,
               borderWidth: 2,
               borderColor: '#ffffff',
               hoverBorderWidth: 3,
@@ -242,15 +226,14 @@ export default {
         })
       }
       
-      if (chartConclusao.value) {
-        console.log('Criando gráfico Conclusão...')
+      if (chartConclusao.value && conclusaoChart.value.labels.length > 0) {
         chartConclusaoInstance = new Chart(chartConclusao.value, {
           type: "pie",
           data: {
-            labels: conclusaoLabels,
+            labels: conclusaoChart.value.labels,
             datasets: [{
-              data: conclusaoData,
-              backgroundColor: conclusaoColors,
+              data: conclusaoChart.value.percentages,
+              backgroundColor: conclusaoChart.value.colors,
               borderWidth: 2,
               borderColor: '#ffffff',
               hoverBorderWidth: 3,
@@ -276,6 +259,10 @@ export default {
         })
       }
     }
+    
+    watch(() => [props.tiposData, props.statusData, props.conclusaoData], () => {
+      if(open.value) createCharts();
+    }, { deep: true });
 
     watch(() => open.value, (newValue) => {
       if (newValue) setTimeout(() => { createCharts() }, 300)
@@ -291,16 +278,15 @@ export default {
       chartTipos,
       chartStatus,
       chartConclusao,
-      tiposLabels,
-      tiposData,
-      tiposColors,
-      statusLabels,
-      statusData,
-      statusColors,
-      conclusaoLabels,
-      conclusaoData,
-      conclusaoColors,
-      responsaveis: props.responsaveis
+      tiposLabels: computed(() => tiposChart.value.labels),
+      tiposData: computed(() => tiposChart.value.percentages),
+      tiposColors: computed(() => tiposChart.value.colors),
+      statusLabels: computed(() => statusChart.value.labels),
+      statusData: computed(() => statusChart.value.percentages),
+      statusColors: computed(() => statusChart.value.colors),
+      conclusaoLabels: computed(() => conclusaoChart.value.labels),
+      conclusaoData: computed(() => conclusaoChart.value.percentages),
+      conclusaoColors: computed(() => conclusaoChart.value.colors),
     }
   }
 }

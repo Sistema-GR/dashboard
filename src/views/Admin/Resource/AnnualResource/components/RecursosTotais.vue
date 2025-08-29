@@ -63,14 +63,9 @@ export default {
     ChevronDownIcon
   },
   props: {
-    data: {
-      type: Array,
-      required: true
-    },
-    availableUnits: {
-      type: Array,
-      default: () => []
-    }
+    recursosPorUnidade: { type: Array, default: () => [] },
+    recursosPorCategoria: { type: Array, default: () => [] },
+    recursosPorEquipe: { type: Array, default: () => [] },
   },
   setup(props) {
     const open = ref(true)
@@ -159,25 +154,27 @@ export default {
       const hasRealData = props.data && props.data.length > 0
       
       // Gráfico de Unidades
-      if (chartUnidades.value) {
-        let unitsData, unitsLabels
-        
-        if (hasRealData) {
-          const unitsCount = {}
-          props.data.forEach(resource => {
-            const unitName = getUnitName(resource.unidade_atuacao_id)
-            unitsCount[unitName] = (unitsCount[unitName] || 0) + 1
-          })
-          const sortedUnits = Object.entries(unitsCount).sort(([,a], [,b]) => b - a).slice(0, 10)
-          unitsLabels = sortedUnits.map(([name]) => name)
-          unitsData = sortedUnits.map(([,count]) => count)
-        } else {
-          unitsLabels = ['Unidade A', 'Unidade B', 'Unidade C', 'Unidade D', 'Unidade E', 'Unidade F', 'Unidade G', 'Unidade H', 'Unidade I', 'Unidade J']
-          unitsData = [25, 20, 15, 12, 10, 8, 6, 5, 3, 2]
-        }
-        
+      if (chartUnidades.value && props.recursosPorUnidade.length > 0) {
+        const sortedData = [...props.recursosPorUnidade].sort((a, b) => b.value - a.value).slice(0, 10);
+        const unitsLabels = sortedData.map(item => item.name);
+        const unitsData = sortedData.map(item => item.value);
         // Gerar cores azuis baseadas na quantidade de barras
-        const unitsColors = generateColorPalette(unitsLabels.length, 'blue')
+        const unitsColors = generateColorPalette(unitsLabels.length, 'blue');
+        
+        // if (hasRealData) {
+        //   const unitsCount = {}
+        //   props.data.forEach(resource => {
+        //     const unitName = getUnitName(resource.unidade_atuacao_id)
+        //     unitsCount[unitName] = (unitsCount[unitName] || 0) + 1
+        //   })
+        //   const sortedUnits = Object.entries(unitsCount).sort(([,a], [,b]) => b - a).slice(0, 10)
+        //   unitsLabels = sortedUnits.map(([name]) => name)
+        //   unitsData = sortedUnits.map(([,count]) => count)
+        // } else {
+        //   unitsLabels = ['Unidade A', 'Unidade B', 'Unidade C', 'Unidade D', 'Unidade E', 'Unidade F', 'Unidade G', 'Unidade H', 'Unidade I', 'Unidade J']
+        //   unitsData = [25, 20, 15, 12, 10, 8, 6, 5, 3, 2]
+        // }
+        
         
         chartsInstances.unidades = new Chart(chartUnidades.value, {
           type: 'bar',
@@ -219,27 +216,29 @@ export default {
       }
       
       // Gráfico de Categorias
-      if (chartCategorias.value) {
-        let categoriesData, categoriesLabels
-        
-        if (hasRealData) {
-          const categories = {}
-          props.data.forEach(resource => {
-            const criterios = resource.criterios_selecionados || []
-            criterios.forEach(criterio => {
-              categories[criterio] = (categories[criterio] || 0) + 1
-            })
-          })
-          const sortedCategories = Object.entries(categories).sort(([,a], [,b]) => a - b).slice(0, 8)
-          categoriesLabels = sortedCategories.map(([cat]) => getCategoryLabel(cat))
-          categoriesData = sortedCategories.map(([,count]) => count)
-        } else {
-          categoriesLabels = ['Formação', 'Faltas', 'Tempo de atuação', 'Esclarecimento', 'Atividades', 'Grupo', 'Pagamento indevido', 'Mais de um critério']
-          categoriesData = [5, 8, 12, 15, 18, 22, 25, 30]
-        }
-        
+      if (chartCategorias.value && props.recursosPorCategoria.length > 0) {
+        const sortedData = [...props.recursosPorCategoria].sort((a, b) => a.value - b.value).slice(0, 8);
+        const categoriesLabels = sortedData.map(item => item.name);
+        const categoriesData = sortedData.map(item => item.value);
         // Gerar cores azuis baseadas na quantidade de barras
         const categoriesColors = generateColorPalette(categoriesLabels.length, 'blue')
+        
+        // if (hasRealData) {
+        //   const categories = {}
+        //   props.data.forEach(resource => {
+        //     const criterios = resource.criterios_selecionados || []
+        //     criterios.forEach(criterio => {
+        //       categories[criterio] = (categories[criterio] || 0) + 1
+        //     })
+        //   })
+        //   const sortedCategories = Object.entries(categories).sort(([,a], [,b]) => a - b).slice(0, 8)
+        //   categoriesLabels = sortedCategories.map(([cat]) => getCategoryLabel(cat))
+        //   categoriesData = sortedCategories.map(([,count]) => count)
+        // } else {
+        //   categoriesLabels = ['Formação', 'Faltas', 'Tempo de atuação', 'Esclarecimento', 'Atividades', 'Grupo', 'Pagamento indevido', 'Mais de um critério']
+        //   categoriesData = [5, 8, 12, 15, 18, 22, 25, 30]
+        // }
+        
         
         chartsInstances.categorias = new Chart(chartCategorias.value, {
           type: 'bar',
@@ -276,26 +275,27 @@ export default {
       }
       
       // Gráfico de Equipes
-      if (chartEquipes.value) {
-        let teamsData, teamsLabels
-        
-        if (hasRealData) {
-          const teamsCount = {}
-          props.data.forEach(resource => {
-            const team = resource.equipe_responsavel || 'Não definido'
-            teamsCount[team] = (teamsCount[team] || 0) + 1
-          })
-          const sortedTeams = Object.entries(teamsCount).sort(([,a], [,b]) => a - b)
-          teamsLabels = sortedTeams.map(([team]) => team)
-          teamsData = sortedTeams.map(([,count]) => count)
-        } else {
-          teamsLabels = ['Equipe Alpha', 'Equipe Beta', 'Equipe Gamma', 'Equipe Delta', 'Equipe Epsilon']
-          teamsData = [10, 15, 25, 35, 40]
-        }
-        
+      if (chartEquipes.value && props.recursosPorEquipe.length > 0) {
+        const sortedData = [...props.recursosPorEquipe].sort((a, b) => a.value - b.value);
+        const teamsLabels = sortedData.map(item => item.name);
+        const teamsData = sortedData.map(item => item.value);
         // Gerar cores azuis baseadas na quantidade de barras
         const teamsColors = generateColorPalette(teamsLabels.length, 'blue')
         
+        // if (hasRealData) {
+        //   const teamsCount = {}
+        //   props.data.forEach(resource => {
+        //     const team = resource.equipe_responsavel || 'Não definido'
+        //     teamsCount[team] = (teamsCount[team] || 0) + 1
+        //   })
+        //   const sortedTeams = Object.entries(teamsCount).sort(([,a], [,b]) => a - b)
+        //   teamsLabels = sortedTeams.map(([team]) => team)
+        //   teamsData = sortedTeams.map(([,count]) => count)
+        // } else {
+        //   teamsLabels = ['Equipe Alpha', 'Equipe Beta', 'Equipe Gamma', 'Equipe Delta', 'Equipe Epsilon']
+        //   teamsData = [10, 15, 25, 35, 40]
+        // }
+         
         chartsInstances.equipes = new Chart(chartEquipes.value, {
           type: 'bar',
           data: {
@@ -334,6 +334,10 @@ export default {
     const updateCharts = () => {
       createCharts()
     }
+
+     watch(() => [props.recursosPorUnidade, props.recursosPorCategoria, props.recursosPorEquipe], () => {
+      if(open.value) createCharts();
+    }, { deep: true });
     
     // Watch para recriar gráficos quando o painel abrir
     watch(() => open.value, (newValue) => {
