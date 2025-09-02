@@ -12,7 +12,7 @@
                         <UserIcon class="w-12 h-12 sm:w-14 sm:h-14 text-[#003965] mr-3 flex-shrink-0" />
                         <div class="min-w-0 flex-1">
                             <p class="text-sm sm:text-15 font-semibold text-gray-900 truncate">{{ recurso.nome_completo }}</p>
-                            <p class="text-sm sm:text-15 text-gray-600">{{ recurso.matricula }}</p>
+                            <p class="text-sm sm:text-15 text-gray-600"> {{ recurso.matriculas.join(', ') }}</p>
                         </div>
                     </div>
                     

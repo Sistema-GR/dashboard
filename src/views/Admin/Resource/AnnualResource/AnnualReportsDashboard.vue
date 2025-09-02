@@ -30,20 +30,20 @@
     <div v-else-if="error" class="text-center py-10 text-red-500">{{ error }}</div>
 
     <div v-else-if="dashboardData">
-    <!-- Resumo Geral -->
+    <!-- RecursosRespondidos -->
       <RecursosRespondidos :stats="dashboardData.stats" />
 
-      <!-- Cards de Estatísticas -->
+      <!-- ValorPago -->
       <ValorPago />
 
-      <!-- Gráficos de Pizza -->
+      <!-- TipoRecurso  -->
       <TipoRecurso 
         :tipos-data="dashboardData.recursos_por_categoria"
         :status-data="dashboardData.status_counts"
         :conclusao-data="dashboardData.conclusao_counts"
       />
 
-      <!-- Gráficos de Barras -->
+      <!-- RecursosTotais -->
       <RecursosTotais 
         :recursos-por-unidade="dashboardData.recursos_por_unidade"
         :recursos-por-categoria="dashboardData.recursos_por_categoria"
