@@ -60,7 +60,8 @@
 
   </div>
 
-  <Drawer ref="drawerRef" :title="drawerTitle" v-model:rowData="selectedRowData" :columns="filteredColumns" @update:rowData="updateRowData" @drawer-closed="handleDrawerClosed" />
+  <Drawer ref="drawerRef" :title="drawerTitle" v-model:rowData="selectedRowData"
+   :columns="filteredColumns" @update:rowData="updateRowData" @drawer-closed="handleDrawerClosed" />
 </template>
 
 <script setup>
@@ -69,6 +70,9 @@ import { EyeIcon } from "@heroicons/vue/24/outline";
 import { debounce } from 'lodash';
 import { renameColumns } from '@/service/columnRenaming';
 import { useRouter } from 'vue-router';
+import { getAccessToken } from '@/service/token';
+import axios from 'axios';
+
 import Drawer from '../Drawer/Drawer.vue';
 import Pagination from '../Pagination/Pagination.vue';
 import Loading from '../Loading/Loading.vue';
@@ -82,8 +86,14 @@ const props = defineProps({
   searchQuery: {
     type: String,
     default: ''
+  },
+  isDynamicRoute: {
+    type: Boolean,
+    default: false
   }
 });
+
+const emit = defineEmits(['row-updated']);
 
 const router = useRouter();
 const itemsPerPage = 10;
@@ -113,7 +123,7 @@ const drawerTitle = computed(() => {
   return titles[props.route] || '';
 });
 
-const showEdit = computed(() => ['Results', 'Profissional', 'Calendar', 'Steps', 'Frequency', 'Activities', 'Service', 'Training', 'StageGroup'].includes(props.route));
+const showEdit = computed(() => ['Results', 'Profissional', 'Calendar', 'Steps', 'Frequency', 'Activities', 'Service', 'Training', 'StageGroup'].includes(props.route) || props.isDynamicRoute);
 const showGr = computed(() => props.route === 'Report');
 
 const filteredPeopleByQuery = computed(() => {
@@ -163,19 +173,46 @@ function toggleFilterMenu(column) {
 
 async function fetchPeople() {
   currentPage.value = 1;
-
   isLoading.value = true; 
   try {
-    const { people, columns } = await loadPeopleData(props.route);
-    filteredPeople.value = people;
-    filteredColumns.value = renameColumns(columns, props.route);
+    let peopleData, columnsData;
+
+    if (props.isDynamicRoute) {
+      const token = await getAccessToken();
+      const response = await axios.get(`http://127.0.0.1:8000/csv/${props.route}`, {
+          headers: { Authorization: `Bearer ${token}` }
+      });
+      peopleData = response.data;
+      if (peopleData && peopleData.length > 0) {
+        columnsData = Object.keys(peopleData[0]);
+      } else {
+        columnsData = [];
+      }
+    } else {
+      const { people, columns } = await loadPeopleData(props.route);
+      peopleData = people;
+      columnsData = columns;
+    }
+    
+    filteredPeople.value = peopleData;
+    if (props.isDynamicRoute) {
+      filteredColumns.value = columnsData.map(key => ({
+        key: key,
+        label: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ') 
+      }));
+    } else {
+      filteredColumns.value = renameColumns(columnsData, props.route);
+    }
+    
     loadMore(); 
   } catch (error) {
+    console.error('Erro ao carregar dados:', error);
     alert('Erro ao carregar dados. Tente novamente mais tarde.');
   } finally {
     isLoading.value = false;
   }
 }
+
 
 function loadMore() {
   const start = (currentPage.value - 1) * itemsPerPage;
@@ -187,7 +224,9 @@ function updateRowData(updatedRowData) {
   const index = filteredPeople.value.findIndex(person => person.matricula === updatedRowData.matricula);
   if (index !== -1) {
     filteredPeople.value[index] = { ...filteredPeople.value[index], ...updatedRowData };
-    loadMore(); 
+    loadMore();
+
+    emit('row-updated', updatedRowData);
   } else {
     alert("Erro ao atualizar dados: matrícula não encontrada.");
   }

@@ -9,8 +9,8 @@
         :disabled="disabled"
         :placeholder="placeholder"
         :type="type"
-        v-model="modelValue"
-        @input="updateInput"
+        v-model="internalValue"
+
         v-bind="$attrs"
         class="bg-transparent appearance-none h-full border-none outline-none w-full"
       />
@@ -41,7 +41,7 @@ const props = defineProps({
   info: Boolean,
   warning: Boolean,
   modelValue: {
-    type: [String, Number],
+    type: [String, Number, Boolean],
     default: '',
   },
   // Adicionando a prop labelClass
@@ -53,7 +53,19 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
-const modelValue = ref(props.modelValue);
+const internalValue = computed({
+  get() {
+    if (props.modelValue === null || props.modelValue === undefined) {
+      return '';
+    }
+    // Sempre converte o valor recebido (incluindo booleanos) para uma String para o input.
+    return String(props.modelValue);
+  },
+  set(newValue) {
+    // Quando o usuário digita, o novo valor é emitido para o componente pai.
+    emit('update:modelValue', newValue);
+  }
+});
 
 function updateInput(event) {
   emit('update:modelValue', event.target.value);

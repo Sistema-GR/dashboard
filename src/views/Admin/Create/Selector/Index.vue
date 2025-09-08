@@ -9,7 +9,7 @@
         <PrimaryButton 
           value="Criar a partir de dados existentes"
           customColor="bg-[#4168b5] shadow-md hover:shadow-lg"
-          @click="navigateTo('/home/create/versionmanager')"
+          @click="navigateTo('/home/create/from-template')"
         />
       </div>
     </Whiteboard>

@@ -3,7 +3,8 @@
 
 
 <!-- Header com botão de relatórios -->
-        <div class="flex justify-end items-center px-4 sm:px-10 py-4">
+        <div class="flex justify-end items-center px-4 sm:px-10 py-4 margin-between-sections gap-3">
+          
           <button 
             @click="navigateToAnnualReports" 
             class="bg-[#3459A2] hover:bg-[#2a4a8a] text-white px-4 py-2 rounded-[10px] transition-colors duration-200 flex items-center gap-2 font-medium shadow-md"
@@ -13,6 +14,15 @@
               <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"/>
             </svg>
             Relatórios Anuais
+          </button>
+          <button 
+              @click="navigateToVersionManager"
+              :disabled="!activeCalculusId"
+              class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-[10px] transition-colors duration-200 flex items-center gap-2 font-medium shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed"
+          >
+              <!-- Ícone de versionamento (opcional, mas legal) -->
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
+              Gerenciar Versões do Cálculo
           </button>
         </div>
 
@@ -94,6 +104,19 @@ export default {
         const recursos = ref([])
         const selectedStatus = ref('aguardando_resposta')
         const isLoading = ref(true)
+        const activeCalculusId = ref(null)
+
+        async function fetchActiveCalculusInfo() {
+            try {
+                const response = await axios.get('/csv/opencalc/get-active-info/', {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+                });
+                activeCalculusId.value = response.data.calculus_id;
+            } catch (error) {
+                console.error("Não foi possível obter informações do cálculo ativo:", error);
+
+            }
+        }
 
         async function fetchRecursos() {
             isLoading.value = true;
@@ -114,7 +137,19 @@ export default {
             }
         }
 
-        onMounted(fetchRecursos);
+        onMounted(() => {
+            fetchRecursos();
+            fetchActiveCalculusInfo();
+        });
+
+        function navigateToVersionManager() {
+            if (activeCalculusId.value) {
+                router.push({ name: 'versionmanager', params: { id: activeCalculusId.value } });
+            } else {
+                alert("A informação do cálculo ativo não pôde ser carregada. Não é possível gerenciar versões.");
+            }
+        }
+
 
         const filteredRecursos = computed(() => {
             if (!recursos.value) return [];
@@ -183,6 +218,8 @@ export default {
             activeStatusStyle,
             STATUS_DEFINITIONS,
             activeStatusColorClass,
+            activeCalculusId,
+            navigateToVersionManager,
         }
     },
 }

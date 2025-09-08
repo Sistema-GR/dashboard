@@ -21,6 +21,7 @@ import selector from '@/views/Admin/Create/Selector/Index.vue'
 import editversion from '@/views/Admin/Create/EditVersions/index.vue'
 import permissionsaccess from '@/views/Admin/PermissionsAccess/index.vue'
 import AnnualReportsDashboard from '@/views/Admin/Resource/AnnualResource/AnnualReportsDashboard.vue'
+import createfromtemplate from '@/views/Admin/Create/CreateFromTemplate/index.vue'
 //Resource
 import resource from '@/views/Admin/Resource/index.vue'
 import infodetails from '@/views/Admin/Resource/InfoDetails/index.vue'
@@ -75,9 +76,10 @@ const router = createRouter({
           children: [
             { path: 'newcal', name: 'create-newcal', component: newcal },
             { path: 'imports', name: 'create-imports', component: imports },
-            { path: 'versionmanager', name: 'versionmanager', component: versionmanager },
+            { path: 'from-template', name: 'create-from-template', component: createfromtemplate },
             { path: 'selector', name: 'selector', component: selector },
-            { path: 'editversion', name: 'editversion', component: editversion },
+            { path: 'editversion/:id', name: 'editversion', component: editversion, props: true },
+            { path: 'versionmanager/:id', name: 'versionmanager', component: versionmanager, props: true },
           ]
         }
       ]
