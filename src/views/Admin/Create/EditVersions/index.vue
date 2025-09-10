@@ -29,7 +29,10 @@
       <!-- Conteúdo da Aba: Editar Dados -->
       <div v-if="activeTab === 'editData'" class="mt-6">
         <div class="mb-4">
-          <Search @search="handleSearch" />
+          <Search 
+            :columns="filterableColumns"
+            @search="handleSearch" 
+          />
         </div>
         <p class="text-gray-600 mb-4">
           Clique em "Edit" em uma linha para modificar seus valores. As alterações são salvas individualmente.
@@ -38,8 +41,9 @@
           :key="tableKey"
           :route="`calculus/${calculusId}/processed-file/criterios`"
           :isDynamicRoute="true" 
-          :searchQuery="searchQuery"
+          :searchCriteria="searchCriteria"
           @row-updated="handleRowUpdate"
+          @columns-loaded="handleColumnsLoaded"
         />
       </div>
 
@@ -75,7 +79,7 @@ import { getAccessToken } from '@/service/token';
 
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
-import PrimaryTable from '@/components/Table/PrimaryTable.vue'; // Verifique se o caminho está correto
+import PrimaryTable from '@/components/Table/PrimaryTable.vue';
 import Search from '@/components/Search/Search.vue';
 
 const route = useRoute();
@@ -87,11 +91,17 @@ const isReprocessing = ref(false);
 const fileInput = ref(null);
 const selectedFileKey = ref(null);
 const tableKey = ref(0); 
+const searchCriteria = ref({ query: '', column: 'all' });
+const filterableColumns = ref([]);
 
-const searchQuery = ref('');
-const handleSearch = (query) => {
-  searchQuery.value = query;
+
+const handleSearch = (criteria) => {
+  searchCriteria.value = criteria;
 };
+
+const handleColumnsLoaded = (columns) => {
+  filterableColumns.value = columns;
+}
 
 const calculusId = computed(() => route.params.id);
 

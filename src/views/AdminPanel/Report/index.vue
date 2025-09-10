@@ -1,13 +1,20 @@
 <template>
     <Whiteboard :title="titulo" >
         <div class="flex flex-row w-full items-center gap-3 justify-between px-4 sm:px-10 mt-4">
-            <Search @search="handleSearch" />
+            <Search 
+                :columns="filterableColumns"
+                @search="handleSearch" 
+            />
             <div v-if="selectedRoute == 'Frequency'" class="flex flex-row items-center  gap-1 w-full max-w-64 cursor-pointer">
                <p class="text-gray-800 font-medium hover:text-blue-900" @click="handleRouteUpdate('Infrequency')">Dados de Infrequência</p>
             </div>
         </div>   
         <div class="w-full pb-5 capitalize">        
-            <PrimaryTable :route="selectedRoute" :searchQuery="searchQuery" />
+            <PrimaryTable 
+                :route="selectedRoute" 
+                :searchCriteria="searchCriteria"
+                @columns-loaded="handleColumnsLoaded"
+            />
         </div>
     </Whiteboard>
     <Sidebar :route="selectedRoute"
@@ -28,17 +35,25 @@ export default {
     components: {Sidebar, Whiteboard, PrimaryTable, TextInput, Search, Pagination},
 
     setup() {
-    const searchQuery = ref('');
-    const selectedRoute = ref('Report') // default
-    const titulo = ref('Admin Panel') // default
-    const handleSearch = (query) => {
-        searchQuery.value = query
+    const searchCriteria = ref({ query: '', column: 'all' });
+    const filterableColumns = ref([]);
+    const selectedRoute = ref('Report')
+    const titulo = ref('Admin Panel')
+
+    const handleSearch = (criteria) => {
+            searchCriteria.value = criteria
     }
+
+    const handleColumnsLoaded = (columns) => {
+            filterableColumns.value = columns;
+    }
+
     function handleRouteUpdate(newRoute) {
       selectedRoute.value = newRoute
-      // Optionally map route to page title
       titulo.value = routeToTitle(newRoute)
+      filterableColumns.value = [];
     }
+
     function routeToTitle(route) {
       const map = {
         'Results': 'Resultados IDEM',
@@ -59,8 +74,10 @@ export default {
     }
 
     return {
-      searchQuery,
+      searchCriteria,
+      filterableColumns,
       handleSearch,
+      handleColumnsLoaded,
       selectedRoute,
       titulo,
       handleRouteUpdate,

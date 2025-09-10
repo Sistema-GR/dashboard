@@ -83,9 +83,9 @@ const props = defineProps({
     type: String,
     required: true
   },
-  searchQuery: {
-    type: String,
-    default: ''
+  searchCriteria: {
+    type: Object,
+    default: () => ({ query: '', column: 'all' })
   },
   isDynamicRoute: {
     type: Boolean,
@@ -93,7 +93,7 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['row-updated']);
+const emit = defineEmits(['row-updated', 'columns-loaded']);
 
 const router = useRouter();
 const itemsPerPage = 10;
@@ -127,12 +127,22 @@ const showEdit = computed(() => ['Results', 'Profissional', 'Calendar', 'Steps',
 const showGr = computed(() => props.route === 'Report');
 
 const filteredPeopleByQuery = computed(() => {
-  if (!props.searchQuery) return filteredPeople.value;
+  const { query, column } = props.searchCriteria;
 
-  const query = props.searchQuery.toLowerCase();
-  return filteredPeople.value.filter(person =>
-    Object.values(person).some(value => String(value).toLowerCase().includes(query))
-  );
+  if (!query) return filteredPeople.value;
+
+  const lowerCaseQuery = query.toLowerCase();
+
+  return filteredPeople.value.filter(person => {
+    if (column === 'all') {
+      return Object.values(person).some(value => 
+        String(value).toLowerCase().includes(lowerCaseQuery)
+      );
+    } else {
+      const cellValue = person[column];
+      return cellValue && String(cellValue).toLowerCase().includes(lowerCaseQuery);
+    }
+  });
 });
 
 const totalPages = computed(() => Math.ceil(filteredPeopleByQuery.value.length / itemsPerPage));
@@ -149,10 +159,10 @@ watch(() => props.route, (newRoute) => {
   }
 }, { immediate: true });
 
-watch(() => props.searchQuery, debounce(() => {
+watch(() => props.searchCriteria, debounce(() => {
   currentPage.value = 1; 
   loadMore();
-}, 300)); 
+}, 300), { deep: true });
 
 watch(currentPage, loadMore);
 
@@ -194,7 +204,6 @@ async function fetchPeople() {
       columnsData = columns;
     }
     
-    filteredPeople.value = peopleData;
     if (props.isDynamicRoute) {
       filteredColumns.value = columnsData.map(key => ({
         key: key,
@@ -204,6 +213,9 @@ async function fetchPeople() {
       filteredColumns.value = renameColumns(columnsData, props.route);
     }
     
+    emit('columns-loaded', filteredColumns.value);
+    filteredPeople.value = peopleData;
+
     loadMore(); 
   } catch (error) {
     console.error('Erro ao carregar dados:', error);
