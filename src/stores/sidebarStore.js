@@ -4,7 +4,7 @@ export const useSidebarStore = defineStore('sidebar', {
   state: () => ({
     isSidebarMinimized: false,
     isVisible: true,
-    reportPage: 'Report'
+    reportPage: localStorage.getItem('reportPage') || 'Results',
   }),
   actions: {
     toggleSidebar() {
@@ -18,6 +18,7 @@ export const useSidebarStore = defineStore('sidebar', {
     },
     setReportPage(val) {
       this.reportPage = val
+      localStorage.setItem('reportPage', val)
     }
   }
 })

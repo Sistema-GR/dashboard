@@ -88,7 +88,7 @@
     </Whiteboard>
 </template>
 
-<script setup>
+<script>
 import { ref, onMounted, inject } from 'vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';

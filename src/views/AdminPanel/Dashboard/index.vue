@@ -259,6 +259,7 @@ export default {
                   { label: "Tempo de Atuação", value: motivoCombinadoCounts["Tempo de atuação"] || 0 },
                   { label: "Mais de um critério", value: motivoCombinadoCounts["Mais de um critério"] || 0 },
                   { label: "Mais de dois critérios", value: motivoCombinadoCounts["Mais de dois critérios"] || 0 },
+                  { label: "Secretário e Diretores Executivos", value: motivoCombinadoCounts["Diretor Executivo"] + motivoCombinadoCounts["Secretário"] || 0 },
                 ].sort((a, b) => b.value - a.value)
             },
             {
