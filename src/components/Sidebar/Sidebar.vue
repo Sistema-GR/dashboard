@@ -325,7 +325,7 @@ const userName = ref('')  // Variável para armazenar o nome do usuário
 // Função para emitir ou redirecionar a rota dos componentes filhos
 function selectRoute(route) {
   if (route.id) {
-    emit('update:route', route.id)
+    sidebarStore.setReportPage(route.id)
   } 
   if(router.currentRoute.value.path != '/admin/report'){
     router.push('/admin/report')
@@ -385,9 +385,6 @@ async function fetchUserName() {
 onMounted(() => {
   fetchUserName()
 })
-
-
-const emit = defineEmits(['update:route'])
 
 const filteredNavigation = computed(() => {
   const userType = getUserType();
