@@ -72,12 +72,12 @@
                     <!-- Unidade de atuação -->
                     <div id="tutorial-unidade">
                         <label class="block text-15 font-medium text-gray-700 mb-1">Unidade de atuação</label>
-                        <input 
-                            v-model="form.unidade" 
-                            type="text" 
-                            class="w-full px-3 py-2 border border-gray-300 rounded-[10px] text-15 focus:ring-1 focus:ring-blue-500 focus:border-blue-500" 
-                            placeholder="Digite sua unidade de atuação"
-                        />
+                        <select id="unidade" v-model="form.unidade" class="w-full px-3 py-2 border border-gray-300 rounded-[10px] text-15 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white">
+                            <option disabled value="">Selecione um setor...</option>
+                            <option v-for="setor in listaDeSetores" :key="setor" :value="setor">
+                                {{ setor }}
+                            </option>
+                        </select>
                         <p v-if="errors.unidade" class="text-red-500 text-xs mt-1">{{ errors.unidade }}</p>
                     </div>
 
@@ -204,6 +204,24 @@ export default {
         const { getMatriculasPorCPF } = usePersonService();
         const matriculasDisponiveis = ref([]);
         const isLoadingMatriculas = ref(false);
+
+         const listaDeSetores = ref([
+            "Administração e Finanças", "Apoio Educacional", "Apoio Jurídico",
+            "Assessoria Pedagógica - Apoio Pedagógico", "Assessoria Pedagógica - Supervisão Escolar", "Avaliação Escolar",
+            "Comunicação", "Contraturno e tempo integral", "Convênios e Credenciamento de CEIs",
+            "Desenvolvimento Profissional", "Diretoria de Formação e Inovação", "Diretoria de Gestão",
+            "Diretoria de Políticas Educacionais", "Diretoria de Suprimentos e Infraestruturaa", "Educação Especial",
+            "Educação Infantil", "EJA / Ed. Profissional", "Ensino Fundamental",
+            "Escritório de Projetos, Processos e Inovação", "Folha de Pagamento", "Formação e Currículo",
+            "Formação e Currículo - Nucleação", "Gabinete", "Gerência Apoio à Aprendizagerm",
+            "Gestão Democrática e Articulação", "Gestão do Trabalho", "Gestão Escolar - Educação Infantil",
+            "Gestão Escolar - Ensino Fundamental", "Inovação e Tecnologia", "Matrículas e Atendimento",
+            "Mídias e Tecnologias Educacionais", "Nucleo de Apoio aos Conselhos", "Núcleo de Apoio aos Conselhos",
+            "Núcleo de Desenvolvimento Integral", "Núcleo de Educação Ambiental", "Orçamento",
+            "PDDE Federal", "PDDE Federal / Programa Dinheiro na Escola Municipal", "Planejamento",
+            "Prestação de Contas das Parceirias", "Programa Dinheiro na Escola Municipal", "Quadro Funcional",
+            "Recomposição da Aprendizagem", "Requisição de Compras", "Sistemas e Estatisticas"
+        ]);
 
         const form = reactive({
             nome_completo: '',
@@ -361,7 +379,7 @@ export default {
 
             isLoadingMatriculas,
             matriculasDisponiveis,
-
+            listaDeSetores, 
         };
     }
 };

@@ -45,8 +45,8 @@
       <option value="formacao_aurea">Formação Áurea</option>
     </select>
     <select
-      :value="filters.responsavel"
-      @change="updateFilter('responsavel', $event.target.value)"
+      :value="filters.responsavel_id"
+      @change="updateFilter('responsavel_id', $event.target.value)"
       class="border border-gray-300 rounded-[10px] w-full px-4 py-1 bg-white focus:outline-none max-w-[220px] h-8"
     >
       <option value="">Responsável</option>

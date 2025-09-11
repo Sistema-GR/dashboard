@@ -154,3 +154,42 @@ export const fetchEmployeeData = async () => {
     throw error;
   }
 };
+
+
+export const getActiveCalculusFiles = () => {
+  return apiClient.get('/csv/api/calculus/active/files/');
+};
+
+export const downloadFileById = (fileId) => {
+  const downloadUrl = `${apiClient.defaults.baseURL}/csv/api/data-files/${fileId}/download/`;
+  const link = document.createElement('a');
+  link.href = downloadUrl;
+
+  apiClient.get(`/csv/api/data-files/${fileId}/download/`, {
+    responseType: 'blob',
+    headers: {
+        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+    }
+  }).then(response => {
+    const headerLine = response.headers['content-disposition'];
+    let filename = 'downloaded_file.csv';
+    if (headerLine) {
+        const filenameMatch = headerLine.match(/filename="(.+)"/);
+        if (filenameMatch && filenameMatch.length > 1) {
+            filename = filenameMatch[1];
+        }
+    }
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  }).catch(error => {
+    console.error('Erro no download do arquivo:', error);
+    alert('Não foi possível baixar o arquivo.');
+  });
+};

@@ -88,7 +88,7 @@
 </template>
 
 <script setup>
-import { computed, defineEmits } from 'vue'
+import { computed } from 'vue'
 import { ArrowLongLeftIcon, ArrowLongRightIcon } from '@heroicons/vue/20/solid'
 
 const props = defineProps({

@@ -16,7 +16,7 @@
             <!-- Coluna 2: Nome e Matrícula -->
             <div class="flex flex-col">
                 <h3 class="text-15 font-bold text-black mb-1">{{ recurso.nome_completo }}</h3>
-                <p class="text-15 text-black">Matrícula: {{ recurso.matricula }}</p>
+                <p class="text-15 text-black">Matrícula:{{ recurso.matriculas.join(', ') }}</p>
             </div>
         </router-link>
 

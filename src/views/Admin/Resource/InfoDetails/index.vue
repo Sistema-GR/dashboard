@@ -12,7 +12,7 @@
                         <UserIcon class="w-12 h-12 sm:w-14 sm:h-14 text-[#003965] mr-3 flex-shrink-0" />
                         <div class="min-w-0 flex-1">
                             <p class="text-sm sm:text-15 font-semibold text-gray-900 truncate">{{ recurso.nome_completo }}</p>
-                            <p class="text-sm sm:text-15 text-gray-600">{{ recurso.matricula }}</p>
+                            <p class="text-sm sm:text-15 text-gray-600"> {{ recurso.matriculas.join(', ') }}</p>
                         </div>
                     </div>
                     
@@ -198,11 +198,23 @@ export default {
         
         async function generateAndSendResponse() {
             if (!selectedTemplateId.value) return alert("Por favor, selecione um template.");
+
+            console.log("--- ENVIANDO PARA A API ---");
+            const payload = {
+                template_id: selectedTemplateId.value,
+                contexto_variaveis: templateForm.value,
+                decisao: templateForm.value.decisao,
+                unidade_responsavel: templateForm.value.unidade_responsavel
+            };
+            console.log(payload);
+
             isGenerating.value = true;
             try {
                 const response = await axios.post(`/recursos/${resourceId}/gerar-resposta-pdf/`, {
                     template_id: selectedTemplateId.value,
-                    contexto_variaveis: templateForm.value
+                    contexto_variaveis: templateForm.value,
+                    decisao: templateForm.value.decisao,
+                    unidade_responsavel: templateForm.value.unidade_responsavel
                 }, { headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` } });
                 
                 recurso.value.respostas.unshift(response.data);

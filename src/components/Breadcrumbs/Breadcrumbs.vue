@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue';
+
 import { useRouter } from 'vue-router';
 import voltarIcon from '@/assets/images/voltar.png'
 

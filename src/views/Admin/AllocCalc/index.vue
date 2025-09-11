@@ -84,10 +84,12 @@
                     </tbody>
                 </table>
             </div>
+
     </Whiteboard>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted, inject } from 'vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
 import axios from 'axios';
@@ -220,4 +222,34 @@ export default {
         }
     }
 }
+
+async function promoteToOpenCalc(calcId) {
+    if (!confirm(`Tem certeza que deseja promover o cálculo ID ${calcId} para a área de visualização?`)) {
+        return;
+    }
+
+    try {
+        const token = await getAccessToken();
+        const response = await axios.post('http://127.0.0.1:8000/csv/opencalc/create-opencalc/',
+            { calc_id: calcId },
+            { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        if (response.status === 201) {
+            alert('Cálculo promovido com sucesso!');
+            // highlight-start
+            // Recarrega a lista para obter o status mais recente do backend
+            await fetchCalculusList();
+            // highlight-end
+        }
+    } catch (error) {
+        console.error("Erro ao promover o cálculo:", error.response?.data || error);
+        const errorMessage = error.response?.data?.error || "Ocorreu um erro desconhecido.";
+        alert(`Falha ao promover o cálculo: ${errorMessage}`);
+    }
+}
+
+onMounted(() => {
+    fetchCalculusList();
+});
 </script>
