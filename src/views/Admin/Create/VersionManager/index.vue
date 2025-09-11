@@ -53,8 +53,14 @@
                 />
               </template>
               
-               <!-- Nenhuma ação para versão ARQUIVADA -->
-              <p v-if="version.status === 'ARCHIVED'" class="text-sm text-gray-400 italic">Versão arquivada</p>
+              <!-- Ações para versão ARQUIVADA -->
+              <PrimaryButton
+                v-if="version.status === 'ARCHIVED'"
+                value="Visualizar Versão"
+                @click="goToViewPage(version.id)"
+                customColor="bg-gray-500 hover:bg-gray-600"
+              />
+
             </div>
           </div>
         </div>
@@ -69,8 +75,6 @@ import { ref, onMounted, computed, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import { getAccessToken } from '@/service/token';
-
-// Import dos seus componentes de UI
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
 
@@ -142,7 +146,7 @@ async function publishVersion(draftId) {
     });
     
     alert('Versão publicada com sucesso!');
-    await fetchVersions(); // Recarrega a lista para mostrar os status atualizados
+    await fetchVersions();
     
   } catch (err) {
     console.error("Erro ao publicar versão:", err);
@@ -155,6 +159,14 @@ function goToEditPage(draftId) {
   router.push({ name: 'editversion', params: { id: draftId } });
 }
 
+function goToViewPage(archivedId) {
+  router.push({ 
+    name: 'editversion', 
+    params: { id: archivedId },
+    query: { viewOnly: 'true' }
+  });
+}
+
 // Helper para estilização do status
 function getStatusClass(status) {
   const classes = {
@@ -165,6 +177,5 @@ function getStatusClass(status) {
   return classes[status] || 'bg-gray-100';
 }
 
-// Carrega os dados quando o componente é montado
 onMounted(fetchVersions);
 </script>

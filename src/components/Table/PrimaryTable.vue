@@ -90,6 +90,10 @@ const props = defineProps({
   isDynamicRoute: {
     type: Boolean,
     default: false
+  },
+  isViewOnly: {
+    type: Boolean,
+    default: false
   }
 });
 
@@ -123,7 +127,13 @@ const drawerTitle = computed(() => {
   return titles[props.route] || '';
 });
 
-const showEdit = computed(() => ['Results', 'Profissional', 'Calendar', 'Steps', 'Frequency', 'Activities', 'Service', 'Training', 'StageGroup'].includes(props.route) || props.isDynamicRoute);
+const showEdit = computed(() => {
+  if (props.isViewOnly) {
+    return false;
+  }
+  const editableRoutes = ['Results', 'Profissional', 'Calendar', 'Steps', 'Frequency', 'Activities', 'Service', 'Training', 'StageGroup'];
+  return editableRoutes.includes(props.route) || props.isDynamicRoute;
+});
 const showGr = computed(() => props.route === 'Report');
 
 const filteredPeopleByQuery = computed(() => {

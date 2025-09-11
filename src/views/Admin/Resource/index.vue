@@ -108,7 +108,7 @@ export default {
 
         async function fetchActiveCalculusInfo() {
             try {
-                const response = await axios.get('/csv/opencalc/get-active-info/', {
+                const response = await axios.get('/csv/calculus/get-active-for-admin/', {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
                 });
                 activeCalculusId.value = response.data.calculus_id;

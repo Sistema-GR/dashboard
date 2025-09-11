@@ -43,6 +43,7 @@
           :isDynamicRoute="true" 
           :searchCriteria="searchCriteria"
           @row-updated="handleRowUpdate"
+          :is-view-only="isViewOnlyMode"
           @columns-loaded="handleColumnsLoaded"
         />
       </div>
@@ -72,7 +73,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, inject } from 'vue';
+import { ref, computed, inject } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
 import { getAccessToken } from '@/service/token';
@@ -84,8 +85,15 @@ import Search from '@/components/Search/Search.vue';
 
 const route = useRoute();
 const isSidebarMinimized = inject('isSidebarMinimized', ref(false));
+const isViewOnlyMode = computed(() => route.query.viewOnly === 'true');
 
-const pageTitle = ref("Editando Rascunho");
+const pageTitle = computed(() => {
+  if (isViewOnlyMode.value) {
+    return "Visualizando Versão Arquivada";
+  }
+  return "Editando Rascunho";
+});
+
 const activeTab = ref('editData');
 const isReprocessing = ref(false);
 const fileInput = ref(null);
@@ -105,10 +113,16 @@ const handleColumnsLoaded = (columns) => {
 
 const calculusId = computed(() => route.params.id);
 
-const tabs = [
-  { name: 'Editar Dados Processados', key: 'editData' },
-  { name: 'Gerenciar Arquivos de Entrada', key: 'manageFiles' },
-];
+const tabs = computed(() => {
+  const allTabs = [
+    { name: 'Visualizar Dados Processados', key: 'editData' },
+    { name: 'Gerenciar Arquivos de Entrada', key: 'manageFiles' },
+  ];
+  if (isViewOnlyMode.value) {
+    return allTabs.filter(tab => tab.key === 'editData');
+  }
+  return allTabs;
+});
 
 const fileTypes = ref([
   { name: 'Funcionários', key: 'funcionarios' }, { name: 'Demissões', key: 'demissoes' },
