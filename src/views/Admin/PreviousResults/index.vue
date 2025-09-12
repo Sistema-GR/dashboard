@@ -157,15 +157,16 @@ export default {
       try {
         const token = await getAccessToken();
         await axios.post(
-          "http://127.0.0.1:8000/csv/delete-calculus/",
-          { calc_id: calculusId },
+          `http://127.0.0.1:8000/csv/calculus/${calculusId}/delete/`,
+          {},
           { headers: { Authorization: `Bearer ${token}` } }
         );
+
         alert('Cálculo excluído com sucesso.');
-        await this.fetchCalculus(); // Recarrega a lista
+        await this.fetchCalculus();
       } catch (error) {
         console.error('Erro ao excluir cálculo:', error);
-        this.errorMessage = 'Erro ao excluir o cálculo.';
+        this.errorMessage = error.response?.data?.error || 'Erro ao excluir o cálculo.';
       }
     },
 
