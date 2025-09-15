@@ -325,7 +325,7 @@ const userName = ref('')  // Variável para armazenar o nome do usuário
 // Função para emitir ou redirecionar a rota dos componentes filhos
 function selectRoute(route) {
   if (route.id) {
-    emit('update:route', route.id)
+    sidebarStore.setReportPage(route.id)
   } 
   if(router.currentRoute.value.path != '/admin/report'){
     router.push('/admin/report')
@@ -352,7 +352,7 @@ async function fetchUserName() {
     }
 
     // Requisição com token no header
-    axios.get('http://127.0.0.1:8000/auth/user-info/', {
+    axios.get('http://10.203.3.46:8000/auth/user-info/', {
       headers: {
         'Authorization': `Bearer ${token}`  // Corrigir o nome do token para "accessToken"
       }
@@ -385,9 +385,6 @@ async function fetchUserName() {
 onMounted(() => {
   fetchUserName()
 })
-
-
-const emit = defineEmits(['update:route'])
 
 const filteredNavigation = computed(() => {
   const userType = getUserType();

@@ -73,9 +73,16 @@ export default {
     async fetchCalculus() {
       try {
         const token = await getAccessToken();
-        const response = await axios.get("http://127.0.0.1:8000/csv/get-list-calculus/", {
+        
+        if (!token) {
+          this.errorMessage = 'Usuário não autenticado ou token expirado.';
+          return;
+        }
+
+        const response = await axios.get("http://10.203.3.46:8000/csv/get-list-calculus/", {
           headers: { Authorization: `Bearer ${token}` }
         });
+        
         this.processCalculusData(response.data);
       } catch (error) {
         console.error('Erro ao buscar cálculos:', error);
@@ -133,15 +140,36 @@ export default {
 
     goToVersionManager(parentId) {
       this.$router.push({ name: 'versionmanager', params: { id: parentId } });
+    }
+    async copiarCalculo(item) {
+      try {
+        const token = await getAccessToken();
+        const response = await axios.post("http://10.203.3.46:8000/csv/copy-calculus/", { calc_id: item.id }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        alert(`Cálculo copiado com sucesso! Novo ID: ${response.data.new_calculus_id}`);
+        
+        // Recarregar a página
+        window.location.reload();
+      } catch (error) {
+        console.error('Erro ao copiar cálculo:', error);
+      }
     },
 
     async handleVisualizarClick(calculusId) {
       try {
         const token = await getAccessToken();
-        await axios.post(
-          "http://127.0.0.1:8000/csv/api/set-active-calculus/",
-          { calc_id: calculusId },
-          { headers: { Authorization: `Bearer ${token}` } }
+        if (!token) {
+          this.errorMessage = 'Usuário não autenticado ou token expirado.';
+          return;
+        }
+
+        const response = await axios.post(
+          "http://10.203.3.46:8000/csv/api/set-active-calculus/",
+          { calc_id: id },
+          {
+            headers: { Authorization: `Bearer ${token}` }
+          }
         );
         this.$router.push({ path: '/admin/dashboard' });
       } catch (error) {
@@ -162,8 +190,17 @@ export default {
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        alert('Cálculo excluído com sucesso.');
-        await this.fetchCalculus();
+        // Faz a requisição POST para excluir o cálculo
+        const response = await axios.post(
+              "http://10.203.3.46:8000/csv/delete-calculus/",
+              { calc_id: id }, // Envia o ID do cálculo no corpo da requisição
+              {
+                headers: { Authorization: `Bearer ${token}` }
+              }
+            );
+
+            // Atualiza a lista de cálculos após a exclusão
+            await this.fetchCalculus();
       } catch (error) {
         console.error('Erro ao excluir cálculo:', error);
         this.errorMessage = error.response?.data?.error || 'Erro ao excluir o cálculo.';

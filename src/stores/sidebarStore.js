@@ -3,7 +3,8 @@ import { defineStore } from 'pinia'
 export const useSidebarStore = defineStore('sidebar', {
   state: () => ({
     isSidebarMinimized: false,
-    isVisible: true
+    isVisible: true,
+    reportPage: localStorage.getItem('reportPage') || 'Results',
   }),
   actions: {
     toggleSidebar() {
@@ -14,6 +15,10 @@ export const useSidebarStore = defineStore('sidebar', {
     },
     setVisible(val) {
       this.isVisible = val
+    },
+    setReportPage(val) {
+      this.reportPage = val
+      localStorage.setItem('reportPage', val)
     }
   }
 })

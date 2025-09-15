@@ -76,8 +76,7 @@ export default {
     const fetchData = async () => {
       try {
         const token = await getAccessToken();
-        // Chama a NOVA API
-        const response = await axios.get('http://127.0.0.1:8000/csv/opencalc/list-versions/', {
+        const response = await axios.get('http://10.203.3.46:8000/csv/opencalc/list-opencalc/', {
           headers: { Authorization: `Bearer ${token}` },
         });
         calculusFamilies.value = response.data;
@@ -97,15 +96,16 @@ export default {
       if (!pendingVersion.value) return;
 
       const idParaAtivar = pendingVersion.value.id;
+      
+        try {
+          const token = await getAccessToken();
+          
+          const response = await axios.post('http://10.203.3.46:8000/csv/opencalc/activate-opencalc/', 
+            { calc_id: idParaAtivar },
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
 
-      try {
-        const token = await getAccessToken();
-        const response = await axios.post('http://127.0.0.1:8000/csv/opencalc/activate-opencalc/', 
-          { calc_id: idParaAtivar },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-
-        if (response.status === 200) {
+          if (response.status === 200) {
           // Atualiza o estado local para refletir a mudança imediatamente
           calculusFamilies.value.forEach(family => {
             family.versions.forEach(version => {

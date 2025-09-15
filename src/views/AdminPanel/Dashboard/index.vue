@@ -149,7 +149,8 @@ export default {
           return;
         }
 
-        const responseCriterios = await axios.get('http://127.0.0.1:8000/csv/process/criterios/', {
+        // Requisição para critérios para calcular quem recebe/não recebe
+        const responseCriterios = await axios.get('http://10.203.3.46:8000/csv/process/criterios/', {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -180,7 +181,8 @@ export default {
 
         chartDataFaixaPagamento.value = faixaPagamento;
 
-        const responseAnalysis = await axios.get('http://127.0.0.1:8000/csv/get-import-files/', {
+        // Requisição para os motivos de não recebimento
+        const responseAnalysis = await axios.get('http://10.203.3.46:8000/csv/get-import-files/', {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -244,6 +246,7 @@ export default {
                   { label: "Tempo de Atuação", value: motivoCombinadoCounts["Tempo de atuação"] || 0 },
                   { label: "Mais de um critério", value: motivoCombinadoCounts["Mais de um critério"] || 0 },
                   { label: "Mais de dois critérios", value: motivoCombinadoCounts["Mais de dois critérios"] || 0 },
+                  { label: "Secretário e Diretores Executivos", value: motivoCombinadoCounts["Diretor Executivo"] + motivoCombinadoCounts["Secretário"] || 0 },
                 ].sort((a, b) => b.value - a.value)
             },
             {

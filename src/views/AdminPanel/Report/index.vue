@@ -2,28 +2,27 @@
     <Whiteboard :title="titulo" >
         <div class="flex flex-row w-full items-center gap-3 justify-between px-4 sm:px-10 mt-4">
             <Search 
-                :columns="filterableColumns"
-                @search="handleSearch" 
+              :columns="filterableColumns"
+              @search="handleSearch"
             />
-            <div v-if="selectedRoute == 'Frequency'" class="flex flex-row items-center  gap-1 w-full max-w-64 cursor-pointer">
-               <p class="text-gray-800 font-medium hover:text-blue-900" @click="handleRouteUpdate('Infrequency')">Dados de Infrequência</p>
+            <div v-if=" sidebarStore.reportPage == 'Frequency'" class="flex flex-row items-center  gap-1 w-full max-w-64 cursor-pointer">
+               <p class="text-gray-800 font-medium hover:text-blue-900" @click="sidebarStore.setReportPage('Infrequency')">Dados de Infrequência</p>
             </div>
         </div>   
         <div class="w-full pb-5 capitalize">        
             <PrimaryTable 
-                :route="selectedRoute" 
-                :searchCriteria="searchCriteria"
-                @columns-loaded="handleColumnsLoaded"
+              :route="sidebarStore.reportPage"
+              :searchQuery="searchQuery"
+              :searchCriteria="searchCriteria"
+              @columns-loaded="handleColumnsLoaded"
             />
         </div>
     </Whiteboard>
-    <Sidebar :route="selectedRoute"
-             @update:route="handleRouteUpdate" />
 </template>
 
 <script>
-import { ref } from 'vue'
-import Sidebar from '@/components/Sidebar/Sidebar.vue';
+import { ref, computed } from 'vue'
+import { useSidebarStore } from '@/stores/sidebarStore';
 import TextInput from '@/components/Inputs/TextInput.vue';
 import PrimaryTable from '@/components/Table/PrimaryTable.vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
@@ -32,7 +31,7 @@ import Pagination from '@/components/Pagination/Pagination.vue';
 
 export default {
     name: "AdminPanel",
-    components: {Sidebar, Whiteboard, PrimaryTable, TextInput, Search, Pagination},
+    components: { Whiteboard, PrimaryTable, TextInput, Search, Pagination},
 
     setup() {
     const searchCriteria = ref({ query: '', column: 'all' });
@@ -54,8 +53,9 @@ export default {
       filterableColumns.value = [];
     }
 
-    function routeToTitle(route) {
-      const map = {
+    const sidebarStore = useSidebarStore();
+    const searchQuery = ref('');
+    const map = {
         'Results': 'Resultados IDEM',
         'Calendar': 'Calendário Escolar',
         'Profissional': 'Profissionais',
@@ -69,10 +69,11 @@ export default {
         'Service': 'Tempo de Atuação',
         'Training': 'Formação',
         'Report': 'Relatórios Finais',
-      }
-      return map[route] || 'Page'
     }
-
+    const titulo = computed(() => map[sidebarStore.reportPage] || 'Page')
+    const handleSearch = (query) => {
+        searchQuery.value = query
+    }
     return {
       searchCriteria,
       filterableColumns,
@@ -80,7 +81,7 @@ export default {
       handleColumnsLoaded,
       selectedRoute,
       titulo,
-      handleRouteUpdate,
+      sidebarStore,
     }
   }
 }  
