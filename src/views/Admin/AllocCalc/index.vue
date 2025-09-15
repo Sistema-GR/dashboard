@@ -129,7 +129,7 @@ export default {
                     return;
                 }
                 await axios.post(
-                    'http://127.0.0.1:8000/csv/opencalc/create-opencalc/',                    
+                    'http://10.203.3.46:8000/csv/opencalc/create-opencalc/',                    
                     { calc_id: this.calcId },
                     {
                         headers: {
@@ -159,7 +159,7 @@ export default {
                     return;
                 }
                 const response = await axios.get(
-                    'http://127.0.0.1:8000/csv/opencalc/list-opencalc/',
+                    'http://10.203.3.46:8000/csv/opencalc/list-opencalc/',
                     {
                         headers: {
                             Authorization: `Bearer ${token}`
@@ -193,8 +193,8 @@ export default {
                     return;
                 }
                 const url = calc.ativa
-                    ? 'http://127.0.0.1:8000/csv/opencalc/deactivate-opencalc/'
-                    : 'http://127.0.0.1:8000/csv/opencalc/activate-opencalc/';
+                    ? 'http://10.203.3.46:8000/csv/opencalc/deactivate-opencalc/'
+                    : 'http://10.203.3.46:8000/csv/opencalc/activate-opencalc/';
                 const request = calc.ativa
                     ? { reference_year: calc.referencia }
                     : { calc_id: calc.id };
@@ -230,7 +230,7 @@ async function promoteToOpenCalc(calcId) {
 
     try {
         const token = await getAccessToken();
-        const response = await axios.post('http://127.0.0.1:8000/csv/opencalc/create-opencalc/',
+        const response = await axios.post('http://10.203.3.46:8000/csv/opencalc/create-opencalc/',
             { calc_id: calcId },
             { headers: { Authorization: `Bearer ${token}` } }
         );

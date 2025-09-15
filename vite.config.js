@@ -14,19 +14,21 @@ export default defineConfig({
     }
   },
   server: {
+    host: true,
+    port: 5173,
     proxy: {
         // Redireciona qualquer chamada para /recursos/...
         '/recursos': {
-            target: 'http://localhost:8000',
+            target: 'http://10.203.3.46:8000',
             changeOrigin: true,
         },
 
         '/auth': {
-            target: 'http://localhost:8000',
+            target: 'http://10.203.3.46:8000',
             changeOrigin: true,
         },
         '/csv': {
-            target: 'http://localhost:8000',
+            target: 'http://10.203.3.46:8000',
             changeOrigin: true,
         },
         

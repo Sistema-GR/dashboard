@@ -98,7 +98,7 @@ export default {
     const fetchData = async () => {
       try {
         const token = await getAccessToken();
-        const response = await axios.get('http://127.0.0.1:8000/csv/opencalc/list-opencalc/', {
+        const response = await axios.get('http://10.203.3.46:8000/csv/opencalc/list-opencalc/', {
           headers: { Authorization: `Bearer ${token}` },
         });
         
@@ -136,7 +136,7 @@ export default {
         try {
           const token = await getAccessToken();
           
-          const response = await axios.post('http://127.0.0.1:8000/csv/opencalc/activate-opencalc/', 
+          const response = await axios.post('http://10.203.3.46:8000/csv/opencalc/activate-opencalc/', 
             { calc_id: idParaAtivar },
             { headers: { Authorization: `Bearer ${token}` } }
           );
