@@ -60,8 +60,15 @@
 
   </div>
 
-  <Drawer ref="drawerRef" :title="drawerTitle" v-model:rowData="selectedRowData"
-   :columns="filteredColumns" @update:rowData="updateRowData" @drawer-closed="handleDrawerClosed" />
+  <Drawer 
+  ref="drawerRef" 
+  :title="drawerTitle" 
+  v-model:rowData="selectedRowData"
+  :columns="columnsForDrawer" 
+  @update:rowData="updateRowData" 
+  @drawer-closed="handleDrawerClosed" 
+  :fileKey="props.fileKey"
+  />
 </template>
 
 <script setup>
@@ -94,6 +101,14 @@ const props = defineProps({
   isViewOnly: {
     type: Boolean,
     default: false
+  },
+  editableColumns: {
+    type: Array,
+    default: null
+  },
+  fileKey: {
+    type: String,
+    default: ''
   }
 });
 
@@ -280,5 +295,13 @@ async function saveRowData(person) {
     name: 'admin-view-rewards',
   });
 }
+
+const columnsForDrawer = computed(() => {
+  if (props.editableColumns) {
+    const editableKeys = props.editableColumns.map(c => c.key);
+    return filteredColumns.value.filter(c => editableKeys.includes(c.key));
+  }
+  return filteredColumns.value;
+});
 
 </script>

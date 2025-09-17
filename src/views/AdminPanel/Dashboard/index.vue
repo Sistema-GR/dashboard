@@ -107,12 +107,6 @@
         </div>
       </div>
       <div class="mt-6 mr-4 sm:mr-10 text-right">
-        <button
-          @click="navigateHome"
-          class="bg-[#3459A2] text-white px-6 py-2 rounded-[10px] hover:bg-[#203661] transition duration-300"
-        >
-          Sair
-        </button>
       </div>
     </div>
   </Whiteboard>
@@ -193,9 +187,6 @@ export default {
 
     onMounted(fetchDashboardData);
 
-    const navigateHome = () => {
-      router.push({ name: 'home' });
-    };
 
     const formattedDashboardData = computed(() => {
       const totalRecebeFormatado = totalRecebem.value;
@@ -312,7 +303,6 @@ export default {
       cards,
       downloadCriteriosCSV,
       formattedDashboardData,
-      navigateHome,
     };
   }
 };
