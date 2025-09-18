@@ -23,7 +23,13 @@
             </thead>
 
             <tbody class="bg-white">
-              <tr v-for="person in visiblePeople" :key="person.matricula" class="even:bg-gray-50">
+              <tr 
+                v-for="person in visiblePeople" 
+                :key="person.matricula" 
+                class="even:bg-gray-50 hover:bg-indigo-50"
+                @mouseenter="isAppealsMode && $emit('show-hover', person.appeal_details, $event)"
+                @mouseleave="isAppealsMode && $emit('hide-hover')"
+              >
                 <td v-for="column in filteredColumns" :key="column.key" class="whitespace-nowrap py-4 pl-4 pr-3 text-15 font-medium text-gray-900 sm:pl-3">
                   {{ column.format ? column.format(person[column.key]) : person[column.key] }}
                 </td>
@@ -60,8 +66,15 @@
 
   </div>
 
-  <Drawer ref="drawerRef" :title="drawerTitle" v-model:rowData="selectedRowData"
-   :columns="filteredColumns" @update:rowData="updateRowData" @drawer-closed="handleDrawerClosed" />
+  <Drawer 
+  ref="drawerRef" 
+  :title="drawerTitle" 
+  v-model:rowData="selectedRowData"
+  :columns="columnsForDrawer" 
+  @update:rowData="updateRowData" 
+  @drawer-closed="handleDrawerClosed" 
+  :fileKey="props.fileKey"
+  />
 </template>
 
 <script setup>
@@ -94,10 +107,26 @@ const props = defineProps({
   isViewOnly: {
     type: Boolean,
     default: false
-  }
+  },
+  editableColumns: {
+    type: Array,
+    default: null
+  },
+  fileKey: {
+    type: String,
+    default: ''
+  },
+  isAppealsMode: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-const emit = defineEmits(['row-updated', 'columns-loaded']);
+watch(() => props.isAppealsMode, (newValue) => {
+  console.log('PrimaryTable prop isAppealsMode mudou para:', newValue);
+}, { immediate: true });
+
+const emit = defineEmits(['row-updated', 'columns-loaded', 'show-hover', 'hide-hover']);
 
 const router = useRouter();
 const itemsPerPage = 10;
@@ -204,7 +233,7 @@ async function fetchPeople() {
       });
       peopleData = response.data;
       if (peopleData && peopleData.length > 0) {
-        columnsData = Object.keys(peopleData[0]);
+        columnsData = Object.keys(peopleData[0]).filter(key => key !== 'appeal_details');
       } else {
         columnsData = [];
       }
@@ -280,5 +309,13 @@ async function saveRowData(person) {
     name: 'admin-view-rewards',
   });
 }
+
+const columnsForDrawer = computed(() => {
+  if (props.editableColumns) {
+    const editableKeys = props.editableColumns.map(c => c.key);
+    return filteredColumns.value.filter(c => editableKeys.includes(c.key));
+  }
+  return filteredColumns.value;
+});
 
 </script>
