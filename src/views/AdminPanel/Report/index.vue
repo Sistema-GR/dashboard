@@ -37,7 +37,6 @@ export default {
     const searchCriteria = ref({ query: '', column: 'all' });
     const filterableColumns = ref([]);
     const selectedRoute = ref('Report')
-    const titulo = ref('Admin Panel')
 
     const handleSearch = (criteria) => {
             searchCriteria.value = criteria
@@ -71,9 +70,7 @@ export default {
         'Report': 'Relatórios Finais',
     }
     const titulo = computed(() => map[sidebarStore.reportPage] || 'Page')
-    const handleSearch = (query) => {
-        searchQuery.value = query
-    }
+    
     return {
       searchCriteria,
       filterableColumns,

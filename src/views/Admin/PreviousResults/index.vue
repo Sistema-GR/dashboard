@@ -140,7 +140,7 @@ export default {
 
     goToVersionManager(parentId) {
       this.$router.push({ name: 'versionmanager', params: { id: parentId } });
-    }
+    },
     async copiarCalculo(item) {
       try {
         const token = await getAccessToken();

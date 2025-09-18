@@ -111,6 +111,8 @@ async function fetchCalculusList() {
         alert('Não foi possível carregar os cálculos.');
     } finally {
         isLoading.value = false;
+    }
+}
 export default {
     name: "AllocCalc",
     components: { Whiteboard, PrimaryButton },
