@@ -29,6 +29,12 @@
             </select>
           </div>
           <div class="md:text-right">
+             <PrimaryButton
+              :value="isAppealsModeActive ? 'Sair do Modo Recurso' : 'Ativar Modo Recurso'"
+              @click="toggleAppealsMode"
+              :customColor="isAppealsModeActive ? 'bg-orange-500 hover:bg-orange-600' : 'bg-blue-600 hover:bg-blue-700'"
+              title="Filtra a visualização para focar apenas em usuários com recursos abertos."
+            />
             <PrimaryButton 
               value="Reprocessar e Publicar Versão"
               @click="publishVersion"
@@ -54,11 +60,21 @@
             :is-view-only="isViewOnlyMode"
             :editable-columns="currentEditableColumns"
             :file-key="selectedFileToEdit"
+            @show-hover="handleShowHover"
+            @hide-hover="handleHideHover"
+            :is-appeals-mode="isAppealsModeActive"
           />
         </div>
       </div>
     </div>
   </Whiteboard>
+  <Teleport to="body">
+    <EditHover
+      v-if="hoveredAppealData"
+      :appeal-data="hoveredAppealData"
+      :style="hoverStyle"
+    />
+  </Teleport>
 </template>
 
 <script setup>
@@ -71,6 +87,7 @@ import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
 import PrimaryTable from '@/components/Table/PrimaryTable.vue';
 import Search from '@/components/Search/Search.vue';
+import EditHover from '@/components/EditHover/EditHover.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -84,6 +101,33 @@ const isViewOnlyMode = computed(() => route.query.viewOnly === 'true');
 
 const searchCriteria = ref({ query: '', column: 'all' });
 const filterableColumns = ref([]);
+
+const isAppealsModeActive = ref(false);
+const hoveredAppealData = ref(null);
+const hoverPosition = ref({ top: '0px', left: '0px' });
+
+const hoverStyle = computed(() => ({
+  position: 'fixed', 
+  top: hoverPosition.value.top,
+  left: hoverPosition.value.left,
+  transform: 'translate(15px, 15px)',
+  zIndex: 9999, 
+}));
+
+function handleShowHover(appealData, event) {
+  console.log('%cEvento recebido em editVersion!', 'color: green; font-weight: bold;', appealData);
+  if (!appealData || Object.keys(appealData).length === 0) return;
+  
+  hoveredAppealData.value = appealData;
+  hoverPosition.value = {
+    top: `${event.clientY}px`,
+    left: `${event.clientX}px`,
+  };
+}
+
+function handleHideHover() {
+  hoveredAppealData.value = null;
+}
 
 const handleSearch = (criteria) => {
   searchCriteria.value = criteria;
@@ -99,7 +143,15 @@ const pageTitle = computed(() => {
 
 const selectedFileToEdit = ref('funcionarios'); 
 
-const editableFiles = ref([
+const appealsModeFiles = [
+  { name: 'Funcionários', key: 'funcionarios' },
+  { name: 'Demissões', key: 'demissoes' },
+  { name: 'Frequência', key: 'frequencia' },
+  { name: 'Atividades', key: 'atividades' },
+  { name: 'Formações', key: 'formacoes' },
+];
+
+const allEditableFiles  = ref([
   { name: 'Funcionários', key: 'funcionarios' },
   { name: 'Demissões', key: 'demissoes' },
   { name: 'Frequência', key: 'frequencia' },
@@ -116,9 +168,20 @@ const editableFiles = ref([
   { name: 'Função, Grupo e Etapas', key: 'funcao_grupo_etapas' },
 ]);
 
-const tableRoute = computed(() => `calculus/${calculusId.value}/cleaned-file/${selectedFileToEdit.value}`);
+const editableFiles = computed(() => {
+  return isAppealsModeActive.value ? appealsModeFiles : allEditableFiles.value;
+});
 
-watch(selectedFileToEdit, () => {
+const tableRoute = computed(() => {
+  let baseRoute = `calculus/${calculusId.value}/cleaned-file/${selectedFileToEdit.value}`;
+  if (isAppealsModeActive.value) {
+    return `${baseRoute}?appeals_only=true`;
+  }
+  return baseRoute;
+});
+
+
+watch([selectedFileToEdit, isAppealsModeActive], () => {
   tableKey.value++;
 });
 
@@ -215,4 +278,13 @@ async function publishVersion() {
     isLoading.value = false;
   }
 }
+
+function toggleAppealsMode() {
+  isAppealsModeActive.value = !isAppealsModeActive.value;
+  const allowedKeys = ['funcionarios', 'demissoes', 'atividades', 'frequencia', 'formacoes'];
+  if (isAppealsModeActive.value && !allowedKeys.includes(selectedFileToEdit.value)) {
+    selectedFileToEdit.value = 'funcionarios';
+  }
+}
+
 </script>
