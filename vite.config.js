@@ -19,7 +19,9 @@ export default defineConfig({
     proxy: {
         // Redireciona qualquer chamada para /recursos/...
         '/recursos': {
+
             target: 'http://127.0.0.1:8000',
+
             changeOrigin: true,
         },
 
@@ -29,6 +31,7 @@ export default defineConfig({
         },
         '/csv': {
             target: 'http://127.0.0.1:8000',
+
             changeOrigin: true,
         },
         

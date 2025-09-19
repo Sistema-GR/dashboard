@@ -79,7 +79,7 @@ export default {
           return;
         }
 
-        const response = await axios.get("http://127.0.0.1:8000/csv/get-list-calculus/", {
+        const response = await axios.get("http://10.203.3.46:8000/csv/get-list-calculus/", {
           headers: { Authorization: `Bearer ${token}` }
         });
         
@@ -144,7 +144,7 @@ export default {
     async copiarCalculo(item) {
       try {
         const token = await getAccessToken();
-        const response = await axios.post("http://127.0.0.1:8000/csv/copy-calculus/", { calc_id: item.id }, {
+        const response = await axios.post("http://10.203.3.46:8000/csv/copy-calculus/", { calc_id: item.id }, {
           headers: { Authorization: `Bearer ${token}` }
         });
         alert(`Cálculo copiado com sucesso! Novo ID: ${response.data.new_calculus_id}`);
@@ -167,6 +167,7 @@ export default {
         const response = await axios.post(
           "http://127.0.0.1:8000/csv/api/set-active-calculus/",
           { calc_id: calculusId },
+
           {
             headers: { Authorization: `Bearer ${token}` }
           }
@@ -179,12 +180,15 @@ export default {
     },
 
     async excluirCalculo(calculusId) {
+
       if (!confirm('Tem certeza que deseja excluir esta versão? Esta ação não pode ser desfeita.')) {
+
         return;
       }
       try {
         const token = await getAccessToken();
         await axios.post(
+
           `http://127.0.0.1:8000/csv/calculus/${calculusId}/delete/`, 
           {},
           { headers: { Authorization: `Bearer ${token}` } }
@@ -193,6 +197,7 @@ export default {
         alert('Versão excluída com sucesso!');
         
         await this.fetchCalculus();
+
 
       } catch (error) {
         console.error('Erro ao excluir cálculo:', error);

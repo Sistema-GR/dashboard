@@ -123,7 +123,6 @@ const props = defineProps({
 });
 
 
-
 const emit = defineEmits(['row-updated', 'columns-loaded', 'show-hover', 'hide-hover']);
 
 const router = useRouter();

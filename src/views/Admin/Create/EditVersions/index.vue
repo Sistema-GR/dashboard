@@ -38,6 +38,7 @@
               title="Substituir um arquivo de entrada completo por uma nova versão."
             />
             <PrimaryButton
+
               :value="isAppealsModeActive ? 'Sair do Modo Recurso' : 'Ativar Modo Recurso'"
               @click="toggleAppealsMode"
               :customColor="isAppealsModeActive ? 'bg-orange-500 hover:bg-orange-600' : 'bg-blue-600 hover:bg-blue-700'"
@@ -106,6 +107,7 @@ import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
 import PrimaryTable from '@/components/Table/PrimaryTable.vue';
 import Search from '@/components/Search/Search.vue';
 import EditHover from '@/components/EditHover/EditHover.vue';
+
 import FileReplaceModal from '@/components/FileReplaceModal/FileReplaceModal.vue';
 
 const route = useRoute();
@@ -194,6 +196,7 @@ const allEditableFiles  = ref([
   { name: 'Dados Gerais (Nomes de Unidades)', key: 'dados_gerais' },
   { name: 'Função, Grupo e Etapas', key: 'funcao_grupo_etapas' },
 ]);
+
 
 const editableFiles = computed(() => {
   return isAppealsModeActive.value ? appealsModeFiles : allEditableFiles.value;
