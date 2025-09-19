@@ -107,12 +107,6 @@
         </div>
       </div>
       <div class="mt-6 mr-4 sm:mr-10 text-right">
-        <button
-          @click="navigateHome"
-          class="bg-[#3459A2] text-white px-6 py-2 rounded-[10px] hover:bg-[#203661] transition duration-300"
-        >
-          Sair
-        </button>
       </div>
     </div>
   </Whiteboard>
@@ -133,12 +127,11 @@ export default {
   components: { Whiteboard, UsersIcon, BanknotesIcon, DocumentDuplicateIcon, ArrowDownTrayIcon },
 
   setup() {
-    const dashboardData = ref(null); // Iniciar como nulo para verificações mais fáceis
-    const dashboardMotivos = ref(null);
+    const dashboardAnalysisData = ref(null);
     const totalRecebem = ref(0);
     const totalNaoRecebem = ref(0);
     const totalAPagar = ref(0);
-    const chartDataFaixaPagamento = ref([]); // Manter os dados do gráfico como reativos
+    const chartDataFaixaPagamento = ref([]);
     const router = useRouter();
 
     const fetchDashboardData = async () => {
@@ -151,18 +144,16 @@ export default {
         }
 
         // Requisição para critérios para calcular quem recebe/não recebe
-        const responseCriterios = await axios.get('http://127.0.0.1:8000/csv/process/criterios/', {
+        const responseCriterios = await axios.get('http://10.203.3.46:8000/csv/process/criterios/', {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         const dataCriterios = responseCriterios.data;
 
-        // Atualiza os totais reativos
         totalRecebem.value = dataCriterios.filter(item => item.recebe_gratificacao === true).length;
         totalNaoRecebem.value = dataCriterios.filter(item => item.recebe_gratificacao === false).length;
         totalAPagar.value = dataCriterios.reduce((sum, item) => sum + parseFloat(item.valor_total || 0), 0);
         
-        // Lógica para faixa de pagamento
         const faixaPagamento = [
           { label: "Até R$ 1.500", value: 0 },
           { label: "De R$ 1.500 a R$ 3.000", value: 0 },
@@ -184,35 +175,22 @@ export default {
 
         chartDataFaixaPagamento.value = faixaPagamento;
 
-        // Requisição para os dados principais do dashboard
-        const responseFuncionarios = await axios.get('http://127.0.0.1:8000/csv/process/funcionarios/', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        dashboardData.value = responseFuncionarios.data;
-
-
         // Requisição para os motivos de não recebimento
-        const responseMotivos = await axios.get('http://127.0.0.1:8000/csv/get-import-files/', {
+        const responseAnalysis = await axios.get('http://10.203.3.46:8000/csv/get-import-files/', {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        dashboardMotivos.value = responseMotivos.data;
+        dashboardAnalysisData.value = responseAnalysis.data;
 
       } catch (error) {
         console.error("Erro ao buscar os dados do dashboard:", error);
-        // Considere definir um estado de erro aqui para exibir uma mensagem ao usuário
       }
     };
 
     onMounted(fetchDashboardData);
 
-    const navigateHome = () => {
-      router.push({ name: 'home' });
-    };
 
     const formattedDashboardData = computed(() => {
-      // Usar os valores reativos diretamente para os totais
       const totalRecebeFormatado = totalRecebem.value;
       const totalNaoRecebeFormatado = totalNaoRecebem.value;
       const totalAPagarFormatado = new Intl.NumberFormat('pt-BR', {
@@ -246,7 +224,7 @@ export default {
     ]);
 
     const chartSections = computed(() => {
-        const motivoCombinadoCounts = dashboardMotivos.value?.analysis_result?.motivo_combinado_counts || {};
+        const motivoCombinadoCounts = dashboardAnalysisData.value?.analysis_result?.motivo_combinado_counts || {};
         
         return [
             {
@@ -289,8 +267,8 @@ export default {
     ];
 
     const version = computed(() => {
-      if (!dashboardData.value?.version_info) return [];
-      const { version_info } = dashboardData.value;
+      if (!dashboardAnalysisData.value?.version_info) return [];
+      const { version_info } = dashboardAnalysisData.value;
       return [
         { label: 'Versão', value: version_info.description || 'Desconhecido' },
         { label: 'Data de Criação', value: new Date(version_info.created_at).toLocaleDateString('pt-BR') },
@@ -328,7 +306,6 @@ export default {
       cards,
       downloadCriteriosCSV,
       formattedDashboardData,
-      navigateHome,
     };
   }
 };

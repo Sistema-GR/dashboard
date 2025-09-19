@@ -1,13 +1,21 @@
 <template>
     <Whiteboard :title="titulo" >
         <div class="flex flex-row w-full items-center gap-3 justify-between px-4 sm:px-10 mt-4">
-            <Search @search="handleSearch" />
+            <Search 
+              :columns="filterableColumns"
+              @search="handleSearch"
+            />
             <div v-if=" sidebarStore.reportPage == 'Frequency'" class="flex flex-row items-center  gap-1 w-full max-w-64 cursor-pointer">
                <p class="text-gray-800 font-medium hover:text-blue-900" @click="sidebarStore.setReportPage('Infrequency')">Dados de Infrequência</p>
             </div>
         </div>   
         <div class="w-full pb-5 capitalize">        
-            <PrimaryTable :route="sidebarStore.reportPage" :searchQuery="searchQuery" />
+            <PrimaryTable 
+              :route="sidebarStore.reportPage"
+              :searchQuery="searchQuery"
+              :searchCriteria="searchCriteria"
+              @columns-loaded="handleColumnsLoaded"
+            />
         </div>
     </Whiteboard>
 </template>
@@ -26,6 +34,24 @@ export default {
     components: { Whiteboard, PrimaryTable, TextInput, Search, Pagination},
 
     setup() {
+    const searchCriteria = ref({ query: '', column: 'all' });
+    const filterableColumns = ref([]);
+    const selectedRoute = ref('Report')
+
+    const handleSearch = (criteria) => {
+            searchCriteria.value = criteria
+    }
+
+    const handleColumnsLoaded = (columns) => {
+            filterableColumns.value = columns;
+    }
+
+    function handleRouteUpdate(newRoute) {
+      selectedRoute.value = newRoute
+      titulo.value = routeToTitle(newRoute)
+      filterableColumns.value = [];
+    }
+
     const sidebarStore = useSidebarStore();
     const searchQuery = ref('');
     const map = {
@@ -44,12 +70,13 @@ export default {
         'Report': 'Relatórios Finais',
     }
     const titulo = computed(() => map[sidebarStore.reportPage] || 'Page')
-    const handleSearch = (query) => {
-        searchQuery.value = query
-    }
+    
     return {
-      searchQuery,
+      searchCriteria,
+      filterableColumns,
       handleSearch,
+      handleColumnsLoaded,
+      selectedRoute,
       titulo,
       sidebarStore,
     }

@@ -23,7 +23,13 @@
             </thead>
 
             <tbody class="bg-white">
-              <tr v-for="person in visiblePeople" :key="person.matricula" class="even:bg-gray-50">
+              <tr 
+                v-for="person in visiblePeople" 
+                :key="person.matricula" 
+                class="even:bg-gray-50 hover:bg-indigo-50"
+                @mouseenter="isAppealsMode && $emit('show-hover', person.appeal_details, $event)"
+                @mouseleave="isAppealsMode && $emit('hide-hover')"
+              >
                 <td v-for="column in filteredColumns" :key="column.key" class="whitespace-nowrap py-4 pl-4 pr-3 text-15 font-medium text-gray-900 sm:pl-3">
                   {{ column.format ? column.format(person[column.key]) : person[column.key] }}
                 </td>
@@ -60,7 +66,15 @@
 
   </div>
 
-  <Drawer ref="drawerRef" :title="drawerTitle" v-model:rowData="selectedRowData" :columns="filteredColumns" @update:rowData="updateRowData" @drawer-closed="handleDrawerClosed" />
+  <Drawer 
+  ref="drawerRef" 
+  :title="drawerTitle" 
+  v-model:rowData="selectedRowData"
+  :columns="columnsForDrawer" 
+  @update:rowData="updateRowData" 
+  @drawer-closed="handleDrawerClosed" 
+  :fileKey="props.fileKey"
+  />
 </template>
 
 <script setup>
@@ -69,6 +83,9 @@ import { EyeIcon } from "@heroicons/vue/24/outline";
 import { debounce } from 'lodash';
 import { renameColumns } from '@/service/columnRenaming';
 import { useRouter } from 'vue-router';
+import { getAccessToken } from '@/service/token';
+import axios from 'axios';
+
 import Drawer from '../Drawer/Drawer.vue';
 import Pagination from '../Pagination/Pagination.vue';
 import Loading from '../Loading/Loading.vue';
@@ -79,11 +96,37 @@ const props = defineProps({
     type: String,
     required: true
   },
-  searchQuery: {
+  searchCriteria: {
+    type: Object,
+    default: () => ({ query: '', column: 'all' })
+  },
+  isDynamicRoute: {
+    type: Boolean,
+    default: false
+  },
+  isViewOnly: {
+    type: Boolean,
+    default: false
+  },
+  editableColumns: {
+    type: Array,
+    default: null
+  },
+  fileKey: {
     type: String,
     default: ''
-  }
+  },
+  isAppealsMode: {
+    type: Boolean,
+    default: false,
+  },
 });
+
+watch(() => props.isAppealsMode, (newValue) => {
+  console.log('PrimaryTable prop isAppealsMode mudou para:', newValue);
+}, { immediate: true });
+
+const emit = defineEmits(['row-updated', 'columns-loaded', 'show-hover', 'hide-hover']);
 
 const router = useRouter();
 const itemsPerPage = 10;
@@ -113,16 +156,32 @@ const drawerTitle = computed(() => {
   return titles[props.route] || '';
 });
 
-const showEdit = computed(() => ['Results', 'Profissional', 'Calendar', 'Steps', 'Frequency', 'Activities', 'Service', 'Training', 'StageGroup'].includes(props.route));
+const showEdit = computed(() => {
+  if (props.isViewOnly) {
+    return false;
+  }
+  const editableRoutes = ['Results', 'Profissional', 'Calendar', 'Steps', 'Frequency', 'Activities', 'Service', 'Training', 'StageGroup'];
+  return editableRoutes.includes(props.route) || props.isDynamicRoute;
+});
 const showGr = computed(() => props.route === 'Report');
 
 const filteredPeopleByQuery = computed(() => {
-  if (!props.searchQuery) return filteredPeople.value;
+  const { query, column } = props.searchCriteria;
 
-  const query = props.searchQuery.toLowerCase();
-  return filteredPeople.value.filter(person =>
-    Object.values(person).some(value => String(value).toLowerCase().includes(query))
-  );
+  if (!query) return filteredPeople.value;
+
+  const lowerCaseQuery = query.toLowerCase();
+
+  return filteredPeople.value.filter(person => {
+    if (column === 'all') {
+      return Object.values(person).some(value => 
+        String(value).toLowerCase().includes(lowerCaseQuery)
+      );
+    } else {
+      const cellValue = person[column];
+      return cellValue && String(cellValue).toLowerCase().includes(lowerCaseQuery);
+    }
+  });
 });
 
 const totalPages = computed(() => Math.ceil(filteredPeopleByQuery.value.length / itemsPerPage));
@@ -139,10 +198,10 @@ watch(() => props.route, (newRoute) => {
   }
 }, { immediate: true });
 
-watch(() => props.searchQuery, debounce(() => {
+watch(() => props.searchCriteria, debounce(() => {
   currentPage.value = 1; 
   loadMore();
-}, 300)); 
+}, 300), { deep: true });
 
 watch(currentPage, loadMore);
 
@@ -163,19 +222,48 @@ function toggleFilterMenu(column) {
 
 async function fetchPeople() {
   currentPage.value = 1;
-
   isLoading.value = true; 
   try {
-    const { people, columns } = await loadPeopleData(props.route);
-    filteredPeople.value = people;
-    filteredColumns.value = renameColumns(columns, props.route);
+    let peopleData, columnsData;
+
+    if (props.isDynamicRoute) {
+      const token = await getAccessToken();
+      const response = await axios.get(`http://127.0.0.1:8000/csv/${props.route}`, {
+          headers: { Authorization: `Bearer ${token}` }
+      });
+      peopleData = response.data;
+      if (peopleData && peopleData.length > 0) {
+        columnsData = Object.keys(peopleData[0]).filter(key => key !== 'appeal_details');
+      } else {
+        columnsData = [];
+      }
+    } else {
+      const { people, columns } = await loadPeopleData(props.route);
+      peopleData = people;
+      columnsData = columns;
+    }
+    
+    if (props.isDynamicRoute) {
+      filteredColumns.value = columnsData.map(key => ({
+        key: key,
+        label: key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ') 
+      }));
+    } else {
+      filteredColumns.value = renameColumns(columnsData, props.route);
+    }
+    
+    emit('columns-loaded', filteredColumns.value);
+    filteredPeople.value = peopleData;
+
     loadMore(); 
   } catch (error) {
+    console.error('Erro ao carregar dados:', error);
     alert('Erro ao carregar dados. Tente novamente mais tarde.');
   } finally {
     isLoading.value = false;
   }
 }
+
 
 function loadMore() {
   const start = (currentPage.value - 1) * itemsPerPage;
@@ -187,7 +275,9 @@ function updateRowData(updatedRowData) {
   const index = filteredPeople.value.findIndex(person => person.matricula === updatedRowData.matricula);
   if (index !== -1) {
     filteredPeople.value[index] = { ...filteredPeople.value[index], ...updatedRowData };
-    loadMore(); 
+    loadMore();
+
+    emit('row-updated', updatedRowData);
   } else {
     alert("Erro ao atualizar dados: matrícula não encontrada.");
   }
@@ -219,5 +309,13 @@ async function saveRowData(person) {
     name: 'admin-view-rewards',
   });
 }
+
+const columnsForDrawer = computed(() => {
+  if (props.editableColumns) {
+    const editableKeys = props.editableColumns.map(c => c.key);
+    return filteredColumns.value.filter(c => editableKeys.includes(c.key));
+  }
+  return filteredColumns.value;
+});
 
 </script>
