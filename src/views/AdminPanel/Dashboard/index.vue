@@ -144,7 +144,7 @@ export default {
         }
 
         // Requisição para critérios para calcular quem recebe/não recebe
-        const responseCriterios = await axios.get('http://10.203.3.46:8000/csv/process/criterios/', {
+        const responseCriterios = await axios.get('http://127.0.0.1:8000/csv/process/criterios/', {
           headers: { Authorization: `Bearer ${token}` },
         });
 

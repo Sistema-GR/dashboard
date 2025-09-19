@@ -3,7 +3,7 @@ import { getAccessToken } from './token'; // Importa a função que obtém o tok
 
 // Configuração do axios com baseURL
 const api = axios.create({
-  baseURL: 'http://10.203.3.46:8000/csv/process/', // URL base para todos os endpoints
+  baseURL: 'http://127.0.0.1:8000/csv/process/', // URL base para todos os endpoints
 });
 
 // Função genérica para fazer o download do CSV

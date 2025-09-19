@@ -79,7 +79,7 @@ export default {
           return;
         }
 
-        const response = await axios.get("http://10.203.3.46:8000/csv/get-list-calculus/", {
+        const response = await axios.get("http://127.0.0.1:8000/csv/get-list-calculus/", {
           headers: { Authorization: `Bearer ${token}` }
         });
         
@@ -144,7 +144,7 @@ export default {
     async copiarCalculo(item) {
       try {
         const token = await getAccessToken();
-        const response = await axios.post("http://10.203.3.46:8000/csv/copy-calculus/", { calc_id: item.id }, {
+        const response = await axios.post("http://127.0.0.1:8000/csv/copy-calculus/", { calc_id: item.id }, {
           headers: { Authorization: `Bearer ${token}` }
         });
         alert(`Cálculo copiado com sucesso! Novo ID: ${response.data.new_calculus_id}`);
