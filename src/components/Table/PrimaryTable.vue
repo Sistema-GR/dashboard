@@ -122,9 +122,7 @@ const props = defineProps({
   },
 });
 
-watch(() => props.isAppealsMode, (newValue) => {
-  console.log('PrimaryTable prop isAppealsMode mudou para:', newValue);
-}, { immediate: true });
+
 
 const emit = defineEmits(['row-updated', 'columns-loaded', 'show-hover', 'hide-hover']);
 

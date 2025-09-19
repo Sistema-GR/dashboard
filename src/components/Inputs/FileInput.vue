@@ -91,7 +91,7 @@ export default {
     },
     baseUrl: {
       type: String,
-      default: window.__VUE__API_BASE_URL || 'http://10.203.3.46:8000',
+      default: window.__VUE__API_BASE_URL || 'http://127.0.0.1:8000',
     },
     isUploading: {
       type: Boolean,

@@ -46,11 +46,6 @@
                   @click="goToEditPage(version.id)"
                   customColor="bg-green-600 hover:bg-green-700"
                 />
-                <PrimaryButton
-                  value="Publicar Versão"
-                  @click="publishVersion(version.id)"
-                  customColor="bg-indigo-600 hover:bg-indigo-700"
-                />
               </template>
               
               <!-- Ações para versão ARQUIVADA -->
@@ -131,26 +126,6 @@ async function createNewVersion(publishedId) {
   } catch (err) {
     console.error("Erro ao criar nova versão:", err);
     alert(`Falha ao criar nova versão: ${err.response?.data?.error || 'Erro desconhecido'}`);
-  }
-}
-
-// Ação para publicar um rascunho
-async function publishVersion(draftId) {
-  if (!confirm("Atenção: Publicar esta versão irá arquivar a versão publicada anterior. Deseja continuar?")) {
-    return;
-  }
-  try {
-    const token = await getAccessToken();
-    await axios.post(`http://127.0.0.1:8000/csv/calculus/${draftId}/publish/`, {}, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    
-    alert('Versão publicada com sucesso!');
-    await fetchVersions();
-    
-  } catch (err) {
-    console.error("Erro ao publicar versão:", err);
-    alert(`Falha ao publicar versão: ${err.response?.data?.error || 'Erro desconhecido'}`);
   }
 }
 

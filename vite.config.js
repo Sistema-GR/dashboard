@@ -19,16 +19,16 @@ export default defineConfig({
     proxy: {
         // Redireciona qualquer chamada para /recursos/...
         '/recursos': {
-            target: 'http://10.203.3.46:8000',
+            target: 'http://127.0.0.1:8000',
             changeOrigin: true,
         },
 
         '/auth': {
-            target: 'http://10.203.3.46:8000',
+            target: 'http://127.0.0.1:8000',
             changeOrigin: true,
         },
         '/csv': {
-            target: 'http://10.203.3.46:8000',
+            target: 'http://127.0.0.1:8000',
             changeOrigin: true,
         },
         
