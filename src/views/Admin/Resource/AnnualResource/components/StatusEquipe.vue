@@ -1,0 +1,226 @@
+<template>
+  <div class="mb-6 w-full">
+    <button @click="open = !open" class="w-full text-left px-6 py-3 justify-between bg-blue-50 rounded-[10px] focus:outline-none flex items-center">
+      <span class="text-25 font-bold text-black">Status por Equipe | Pessoa</span>
+      <ChevronDownIcon class="w-4 h-4 sm:w-5 sm:h-5" :class="{ 'rotate-180': open }"/>
+    </button>
+    
+    <div v-show="open" class="px-10">
+      <div class="flex flex-col gap-10 py-8 justify-center items-stretch">
+        <!-- Card Gráfico -->
+        <div class="flex flex-col gap-4 flex-1 w-full justify-center">
+          <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full max-w-full">
+            <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
+              Grafico
+            </div>
+            <div class="flex-1 flex items-center justify-center p-4 min-h-[260px] overflow-hidden">
+              <div class="w-full h-[220px] flex items-center justify-center overflow-hidden relative">
+                <canvas ref="chartStatus" class="w-full h-full !block relative z-10" style="max-width:100%;max-height:100%;display:block;"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+              <!-- Tabela de responsáveis -->
+        <div class="flex flex-col gap-4 flex-1 w-full">
+          <div class="bg-white rounded-[10px]  shadow-md rounded-t-lg flex-1 w-full">
+            <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
+              Responsáveis por Recurso
+            </div>
+            <div class="p-6 overflow-x-auto">
+              <table class="min-w-full text-15 text-center border-separate border-spacing-y-1">
+                <thead>
+                  <tr class="bg-[#2360a5] text-white">
+                    <th class="px-3 py-2 font-bold">Responsável</th>
+                    <th class="px-3 py-2 font-bold">Total</th>
+                    <th class="px-3 py-2 font-bold">Deferidos</th>
+                    <th class="px-3 py-2 font-bold">Indeferidos</th>
+                    <th class="px-3 py-2 font-bold">Parcialmente Deferidos</th>
+                    <th class="px-3 py-2 font-bold">% do Total</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white text-black">
+                  <tr v-for="responsible in responsaveis" :key="responsible.id">
+                    <td class="px-3 py-1">{{ responsible.name }}</td>
+                    <td class="px-3 py-1">{{ responsible.total }}</td>
+                    <td class="px-3 py-1">{{ responsible.deferidos }}</td>
+                    <td class="px-3 py-1">{{ responsible.indeferidos }}</td>
+                    <td class="px-3 py-1">{{ responsible.parcialmente_deferidos }}</td>
+                    <td class="px-3 py-1">{{ responsible.percentage }}%</td>
+                  </tr>
+                  <tr v-if="responsaveis.length === 0">
+                    <td colspan="6" class="px-4 py-8 text-center text-gray-500">
+                      Nenhum dado encontrado
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import { ref, onMounted, watch, nextTick } from 'vue'
+import Chart from 'chart.js/auto'
+import { ChevronDownIcon } from '@heroicons/vue/24/outline'
+
+export default {
+  name: 'StatusEquipe',
+  components: {
+    ChevronDownIcon
+  },
+   props: {
+    responsaveis: { type: Array, default: () => [] }
+  },
+  setup(props) {
+    const open = ref(true)
+    const chartStatus = ref(null)
+    let chartInstance = null
+
+    // Função para gerar paleta de cores azul
+    const generateBlueColorPalette = (count) => {
+      const darkest = '#1e3a8a'  // blue-900
+      const lightest = '#dbeafe' // blue-100
+      
+      // Converter hex para RGB
+      const hexToRgb = (hex) => {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+        return result ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16)
+        } : null
+      }
+      
+      const darkRgb = hexToRgb(darkest)
+      const lightRgb = hexToRgb(lightest)
+      
+      const colors = []
+      
+      for (let i = 0; i < count; i++) {
+        const ratio = count === 1 ? 0 : i / (count - 1)
+        
+        const r = Math.round(darkRgb.r + (lightRgb.r - darkRgb.r) * ratio)
+        const g = Math.round(darkRgb.g + (lightRgb.g - darkRgb.g) * ratio)
+        const b = Math.round(darkRgb.b + (lightRgb.b - darkRgb.b) * ratio)
+        
+        colors.push(`rgb(${r}, ${g}, ${b})`)
+      }
+      
+      return colors
+    }
+
+    const destroyChart = () => {
+      if (chartInstance) {
+        chartInstance.destroy()
+        chartInstance = null
+      }
+    }
+
+    const createChart = async () => {
+      await nextTick()
+      destroyChart()
+      if (!open.value) return
+      
+      await new Promise(resolve => setTimeout(resolve, 200))
+      
+      if (chartStatus.value && props.responsaveis.length > 0) {
+        const sortedData = [...props.responsaveis].sort((a, b) => b.total - a.total);
+        
+        const chartLabels = sortedData.map(d => d.name);
+        const chartData = sortedData.map(d => d.total);
+        // Gerar cores azuis baseadas na quantidade de barras
+        const blueColors = generateBlueColorPalette(chartLabels.length)
+        
+        // if (hasRealData) {
+        //   chartLabels = props.data.map(d => d.label || d.name || 'N/A')
+        //   chartData = props.data.map(d => d.value || d.count || 0)
+        // } else {
+        //   chartLabels = ['Tamires', 'Kamila Nunes', 'José Gonçalves', 'Janis Ellye', 'Geovani', 'Carlos Daniel', 'Aurea Vieira']
+        //   chartData = [11, 35, 102, 73, 107, 121, 182]
+        // }
+
+        
+        chartInstance = new Chart(chartStatus.value, {
+          type: 'bar',
+          data: {
+            labels: chartLabels,
+            datasets: [{
+              label: 'Quantidade de Recursos',
+              data: chartData,
+              backgroundColor: blueColors,
+              borderColor: blueColors.map(color => color.replace('rgb', 'rgba').replace(')', ', 0.8)')),
+              borderWidth: 1,
+              borderRadius: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { 
+                display: false 
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    return `${context.label}: ${context.parsed.y} recursos`
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: { 
+                  font: { size: 10 },
+                  maxRotation: 45
+                }
+              },
+              y: {
+                beginAtZero: true,
+                grid: { color: '#e5e7eb' },
+                ticks: { 
+                  font: { size: 12 },
+                  stepSize: 20
+                }
+              }
+            }
+          }
+        })
+      }
+    }
+
+    watch(() => props.responsaveis, () => {
+      if(open.value) createChart();
+    }, { deep: true });
+    
+    watch(() => open.value, (newValue) => {
+      if (newValue) {
+        setTimeout(() => {
+          createChart()
+        }, 300)
+      }
+    })
+
+    watch(() => props.data, () => {
+      createChart()
+    }, { deep: true })
+
+    onMounted(() => {
+      setTimeout(() => {
+        createChart()
+      }, 500)
+    })
+
+    return {
+      open,
+      chartStatus
+    }
+  }
+}
+</script>

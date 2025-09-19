@@ -3,7 +3,7 @@ import { getAccessToken, setupAxiosInterceptors } from './token';
 
 // Configuração do axios
 const apiClient = axios.create({
-  baseURL: 'http://127.0.0.1:8000/',  
+  baseURL: 'http://10.203.3.46:8000/',  
   headers: {
     'Content-Type': 'application/json',
   },
@@ -92,20 +92,37 @@ export const createGeneralData = async (data) => {
 };
 
 export const uploadFile = async (file, endpoint) => {
-  try {
     const token = await getAccessToken();
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('funcionarios', funcionariosFile);
+    formData.append('demissoes', demissoesFile);
+    formData.append('frequencia', frequenciaFile);
+    formData.append('atividades', atividadesFile);
+    formData.append('tipoLocal', tipoLocalFile);
+    formData.append('dadosGerais', atividadesFile);
+    formData.append('funcoesGruposEtapas', funcoesGruposEtapasFile);
+    formData.append('aprenderMais', aprenderMaisFile);
+    formData.append('etapasMetas', etapasMetasFile);
+    formData.append('uesPercGr', uesPercGrFile);
+    formData.append('definicaoEtapas', definicaoEtapasFile);
+    formData.append('formacoes', formacoesFile);
+    formData.append('motivosInfrequencia', motivosInfrequenciaFile);
+    formData.append('dias_nao_contabilizados', diasNaoContabilizadosFile);
 
-    const response = await apiClient.post(endpoint, formData, {
+    fetch('/csv/process/unified-upload/', {
+      method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
       },
+      body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Success:', data);
+    })
+    .catch(error => {
+      console.error('Error:', error);
     });
-    return response.data;
-  } catch (error) {
-    handleApiError(error);
-  }
 };
 
 // Função para processar todos os arquivos
@@ -136,4 +153,43 @@ export const fetchEmployeeData = async () => {
     console.error("Erro ao buscar dados do funcionário:", error);
     throw error;
   }
+};
+
+
+export const getActiveCalculusFiles = () => {
+  return apiClient.get('/csv/api/calculus/active/files/');
+};
+
+export const downloadFileById = (fileId) => {
+  const downloadUrl = `${apiClient.defaults.baseURL}/csv/api/data-files/${fileId}/download/`;
+  const link = document.createElement('a');
+  link.href = downloadUrl;
+
+  apiClient.get(`/csv/api/data-files/${fileId}/download/`, {
+    responseType: 'blob',
+    headers: {
+        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+    }
+  }).then(response => {
+    const headerLine = response.headers['content-disposition'];
+    let filename = 'downloaded_file.csv';
+    if (headerLine) {
+        const filenameMatch = headerLine.match(/filename="(.+)"/);
+        if (filenameMatch && filenameMatch.length > 1) {
+            filename = filenameMatch[1];
+        }
+    }
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  }).catch(error => {
+    console.error('Erro no download do arquivo:', error);
+    alert('Não foi possível baixar o arquivo.');
+  });
 };

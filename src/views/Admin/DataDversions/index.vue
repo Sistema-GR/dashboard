@@ -1,132 +1,135 @@
 <template>
-    <Whiteboard title="Painel do Usuário" :isSidebarMinimized="isSidebarMinimized">
-        <div class="flex w-full p-2">
-            <h1 class="">Selecione a versão que será exibida no painel para todos os usuários</h1>
-        </div>
-        <div class="flex flex-col py-0 space-x-4 p-2 w-full pb-10 lg:flex-row">
-            <!-- Coluna Cálculo a Ativar -->
-            <div class="flex flex-col w-full items-center px-10">
-                <h2 class="font-semibold text-lg mb-2 border-b-2 w-full text-center my-2 leading-10">Cálculo</h2>
-                <div 
-                    v-for="(versao, index) in versoesCalculo" 
-                    :key="index"
-                    class="flex flex-col w-full border-2 mt-3 rounded-md shadow-sm p-3 hover:bg-gray-100 hover:transition-all hover:duration-200"
-                >
-                    <div class="flex w-full justify-between">
-                        <p>{{ versao.nome }}</p>
-                        <Toggle 
-                            class="scale-75"
-                            :modelValue="versao.ativa" 
-                            @update:modelValue="() => handleToggle('calculo', index)" 
-                        />
-                    </div>
-                    <div class="flex w-full justify-between mt-1">
-                        <p class="text-gray-400">{{ versao.descricao }}</p>
-                        <p class="text-gray-900">{{ versao.data }}</p>
-                    </div>
+  <Whiteboard title="Ativação de Versão para Usuários" :hideBreadcrumbs="false">
+    <div class="flex w-full p-8">
+      <h1 class="text-center w-full font-semibold text-15 text-gray-800">
+        Selecione a versão que será exibida no painel para todos os usuários. Apenas uma versão pode estar ativa.
+      </h1>
+    </div>
+
+    <div class="flex flex-col gap-6 w-full pb-10 px-4 sm:px-10">
+      <!-- Loop sobre as "Famílias" de Cálculos -->
+      <div v-for="family in calculusFamilies" :key="family.parent_id" class="border rounded-lg bg-white shadow-sm">
+        <Disclosure v-slot="{ open }">
+          <!-- Cabeçalho da Família -->
+          <DisclosureButton class="w-full flex justify-between items-center bg-gray-50 text-gray-800 px-4 py-3 text-lg font-semibold rounded-t-lg">
+            <span>{{ family.description }}</span>
+            <ChevronDownIcon class="w-6 h-6 transition-transform" :class="{ 'rotate-180': open }" />
+          </DisclosureButton>
+          
+          <!-- Lista de Versões Publicadas -->
+          <DisclosurePanel class="text-gray-900">
+            <div v-for="versao in family.versions" :key="versao.id" class="border-t border-gray-200 px-4 py-3">
+              <div class="flex justify-between items-center">
+                <div class="flex flex-col gap-1">
+                  <span class="font-medium">{{ versao.descricao }}</span>
                 </div>
-            </div>
-
-            <div class="border"></div>
-
-            <!-- Coluna Recurso a Ativar -->
-            <div class="flex flex-col w-full items-center px-10">
-                <h2 class="font-semibold text-lg mb-2 border-b-2 w-full text-center my-2 leading-10">Recurso</h2>
-                <div 
-                    v-for="(versao, index) in versoesRecurso" 
-                    :key="index"
-                    class="flex flex-col w-full border-2 mt-3 rounded-md shadow-sm p-3 hover:bg-gray-100 hover:transition-all hover:duration-200"
-                >
-                    <div class="flex w-full justify-between">
-                        <p>{{ versao.nome }}</p>
-                        <Toggle 
-                            class="scale-75"
-                            :modelValue="versao.ativa" 
-                            @update:modelValue="() => handleToggle('recurso', index)" 
-                        />
-                    </div>
-                    <div class="flex w-full mt-1 gap-1">
-                       <FolderIcon class="w-5 h-auto stroke-gray-400" />
-                       <p class="text-gray-400">{{ versao.nome }}</p>
-                    </div>
+                <div class="flex items-center space-x-4">
+                   <span class="text-sm text-gray-500">{{ versao.data }}</span>
+                  <Toggle
+                    class="scale-90"
+                    :modelValue="versao.ativa"
+                    @update:modelValue="() => handleToggle(versao)"
+                  />
                 </div>
+              </div>
             </div>
-        </div>
+          </DisclosurePanel>
+        </Disclosure>
+      </div>
+    </div>
 
-        <!-- Modal de Confirmação -->
-        <div v-if="showConfirmation" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
-            <div class="bg-white p-5 rounded-md shadow-lg max-w-sm w-full text-center">
-                <h3 class="text-lg font-semibold mb-4">Deseja realmente alterar a versão ativa?</h3>
-                <div class="flex justify-around">
-                    <button @click="confirmToggle" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Sim</button>
-                    <button @click="cancelToggle" class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">Não</button>
-                </div>
-            </div>
+    <!-- Modal de Confirmação (inalterado) -->
+    <div v-if="showConfirmation" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
+      <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+        <h3 class="text-lg font-semibold mb-4">Deseja realmente alterar a versão ativa?</h3>
+        <p class="text-sm text-gray-600 mb-6">A versão atualmente ativa será desativada.</p>
+        <div class="flex justify-center gap-4">
+          <button @click="confirmToggle" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+            Sim, Ativar
+          </button>
+          <button @click="cancelToggle" class="px-6 py-2 bg-gray-200 rounded-md hover:bg-gray-300">
+            Não
+          </button>
         </div>
-
-        
-    </Whiteboard>
+      </div>
+    </div>
+  </Whiteboard>
 </template>
 
 <script>
-import { inject, ref } from 'vue';
-import { FolderIcon } from "@heroicons/vue/24/outline";
+import { ref, onMounted } from 'vue';
+import { ChevronDownIcon } from '@heroicons/vue/20/solid';
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import Toggle from '@/components/Toggle/Toggle.vue';
+import axios from 'axios';
+import { getAccessToken } from '@/service/token';
 
 export default {
-    name: "Ativos",
-    components: { Whiteboard, Toggle, FolderIcon },
-    setup() {
-        const isSidebarMinimized = inject('isSidebarMinimized');
-        
-        const versoesCalculo = ref([
-            { nome: 'Primeira Versão', descricao: 'Descrição: primeira versão realizada em 2024', data: '01/06/2024', ativa: false },
-            { nome: 'Segunda Versão', descricao: 'Descrição: segunda versão realizada em 2024', data: '01/07/2024', ativa: false },
-            { nome: 'Terceira Versão', descricao: 'Descrição: terceira versão realizada em 2024', data: '01/08/2024', ativa: false },
-            { nome: 'Quarta Versão', descricao: 'Descrição: quarta versão realizada em 2024', data: '01/09/2024', ativa: false }
-        ]);
+  name: 'DataVersions',
+  components: { Whiteboard, Toggle, ChevronDownIcon, Disclosure, DisclosureButton, DisclosurePanel },
+  setup() {
+    const calculusFamilies = ref([]);
+    const showConfirmation = ref(false);
+    const pendingVersion = ref(null);
 
-        const versoesRecurso = ref([
-            { nome: 'Recurso 1', descricao: 'Primeira Versão', ativa: false },
-            { nome: 'Recurso 2', descricao: 'Segunda Versão', ativa: false }
-        ]);
+    const fetchData = async () => {
+      try {
+        const token = await getAccessToken();
+        const response = await axios.get('http://10.203.3.46:8000/csv/opencalc/list-opencalc/', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        calculusFamilies.value = response.data;
+      } catch (error) {
+        console.error("Erro ao buscar as famílias de cálculo:", error);
+      }
+    };
 
-        const showConfirmation = ref(false);
-        const pendingVersion = ref({ type: null, index: null });
+    const handleToggle = (versionToActivate) => {
+      if (!versionToActivate.ativa) {
+        pendingVersion.value = versionToActivate;
+        showConfirmation.value = true;
+      }
+    };
 
-        const handleToggle = (type, index) => {
-            const versoes = type === 'calculo' ? versoesCalculo : versoesRecurso;
-            if (!versoes.value[index].ativa) {
-                pendingVersion.value = { type, index };
-                showConfirmation.value = true;
-            }
-        };
+    const confirmToggle = async () => {
+      if (!pendingVersion.value) return;
 
-        const confirmToggle = () => {
-            const { type, index } = pendingVersion.value;
-            const versoes = type === 'calculo' ? versoesCalculo : versoesRecurso;
+      const idParaAtivar = pendingVersion.value.id;
+      
+        try {
+          const token = await getAccessToken();
+          
+          const response = await axios.post('http://10.203.3.46:8000/csv/opencalc/activate-opencalc/', 
+            { calc_id: idParaAtivar },
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
 
-            // Desativa todas as versões do mesmo tipo
-            versoes.value.forEach((v, i) => v.ativa = i === index);
+          if (response.status === 200) {
+          // Atualiza o estado local para refletir a mudança imediatamente
+          calculusFamilies.value.forEach(family => {
+            family.versions.forEach(version => {
+              version.ativa = (version.id === idParaAtivar);
+            });
+          });
+        }
+      } catch (error) {
+        console.error("Erro detalhado ao ativar a versão:", error.response || error);
+        alert("Falha ao ativar a versão.");
+      } finally {
+        showConfirmation.value = false;
+        pendingVersion.value = null;
+      }
+    };
 
-            showConfirmation.value = false;
-        };
+    const cancelToggle = () => {
+      showConfirmation.value = false;
+      pendingVersion.value = null;
+    };
 
-        const cancelToggle = () => {
-            showConfirmation.value = false;
-            pendingVersion.value = { type: null, index: null };
-        };
+    onMounted(fetchData);
 
-        return {
-            isSidebarMinimized,
-            versoesCalculo,
-            versoesRecurso,
-            showConfirmation,
-            handleToggle,
-            confirmToggle,
-            cancelToggle,
-        };
-    },
-};
+    return { calculusFamilies, showConfirmation, handleToggle, confirmToggle, cancelToggle };
+  }
+}
 </script>

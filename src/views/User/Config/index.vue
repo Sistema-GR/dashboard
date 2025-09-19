@@ -1,43 +1,86 @@
 <template>
-    <Whiteboard title="Configurações" :isSidebarMinimized="isSidebarMinimized">
-        <div class="flex w-full gap-4 p-4 mb-4 bg-white rounded-lg shadow-sm, shadow-none">
-            <div class="flex p-1 bg-gray-100 rounded-full shadow-md">
-                <img class="w-24 object-cover h-auto rounded-lg" src="@/assets/images/profile-pattern.png" />
+  <Whiteboard title="Configurações" >
+        <div class="flex flex-col w-full lg:flex-row">
+            <div class="flex-1 rounded-[10px] shadow-lg">
+                <div class="bg-white p-8 rounded-[10px]">
+                    <form @submit.prevent="salvarConfiguracoes" class="space-y-6 max-w-2xl mx-auto">
+                        <!-- Nome completo -->
+                        <div>
+                            <label for="nomeCompleto" class="block text-15 font-medium text-gray-700 mb-2">
+                                Nome completo
+                            </label>
+                            <input
+                                disabled
+                                id="nomeCompleto"
+                                v-model="formData.nomeCompleto"
+                                type="text"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-[10px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                                placeholder="Digite seu nome completo"
+                            />
+                        </div>
 
-            </div>
-  
-            <div class="flex flex-row justify-between w-full items-center">
-                <div class="flex flex-col gap-1">
-                    <p class="text-lg font-semibold text-gray-800">{{ userFullName }}</p>
-                    <p class="text-sm text-gray-600">{{ userRole }}</p>
-                </div>
-    
-                <SecondaryButton label="Editar" class="mt-2 w-full lg:w-1/12"/>
-            </div>
-        </div>
-  
-        <div class="flex flex-col w-full gap-6 border-t-2 pt-6">
-            <p class="text-xl font-semibold text-gray-800">Dados Cadastrais</p>
-  
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-5">
-                <div>
-                    <p class="text-sm font-medium text-gray-700 mb-2">Nome</p>
-                    <input type="text" v-model="userFullName" disabled class="w-full p-2 border rounded-lg bg-gray-100" />
-                </div>
-    
-                <div>
-                    <p class="text-sm font-medium text-gray-700 mb-2">CPF</p>
-                    <input type="text" v-model="userCpf" disabled class="w-full p-2 border rounded-lg bg-gray-100" />
-                </div>
-    
-                <div>
-                    <p class="text-sm font-medium text-gray-700 mb-2">E-mail</p>
-                    <input type="email" v-model="userEmail" disabled class="w-full p-2 border rounded-lg bg-gray-100" />
-                </div>
-    
-                <div>
-                    <p class="text-sm font-medium text-gray-700 mb-2">Senha</p>
-                    <input type="password" v-model="userPassword" disabled class="w-full p-2 border rounded-lg bg-gray-100" />
+                        <!-- CPF -->
+                        <div>
+                            <label for="cpf" class="block text-15 font-medium text-gray-700 mb-2">
+                                CPF
+                            </label>
+                            <input
+                                disabled
+                                id="cpf"
+                                v-model="formData.cpf"
+                                type="text"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-[10px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                                placeholder="000.000.000-00"
+                                @input="formatarCPF"
+                            />
+                        </div>
+
+                        <!-- E-mail -->
+                        <div>
+                            <label for="email" class="block text-15 font-medium text-gray-700 mb-2">
+                                E-mail
+                            </label>
+                            <input
+                                disabled
+                                id="email"
+                                v-model="formData.email"
+                                type="email"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-[10px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                                placeholder="seuemail@exemplo.com"
+                            />
+                        </div>
+
+                        <!-- Senha atual -->
+                        <div>
+                            <label class="block text-15 font-medium text-gray-700 mb-2">Senha Atual</label>
+                            <input v-model="formData.senhaAtual" type="password" class="w-full p-3 border rounded-[10px]" placeholder="Digite sua senha atual" />
+                        </div>
+
+                        <!-- Nova senha -->
+                        <div>
+                            <label class="block text-15 font-medium text-gray-700 mb-2">Nova Senha</label>
+                            <input v-model="formData.novaSenha" type="password" class="w-full p-3 border rounded-[10px]" placeholder="Digite sua nova senha" @input="validarSenhas" />
+                            <p v-if="formData.novaSenha && formData.novaSenha.length < 6" class="text-red-500 text-15 mt-1">
+                                A senha deve ter pelo menos 6 caracteres
+                            </p>
+                        </div>
+
+                        <!-- Confirmar nova senha -->
+                        <div>
+                            <label class="block text-15 font-medium text-gray-700 mb-2">Confirmar Nova Senha</label>
+                            <input v-model="formData.confirmarSenha" type="password" class="w-full p-3 border rounded-[10px]" placeholder="Confirme sua nova senha" :class="{ 'border-red-500': senhasNaoConferem }" @input="validarSenhas" />
+                            <p v-if="senhasNaoConferem" class="text-red-500 text-15 mt-1">
+                                As senhas não conferem
+                            </p>
+                        </div>
+
+                        <!-- Botão -->
+                        <div class="flex justify-end pt-6">
+                            <button type="submit" class="bg-[#3459a2] hover:bg-blue-700 text-white px-8 py-3 rounded-[10px]" :disabled="salvando">
+                                {{ salvando ? 'Salvando...' : 'Salvar' }}
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -45,32 +88,50 @@
 </template>
 
 <script>
-import SecondaryButton from '@/components/Buttons/SecondaryButton.vue';
-import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
-import { inject, onMounted, ref } from 'vue';
+import { ref, onMounted, reactive } from 'vue'
+import Whiteboard from '@/components/Whiteboard/Whiteboard.vue'
+import { getAccessToken } from '@/service/token'
 
 export default {
-    name: "Config",
-    components: { Whiteboard, SecondaryButton },
-
+    name: 'Configuracoes',
+    components: { Whiteboard },
     setup() {
-        const isSidebarMinimized = inject('isSidebarMinimized');
-        
-        const userFullName = ref('');
-        const userRole = ref('');
-        const userCpf = ref('');
-        const userEmail = ref('');
-        const userPassword = ref('*****'); // Adicionado para a senha
+        const salvando = ref(false)
+        const senhasNaoConferem = ref(false)
 
-        const fetchUserInfo = async () => {
-            const token = localStorage.getItem("accessToken");
+        // Dados do formulário
+        const formData = reactive({
+            nomeCompleto: '',
+            cpf: '',
+            email: '',
+            senhaAtual: '',
+            novaSenha: '',
+            confirmarSenha: ''
+        })
+
+        const formatarCPF = (event) => {
+            let valor = event.target.value.replace(/\D/g, '')
+            valor = valor.replace(/(\d{3})(\d)/, '$1.$2')
+            valor = valor.replace(/(\d{3})(\d)/, '$1.$2')
+            valor = valor.replace(/(\d{3})(\d{1,2})$/, '$1-$2')
+            formData.value.cpf = valor
+        }
+
+        const validarSenhas = () => {
+            senhasNaoConferem.value = formData.value.novaSenha !== formData.value.confirmarSenha
+        }
+
+        // Carregar dados do usuário
+        const carregarDadosUsuario = async () => {
+            
+            const token = await getAccessToken();
             if (!token) {
                 console.error("Token de autenticação não encontrado");
                 return;
             }
 
             try {
-                const response = await fetch("http://127.0.0.1:8000/auth/user-info/", {
+                const response = await fetch("http://10.203.3.46:8000/auth/user-info/", {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -82,41 +143,70 @@ export default {
 
                 const data = await response.json();
                 
-                // Verifique os dados recebidos
-                console.log("Dados recebidos da API:", data);
-
                 // Garantir que os dados estão sendo atribuídos corretamente
                 const firstName = data.first_name.charAt(0).toUpperCase() + data.first_name.slice(1).toLowerCase();
                 const lastName = data.last_name.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+                
+                formData.nomeCompleto = `${firstName} ${lastName}`;
+                //userRole.value = data.role || 'Cargo não disponível';
+                formData.cpf = data.cpf || 'Não disponível';
+                formData.email = data.email || 'Não disponível';
+            }
+            catch (error) {
+                console.error("Erro ao obter dados:", error);
+                alert(`Erro ao salvar configurações: ${error.message}`)
+            } finally {
+                salvando.value = false
+            }
+        }
 
-                userFullName.value = `${firstName} ${lastName}`;
-                userRole.value = data.role || 'Cargo não disponível';
-                userCpf.value = data.cpf || 'Não disponível';
-                userEmail.value = data.email || 'Não disponível';
+        const salvarConfiguracoes = async () => {
+            salvando.value = true
+            const token = localStorage.getItem('accessToken')
 
-                // Verifique o valor das variáveis
-                console.log("userFullName:", userFullName.value);
-                console.log("userRole:", userRole.value);
-                console.log("userCpf:", userCpf.value);
-                console.log("userEmail:", userEmail.value);
+            try {
+                const response = await fetch('http://10.203.3.46:8000/auth/user-update/', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        cpf: formData.value.cpf,
+                        email: formData.value.email,
+                        password: formData.value.novaSenha,
+                        current_password: formData.value.senhaAtual
+                    })
+                })
 
+                if (!response.ok) {
+                    const errData = await response.json()
+                    console.error('Erro:', errData)
+                    throw new Error(errData.message || 'Erro ao salvar')
+                }
+
+                alert('Configurações salvas com sucesso!')
             } catch (error) {
                 console.error("Erro ao obter dados:", error);
+                alert(`Erro ao salvar configurações: ${error.message}`)
+            } finally {
+                salvando.value = false
             }
-        };
+        }
+        const capitalize = (str) => str.split(' ').map(capitalize).join(' ')
 
         onMounted(() => {
-            fetchUserInfo();
-        });
+            carregarDadosUsuario()
+        })
 
         return {
-            isSidebarMinimized,
-            userFullName,
-            userRole,
-            userCpf,
-            userEmail,
-            userPassword // Retornar a variável para a senha
-        };
+            formData,
+            formatarCPF,
+            validarSenhas,
+            senhasNaoConferem,
+            salvarConfiguracoes,
+            salvando
+        }
     }
-};
+}
 </script>

@@ -1,147 +1,150 @@
 <template>
-  <Whiteboard title="Cálculo Anteriores" :isSidebarMinimized="isSidebarMinimized">
-    <!-- Seção para exibir os anos -->
-    <div v-for="category in categories" :key="category.name" class="mb-8 w-full">
-      <!-- Exibindo o ano -->
-      <div class="flex flex-row items-start justify-between p-5 rounded-md cursor-pointer bg-gray-50" @click="toggleDropdown(category)">
-        <p class="text-3xl font-semibold text-gray-800">
-          {{ category.name }}  <!-- Exibindo o ano -->
-        </p>
-        <ChevronDownIcon class="w-6 h-6 text-gray-500 cursor-pointer" />
+  <Whiteboard title="Biblioteca de Cálculos">
+    <div v-if="errorMessage" class="p-4 text-red-700 bg-red-100">{{ errorMessage }}</div>
+
+    <!-- Seção para cada Ano -->
+    <div v-for="(yearData, year) in calculusGroupsByYear" :key="year" class="w-full">
+      <div class="px-4 sm:px-10 py-4">
+        <h2 class="text-2xl font-bold text-gray-800 border-b pb-2">Ano de Referência: {{ year }}</h2>
       </div>
 
-      <!-- Exibindo a categoria 'teste' para o ano -->
-      <div v-show="category.isOpen" class="w-full px-6 border-gray-300 pt-6">
-        <div class="border-b-2 w-full mb-6"></div>
-        <p class="text-normal font-medium text-gray-500 mb-6">Selecione a Categoria</p>
-
-        <!-- Pasta 'teste' única para cada ano -->
-        <div class="flex flex-col p-6 border border-gray-200 rounded-lg bg-white shadow-md w-full">
-          <div class="flex flex-row items-start gap-3 mb-6 w-full">
-            <FolderIcon class="w-6 h-auto text-gray-500" />
-            <p class="text-gray-900 font-medium">teste</p>  <!-- Exibindo categoria 'teste' -->
-          </div>
-
-          <!-- Exibindo todos os cálculos dentro da pasta 'teste' -->
-          <div class="mt-6 flex flex-col space-y-6 w-full">
-            <div v-for="item in category.versions" :key="item.id" class="flex flex-col p-6 border border-gray-200 rounded-lg bg-white shadow-md w-full">
-              <div class="flex items-center justify-between cursor-pointer w-full" @click="toggleDetails(item)">
-                <p class="italic text-gray-700">{{ item.description }}</p>
-                <ChevronDownIcon class="w-5 h-5 text-gray-500" />
-              </div>
-
-              <div v-show="selectedVersion === item" class="mt-6 space-y-3 w-full">
-                <p><strong>Criado em:</strong> {{ item.createdAt }}</p>
-                <p><strong>Pasta:</strong> {{ item.pasta }}</p>
-                <div class="flex flex-row items-start justify-start gap-4 mt-6 w-full">
-                  <SecondaryButton label="Visualizar" @click="handleVisualizarClick(item)" />
-                  <SecondaryButton label="Criar cópia" @click="copiarCalculo(item)" />
-                  <SecondaryButton label="Excluir" @click="excluirCalculo(item.id)" />
-                </div>
-              </div>
+      <!-- Lista de "Famílias" de Cálculo -->
+      <div v-if="yearData.length" class="px-4 sm:px-10 pb-8 space-y-6">
+        <div v-for="parent in yearData" :key="parent.id" class="bg-white rounded-lg border border-gray-200 shadow-md">
+          
+          <!-- Cabeçalho da Família de Versões -->
+          <div class="p-4 bg-gray-50 rounded-t-lg flex flex-col sm:flex-row justify-between items-start">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900">{{ parent.description }}</h3>
+              <p class="text-sm text-gray-500">Iniciado em: {{ parent.createdAt }}</p>
             </div>
+            <SecondaryButton label="Gerenciar Versões" @click="goToVersionManager(parent.id)" class="mt-3 sm:mt-0" />
           </div>
+
+          <!-- Lista de Versões (incluindo o pai) -->
+          <ul class="divide-y divide-gray-200">
+            <li v-for="item in [parent, ...parent.versions]" :key="item.id" class="p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center">
+              <div class="flex items-center gap-3">
+                <span :class="getStatusClass(item.status)" class="text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                  {{ item.status }}
+                </span>
+                <p class="font-medium text-gray-800">Versão {{ item.version_number }}</p>
+              </div>
+              
+              <!-- Ações específicas da versão -->
+              <div class="mt-3 sm:mt-0 flex items-center gap-2 flex-wrap">
+                <SecondaryButton 
+                  label="Ver no Dashboard" 
+                  v-if="item.status !== 'DRAFT'"
+                  @click="handleVisualizarClick(item.id)" 
+                />
+                <SecondaryButton 
+                  label="Excluir" 
+                  @click="excluirCalculo(item.id)" 
+                  custom-class="!bg-red-600 hover:!bg-red-700 text-white"
+                />
+              </div>
+            </li>
+          </ul>
         </div>
       </div>
+       <div v-else class="px-4 sm:px-10 pb-8 text-gray-500">Nenhum cálculo encontrado para este ano.</div>
     </div>
   </Whiteboard>
 </template>
 
 <script>
-import axios from 'axios';
-import { inject } from 'vue';
 import { ChevronDownIcon, FolderIcon } from '@heroicons/vue/24/outline';
-import SecondaryButton from '@/components/Buttons/SecondaryButton.vue';
-import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import { getAccessToken } from '@/service/token.js';
+import axios from 'axios';
+import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
+import SecondaryButton from '@/components/Buttons/SecondaryButton.vue';
 
 export default {
   name: 'PreviousResults',
-  components: { Whiteboard, ChevronDownIcon, SecondaryButton, FolderIcon },
+  components: { Whiteboard, SecondaryButton },
   data() {
     return {
-      year: '2024', // Ano inicial, mas substituído pela categoria na visualização
-      categories: [],
-      selectedCategory: null,
-      selectedVersion: null,
-      errorMessage: null
+      calculusGroupsByYear: {},
+      errorMessage: null,
     };
   },
   methods: {
-    handleVisualizarClick(item) {
-      console.log('Item clicado:', item); 
-      this.verCalculo(item.id);
-    },
-    
     async fetchCalculus() {
       try {
         const token = await getAccessToken();
+        
         if (!token) {
           this.errorMessage = 'Usuário não autenticado ou token expirado.';
           return;
         }
 
-        const response = await axios.get("http://127.0.0.1:8000/csv/get-list-calculus/", {
+        const response = await axios.get("http://10.203.3.46:8000/csv/get-list-calculus/", {
           headers: { Authorization: `Bearer ${token}` }
         });
-
-        console.log('🔹 Dados recebidos da API:', response.data);
-        
-        if (!response.data) {
-          console.error('❌ Estrutura inesperada na resposta da API:', response.data);
-          return;
-        }
         
         this.processCalculusData(response.data);
       } catch (error) {
-        console.error('❌ Erro ao buscar cálculos:', error);
-        this.errorMessage = 'Erro ao buscar cálculos. Tente novamente mais tarde.';
+        console.error('Erro ao buscar cálculos:', error);
+        this.errorMessage = 'Erro ao buscar cálculos.';
       }
     },
 
-    processCalculusData(calculusData) {
-      const formattedCategories = [];
-      console.log('📌 Processando dados:', calculusData);
+    processCalculusData(apiData) {
+      const allCalculus = {};
+      const parentCalculusByYear = {};
 
-      for (const year in calculusData) {
-        const category = {
-          name: year,  // Agora, o nome da categoria é o ano
-          versions: [],
-          isOpen: false // Estado de cada categoria (expandida ou não)
-        };
+      // 1ª Passada: Mapear todos os cálculos e identificar os pais
+      for (const year in apiData) {
+        parentCalculusByYear[year] = [];
+        for (const key in apiData[year]) {
+          const calc = apiData[year][key];
+          const formattedCalc = {
+            id: calc.calculus_id,
+            description: calc.description,
+            createdAt: new Date(calc.created_at).toLocaleDateString('pt-BR'),
+            status: calc.status,
+            version_number: calc.version_number,
+            parent_calculus_id: calc.parent_calculus_id,
+            versions: [] // Array para abrigar as versões filhas
+          };
+          
+          allCalculus[calc.calculus_id] = formattedCalc;
 
-        for (const key in calculusData[year]) {
-          const calc = calculusData[year][key];
-
-          category.versions.push({
-            id: calc.calculus_id || 'ID desconhecido',
-            name: key || 'Sem nome',
-            description: calc.description || 'Sem descrição',
-            createdAt: calc.created_at ? calc.created_at.split('T')[0] : 'Data desconhecida',
-            pasta: calc.folder_uuid || 'Sem pasta'
-          });
+          if (!calc.parent_calculus_id) {
+            parentCalculusByYear[year].push(formattedCalc);
+          }
         }
-
-        formattedCategories.push(category);
       }
 
-      console.log('✅ Categorias formatadas:', formattedCategories);
-      this.categories = formattedCategories;
+      // 2ª Passada: Aninhar os filhos em seus respectivos pais
+      for (const id in allCalculus) {
+        const calc = allCalculus[id];
+        if (calc.parent_calculus_id) {
+          const parent = allCalculus[calc.parent_calculus_id];
+          if (parent) {
+            parent.versions.push(calc);
+          }
+        }
+      }
+
+      // Ordenar as versões filhas por número
+      for (const year in parentCalculusByYear) {
+        for (const parent of parentCalculusByYear[year]) {
+          parent.versions.sort((a, b) => a.version_number - b.version_number);
+        }
+      }
+
+      this.calculusGroupsByYear = parentCalculusByYear;
     },
 
-    toggleDropdown(category) {
-      // Alterna o estado de expansão para a categoria específica
-      category.isOpen = !category.isOpen;
+    goToVersionManager(parentId) {
+      this.$router.push({ name: 'versionmanager', params: { id: parentId } });
     },
-
-    toggleDetails(selectedItem) {
-      this.selectedVersion = this.selectedVersion === selectedItem ? null : selectedItem;
-    },
-
     async copiarCalculo(item) {
       try {
         const token = await getAccessToken();
-        const response = await axios.post("http://127.0.0.1:8000/csv/copy-calculus/", { calc_id: item.id }, {
+        const response = await axios.post("http://10.203.3.46:8000/csv/copy-calculus/", { calc_id: item.id }, {
           headers: { Authorization: `Bearer ${token}` }
         });
         alert(`Cálculo copiado com sucesso! Novo ID: ${response.data.new_calculus_id}`);
@@ -153,9 +156,7 @@ export default {
       }
     },
 
-
-    async verCalculo(id) {
-      console.log('ID do cálculo:', id);  // Verificar se o ID é correto
+    async handleVisualizarClick(calculusId) {
       try {
         const token = await getAccessToken();
         if (!token) {
@@ -164,73 +165,59 @@ export default {
         }
 
         const response = await axios.post(
-          "http://127.0.0.1:8000/csv/api/set-active-calculus/",
+          "http://10.203.3.46:8000/csv/api/set-active-calculus/",
           { calc_id: id },
           {
             headers: { Authorization: `Bearer ${token}` }
           }
         );
-
-        console.log('Resposta da API:', response.data);  // Verificar a resposta da API
         this.$router.push({ path: '/admin/dashboard' });
-
       } catch (error) {
         console.error('Erro ao ativar o cálculo:', error);
-        if (error.response) {
-          // A resposta de erro do servidor
-          this.errorMessage = error.response.data.error || 'Erro ao ativar o cálculo. Tente novamente mais tarde.';
-        } else {
-          // Caso o erro seja de rede ou outro problema
-          this.errorMessage = 'Erro de rede ou servidor inacessível.';
-        }
+        this.errorMessage = 'Erro ao ativar o cálculo para visualização.';
       }
     },
 
-    async excluirCalculo(id) {
+    async excluirCalculo(calculusId) {
+      if (!confirm('Tem certeza que deseja excluir este cálculo? Esta ação não pode ser desfeita.')) {
+        return;
+      }
       try {
         const token = await getAccessToken();
-        if (!token) {
-          this.errorMessage = 'Usuário não autenticado ou token expirado.';
-          return;
-        }
-
-        // Confirmação do usuário antes de excluir
-        const confirmacao = confirm('Tem certeza que deseja excluir este cálculo?');
-        if (!confirmacao) {
-          return; // Se o usuário cancelar, não faz nada
-        }
+        await axios.post(
+          `http://127.0.0.1:8000/csv/calculus/${calculusId}/delete/`,
+          {},
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
 
         // Faz a requisição POST para excluir o cálculo
         const response = await axios.post(
-              "http://127.0.0.1:8000/csv/delete-calculus/",
+              "http://10.203.3.46:8000/csv/delete-calculus/",
               { calc_id: id }, // Envia o ID do cálculo no corpo da requisição
               {
                 headers: { Authorization: `Bearer ${token}` }
               }
             );
 
-            console.log('🗑️ Cálculo excluído com sucesso:', response.data);
-
             // Atualiza a lista de cálculos após a exclusão
             await this.fetchCalculus();
       } catch (error) {
-        console.error('❌ Erro ao excluir cálculo:', error);
-        if (error.response) {
-          this.errorMessage = error.response.data.error || 'Erro ao excluir cálculo. Tente novamente mais tarde.';
-        } else {
-          this.errorMessage = 'Erro de rede ou servidor inacessível.';
-        }
+        console.error('Erro ao excluir cálculo:', error);
+        this.errorMessage = error.response?.data?.error || 'Erro ao excluir o cálculo.';
       }
+    },
+
+    getStatusClass(status) {
+      const classes = {
+        PUBLISHED: 'bg-green-100 text-green-800',
+        DRAFT: 'bg-yellow-100 text-yellow-800',
+        ARCHIVED: 'bg-gray-100 text-gray-800',
+      };
+      return classes[status] || 'bg-gray-100';
     }
   },
-
   async mounted() {
     await this.fetchCalculus();
   },
-
-  setup() {
-    const isSidebarMinimized = inject('isSidebarMinimized');
-    return { isSidebarMinimized };
-  }
 };
 </script>

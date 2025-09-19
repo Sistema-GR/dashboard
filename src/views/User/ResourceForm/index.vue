@@ -1,171 +1,385 @@
 <template>
-    <Whiteboard title="Formulário de Recurso" :isSidebarMinimized="isSidebarMinimized">
-        <div class="flex flex-col w-full px-4">
-            <div class="flex flex-col space-y-6 py-4">
-
-                <div class="flex items-center border-b-2 py-0 pb-6">
-                    <label class="font-semibold w-1/4 text-sm">Motivo de não recebimento</label>
-                    <RouterLink to="criteria">
-                        <span class="text-blue-700 font-medium w-3/4 ml-3 text-sm cursor-pointer">Não Recebeu? Clique Aqui e veja o Detalhamento</span>
-                    </RouterLink>
-                </div>
-
-                <div class="flex items-center border-b-2 py-2 pb-6">
-                    <label class="font-semibold w-1/4 text-sm">Nome completo</label>
-                    <span class="text-gray-700 w-3/4 ml-4 text-sm">Tom Cock Harris</span>
-                </div>
-                
-                <div class="flex items-center border-b-2 py-0 pb-6">
-                    <label class="font-semibold w-1/4 text-sm">E-mail</label>
-                    <span class="text-gray-700 w-3/4 ml-4 text-sm">tom.harris@example.com</span>
-                </div>
-
-                <div class="flex items-center border-b-2 py-0 pb-6">
-                    <label class="font-semibold w-1/4 text-sm">CPF</label>
-                    <span class="text-gray-700 w-3/4 ml-4 text-sm">123.456.789-00</span>
-                </div>
-
-                <div class="flex items-center border-b-2 py-0 pb-6">
-                    <label class="font-semibold w-1/4 text-sm">Matrícula</label>
-                    <span class="text-gray-700 w-3/4 ml-4 text-sm">u04444</span>
-                </div>
-
-                <div class="flex items-center border-b-2 py-0 pb-6">
-                    <label class="font-semibold w-1/4 text-sm">Unidade de atuação</label>
-                    <span class="text-gray-700 w-3/4 ml-4 text-sm">Abdon Batista</span>
-                </div>
-
-                <div class="flex items-center border-b-2 py-0 pb-6">
-                    <label class="font-semibold w-1/4 text-sm">Descrição</label>
-                    <div class="w-3/4 ml-4">
-                        <textarea v-model="description" class="w-full border rounded-md p-2 text-sm" rows="4" placeholder="Descreva o motivo do recurso aqui..."></textarea>
-                        <p v-if="errors.description" class="text-red-500 text-sm mt-1">{{ errors.description }}</p>
+    <Whiteboard title="Formulário de Recurso" >
+        <!-- Header com ícone de alerta - largura total -->
+        <div id="tutorial-detalhes" class="w-full bg-blue-50 border-b border-blue-200 mb-6">
+            <div class="max-w-2xl mx-auto px-6 py-4">
+                <div class="flex items-center gap-3">
+                        <InformationCircleIcon class="w-20 h-20 text-black items-center" />
+                    <div>
+                        <h3 class="font-medium text-gray-900 text-20">Não recebeu?</h3>
+                        <RouterLink to="criteria">
+                            <span class="text-blue-600 underline hover:text-blue-800 cursor-pointer text-15">Clique aqui e veja o detalhamento</span>
+                        </RouterLink>
                     </div>
                 </div>
-                
-                <div class="flex items-center border-b-2 py-0 pb-6">
-                    <label class="font-semibold w-1/4 text-sm">Documentos</label>
-                    <div class="w-3/4 ml-4">
-                        <input type="file" @change="handleFileUpload" multiple class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border file:border-gray-300 file:rounded-lg file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/>
-                        <p v-if="errors.files" class="text-red-500 text-sm mt-1">{{ errors.files }}</p>
-                    </div>
-                </div>
+            </div>
+        </div>
 
-                <div v-if="files.length > 0" class="mt-4">
-                    <div class="mb-2">
-                        <h3 class="font-semibold text-sm sm:text-base">Arquivos Anexados:</h3>
+        <!-- Conteúdo do formulário -->
+        <div class="max-w-2xl mx-auto p-6">
+            <div v-if="isLoadingUserData" class="text-center p-10">
+                <p class="text-gray-600">Carregando seus dados...</p>
+            </div>
+            <div v-else class="space-y-6">
+
+                <!-- Formulário -->
+                <form id="tutorial-formulario" @submit.prevent="submitForm" class="space-y-4">
+                    
+                    <!-- Nome completo -->
+                    <div>
+                        <label class="block text-15 font-medium text-gray-700 mb-1">Nome completo</label>
+                        <input 
+                            v-model="form.nome_completo" 
+                            type="text" 
+                            readonly 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-[10px] text-15 bg-gray-50 text-gray-500" 
+                        />
+                        <p v-if="errors.nome_completo" class="text-red-500 text-xs mt-1">{{ errors.nome_completo }}</p>
                     </div>
 
-                    <div class="flex flex-col sm:flex-row sm:items-start sm:gap-4">
-                        <div class="flex flex-col w-full gap-3 border-2 border-blue-500 rounded-lg p-1">
-                            <div v-for="(file, index) in files" :key="index" class="flex items-center justify-between gap-4 w-full text-sm text-blue-500 cursor-pointer">
-                                <div class="flex items-center gap-2">
-                                    <PaperClipIcon class="w-5 h-5 text-gray-500"/> 
-                                    <span class="underline"> {{ file.name }} </span>
+                    <!-- CPF -->
+                    <div>
+                        <label class="block text-15 font-medium text-gray-700 mb-1">CPF</label>
+                        <input 
+                            v-model="form.cpf" 
+                            type="text" 
+                            readonly 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-[10px] text-15 bg-gray-50 text-gray-500" 
+                        />
+                        <p v-if="errors.cpf" class="text-red-500 text-xs mt-1">{{ errors.cpf }}</p>
+                    </div>
+
+                    <!-- Matrícula -->
+                    <div>
+                        <label for="matricula" class="block text-15 font-medium text-gray-700 mb-1">Matrícula</label>
+                        <select 
+                            id="matricula" 
+                            v-model="form.matricula"
+                            multiple
+                            :disabled="isLoadingMatriculas || matriculasDisponiveis.length === 0"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-[10px] text-15 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                        >
+                            <option disabled value="">
+                                {{ isLoadingMatriculas ? 'Buscando matrículas...' : 'Selecione uma matrícula' }}
+                            </option>
+                            <option v-for="mat in matriculasDisponiveis" :key="mat" :value="mat">
+                                {{ mat }}
+                            </option>
+                        </select>
+                        <p v-if="errors.matricula" class="text-red-500 text-xs mt-1">{{ errors.matricula }}</p>
+                    </div>
+
+                    <!-- Unidade de atuação -->
+                    <div id="tutorial-unidade">
+                        <label class="block text-15 font-medium text-gray-700 mb-1">Unidade de atuação</label>
+                        <select id="unidade" v-model="form.unidade" class="w-full px-3 py-2 border border-gray-300 rounded-[10px] text-15 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white">
+                            <option disabled value="">Selecione um setor...</option>
+                            <option v-for="setor in listaDeSetores" :key="setor" :value="setor">
+                                {{ setor }}
+                            </option>
+                        </select>
+                        <p v-if="errors.unidade" class="text-red-500 text-xs mt-1">{{ errors.unidade }}</p>
+                    </div>
+
+                    <!-- Descrição -->
+                    <div id="tutorial-descricao">
+                        <label class="block text-15 font-medium text-gray-700 mb-1">Descrição</label>
+                        <textarea 
+                            v-model="form.descricao" 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-[10px] text-15 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 resize-none" 
+                            rows="4" 
+                            placeholder="Descreva o motivo do recurso aqui..."
+                        ></textarea>
+                        <p v-if="errors.descricao" class="text-red-500 text-xs mt-1">{{ errors.descricao }}</p>
+                    </div>
+                    
+                    <!-- Documentos -->
+                    <div id="tutorial-documentos">
+                        <label class="block text-15 font-medium text-gray-700 mb-1">Documentos</label>
+                        <div class="border-2 border-dashed border-gray-300 rounded-[10px] p-6 text-center hover:border-gray-400 transition-colors">
+                            <input 
+                                id="file-upload" 
+                                type="file" 
+                                @change="handleFileUpload" 
+                                multiple 
+                                class="hidden" 
+                                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/png"
+                            />
+                            <label for="file-upload" class="cursor-pointer">
+                                <div class="space-y-2">
+                                    <svg class="mx-auto h-8 w-8 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                    <div class="text-15 text-gray-600">
+                                        <span class="font-medium text-blue-600 hover:text-blue-500">Escolher arquivo</span>
+                                    </div>
+                                    <p class="text-xs text-gray-500">PDF, JPG, PNG</p>
                                 </div>
+                            </label>
+                        </div>
+                        <p v-if="errors.files" class="text-red-500 text-xs mt-1">{{ errors.files }}</p>
+                    </div>
+
+                    <!-- Lista de arquivos anexados -->
+                    <div v-if="form.files.length > 0" class="space-y-2">
+                        <h4 class="text-15 font-medium text-gray-700">Arquivos anexados:</h4>
+                        <div class="space-y-1">
+                            <div v-for="(file, index) in form.files" :key="index" class="flex items-center justify-between p-2 bg-gray-50 rounded border">
                                 <div class="flex items-center gap-2">
-                                    <ArrowDownTrayIcon class="w-6 h-6 text-gray-700 cursor-pointer" @click="downloadFile(file)" />
-                                    <XMarkIcon class="w-5 h-5 text-red-500 cursor-pointer" @click="removeFile(index)" />
+                                    <PaperClipIcon class="w-4 h-4 text-gray-500" />
+                                    <span class="text-15 text-gray-700">{{ file.name }}</span>
                                 </div>
+                                <button @click="removeFile(index)" type="button" class="text-red-500 hover:text-red-700">
+                                    <XMarkIcon class="w-4 h-4" />
+                                </button>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="flex flex-col items-start mt-6 space-y-4 md:space-x-3">
-                    <div class="space-y-4 px-4 md:px-0">
-                        <p class="font-medium text-sm text-start">
-                            Este formulário é destinado à interposição de recursos por parte dos profissionais vinculados à Secretaria de Educação de Joinville, referente à Gratificação por Resultados, conforme estabelecido pela Lei nº 9.214/2022 e pelo Decreto Municipal nº 49.309/2022.
-                            <br><br>
-                            O período para submissão de recursos neste formulário é de 17/05/2024 a 16/06/2024, encerrando-se às 23h59 do último dia.
+                    <!-- Termos e condições -->
+                    <div class="bg-gray-50 p-4 rounded border text-xs text-gray-600 space-y-2">
+                        <p>
+                            Este formulário é destinado à interposição de recursos por parte dos profissionais vinculados à Secretaria de Educação de Joinville, referente à Gratificação por Resultados.
                         </p>
-
-                        <p class="font-bold text-sm text-start">
-                            Atenção: Para a validação do recurso, é imprescindível anexar documentos que justifiquem e comprovem as alegações, incluindo eventuais divergências nos dados utilizados no cálculo da Gratificação por Resultados. O envio de documentos falsos ou informações inverídicas está sujeito à responsabilização administrativa, civil e criminal, conforme legislação vigente.
+                        <p class="font-medium">
+                            Atenção: Para a validação do recurso, é imprescindível anexar documentos que justifiquem e comprovem as alegações.
                         </p>
-
-                        <div class="flex flex-col items-start gap-2">
-                            <div class="flex flex-row items-center gap-2">
-                                <input 
-                                    type="checkbox" 
-                                    id="terms" 
-                                    v-model="termsAccepted" 
-                                    class="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out" 
-                                />
-                                <label for="terms" class="text-sm">
-                                    Declaro que li e aceito os termos acima.
-                                </label>
-                            </div>
-                            <p v-if="errors.termsAccepted" class="text-red-500 text-sm">{{ errors.termsAccepted }}</p>
-                        </div>
                         
+                        <div class="flex items-start gap-2 pt-2">
+                            <input 
+                                type="checkbox" 
+                                id="terms" 
+                                v-model="form.termsAccepted" 
+                                class="mt-0.5 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" 
+                            />
+                            <label for="terms" class="text-xs text-gray-700 cursor-pointer">
+                                Declaro que li e aceito os termos acima.
+                            </label>
+                        </div>
+                        <p v-if="errors.termsAccepted" class="text-red-500 text-xs">{{ errors.termsAccepted }}</p>
                     </div>
-                </div>
 
-                <div class="flex w-full justify-end">
-                    <PrimaryButton
-                        @click="submitForm"
-                        customColor="bg-blue-500 text-sm w-6/12 md:w-3/12"
-                        value="Enviar"
-                    />
-                </div>
+                    <!-- Botão de envio -->
+                    <div class="flex justify-end pt-4">
+                        <button
+                            type="submit"
+                            :disabled="isSubmitting"
+                            class="px-6 py-2 bg-blue-600 text-white text-15 font-medium rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            {{ isSubmitting ? 'Enviando...' : 'Enviar' }}
+                        </button>
+                    </div>
+                </form>
 
             </div>
         </div>
     </Whiteboard>
+    <TutorialRecurso @start-tutorial="startTutorial" />
 </template>
 
 <script>
-import { inject, ref } from 'vue';
-import { ArrowDownTrayIcon, PaperClipIcon, XMarkIcon } from "@heroicons/vue/24/outline";
+import { ref, reactive, onMounted } from 'vue';
+import { ArrowDownTrayIcon, PaperClipIcon, XMarkIcon, InformationCircleIcon } from "@heroicons/vue/24/outline";
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
+import TutorialRecurso from '@/components/Tutorial/TutorialRecurso.vue';
+import usePersonService from '@/service/personService.js';
 
 export default {
     name: "ResourceForm",
-    components: { Whiteboard, PrimaryButton, ArrowDownTrayIcon, PaperClipIcon, XMarkIcon },
+    components: { 
+        Whiteboard, 
+        PrimaryButton, 
+        ArrowDownTrayIcon, 
+        PaperClipIcon, 
+        XMarkIcon,
+        InformationCircleIcon,
+        TutorialRecurso
+    },
 
     setup() {
-        const isSidebarMinimized = inject('isSidebarMinimized');
-        const files = ref([]);
-        const description = ref('');
-        const termsAccepted = ref(false);
-        const errors = ref({});
         const router = useRouter();
+        const { getMatriculasPorCPF } = usePersonService();
+        const matriculasDisponiveis = ref([]);
+        const isLoadingMatriculas = ref(false);
+
+         const listaDeSetores = ref([
+            "Administração e Finanças", "Apoio Educacional", "Apoio Jurídico",
+            "Assessoria Pedagógica - Apoio Pedagógico", "Assessoria Pedagógica - Supervisão Escolar", "Avaliação Escolar",
+            "Comunicação", "Contraturno e tempo integral", "Convênios e Credenciamento de CEIs",
+            "Desenvolvimento Profissional", "Diretoria de Formação e Inovação", "Diretoria de Gestão",
+            "Diretoria de Políticas Educacionais", "Diretoria de Suprimentos e Infraestruturaa", "Educação Especial",
+            "Educação Infantil", "EJA / Ed. Profissional", "Ensino Fundamental",
+            "Escritório de Projetos, Processos e Inovação", "Folha de Pagamento", "Formação e Currículo",
+            "Formação e Currículo - Nucleação", "Gabinete", "Gerência Apoio à Aprendizagerm",
+            "Gestão Democrática e Articulação", "Gestão do Trabalho", "Gestão Escolar - Educação Infantil",
+            "Gestão Escolar - Ensino Fundamental", "Inovação e Tecnologia", "Matrículas e Atendimento",
+            "Mídias e Tecnologias Educacionais", "Nucleo de Apoio aos Conselhos", "Núcleo de Apoio aos Conselhos",
+            "Núcleo de Desenvolvimento Integral", "Núcleo de Educação Ambiental", "Orçamento",
+            "PDDE Federal", "PDDE Federal / Programa Dinheiro na Escola Municipal", "Planejamento",
+            "Prestação de Contas das Parceirias", "Programa Dinheiro na Escola Municipal", "Quadro Funcional",
+            "Recomposição da Aprendizagem", "Requisição de Compras", "Sistemas e Estatisticas"
+        ]);
+
+        const form = reactive({
+            nome_completo: '',
+            email: '',
+            cpf: '',
+            matricula: [],
+            unidade: '',
+            descricao: '',
+            files: [],
+            termsAccepted: false,
+        });
+        
+        const errors = ref({});
+        const isSubmitting = ref(false);
+        const isLoadingUserData = ref(true);
+        const tutorialComponent = ref(null);
+
+        const fetchUserData = async () => {
+            isLoadingUserData.value = true;
+            try {
+                const response = await axios.get('/auth/user-info/', {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+                });
+                const userData = response.data;
+
+                form.nome_completo = (userData.first_name + ' ' + userData.last_name) || '';
+                form.email = userData.email || '';
+                form.cpf = userData.cpf || '';
+                form.matricula = userData.employeeCode || '';
+                
+                if (form.cpf) {
+                    isLoadingMatriculas.value = true;
+                    try {
+                        const referenceYear = new Date().getFullYear();
+
+                        const todasAsMatriculas = await getMatriculasPorCPF(form.cpf, referenceYear);
+                        
+                        matriculasDisponiveis.value = todasAsMatriculas;
+
+                        if (todasAsMatriculas.length > 0 && !todasAsMatriculas.includes(form.matricula)) {
+                            form.matricula = '';
+                        }
+                    } catch (e) {
+                        console.error("Erro ao buscar a lista de matrículas:", e);
+                        matriculasDisponiveis.value = [form.matricula].filter(Boolean);
+                    } finally {
+                        isLoadingMatriculas.value = false;
+                    }
+                }
+
+            } catch (error) {
+                console.error("Erro ao buscar dados do usuário:", error);
+                alert("Não foi possível carregar seus dados. Por favor, recarregue a página.");
+            } finally {
+                isLoadingUserData.value = false;
+            }
+        };
+
+        onMounted(() => {
+            fetchUserData();
+            
+            // Verificar se é a primeira vez que o usuário acessa esta página
+            const hasSeenTutorial = localStorage.getItem('hasSeenResourceTutorial');
+            if (!hasSeenTutorial) {
+                setTimeout(() => {
+                    if (tutorialComponent.value) {
+                        tutorialComponent.value.startTutorial();
+                    }
+                    localStorage.setItem('hasSeenResourceTutorial', 'true');
+                }, 1000);
+            }
+        });
 
         const handleFileUpload = (event) => {
-            files.value = Array.from(event.target.files);
+            form.files = Array.from(event.target.files);
         };
 
         const removeFile = (index) => {
-            files.value.splice(index, 1);
+            form.files.splice(index, 1);
         };
 
         const validateForm = () => {
             errors.value = {};
-
-            if (!description.value) {
-                errors.value.description = 'A descrição é obrigatória.';
-            }
-            if (!files.value.length) {
-                errors.value.files = 'É necessário anexar pelo menos um documento.';
-            }
-            if (!termsAccepted.value) {
-                errors.value.termsAccepted = 'Você deve aceitar os termos.';
-            }
-
+            if (!form.nome_completo) errors.value.nome_completo = 'O nome completo é obrigatório.';
+            if (!form.email) errors.value.email = 'O e-mail é obrigatório.';
+            if (!form.cpf) errors.value.cpf = 'O CPF é obrigatório.';
+            if (form.matricula.length === 0) errors.value.matricula = 'Pelo menos uma matrícula deve ser selecionada.';
+            if (!form.unidade) errors.value.unidade = 'A unidade de atuação é obrigatória.';
+            if (!form.descricao) errors.value.descricao = 'A descrição é obrigatória.';
+            if (!form.files.length) errors.value.files = 'É necessário anexar pelo menos um documento.';
+            if (!form.termsAccepted) errors.value.termsAccepted = 'Você deve aceitar os termos.';
             return Object.keys(errors.value).length === 0;
         };
 
-        const submitForm = () => {
+        const submitForm = async () => {
             if (validateForm()) {
-                router.push('/user/sucess');
+                isSubmitting.value = true;
+                const formData = new FormData();
+                formData.append('nome_completo', form.nome_completo);
+                formData.append('email', form.email);
+                formData.append('cpf', form.cpf);
+                form.matricula.forEach(mat => {
+                    formData.append('matriculas', mat);
+                });
+                formData.append('unidade_atuacao', form.unidade);
+                formData.append('descricao', form.descricao);
+                
+                form.files.forEach(file => {
+                    formData.append('documentos', file);
+                });
+
+                try {
+                    await axios.post('/recursos/criar/', formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data',
+                            'Authorization': `Bearer ${localStorage.getItem('accessToken')}` 
+                        }
+                    });
+                    router.push({ name: 'status' });
+                } catch (error) {
+                    console.error("Erro ao criar recurso:", error.response ? error.response.data : error.message);
+                    
+                    if (error.response && error.response.data) {
+                        const errorData = error.response.data;
+                        let errorMessage;
+
+                        if (typeof errorData.detail === 'string') {
+                            errorMessage = errorData.detail;
+                        } else {
+                            errorMessage = Object.entries(errorData)
+                                .map(([field, messages]) => {
+                                    const messageText = Array.isArray(messages) ? messages.join(', ') : messages;
+                                    return `${field}: ${messageText}`;
+                                })
+                                .join('\n');
+                        }
+                        alert(`Ocorreram os seguintes erros:\n${errorMessage}`);
+                    } else {
+                        alert('Ocorreu um erro desconhecido ao enviar seu recurso. Tente novamente.');
+                    }
+                } finally {
+                    isSubmitting.value = false;
+                }
             }
         };
 
         return {
-            isSidebarMinimized, files, description, termsAccepted, errors, handleFileUpload, removeFile, submitForm,
+            form, 
+            errors,
+            isSubmitting, 
+            isLoadingUserData,
+            handleFileUpload, 
+            removeFile, 
+            submitForm,
+
+            isLoadingMatriculas,
+            matriculasDisponiveis,
+            listaDeSetores, 
         };
     }
 };

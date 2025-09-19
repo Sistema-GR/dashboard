@@ -5,7 +5,7 @@
         <div class="flex flex-col h-screen items-center justify-center">
           <img src="@/assets/images/logo.png" alt="Logo" class="w-3/12 scale-75 drop-shadow-lg py-0" />
           <div class="w-full max-w-md space-y-3 px-5">
-            <p class="text-sm text-amber-50">Digite seu e-mail abaixo. Se existir um usuário cadastrado com essa credencial, enviaremos um código para o e-mail digitado.</p>
+            <p class="text-15 text-amber-50">Digite seu e-mail abaixo. Se existir um usuário cadastrado com essa credencial, enviaremos um código para o e-mail digitado.</p>
             
             <!-- Campo de E-mail -->
             <TextInput
@@ -29,11 +29,11 @@
             />
 
             <!-- Mensagem de Erro -->
-            <p v-if="errors.global" class="text-red-500 text-sm mt-1">{{ errors.global }}</p>
+            <p v-if="errors.global" class="text-red-500 text-15 mt-1">{{ errors.global }}</p>
 
             <!-- Link para Login -->
             <div class="w-full flex justify-center pt-3">
-              <router-link to="/" class="text-sm text-amber-50 hover:underline -translate-y-5">Possui login? Clique aqui</router-link>
+              <router-link to="/" class="text-15 text-amber-50 hover:underline -translate-y-5">Possui login? Clique aqui</router-link>
             </div>
           </div>
         </div>
@@ -97,7 +97,7 @@ export default {
 
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/auth/forgot-password/",
+          "http://10.203.3.46:8000/auth/forgot-password/",
           {
             method: "POST",
             headers: {
@@ -113,7 +113,7 @@ export default {
         }
 
         // Redireciona para a próxima etapa em caso de sucesso
-        this.$router.push("/insertcode");
+        this.$router.push("/auth/insertcode");
       } catch (error) {
         // Exibe a mensagem de erro global
         this.errors.global = error.message;

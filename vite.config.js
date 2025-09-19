@@ -12,5 +12,27 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
-  }
+  },
+  server: {
+    host: true,
+    port: 5173,
+    proxy: {
+        // Redireciona qualquer chamada para /recursos/...
+        '/recursos': {
+            target: 'http://10.203.3.46:8000',
+            changeOrigin: true,
+        },
+
+        '/auth': {
+            target: 'http://10.203.3.46:8000',
+            changeOrigin: true,
+        },
+        '/csv': {
+            target: 'http://10.203.3.46:8000',
+            changeOrigin: true,
+        },
+        
+      }
+    }
 })
+

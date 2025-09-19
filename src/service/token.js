@@ -1,5 +1,5 @@
 // URLs da API
-const API_BASE_URL = "http://127.0.0.1:8000";  // Defina o valor diretamente
+const API_BASE_URL = "http://10.203.3.46:8000";  // Defina o valor diretamente
 const REFRESH_TOKEN_URL = `${API_BASE_URL}/auth/token/refresh/`;
 
 
@@ -122,7 +122,6 @@ export const setupAxiosInterceptors = (axiosInstance) => {
 const synchronizeTokensAcrossTabs = () => {
   window.addEventListener('storage', (event) => {
     if (event.key === 'accessToken' || event.key === 'refreshToken') {
-      console.log("Tokens sincronizados entre abas.");
     }
   });
 };

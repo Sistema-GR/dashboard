@@ -1,15 +1,15 @@
 <template>
-  <main :class="['flex flex-col overflow-hidden transition-all bg-[#edf8f9]', sidebarClass]">
+  <main :class="['flex flex-col overflow-hidden transition-all bg-white', sidebarClass]">
     <Breadcrumbs 
       class="flex w-full" 
       v-if="showBreadcrumbs && !hideBreadcrumbs" 
       :pages="breadcrumbPages" 
+      :titlePag="title"
     />
-    <div class="px-4 mb-5 sm:px-6 lg:px-8 lg:pt-12">
-      <div class="flex flex-row gap-8 pt-6 items-center">
-        <h3 class="text-lg leading-6 text-black font-semibold">{{ title }}</h3>
+    <div>
+      <div class="flex flex-row gap-8 items-center">
       </div>
-      <div :class="['flex flex-col items-center w-full bg-white shadow-md mt-5 rounded-md py-3 px-5', customClass]">
+      <div :class="['flex flex-col items-center w-full rounded-[10px]', customClass]">
         <slot></slot>
       </div>
     </div>
@@ -18,6 +18,7 @@
 
 <script>
 import Breadcrumbs from '../Breadcrumbs/Breadcrumbs.vue';
+import { useSidebarStore } from '@/stores/sidebarStore';
 import { useRoute } from 'vue-router';
 import { computed, watch } from 'vue';
 import { debounce } from 'lodash'; 
@@ -32,10 +33,6 @@ export default {
       default: 'default Title',
       validator: (value) => typeof value === 'string' && value.length > 0
     },
-    isSidebarMinimized: {
-      type: Boolean,
-      required: true
-    },
     customClass: {
       type: String,
       default: 'custom-whiteboard',
@@ -47,11 +44,12 @@ export default {
     }
   },
 
-  setup(props) {
+  setup() {
     const route = useRoute();
+    const sidebarStore = useSidebarStore();
 
     const sidebarClass = computed(() =>
-      props.isSidebarMinimized ? 'lg:pl-20' : 'lg:pl-60'
+      sidebarStore.isSidebarMinimized ? 'lg:pl-20' : 'lg:pl-60'
     );
 
     const generateBreadcrumbs = (path) => {

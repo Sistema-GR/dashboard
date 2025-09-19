@@ -41,7 +41,7 @@
             </div>
 
             <div class="w-full flex justify-end mt-2">
-              <router-link to="/forgotpassword" class="text-sm text-amber-50 hover:underline mt-0">Esqueceu sua senha?</router-link>
+              <router-link to="/auth/forgotpassword" class="text-15 text-amber-50 hover:underline mt-0">Esqueceu sua senha?</router-link>
             </div>
 
             <PrimaryButton
@@ -53,10 +53,10 @@
               aria-label="Botão de login"
             />
 
-            <p v-if="errors.global" class="text-red-500 text-sm mt-1">{{ errors.global }}</p>
+            <p v-if="errors.global" class="text-red-500 text-15 mt-1">{{ errors.global }}</p>
 
             <div class="w-full flex justify-center pt-3">
-              <router-link to="/register" class="text-sm text-amber-50 hover:underline mt-0 -translate-y-5">Não possui cadastro? Clique aqui</router-link>
+              <router-link to="/auth/register" class="text-15 text-amber-50 hover:underline mt-0 -translate-y-5">Não possui cadastro? Clique aqui</router-link>
             </div>
           </div>
         </div>
@@ -74,6 +74,7 @@ import TextInput from "@/components/Inputs/TextInput.vue";
 import PrimaryButton from "@/components/Buttons/PrimaryButton.vue";
 import { EyeSlashIcon, EyeIcon } from "@heroicons/vue/24/outline";
 import { login } from "@/service/apiService";  
+import { setUserType, getDashboardRoute } from "@/service/userType";
 
 export default {
   name: 'Login',
@@ -127,25 +128,28 @@ export default {
       this.errors.global = null;
 
       try {
-        console.log('Enviando dados de login:', { email: this.email, password: this.senha });
 
         const data = await login(this.email, this.senha);
 
-        console.log('Resposta de login:', data);
 
         localStorage.setItem('accessToken', data.access);
         localStorage.setItem('refreshToken', data.refresh);
         localStorage.setItem('isAuthenticated', 'true');
-        console.log('Tokens armazenados:', {
-          accessToken: localStorage.getItem('accessToken'),
-          refreshToken: localStorage.getItem('refreshToken'),
-        });
+        
+        // Store user type information using the service
+        if (data.user) {
+          setUserType(data.user);
+        }
+        
 
-        const redirectTo = this.$route.query.redirect || '/home/overview';
-        console.log('Redirecionando para:', redirectTo);
+        // Determine redirect based on user type
+        let redirectTo = this.$route.query.redirect;
+        if (!redirectTo) {
+          redirectTo = getDashboardRoute();
+        }
+        
         this.$router.push(redirectTo);
       } catch (error) {
-        console.log('Erro no login:', error);
         this.errors.global = error.message || 'Erro desconhecido. Tente novamente.';
       } finally {
         this.loading = false;

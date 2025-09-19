@@ -5,7 +5,7 @@
         <div class="flex flex-col h-screen items-center justify-center">
           <img src="@/assets/images/logo.png" alt="Logo" class="w-3/12 scale-75 drop-shadow-lg py-0" />
           <div class="w-full max-w-md space-y-3 px-5">
-            <p class="text-sm text-amber-50">
+            <p class="text-15 text-amber-50">
               Foi enviado um código de 5 dígitos para o e-mail digitado no passo anterior. Por favor, digite o código abaixo.
             </p>
             
@@ -31,11 +31,11 @@
             />
 
             <!-- Mensagem de Erro -->
-            <p v-if="errors.global" class="text-red-500 text-sm mt-1">{{ errors.global }}</p>
+            <p v-if="errors.global" class="text-red-500 text-15 mt-1">{{ errors.global }}</p>
 
             <!-- Link para Login -->
             <div class="w-full flex justify-center pt-3">
-              <router-link to="/" class="text-sm text-amber-50 hover:underline -translate-y-5">Possui login? Clique aqui</router-link>
+              <router-link to="/" class="text-15 text-amber-50 hover:underline -translate-y-5">Possui login? Clique aqui</router-link>
             </div>
           </div>
         </div>
@@ -109,7 +109,7 @@ export default {
         });
 
         // Se o código for correto, redireciona para a página de alteração de senha
-        this.$router.push('/changepassword');
+        this.$router.push('/auth/changepassword');
       } catch (error) {
         // Exibir erro global caso o código esteja incorreto
         this.errors.global = error.message;

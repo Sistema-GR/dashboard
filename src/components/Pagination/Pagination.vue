@@ -8,7 +8,7 @@
               href="#"
               @click.prevent="prevPage"
               :class="{'text-gray-400': !hasPrevPage, 'text-gray-500 hover:text-gray-700': hasPrevPage}"
-              class="inline-flex items-center border-t-2 border-transparent pr-1 pt-4 text-sm font-medium"
+              class="inline-flex items-center border-t-2 border-transparent pr-1 pt-4 text-15 font-medium"
               aria-disabled="!hasPrevPage"
             >
               <ArrowLongLeftIcon class="mr-3 h-5 w-5" aria-hidden="true" /> Anterior
@@ -26,13 +26,13 @@
                   :key="page"
                   @click.prevent="goToPage(page)"
                   :class="{'border-indigo-500 text-indigo-600': page === currentPage, 'border-transparent cursor-pointer text-gray-500 hover:text-gray-700': page !== currentPage}"
-                  class="inline-flex items-center border-t-2 px-4 pt-4 text-sm font-medium"
+                  class="inline-flex items-center border-t-2 px-4 pt-4 text-15 font-medium"
                   :aria-current="page === currentPage ? 'page' : undefined"
                 >
                   {{ page }}
                 </a>
 
-                <span class="inline-flex items-center border-t-2 border-transparent px-4 pt-4 text-sm font-medium text-gray-500">...</span>
+                <span class="inline-flex items-center border-t-2 border-transparent px-4 pt-4 text-15 font-medium text-gray-500">...</span>
 
             </template>
 
@@ -41,7 +41,7 @@
                 <a
                   @click.prevent="goToPage(page)"
                   :class="{'border-indigo-500 text-indigo-600': page === currentPage, 'border-transparent cursor-pointer text-gray-500 hover:text-gray-700': page !== currentPage}"
-                  class="inline-flex items-center border-t-2 px-4 pt-4 text-sm font-medium"
+                  class="inline-flex items-center border-t-2 px-4 pt-4 text-15 font-medium"
                   :aria-current="page === currentPage ? 'page' : undefined"
                 >
                   {{ page }}
@@ -51,14 +51,14 @@
 
             <template v-if="showLastEllipsis">
 
-                <span class="inline-flex items-center border-t-2 border-transparent px-4 pt-4 text-sm font-medium text-gray-500">...</span>
+                <span class="inline-flex items-center border-t-2 border-transparent px-4 pt-4 text-15 font-medium text-gray-500">...</span>
 
                 <a
                   v-for="page in lastPages"
                   :key="page"
                   @click.prevent="goToPage(page)"
                   :class="{'border-indigo-500 text-indigo-600': page === currentPage, 'border-transparent cursor-pointer text-gray-500 hover:text-gray-700': page !== currentPage}"
-                  class="inline-flex items-center border-t-2 px-4 pt-4 text-sm font-medium"
+                  class="inline-flex items-center border-t-2 px-4 pt-4 text-15 font-medium"
                   :aria-current="page === currentPage ? 'page' : undefined"
                 >
                   {{ page }}
@@ -74,7 +74,7 @@
               href="#"
               @click.prevent="nextPage"
               :class="{'text-gray-400': !hasNextPage, 'text-gray-500 hover:text-gray-700': hasNextPage}"
-              class="inline-flex items-center border-t-2 border-transparent pl-1 pt-4 text-sm font-medium"
+              class="inline-flex items-center border-t-2 border-transparent pl-1 pt-4 text-15 font-medium"
               aria-disabled="!hasNextPage"
             > Próxima
               
@@ -88,7 +88,7 @@
 </template>
 
 <script setup>
-import { computed, defineEmits } from 'vue'
+import { computed } from 'vue'
 import { ArrowLongLeftIcon, ArrowLongRightIcon } from '@heroicons/vue/20/solid'
 
 const props = defineProps({
