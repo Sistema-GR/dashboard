@@ -176,7 +176,8 @@ export default {
         chartDataFaixaPagamento.value = faixaPagamento;
 
         // Requisição para os motivos de não recebimento
-        const responseAnalysis = await axios.get('http://10.203.3.46:8000/csv/get-import-files/', {
+        const responseAnalysis = await axios.get('http://127.0.0.1:8000/csv/get-import-files/', {
+
           headers: { Authorization: `Bearer ${token}` },
         });
 

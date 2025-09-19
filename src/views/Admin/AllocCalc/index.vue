@@ -124,7 +124,7 @@ export default {
             successMessage: '',
             activeCalcs: [],
             isLoadingCalcs: false,
-            isToggling: {} // Track toggle loading per calc
+            isToggling: {}
         };
     },
     mounted() {

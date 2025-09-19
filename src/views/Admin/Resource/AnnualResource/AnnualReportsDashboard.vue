@@ -34,7 +34,11 @@
       <RecursosRespondidos :stats="dashboardData.stats" />
 
       <!-- ValorPago -->
-      <ValorPago />
+      <ValorPago 
+        :distribuicao="valorPagoProps.distribuicao"
+        :pessoas-afetadas="valorPagoProps.pessoasAfetadas"
+        :valor-corrigido="valorPagoProps.valorCorrigido"
+      />
 
       <!-- TipoRecurso  -->
       <TipoRecurso 
@@ -71,7 +75,7 @@ import StatusEquipe from '@/views/Admin/Resource/AnnualResource/components/Statu
 import RecursosTotais from '@/views/Admin/Resource/AnnualResource/components/RecursosTotais.vue'
 import TipoRecurso from '@/views/Admin/Resource/AnnualResource/components/TipoRecurso.vue'
 import DadosCompletos from './components/DadosCompletos.vue'
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import axios from 'axios'
 import { getAccessToken } from '@/service/token'
 
@@ -104,7 +108,8 @@ export default {
     const dashboardData = ref(null)
     const availableUnits = ref([])
     const availableAdmins = ref([])
-    
+    const comparisonData = ref(null);
+
     const fetchDashboardData = async () => {
       loading.value = true
       error.value = null
@@ -145,8 +150,68 @@ export default {
       }
     }
     
-    watch(filters, fetchDashboardData, { deep: true, immediate: true })
+    const fetchComparisonData = async () => {
+      try {
+        const token = await getAccessToken();
+        const response = await axios.get(`/recursos/dashboard/comparison/?year=${filters.value.year}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        comparisonData.value = response.data; 
+      } catch (err) {
+        console.error('Erro ao buscar dados de comparação:', err);
+        comparisonData.value = null;
+      }
+    };
+
+    const fetchAllData = async () => {
+      loading.value = true;
+      error.value = null;
+      await Promise.all([
+        fetchDashboardData(),
+        fetchComparisonData()
+      ]);
+      loading.value = false;
+    };
+
+    watch(filters, fetchAllData, { deep: true, immediate: true });
     
+    const valorPagoProps = computed(() => {
+      if (!comparisonData.value || !comparisonData.value.initial_data) {
+        const finalData = comparisonData.value?.final_data;
+        return {
+          distribuicao: finalData?.distribuicao || [],
+          pessoasAfetadas: finalData?.pessoas_pagas || 0,
+          valorCorrigido: '0,00'
+        };
+      }
+      const initial = comparisonData.value.initial_data;
+      const final = comparisonData.value.final_data;
+      console.log('Initial Data:', initial);
+      console.log('Final Data:', final);
+
+      const diffPessoas = final.pessoas_pagas - initial.pessoas_pagas;
+      const diffValor = final.valor_pago - initial.valor_pago;
+      
+      const deltaDistribuicao = final.distribuicao.map(finalBracket => {
+        const initialBracket = initial.distribuicao.find(
+          initialB => initialB.label === finalBracket.label
+        );
+        const initialValue = initialBracket ? initialBracket.value : 0;
+        return {
+          label: finalBracket.label,
+          value: finalBracket.value - initialValue,
+        };
+      });
+
+      return {
+        distribuicao: deltaDistribuicao,
+        pessoasAfetadas: diffPessoas,
+        valorCorrigido: diffValor.toLocaleString('pt-BR', { 
+          minimumFractionDigits: 2, 
+          maximumFractionDigits: 2 
+        })
+      };
+    });
     
     return {
       filters,
@@ -154,7 +219,8 @@ export default {
       availableAdmins,
       dashboardData,
       loading,
-      error
+      error,
+      valorPagoProps,
     }
   }
 }

@@ -28,8 +28,17 @@
               <option v-for="file in editableFiles" :key="file.key" :value="file.key">{{ file.name }}</option>
             </select>
           </div>
-          <div class="md:text-right">
-             <PrimaryButton
+          
+          <div class="md:text-right flex items-center justify-end space-x-4">
+            <!-- BOTÃO PARA ABRIR O MODAL DE SUBSTITUIÇÃO -->
+            <PrimaryButton
+              value="Substituir Arquivo"
+              @click="showReplaceModal = true"
+              customColor="bg-yellow-500 hover:bg-yellow-600"
+              title="Substituir um arquivo de entrada completo por uma nova versão."
+            />
+            <PrimaryButton
+
               :value="isAppealsModeActive ? 'Sair do Modo Recurso' : 'Ativar Modo Recurso'"
               @click="toggleAppealsMode"
               :customColor="isAppealsModeActive ? 'bg-orange-500 hover:bg-orange-600' : 'bg-blue-600 hover:bg-blue-700'"
@@ -68,6 +77,15 @@
       </div>
     </div>
   </Whiteboard>
+
+  <FileReplaceModal
+    :show="showReplaceModal"
+    :calculus-id="calculusId"
+    :editable-files="editableFiles"
+    @close="showReplaceModal = false"
+    @file-replaced="handleFileReplaced"
+  />
+
   <Teleport to="body">
     <EditHover
       v-if="hoveredAppealData"
@@ -75,6 +93,7 @@
       :style="hoverStyle"
     />
   </Teleport>
+
 </template>
 
 <script setup>
@@ -89,12 +108,16 @@ import PrimaryTable from '@/components/Table/PrimaryTable.vue';
 import Search from '@/components/Search/Search.vue';
 import EditHover from '@/components/EditHover/EditHover.vue';
 
+import FileReplaceModal from '@/components/FileReplaceModal/FileReplaceModal.vue';
+
 const route = useRoute();
 const router = useRouter();
 const isSidebarMinimized = inject('isSidebarMinimized', ref(false));
 const tableKey = ref(0);
 const isLoading = ref(false);
 const loadingMessage = ref('Carregando...');
+
+const showReplaceModal = ref(false);
 
 const calculusId = computed(() => route.params.id);
 const isViewOnlyMode = computed(() => route.query.viewOnly === 'true');
@@ -113,6 +136,12 @@ const hoverStyle = computed(() => ({
   transform: 'translate(15px, 15px)',
   zIndex: 9999, 
 }));
+
+function handleFileReplaced() {
+  showReplaceModal.value = false;
+  alert('Arquivo substituído e dados reprocessados com sucesso! A tabela será atualizada.');
+  tableKey.value++; 
+}
 
 function handleShowHover(appealData, event) {
   console.log('%cEvento recebido em editVersion!', 'color: green; font-weight: bold;', appealData);
@@ -167,6 +196,7 @@ const allEditableFiles  = ref([
   { name: 'Dados Gerais (Nomes de Unidades)', key: 'dados_gerais' },
   { name: 'Função, Grupo e Etapas', key: 'funcao_grupo_etapas' },
 ]);
+
 
 const editableFiles = computed(() => {
   return isAppealsModeActive.value ? appealsModeFiles : allEditableFiles.value;

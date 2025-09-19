@@ -165,8 +165,9 @@ export default {
         }
 
         const response = await axios.post(
-          "http://10.203.3.46:8000/csv/api/set-active-calculus/",
-          { calc_id: id },
+          "http://127.0.0.1:8000/csv/api/set-active-calculus/",
+          { calc_id: calculusId },
+
           {
             headers: { Authorization: `Bearer ${token}` }
           }
@@ -179,28 +180,25 @@ export default {
     },
 
     async excluirCalculo(calculusId) {
-      if (!confirm('Tem certeza que deseja excluir este cálculo? Esta ação não pode ser desfeita.')) {
+
+      if (!confirm('Tem certeza que deseja excluir esta versão? Esta ação não pode ser desfeita.')) {
+
         return;
       }
       try {
         const token = await getAccessToken();
         await axios.post(
-          `http://127.0.0.1:8000/csv/calculus/${calculusId}/delete/`,
+
+          `http://127.0.0.1:8000/csv/calculus/${calculusId}/delete/`, 
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );
+        
+        alert('Versão excluída com sucesso!');
+        
+        await this.fetchCalculus();
 
-        // Faz a requisição POST para excluir o cálculo
-        const response = await axios.post(
-              "http://10.203.3.46:8000/csv/delete-calculus/",
-              { calc_id: id }, // Envia o ID do cálculo no corpo da requisição
-              {
-                headers: { Authorization: `Bearer ${token}` }
-              }
-            );
 
-            // Atualiza a lista de cálculos após a exclusão
-            await this.fetchCalculus();
       } catch (error) {
         console.error('Erro ao excluir cálculo:', error);
         this.errorMessage = error.response?.data?.error || 'Erro ao excluir o cálculo.';
