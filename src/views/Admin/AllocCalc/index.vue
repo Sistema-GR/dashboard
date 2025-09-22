@@ -1,43 +1,45 @@
 <template>
     <Whiteboard title="Calcular Alocação">
-        
-            <!-- Calculus ID input and submit -->
-            <div class="flex flex-col items-center space-y-2 w-full max-w-md p-6 mb-10">
-                <label for="calcId" class="font-semibold text-gray-700 mb-2">Adicionar um cálculo para alocação por ID:</label>
-                <div class="flex flex-row items-center space-x-2 w-full justify-center">
-                    <input
-                        id="calcId"
-                        v-model="calcId"
-                        type="text"
-                        class="border border-[#bfcbe2] rounded px-2 py-1 w-32 text-sm focus:outline-none focus:ring-2 focus:ring-[#4168b5]"
-                        placeholder="ID do cálculo"
-                    />
-                    <PrimaryButton
-                        customColor="bg-[#2d8f4b] px-4 py-1 text-sm"
-                        :value="isLoading ? 'Enviando...' : 'Definir'"
-                        :disabled="isLoading || !calcId"
-                        @click="submitCalcId"
-                    />
-                </div>
-                <p v-if="errorMessage" class="text-red-500 text-sm mt-2">{{ errorMessage }}</p>
-                <p v-if="successMessage" class="text-green-600 text-sm mt-2">{{ successMessage }}</p>
+        <!-- Input de cálculo -->
+        <div class="w-full px-4 sm:px-10 pt-8 flex flex-col items-center">
+            <label for="calcId" class="font-semibold text-gray-700 mb-4 text-center">
+                Adicionar um cálculo para alocação por ID:
+            </label>
+            <div class="flex flex-row items-center space-x-4 mb-2">
+                <input
+                    id="calcId"
+                    v-model="calcId"
+                    type="text"
+                    class="border border-[#bfcbe2] rounded-[10px] px-4 py-2 w-56 text-15 focus:outline-none focus:ring-2 focus:ring-[#4168b5]"
+                    placeholder="ID do cálculo"
+                />
+                <PrimaryButton
+                    customColor="bg-[#2d8f4b] hover:bg-[#23703a] w-40 h-10 text-15 font-semibold text-white rounded-[10px]"
+                    :value="isLoading ? 'Enviando...' : 'Definir'"
+                    :disabled="isLoading || !calcId"
+                    @click="submitCalcId"
+                />
             </div>
+            <p v-if="errorMessage" class="text-red-500 text-15 mt-2">{{ errorMessage }}</p>
+            <p v-if="successMessage" class="text-green-600 text-15 mt-2">{{ successMessage }}</p>
+        </div>
 
-            <!-- Panel for active calc versions -->
-            <div class="w-full max-w-3xl bg-white rounded-xl shadow-xl p-8 border border-[#dbe6f6]">
+        <!-- Painel de versões de cálculo -->
+        <div class="w-full px-4 sm:px-10 mt-8">
+            <div class="bg-[#f5faff] rounded-[10px] shadow-lg p-6">
                 <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-xl font-bold text-[#4168b5]">Versões de cálculo ativas</h2>
+                    <h2 class="text-20 font-bold text-[#4168b5]">Versões de cálculo ativas</h2>
                     <PrimaryButton
-                        customColor="bg-[#4168b5] px-4 py-1 text-sm"
+                        customColor="bg-[#4168b5] hover:bg-[#27477a] w-40 h-10 text-15 font-semibold text-white rounded"
                         value="Atualizar lista"
                         @click="fetchActiveCalcs"
                     />
                 </div>
                 <div v-if="isLoadingCalcs" class="text-gray-500 py-6 text-center">Carregando versões...</div>
                 <div v-else-if="activeCalcs.length === 0" class="text-gray-500 py-6 text-center">Nenhuma versão ativa encontrada.</div>
-                <table v-else class="w-full text-sm border-collapse">
+                <table v-else class="w-full text-15 border-collapse">
                     <thead>
-                        <tr class="bg-[#f5faff] text-[#4168b5]">
+                        <tr class="bg-[#e3f0ff] rounded-[10px] text-15 text-[#4168b5]">
                             <th class="py-2 px-3 font-semibold text-left">Nome</th>
                             <th class="py-2 px-3 font-semibold text-left">Descrição</th>
                             <th class="py-2 px-3 font-semibold text-left">Criado em</th>
@@ -52,7 +54,7 @@
                             <td class="py-2 px-3">{{ calc.data }}</td>
                             <td class="py-2 px-3 text-center">
                                 <span
-                                    class="inline-block px-2 py-1 rounded text-xs font-semibold"
+                                    class="inline-block px-3 py-1 rounded-[10px]text-15 font-semibold"
                                     :class="calc.ativa ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'"
                                 >
                                     {{ calc.ativa ? 'Ativo' : 'Inativo' }}
@@ -84,7 +86,7 @@
                     </tbody>
                 </table>
             </div>
-
+        </div>
     </Whiteboard>
 </template>
 

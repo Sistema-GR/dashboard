@@ -1,17 +1,18 @@
 <template>
   <Whiteboard :title="pageTitle" :isSidebarMinimized="isSidebarMinimized">
-    <!-- Overlay de Carregamento para Ações em Tela Cheia -->
+    <!-- Overlay de Carregamento -->
     <div v-if="isLoading" class="absolute inset-0 bg-white bg-opacity-80 flex flex-col justify-center items-center z-50">
-      <p class="text-xl font-semibold text-gray-700">{{ loadingMessage }}</p>
+      <p class="text-xl font-semibold text-[#3459a2]">{{ loadingMessage }}</p>
       <p class="text-gray-500 mt-2">Isso pode levar alguns instantes. Por favor, aguarde.</p>
     </div>
 
-    <div class="p-4 sm:p-6 lg:p-8 w-full">
+    <div class="w-full">
       <div v-if="isViewOnlyMode">
-        <div class="mb-4">
-          <p class="text-lg font-semibold text-gray-800">Visualizando Dados Processados</p>
-          <p class="text-sm text-gray-500">Estes são os resultados finais que foram publicados para esta versão. A edição não está disponível para versões arquivadas.</p>
+        <div class="mb-6   px-4 sm:px-10 p-8">
+          <p class="text-20 font-semibold text-black">Visualizando Dados Processados</p>
+          <p class="text-15 text-black">Estes são os resultados finais que foram publicados para esta versão. A edição não está disponível para versões arquivadas.</p>
         </div>
+        <!-- Removido o padding da tabela -->
         <PrimaryTable 
           :key="tableKey"
           :route="`calculus/${calculusId}/processed-file/criterios`"
@@ -21,59 +22,60 @@
       </div>
 
       <div v-else>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center mb-8">
+        <!-- Seleção de arquivo e botões -->
+        <div class="grid px-4 sm:px-10 pt-8 grid-cols-1 md:grid-cols-2 gap-8 items-center mb-10">
           <div class="max-w-md">
-            <label for="file-selector" class="block text-sm font-medium text-gray-700">Selecione o arquivo de entrada para editar:</label>
-            <select id="file-selector" v-model="selectedFileToEdit" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm">
+            <label for="file-selector" class="block text-15 font-medium text-black mb-3">Selecione o arquivo de entrada para editar:</label>
+            <select id="file-selector" v-model="selectedFileToEdit" class="mt-1 block w-full pl-3 pr-10 p-3 text-15 border-[#c2ddfd] focus:outline-none focus:ring-[#3459a2] focus:border-[#3459a2] rounded-[10px] shadow">
               <option v-for="file in editableFiles" :key="file.key" :value="file.key">{{ file.name }}</option>
             </select>
           </div>
           
-          <div class="md:text-right flex items-center justify-end space-x-4">
-            <!-- BOTÃO PARA ABRIR O MODAL DE SUBSTITUIÇÃO -->
+          <div class="md:text-right flex items-center justify-end gap-4">
             <PrimaryButton
               value="Substituir Arquivo"
               @click="showReplaceModal = true"
-              customColor="bg-yellow-500 hover:bg-yellow-600"
+              customColor="bg-[#f7b731] hover:bg-[#e0a800] w-48 h-12 text-15 font-semibold text-white rounded-[10px]"
               title="Substituir um arquivo de entrada completo por uma nova versão."
             />
             <PrimaryButton
-
               :value="isAppealsModeActive ? 'Sair do Modo Recurso' : 'Ativar Modo Recurso'"
               @click="toggleAppealsMode"
-              :customColor="isAppealsModeActive ? 'bg-orange-500 hover:bg-orange-600' : 'bg-blue-600 hover:bg-blue-700'"
+              :customColor="isAppealsModeActive ? 'bg-[#fa8231] hover:bg-[#e17055] w-48 h-12 text-15 font-semibold text-white rounded-[10px]' : 'bg-[#3459a2] hover:bg-[#27477a] w-48 h-12 text-15 font-semibold text-white rounded-[10px]'"
               title="Filtra a visualização para focar apenas em usuários com recursos abertos."
             />
             <PrimaryButton 
-              value="Reprocessar e Publicar Versão"
+              value="Processar e publicar versão"
               @click="publishVersion"
-              customColor="bg-green-600 hover:bg-green-700"
+              customColor="bg-[#2d8f4b] hover:bg-[#23703a] w-48 h-12 text-15 font-semibold text-white rounded-[10px]"
             />
           </div>
         </div>
-        <div class="mt-6">
-          <div class="mb-4">
+        <!-- Filtros -->
+        <div class="mb-8 px-4 sm:px-10 flex flex-col md:flex-row gap-6">
+          <div class="flex-1">
             <Search 
               :columns="filterableColumns"
               @search="handleSearch" 
             />
           </div>
-          <PrimaryTable 
-            v-if="selectedFileToEdit"
-            :key="tableKey"
-            :route="tableRoute"
-            :isDynamicRoute="true"
-            :searchCriteria="searchCriteria"  
-            @row-updated="handleRowUpdate"
-            @columns-loaded="handleColumnsLoaded"
-            :is-view-only="isViewOnlyMode"
-            :editable-columns="currentEditableColumns"
-            :file-key="selectedFileToEdit"
-            @show-hover="handleShowHover"
-            @hide-hover="handleHideHover"
-            :is-appeals-mode="isAppealsModeActive"
-          />
         </div>
+        <!-- Removido o padding da tabela -->
+        <PrimaryTable 
+          v-if="selectedFileToEdit"
+          :key="tableKey"
+          :route="tableRoute"
+          :isDynamicRoute="true"
+          :searchCriteria="searchCriteria"  
+          @row-updated="handleRowUpdate"
+          @columns-loaded="handleColumnsLoaded"
+          :is-view-only="isViewOnlyMode"
+          :editable-columns="currentEditableColumns"
+          :file-key="selectedFileToEdit"
+          @show-hover="handleShowHover"
+          @hide-hover="handleHideHover"
+          :is-appeals-mode="isAppealsModeActive"
+        />
       </div>
     </div>
   </Whiteboard>
@@ -93,7 +95,6 @@
       :style="hoverStyle"
     />
   </Teleport>
-
 </template>
 
 <script setup>
