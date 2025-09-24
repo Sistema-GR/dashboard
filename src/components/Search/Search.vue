@@ -40,7 +40,6 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from 'vue'
 import { MagnifyingGlassIcon } from "@heroicons/vue/24/outline"
 
 const props = defineProps({

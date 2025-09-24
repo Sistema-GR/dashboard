@@ -33,12 +33,12 @@
               </div>
               
               <!-- Ações específicas da versão -->
-              <div class="mt-4 sm:mt-0 flex items-center gap-3 flex-wrap">
-                <SecondaryButton 
-                  label="Ver no Dashboard" 
-                  v-if="item.status !== 'DRAFT'"
-                  @click="handleVisualizarClick(item.id)" 
-                  class="w-44 h-10 text-15 font-semibold bg-[#3459a2] text-white rounded-[10px]"
+
+              <div class="mt-3 sm:mt-0 flex items-center gap-2 flex-wrap">
+                 <SecondaryButton 
+                  label="Visualizar Relatório" 
+                  @click="openPreviewModal(item.id)" 
+
                 />
                 <SecondaryButton 
                   label="Excluir" 
@@ -52,23 +52,30 @@
       </div>
       <div v-else class="px-4 sm:px-10 pb-8 text-15 text-[#3459a2]">Nenhum cálculo encontrado para este ano.</div>
     </div>
+    <CalculusPreviewModal 
+        :visible="isModalVisible" 
+        :calculus-id="selectedCalculusId" 
+        @close="isModalVisible = false"
+    />
   </Whiteboard>
 </template>
 
 <script>
-import { ChevronDownIcon, FolderIcon } from '@heroicons/vue/24/outline';
 import { getAccessToken } from '@/service/token.js';
 import axios from 'axios';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import SecondaryButton from '@/components/Buttons/SecondaryButton.vue';
+import CalculusPreviewModal from '@/components/Modal/CalculusPreviewModal.vue';
 
 export default {
   name: 'PreviousResults',
-  components: { Whiteboard, SecondaryButton },
+  components: { Whiteboard, SecondaryButton, CalculusPreviewModal },
   data() {
     return {
       calculusGroupsByYear: {},
       errorMessage: null,
+      isModalVisible: false,
+      selectedCalculusId: null,
     };
   },
   methods: {
@@ -214,7 +221,13 @@ export default {
         ARCHIVED: 'bg-gray-100 text-gray-800',
       };
       return classes[status] || 'bg-gray-100';
-    }
+    },
+
+    openPreviewModal(calculusId) {
+      this.selectedCalculusId = calculusId;
+      this.isModalVisible = true;
+    },
+
   },
   async mounted() {
     await this.fetchCalculus();
