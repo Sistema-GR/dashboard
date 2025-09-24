@@ -223,6 +223,14 @@ async function fetchPeople() {
   try {
     let peopleData, columnsData;
 
+    let requestUrl;
+    if (props.isDynamicRoute) {
+      requestUrl = `http://127.0.0.1:8000/csv/${props.route}`;
+    } else {
+      const endpoint = await getEndpointForRoute(props.route);
+      requestUrl = `http://127.0.0.1:8000/csv/${endpoint}`;
+    }
+
     if (props.isDynamicRoute) {
       const token = await getAccessToken();
       const response = await axios.get(`http://127.0.0.1:8000/csv/${props.route}`, {
@@ -261,6 +269,14 @@ async function fetchPeople() {
   }
 }
 
+async function getEndpointForRoute(routeName) {
+    const routeMap = {
+        'Report': 'process/criterios/',
+        'Profissional': 'process/filtered-funcionarios/',
+        'Frequency': 'process/frequencia/',
+    };
+    return routeMap[routeName] || 'process/criterios/';
+}
 
 function loadMore() {
   const start = (currentPage.value - 1) * itemsPerPage;
