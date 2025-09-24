@@ -22,6 +22,9 @@ import editversion from '@/views/Admin/Create/EditVersions/index.vue'
 import permissionsaccess from '@/views/Admin/PermissionsAccess/index.vue'
 import AnnualReportsDashboard from '@/views/Admin/Resource/AnnualResource/AnnualReportsDashboard.vue'
 import createfromtemplate from '@/views/Admin/Create/CreateFromTemplate/index.vue'
+import PaymentAnalysisDashboard from '@/views/AdminPanel/Dashboard/PaymentAnalysis/PaymentAnalysisDashboard.vue'
+// import PaymentAnalysisVisaoGeral from '@/views/AdminPanel/Dashboard/PaymentAnalysis/PaymentAnalysisVisaoGeral.vue'
+// import PaymentAnalysisDadosUnidade from '@/views/AdminPanel/Dashboard/PaymentAnalysis/PaymentAnalysisDadosUnidade.vue'
 //Resource
 import resource from '@/views/Admin/Resource/index.vue'
 import infodetails from '@/views/Admin/Resource/InfoDetails/index.vue'
@@ -100,6 +103,21 @@ const router = createRouter({
           name: 'annual-reports',
           component: AnnualReportsDashboard
         },
+        {
+          path: 'payment-analysis',
+          name: 'payment-analysis',
+          component: PaymentAnalysisDashboard
+        }
+        // {
+        //   path: 'payment-analysis/visao-geral',
+        //   name: 'PaymentAnalysisVisaoGeral',
+        //   component: PaymentAnalysisVisaoGeral
+        // },
+        // {
+        //   path: 'payment-analysis/dados-unidade',
+        //   name: 'PaymentAnalysisDadosUnidade',
+        //   component: PaymentAnalysisDadosUnidade
+        // },
       ]
     },
     { path: '/user', 

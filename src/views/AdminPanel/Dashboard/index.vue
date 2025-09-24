@@ -1,7 +1,7 @@
 <template>
   <Whiteboard title="Dashboard" >
     <!-- Total Recebe, Total Não Recebe e Total a Pagar -->
-    <div class="grid w-full py-8">
+    <div class="grid w-full pt-8 pb-3">
       <div class="flex flex-wrap justify-center gap-6 sm:gap-8 xl:justify-between px-4 sm:px-10">
         <div
           v-for="(card, index) in cards"
@@ -27,6 +27,19 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="flex justify-end items-center px-4 sm:px-10 py-4 margin-between-sections gap-3">
+          
+      <button 
+        @click="navigateToPaymentAnalysis"
+        class="bg-[#3459A2] hover:bg-[#2a4a8a] text-white px-4 py-2 rounded-[10px] transition-colors duration-200 flex items-center gap-2 font-medium shadow-md"
+      >
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"/>
+        </svg>
+        Análise de Pagamento
+      </button>
     </div>
 
     <!-- Seções do gráfico -->
@@ -300,6 +313,10 @@ export default {
       ];
     });
 
+    const navigateToPaymentAnalysis = () => {
+      router.push('/admin/payment-analysis');
+    };
+
     return {
       updatedChartSections,
       files,
@@ -307,6 +324,7 @@ export default {
       cards,
       downloadCriteriosCSV,
       formattedDashboardData,
+      navigateToPaymentAnalysis,
     };
   }
 };
