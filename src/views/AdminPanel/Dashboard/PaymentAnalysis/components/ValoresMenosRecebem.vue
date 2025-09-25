@@ -7,10 +7,7 @@
     
     <div v-show="open" class="p-0">
       <div class="flex flex-wrap gap-10 px-10 py-8 justify-center items-stretch">
-        <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full max-w-full">
-          <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
-            Valores a receber x UE - Unidades que menos recebem
-          </div>
+        <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full max-w-full p-5">
           <div class="flex-1 flex items-center justify-center p-4 min-h-[400px] overflow-hidden">
             <div class="w-full h-[360px] flex items-center justify-center overflow-hidden relative">
               <canvas ref="chartValoresMenos" class="w-full h-full !block relative z-10" style="max-width:100%;max-height:100%;display:block;"></canvas>
@@ -45,13 +42,13 @@ export default {
     ]
 
     const faixasValores = {
-      'R$ 0,00 - R$ 1.000': '#b3d9ff',     // Azul muito claro
-      'R$ 1.000 - R$ 2.000': '#80bfff',    // Azul claro
-      'R$ 2.000 - R$ 3.000': '#4da6ff',    // Azul médio claro
-      'R$ 3.000 - R$ 4.000': '#1a8cff',    // Azul médio
-      'R$ 4.000 - R$ 5.000': '#0073e6',    // Azul
-      'R$ 5.000 - R$ 6.000': '#005cb3',    // Azul escuro
-      'Mais de R$ 6.000': '#003d7a'        // Azul muito escuro
+      'R$ 0,00 - R$ 1.000': '#eaeef6',     // Azul muito claro
+      'R$ 1.000 - R$ 2.000': '#c2cde3',    // Azul claro  
+      'R$ 2.000 - R$ 3.000': '#aebdda',    // Azul médio claro
+      'R$ 3.000 - R$ 4.000': '#859bc7',    // Azul médio
+      'R$ 4.000 - R$ 5.000': '#718abe',    // Azul
+      'R$ 5.000 - R$ 6.000': '#4869ab',    // Azul escuro
+      'Mais de R$ 6.000': '#3459a2'        // Azul muito escuro
     }
 
     // Dados simulados para unidades que menos recebem (valores menores)

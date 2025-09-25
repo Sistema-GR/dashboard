@@ -8,10 +8,7 @@
     <div v-show="open" class="p-0">
       <div class="flex flex-wrap gap-10 px-10 py-8 justify-center items-stretch">
         <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full max-w-full">
-          <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
-            Valores a receber x UE
-          </div>
-          <div class="flex-1 flex items-center justify-center p-4 min-h-[300px] overflow-hidden">
+          <div class="flex-1 flex items-center justify-center p-5 min-h-[300px] overflow-hidden">
             <div class="w-full h-[260px] flex items-center justify-center overflow-hidden relative">
               <canvas ref="chartValores" class="w-full h-full !block relative z-10" style="max-width:100%;max-height:100%;display:block;"></canvas>
             </div>
@@ -50,14 +47,13 @@ export default {
 
     const generateValues = () => {
       const faixas = {
-        'R$ 0,00 - R$ 1.000': '#e6f3ff',
-        'R$ 1.000 - R$ 2.000': '#b3d9ff', 
-        'R$ 2.000 - R$ 3.000': '#80bfff',
-        'R$ 3.000 - R$ 4.000': '#4da6ff',
-        'R$ 4.000 - R$ 5.000': '#1a8cff',
-        'R$ 5.000 - R$ 6.000': '#0073e6',
-        'Mais de R$ 6.000': '#005cb3'
-      }
+      'Não recebe nada': '#eaeef6',     // Azul muito claro
+      'Até R$ 1.500': '#aebdda',    // Azul médio claro
+      'De R$ 1.500 a R$ 3.000': '#859bc7',    // Azul médio
+      'De R$ 3.000 a R$ 4.500': '#718abe',    // Azul
+      'De R$ 4.500 a R$ 6.000': '#4869ab',    // Azul escuro
+      'Mais de R$ 6.000': '#3459a2'        // Azul muito escuro
+    }
       
       const datasets = Object.keys(faixas).map(faixa => ({
         label: faixa,

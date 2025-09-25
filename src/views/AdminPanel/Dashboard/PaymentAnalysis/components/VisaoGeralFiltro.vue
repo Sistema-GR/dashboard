@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-row justify-center items-center gap-4 px-10 w-full py-2 bg-blue-100">
+  <div class="flex flex-row flex-reversewrap justify-center items-center gap-4 px-10 w-full py-2 bg-blue-100" style="min-height:56px;">
     <select
       :value="filters.situacao"
       @change="updateFilter('situacao', $event.target.value)"

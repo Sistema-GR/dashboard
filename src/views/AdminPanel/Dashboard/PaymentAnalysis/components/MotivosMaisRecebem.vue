@@ -8,10 +8,7 @@
     <div v-show="open" class="p-0">
       <div class="flex flex-wrap gap-10 px-10 py-8 justify-center items-stretch">
         <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full max-w-full">
-          <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
-            Motivos para não recebimento x UE - Unidades que mais recebem
-          </div>
-          <div class="flex-1 flex items-center justify-center p-4 min-h-[400px] overflow-hidden">
+          <div class="flex-1 flex items-center justify-center p-5 min-h-[400px] overflow-hidden">
             <div class="w-full h-[360px] flex items-center justify-center overflow-hidden relative">
               <canvas ref="chartMaisRecebem" class="w-full h-full !block relative z-10" style="max-width:100%;max-height:100%;display:block;"></canvas>
             </div>
@@ -54,12 +51,12 @@ export default {
     }
 
     const colors = {
-      'Atividades': '#87ceeb',        // Azul claro
-      'Formação': '#4682b4',          // Azul aço
-      'Frequência': '#1e90ff',        // Azul dodger
-      'Mais de 1 critério individual': '#0066cc', // Azul médio
-      'Não recebe valor total por mais de 1 critério individual': '#003d7a', // Azul escuro
-      'Tempo de atuação': '#001f3f'   // Azul muito escuro
+      'Atividades': '#3459a2',
+      'Formação': '#5d7ab5',
+      'Frequência': '#859bc7',
+      'Mais de 1 critério individual': '#99acd0',
+      'Não recebe valor total por mais de 1 critério individual': '#c2cde3',
+      'Tempo de atuação': '#eaeef6'
     }
 
     const destroyChart = () => {

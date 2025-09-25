@@ -3,31 +3,37 @@
     <div class="grid grid-cols-3 gap-6">
       <!-- Servidores -->
       <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full">
-        <div class="bg-[#3459A2] text-white text-center font-bold text-18 p-3 rounded-t-[10px]">
+        <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
           Servidores
         </div>
-        <div class="bg-blue-50 p-6 rounded-b-[10px] text-center">
-          <span class="text-[32px] font-bold text-gray-800">{{ servidores?.toLocaleString() || '187' }}</span>
+        <div class="bg-blue-50 p-4 rounded-b-[10px]">
+          <div class="flex flex-row items-center justify-center mb-1">
+            <span class="text-20 font-bold text-black leading-none">{{ servidores?.toLocaleString() || '187' }}</span>
+          </div>
         </div>
       </div>
 
       <!-- Não recebem -->
       <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full">
-        <div class="bg-[#3459A2] text-white text-center font-bold text-18 p-3 rounded-t-[10px]">
+        <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
           Não recebem
         </div>
-        <div class="bg-blue-50 p-6 rounded-b-[10px] text-center">
-          <span class="text-[32px] font-bold text-gray-800">{{ naoRecebem?.toLocaleString() || '1646' }}</span>
+        <div class="bg-blue-50 p-4 rounded-b-[10px]">
+          <div class="flex flex-row items-center justify-center mb-1">
+            <span class="text-20 font-bold text-black leading-none">{{ naoRecebem?.toLocaleString() || '1646' }}</span>
+          </div>
         </div>
       </div>
 
       <!-- % que não recebe -->
       <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full">
-        <div class="bg-[#3459A2] text-white text-center font-bold text-18 p-3 rounded-t-[10px]">
+        <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
           % que não recebe
         </div>
-        <div class="bg-blue-50 p-6 rounded-b-[10px] text-center">
-          <span class="text-[32px] font-bold text-gray-800">{{ percentualNaoRecebe?.toFixed(1) || '85.46' }}%</span>
+        <div class="bg-blue-50 p-4 rounded-b-[10px]">
+          <div class="flex flex-row items-center justify-center mb-1">
+            <span class="text-20 font-bold text-black leading-none">{{ percentualNaoRecebe?.toFixed(1) || '85.46' }}%</span>
+          </div>
         </div>
       </div>
     </div>

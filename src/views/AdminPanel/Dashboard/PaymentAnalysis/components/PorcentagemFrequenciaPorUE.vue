@@ -7,11 +7,8 @@
     
     <div v-show="open" class="p-0">
       <div class="flex flex-wrap gap-10 px-10 py-8 justify-center items-stretch">
-        <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full max-w-full">
-          <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
-            % de frequência por UE
-          </div>
-          <div class="flex-1 flex items-center justify-center p-4 min-h-[300px] overflow-hidden">
+        <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full max-w-full p-5">
+          <div class="flex-1 flex items-center justify-center min-h-[300px] overflow-hidden">
             <div class="w-full h-[260px] flex items-center justify-center overflow-hidden relative">
               <canvas ref="chartFrequencia" class="w-full h-full !block relative z-10" style="max-width:100%;max-height:100%;display:block;"></canvas>
             </div>
@@ -48,12 +45,12 @@ export default {
     }
 
     const faixasFrequencia = {
-      '0%-29%': '#ff6b6b',      // Vermelho
-      '30%-49%': '#ffa726',     // Laranja
-      '50%-69%': '#ffeb3b',     // Amarelo
-      '70%-79%': '#9ccc65',     // Verde claro
-      '80%-89%': '#66bb6a',     // Verde
-      '90%-100%': '#42a5f5'     // Azul
+      '0%-29%': '#eaeef6',      // Vermelho
+      '30%-49%': '#aebdda',     // Laranja
+      '50%-69%': '#859bc7',     // Amarelo
+      '70%-79%': '#718abe',     // Verde claro
+      '80%-89%': '#4869ab',     // Verde
+      '90%-100%': '#3459a2'     // Azul
     }
 
     const generateFrequencyData = () => {

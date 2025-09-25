@@ -1,18 +1,40 @@
 <template>
-  <div class="bg-white rounded-lg shadow-sm border p-6 mb-6">
-    <h4 class="text-sm font-medium text-gray-700 mb-4">Indicadores Gerais</h4>
+  <div class="flex flex-col w-full px-10 py-8">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="text-center p-4 bg-gray-50 rounded-lg">
-        <div class="text-2xl font-bold text-green-600 mb-1">{{ totalRecebe?.toLocaleString() || '0' }}</div>
-        <div class="text-sm text-gray-600">Total que recebe</div>
+      <!-- Total que recebe -->
+      <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full max-w-full">
+        <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
+          Total que recebe
+        </div>
+        <div class="bg-blue-50 p-4 rounded-b-[10px]">
+          <div class="flex flex-row items-center justify-center mb-1">
+            <span class="text-20 font-bold text-gray-800 leading-none">{{ totalRecebe?.toLocaleString() || '514.4' }}</span>
+          </div>
+        </div>
       </div>
-      <div class="text-center p-4 bg-gray-50 rounded-lg">
-        <div class="text-2xl font-bold text-red-600 mb-1">{{ totalNaoRecebe?.toLocaleString() || '0' }}</div>
-        <div class="text-sm text-gray-600">Total que não recebe</div>
+
+      <!-- Total que não recebe -->
+      <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full max-w-full">
+        <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
+          Total que não recebe
+        </div>
+        <div class="bg-blue-50 p-4 rounded-b-[10px]">
+          <div class="flex flex-row items-center justify-center mb-1">
+            <span class="text-20 font-bold text-gray-800 leading-none">{{ totalNaoRecebe?.toLocaleString() || '3545' }}</span>
+          </div>
+        </div>
       </div>
-      <div class="text-center p-4 bg-gray-50 rounded-lg">
-        <div class="text-2xl font-bold text-blue-600 mb-1">R$ {{ valorPagar?.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) || '0,00' }}</div>
-        <div class="text-sm text-gray-600">Valor a pagar</div>
+
+      <!-- Valor a pagar -->
+      <div class="bg-white rounded-[10px] shadow-md flex flex-col w-full max-w-full">
+        <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3 rounded-t-[10px]">
+          Valor a pagar
+        </div>
+        <div class="bg-blue-50 p-4 rounded-b-[10px]">
+          <div class="flex flex-row items-center justify-center mb-1">
+            <span class="text-20 font-bold text-gray-800 leading-none">R$ {{ valorPagar?.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) || '12.854,60' }}</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -22,18 +44,9 @@
 export default {
   name: 'VisaoGeralIndicadores',
   props: {
-    totalRecebe: {
-      type: Number,
-      default: 0
-    },
-    totalNaoRecebe: {
-      type: Number,
-      default: 0
-    },
-    valorPagar: {
-      type: Number,
-      default: 0
-    }
+    totalRecebe: { type: Number, default: 514.4 },
+    totalNaoRecebe: { type: Number, default: 3545 },
+    valorPagar: { type: Number, default: 12854.60 }
   }
 }
 </script>

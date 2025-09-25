@@ -1,83 +1,184 @@
 <template>
-  <div class="mb-8">
-    <div class="font-bold mb-2">Faixas de Pagamento</div>
-    <div class="flex gap-4">
-      <div class="flex-1">
-        <canvas ref="barCanvas"></canvas>
+  <div class="mb-6 w-full">
+    <button @click="open = !open" class="w-full text-left px-6 py-3 justify-between bg-blue-50 rounded-[10px] focus:outline-none flex items-center">
+      <span class="text-25 font-bold text-black">Faixas de Pagamento</span>
+      <ChevronDownIcon class="w-4 h-4 sm:w-5 sm:h-5" :class="{ 'rotate-180': open }"/>
+    </button>
+    <div v-show="open" class="p-0">
+      <div class="flex flex-wrap gap-10 px-10 py-8 justify-center items-stretch">
+        <!-- Card único com gráfico e tabela -->
+        <div class="bg-white rounded-[10px] shadow-md p-5 flex flex-col w-full max-w-full">
+                    
+          <!-- Tabela -->
+          <div class="p-4">
+            <table class="w-full text-15">
+              <thead class="bg-[#1e3a8a] text-white rounded-[10px]">
+                <tr>
+                  <th class="px-4 py-2 text-left">Faixas de Pagamento</th>
+                  <th class="px-4 py-2 text-center">Matrícula</th>
+                  <th class="px-4 py-2 text-center">% matrícula</th>
+                  <th class="px-4 py-2 text-right">Valor a pagar</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(faixa, i) in faixasData" :key="i" class="border-b">
+                  <td class="px-4 py-2">{{ faixa.nome }}</td>
+                  <td class="px-4 py-2 text-center">{{ faixa.quantidade }}</td>
+                  <td class="px-4 py-2 text-center">{{ faixa.percentual }}%</td>
+                  <td class="px-4 py-2 text-right">{{ faixa.valorMedio }}</td>
+                </tr>
+                <tr class="bg-gray-50 font-bold">
+                  <td class="px-4 py-2">Total geral</td>
+                  <td class="px-4 py-2 text-center">{{ totalGeral.quantidade }}</td>
+                  <td class="px-4 py-2 text-center">{{ totalGeral.percentual }}%</td>
+                  <td class="px-4 py-2 text-right">{{ totalGeral.valorMedio }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Gráfico de barras -->
+          <div class="flex-1 flex items-center justify-center p-4 min-h-[260px] overflow-hidden">
+            <div class="w-full h-[220px] flex items-center justify-center overflow-hidden relative">
+              <canvas ref="chartDistribuicao" class="w-full h-full !block relative z-10" style="max-width:100%;max-height:100%;display:block;"></canvas>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="flex-1">
-        <canvas ref="pieCanvas"></canvas>
-      </div>
-    </div>
-    <div class="mt-4">
-      <table>
-        <thead>
-          <tr>
-            <th>Faixa</th>
-            <th>Matrícula</th>
-            <th>Matrícula</th>
-            <th>Valor a pagar</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(item, idx) in info" :key="idx">
-            <td>{{ item.faixa }}</td>
-            <td>{{ item.matricula }}</td>
-            <td>{{ item.porcentagemMatricula }}</td>
-            <td>{{ item.valorPagar }}</td>
-          </tr>
-        </tbody>
-      </table>
     </div>
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue'
+<script>
+import { ref, watch, nextTick, computed, onMounted } from 'vue'
 import Chart from 'chart.js/auto'
+import { ChevronDownIcon } from '@heroicons/vue/24/outline'
 
-const barCanvas = ref(null)
-const pieCanvas = ref(null)
+export default {
+  name: 'FaixasPagamento',
+  components: { ChevronDownIcon },
+  props: { data: { type: Object, default: () => ({}) } },
+  
+  setup(props) {
+    const open = ref(true)
+    const chartDistribuicao = ref(null)
+    let chartInstance = null
 
-const labels = [
-  'Não recebe nada', 'Até R$ 1.000', 'De R$ 1.000 a R$ 2.000',
-  'De R$ 2.000 a R$ 4.000', 'De R$ 4.000 a R$ 6.000', 'Mais que R$ 6.000'
-]
-const data = [1200, 300, 400, 600, 300, 200]
-const colors = ['#1976d2', '#2196f3', '#64b5f6', '#90caf9', '#bbdefb', '#e3f2fd']
+    const faixasData = [
+      { nome: 'Não recebe nada', quantidade: 3474, percentual: 85.4, valorMedio: 'R$ 0,00' },
+      { nome: 'Até R$ 1.000', quantidade: 300, percentual: 7.4, valorMedio: 'R$ 500,00' },
+      { nome: 'De R$ 1.000 a R$ 2.000', quantidade: 150, percentual: 3.7, valorMedio: 'R$ 1.500,00' },
+      { nome: 'De R$ 2.000 a R$ 4.000', quantidade: 100, percentual: 2.5, valorMedio: 'R$ 3.000,00' },
+      { nome: 'De R$ 4.000 a R$ 6.000', quantidade: 30, percentual: 0.7, valorMedio: 'R$ 5.000,00' },
+      { nome: 'Mais que R$ 6.000', quantidade: 15, percentual: 0.4, valorMedio: 'R$ 8.000,00' }
+    ]
 
-const info = [
-  { faixa: 'Não recebe nada', matricula: 1200, valorPagar: 'R$ 0,00' },
-  { faixa: 'Até R$ 1.000', matricula: 300, valorPagar: 'R$ 300.000,00' },
-  { faixa: 'De R$ 1.000 a R$ 2.000', matricula: 400, valorPagar: 'R$ 600.000,00' },
-  { faixa: 'De R$ 2.000 a R$ 4.000', matricula: 600, valorPagar: 'R$ 1.800.000,00' },
-  { faixa: 'De R$ 4.000 a R$ 6.000', matricula: 300, valorPagar: 'R$ 1.500.000,00' },
-  { faixa: 'Mais que R$ 6.000', matricula: 200, valorPagar: 'R$ 1.400.000,00' }
-]
+    const totalGeral = {
+      quantidade: 4069,
+      percentual: 100.0,
+      valorMedio: 'R$ 1.254,32'
+    }
 
-onMounted(() => {
-  new Chart(barCanvas.value, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        label: 'Matrícula',
-        data,
-        backgroundColor: '#1976d2'
-      }]
-    },
-    options: { responsive: true }
-  })
-  new Chart(pieCanvas.value, {
-    type: 'pie',
-    data: {
-      labels,
-      datasets: [{
-        data,
-        backgroundColor: colors
-      }]
-    },
-    options: { responsive: true }
-  })
-})
+    const labels = faixasData.map(f => f.nome)
+    const data = faixasData.map(f => f.quantidade)
+
+    const generateBlueColorPalette = (count) => {
+      const colors = []
+      const startColor = [30, 58, 138] // #3459a2
+      const endColor = [147, 197, 253] // #c2ddfd
+      
+      for (let i = 0; i < count; i++) {
+        const ratio = count === 1 ? 0 : i / (count - 1)
+        const r = Math.round(startColor[0] + (endColor[0] - startColor[0]) * ratio)
+        const g = Math.round(startColor[1] + (endColor[1] - startColor[1]) * ratio)
+        const b = Math.round(startColor[2] + (endColor[2] - startColor[2]) * ratio)
+        colors.push(`rgb(${r}, ${g}, ${b})`)
+      }
+      return colors
+    }
+
+    const destroyChart = () => {
+      if (chartInstance) { chartInstance.destroy(); chartInstance = null }
+    }
+
+    const createChart = async () => {
+      await nextTick()
+      if (!chartDistribuicao.value || !open.value) return
+      destroyChart()
+      await nextTick()
+      await new Promise(resolve => setTimeout(resolve, 100))
+
+      const blueColors = generateBlueColorPalette(data.length)
+
+      chartInstance = new Chart(chartDistribuicao.value, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Quantidade',
+            data,
+            backgroundColor: blueColors,
+            borderColor: blueColors.map(color => color.replace('rgb', 'rgba').replace(')', ', 0.8)')),
+            borderWidth: 1,
+            borderRadius: 6,
+            barPercentage: 0.7,
+            categoryPercentage: 0.7
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { 
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return `${context.label}: ${context.parsed.y.toLocaleString()}`
+                }
+              }
+            }
+          },
+          scales: {
+            x: { 
+              grid: { display: false }, 
+              ticks: { 
+                font: { size: 10 }, 
+                maxRotation: 45, 
+                minRotation: 0 
+              } 
+            },
+            y: { 
+              beginAtZero: true, 
+              grid: { color: '#e5e7eb' }, 
+              ticks: { 
+                font: { size: 12 }, 
+                stepSize: 500,
+                callback: function(value) {
+                  return value.toLocaleString()
+                }
+              },
+              max: 4000
+            }
+          }
+        }
+      })
+    }
+
+    watch(() => props.data, () => {
+      if (open.value) setTimeout(() => createChart(), 100)
+    }, { deep: true })
+
+    watch(open, (isOpen) => {
+      if (isOpen) setTimeout(() => createChart(), 300)
+      else destroyChart()
+    })
+
+    onMounted(() => setTimeout(() => createChart(), 500))
+
+    return { open, chartDistribuicao, faixasData, totalGeral }
+  }
+}
 </script>
+
+<style scoped>
+</style>
