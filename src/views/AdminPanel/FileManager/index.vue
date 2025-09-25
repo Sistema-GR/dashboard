@@ -3,10 +3,10 @@
     
     <div v-if="calculusInfo.name" class="px-4 sm:px-10 mt-4 mb-2 border-b pb-4">
       <h3 class="text-xl font-bold text-gray-800">
-        Cálculo Ativo: <span class="text-blue-600">{{ calculusInfo.name }}</span>
+        Cálculo Ativo (OpenCalc): <span class="text-blue-600">{{ calculusInfo.name }}</span>
       </h3>
       <p class="text-sm text-gray-500">
-        Arquivos referentes ao cálculo do ano de {{ calculusInfo.year }}
+        Arquivos referentes ao cálculo oficial do ano de {{ calculusInfo.year }}
       </p>
     </div>
 
@@ -53,7 +53,6 @@
           <ChevronDownIcon class="h-5 w-5 text-gray-500 transition-transform" :class="{ 'rotate-180': isImportedOpen }" />
         </div>
         <transition name="fade">
-          <!-- MODIFICADO v-for para usar importedFiles -->
           <div v-show="isImportedOpen">
             <div v-for="file in importedFiles" :key="file.id" class="bg-white border border-gray-200 rounded-[10px] shadow-md p-4 mt-2">
               <div class="flex flex-col">
@@ -68,15 +67,8 @@
                   <div v-show="file.isOpen" class="ml-6 mt-2 space-y-2">
                     <p class="text-gray-500 text-md">{{ file.filename }}</p>
                     <div class="flex justify-end space-x-3">
-                      <!-- MODIFICADO @click para passar o objeto file -->
                       <button class="bg-blue-600 text-white px-4 py-2 rounded-[10px] hover:bg-blue-700 transition" @click="baixarArquivo(file)">
                         <CloudArrowDownIcon class="h-5 w-5 inline mr-1" /> Download
-                      </button>
-                      <button 
-                        class="bg-yellow-600 text-white px-4 py-2 rounded-[10px] hover:bg-yellow-700 transition"
-                        @click="fazerEdicao"
-                      >
-                        <PencilIcon class="h-5 w-5 inline mr-1" /> Editar
                       </button>
                     </div>
                   </div>
@@ -91,9 +83,6 @@
           <button @click="$router.push('/admin/dashboard')" class="bg-blue-600 text-white px-4 py-2 rounded-[10px] hover:bg-blue-700 transition">
             Voltar
           </button>
-          <button class="bg-red-600 text-white px-4 py-2 rounded-[10px] hover:bg-red-700 transition" @click="fazerRecalculo">
-            Recalcular
-          </button>
         </div>
     </div>
   </Whiteboard>
@@ -101,15 +90,17 @@
 
 <script>
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
-import { getActiveCalculusFiles, downloadFileById } from '@/service/apiService';
+import { getActiveOpenCalcFiles, downloadFileById } from '@/service/apiService';
 import { ChevronDownIcon, CloudArrowDownIcon, PencilIcon } from "@heroicons/vue/24/outline";
 import { DocumentIcon } from '@heroicons/vue/24/solid';
 import { computed, ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
 export default {
   components: { Whiteboard, ChevronDownIcon, CloudArrowDownIcon, PencilIcon, DocumentIcon },
 
   setup() {
+    const router = useRouter();
     const isProcessedOpen = ref(true);
     const isImportedOpen = ref(true);
 
@@ -121,8 +112,7 @@ export default {
 
     const fetchFiles = async () => {
       try {
-        const response = await getActiveCalculusFiles();
-        const data = response.data;
+        const data = await getActiveOpenCalcFiles();
         calculusInfo.value = data.calculus_info;
         files.value = data.files.map(file => ({
           id: file.id,
@@ -148,13 +138,6 @@ export default {
       isImportedOpen.value = !isImportedOpen.value;
     };
     
-    const fazerRecalculo = () => {
-      alert('Esta função ainda não foi implementada!');
-    };
-
-    const fazerEdicao = () => {
-      alert('Esta função ainda não foi implementada!');
-    };
 
     const baixarArquivo = (file) => {
       if (file && file.id) {
@@ -177,8 +160,6 @@ export default {
       toggleImported,
       toggleFile,
       baixarArquivo,
-      fazerEdicao,
-      fazerRecalculo,
       calculusInfo,
     };
   }
