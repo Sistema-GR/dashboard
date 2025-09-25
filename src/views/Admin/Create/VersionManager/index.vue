@@ -5,7 +5,6 @@
       <!-- Estado de Carregamento -->
       <div v-if="isLoading" class="text-center py-10">
         <p class="text-gray-600">Carregando histórico de versões...</p>
-        <!-- Você pode adicionar um componente de spinner aqui se tiver um -->
       </div>
 
       <!-- Estado de Erro -->
@@ -31,9 +30,8 @@
 
             <!-- Botões de Ação -->
             <div class="mt-4 sm:mt-0 sm:ml-4 flex-shrink-0 flex items-center gap-2">
-              <!-- Ação para versão PUBLICADA -->
               <PrimaryButton
-                v-if="version.status === 'PUBLISHED'"
+                v-if="version.status === 'PUBLISHED' && !hasDraftVersion"
                 value="Criar Nova Versão para Edição"
                 @click="createNewVersion(version.id)"
                 customColor="bg-blue-600 hover:bg-blue-700"
@@ -67,13 +65,12 @@
 
 <script setup>
 import { ref, onMounted, computed, inject } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import {  useRouter } from 'vue-router';
 import axios from 'axios';
 import { getAccessToken } from '@/service/token';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
 
-const route = useRoute();
 const router = useRouter();
 const isSidebarMinimized = inject('isSidebarMinimized', ref(false));
 
@@ -81,7 +78,6 @@ const versions = ref([]);
 const isLoading = ref(true);
 const error = ref(null);
 
-const calculusId = computed(() => route.params.id);
 const pageTitle = computed(() => {
   if (versions.value.length > 0) {
     return `Gerenciador de Versões: ${versions.value[0].description}`;
@@ -89,19 +85,38 @@ const pageTitle = computed(() => {
   return 'Gerenciador de Versões';
 });
 
-// Função para buscar os dados da API
-async function fetchVersions() {
+const hasDraftVersion = computed(() => {
+  return versions.value.some(v => v.status === 'DRAFT');
+});
+
+// Função unificada para buscar o cálculo ativo e depois suas versões
+async function fetchActiveCalculusAndVersions() {
   isLoading.value = true;
   error.value = null;
   try {
     const token = await getAccessToken();
-    const response = await axios.get(`http://127.0.0.1:8000/csv/calculus/${calculusId.value}/versions/`, {
+
+    const activeCalcResponse = await axios.get('http://127.0.0.1:8000/csv/opencalc/get-active-info/', {
       headers: { Authorization: `Bearer ${token}` },
     });
-    versions.value = response.data;
+    
+    const activeCalculusId = activeCalcResponse.data.calculus_id;
+    if (!activeCalculusId) {
+      throw new Error("Nenhum cálculo ativo (OpenCalc) foi encontrado no sistema.");
+    }
+
+    const versionsResponse = await axios.get(`http://127.0.0.1:8000/csv/calculus/${activeCalculusId}/versions/`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    versions.value = versionsResponse.data;
+
   } catch (err) {
-    console.error("Erro ao buscar versões:", err);
-    error.value = "Não foi possível carregar o histórico de versões. Tente novamente mais tarde.";
+    console.error("Erro ao buscar versões do cálculo ativo:", err);
+    if (err.response && err.response.status === 404) {
+      error.value = "Nenhum cálculo ativo (OpenCalc) foi encontrado para exibir o histórico de versões.";
+    } else {
+      error.value = "Não foi possível carregar o histórico de versões. Tente novamente mais tarde.";
+    }
   } finally {
     isLoading.value = false;
   }
@@ -152,5 +167,5 @@ function getStatusClass(status) {
   return classes[status] || 'bg-gray-100';
 }
 
-onMounted(fetchVersions);
+onMounted(fetchActiveCalculusAndVersions);
 </script>
