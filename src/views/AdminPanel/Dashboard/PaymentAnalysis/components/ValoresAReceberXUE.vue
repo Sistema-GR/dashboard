@@ -47,12 +47,12 @@ export default {
 
     const generateValues = () => {
       const faixas = {
-      'Não recebe nada': '#eaeef6',     // Azul muito claro
-      'Até R$ 1.500': '#aebdda',    // Azul médio claro
-      'De R$ 1.500 a R$ 3.000': '#859bc7',    // Azul médio
-      'De R$ 3.000 a R$ 4.500': '#718abe',    // Azul
-      'De R$ 4.500 a R$ 6.000': '#4869ab',    // Azul escuro
-      'Mais de R$ 6.000': '#3459a2'        // Azul muito escuro
+      'Não recebe nada': '#6fa3ef',     // Azul muito claro
+      'Até R$ 1.500': '#f4b72f',    // Azul médio claro
+      'De R$ 1.500 a R$ 3.000': '#f16d91',    // Azul médio
+      'De R$ 3.000 a R$ 4.500': '#6cc69d',    // Azul
+      'De R$ 4.500 a R$ 6.000': '#f48e2f',    // Azul escuro
+      'Mais de R$ 6.000': '#6668d4'        // Azul muito escuro
     }
       
       const datasets = Object.keys(faixas).map(faixa => ({
