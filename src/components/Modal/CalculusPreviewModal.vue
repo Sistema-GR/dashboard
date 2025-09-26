@@ -60,6 +60,15 @@
                   </select>
                 </div>
 
+                <div class="mb-8 px-4 sm:px-10 flex flex-col md:flex-row gap-6">
+                  <div class="flex-1">
+                    <Search 
+                      :columns="filterableColumns"
+                      @search="handleSearch" 
+                    />
+                  </div>
+                </div>
+                
                 <div class="border rounded-[10px] overflow-hidden">
                   <PrimaryTable
                     v-if="selectedReport"
@@ -67,6 +76,8 @@
                     :route="dynamicRoute"
                     :isDynamicRoute="true"
                     :isViewOnly="true"
+                    :searchCriteria="searchCriteria"
+                    @columns-loaded="handleColumnsLoaded"
                   />
                 </div>
               </section>
@@ -96,6 +107,7 @@ import { getAccessToken } from '@/service/token';
 import axios from 'axios';
 import PrimaryTable from '../Table/PrimaryTable.vue';
 import Loading from '../Loading/Loading.vue';
+import Search from '@/components/Search/Search.vue';
 
 const props = defineProps({
   calculusId: { type: Number, default: null },
@@ -108,6 +120,16 @@ const isLoading = ref(false);
 const summaryData = ref({});
 const selectedReport = ref('criterios'); 
 const tableKey = ref(0);
+const searchCriteria = ref({ query: '', column: 'all' });
+const filterableColumns = ref([]);
+
+const handleSearch = (criteria) => {
+  searchCriteria.value = criteria;
+};
+
+const handleColumnsLoaded = (columns) => {
+  filterableColumns.value = columns;
+}
 
 const reportOptions = [
   { label: 'Critérios Finais', value: 'criterios' },
