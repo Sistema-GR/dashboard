@@ -42,13 +42,13 @@ export default {
     ]
 
     const faixasValores = {
-      'R$ 0,00 - R$ 1.000': '#eaeef6',     // Azul muito claro
-      'R$ 1.000 - R$ 2.000': '#c2cde3',    // Azul claro  
-      'R$ 2.000 - R$ 3.000': '#aebdda',    // Azul médio claro
-      'R$ 3.000 - R$ 4.000': '#859bc7',    // Azul médio
-      'R$ 4.000 - R$ 5.000': '#718abe',    // Azul
-      'R$ 5.000 - R$ 6.000': '#4869ab',    // Azul escuro
-      'Mais de R$ 6.000': '#3459a2'        // Azul muito escuro
+      'R$ 0,00 - R$ 1.000': '#418b6a',     // Azul muito claro
+      'R$ 1.000 - R$ 2.000': '#6cc69d',    // Azul claro  
+      'R$ 2.000 - R$ 3.000': '#6fa3ef',    // Azul médio claro
+      'R$ 3.000 - R$ 4.000': '#6668d4',    // Azul médio
+      'R$ 4.000 - R$ 5.000': '#f16d91',    // Azul
+      'R$ 5.000 - R$ 6.000': '#f48e2f',    // Azul escuro
+      'Mais de R$ 6.000': '#f4b72f'        // Azul muito escuro
     }
 
     // Dados simulados para unidades que mais recebem (valores maiores)

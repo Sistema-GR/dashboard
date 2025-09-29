@@ -81,24 +81,25 @@ export default {
 
     const labels = faixasData.map(f => f.nome)
     const data = faixasData.map(f => f.quantidade)
-
+    
     const generateBlueColorPalette = (count) => {
-      const colors = []
-      const startColor = [30, 58, 138] // #3459a2
-      const endColor = [147, 197, 253] // #c2ddfd
-      
-      for (let i = 0; i < count; i++) {
-        const ratio = count === 1 ? 0 : i / (count - 1)
-        const r = Math.round(startColor[0] + (endColor[0] - startColor[0]) * ratio)
-        const g = Math.round(startColor[1] + (endColor[1] - startColor[1]) * ratio)
-        const b = Math.round(startColor[2] + (endColor[2] - startColor[2]) * ratio)
-        colors.push(`rgb(${r}, ${g}, ${b})`)
-      }
-      return colors
+      // Cores fixas conforme solicitado
+      const fixedColors = [
+        '#6cc69d',
+        '#6fa3ef',
+        '#6668d4',
+        '#f16d91',
+        '#f48e2f',
+        '#f4b72f'
+      ]
+      return fixedColors.slice(0, count)
     }
 
     const destroyChart = () => {
-      if (chartInstance) { chartInstance.destroy(); chartInstance = null }
+      if (chartInstance) { 
+        chartInstance.destroy()
+        chartInstance = null 
+      }
     }
 
     const createChart = async () => {

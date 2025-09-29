@@ -51,14 +51,13 @@ export default {
     }
 
     const colors = {
-      'Atividades': '#3459a2',
-      'Formação': '#5d7ab5',
-      'Frequência': '#859bc7',
-      'Mais de 1 critério individual': '#99acd0',
-      'Não recebe valor total por mais de 1 critério individual': '#c2cde3',
-      'Tempo de atuação': '#eaeef6'
+      'Atividades': '#6cc69d',
+      'Formação': '#6fa3ef',
+      'Frequência': '#6668d4',
+      'Mais de 1 critério individual': '#f16d91',
+      'Não recebe valor total por mais de 1 critério individual': '#f48e2f',
+      'Tempo de atuação': '#f4b72f'
     }
-
 
     const destroyChart = () => {
       if (chartInstance) { chartInstance.destroy(); chartInstance = null }

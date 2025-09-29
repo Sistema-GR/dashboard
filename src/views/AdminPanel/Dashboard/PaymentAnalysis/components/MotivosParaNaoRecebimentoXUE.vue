@@ -40,12 +40,12 @@ export default {
 
     // Categorias com cores da imagem
     const categorias = [
-      { nome: 'Atividades', color: '#3459a2' },
-      { nome: 'Formação', color: '#5d7ab5' },
-      { nome: 'Frequência', color: '#859bc7' },
-      { nome: 'Mais de 1 critério individual', color: '#99acd0' },
-      { nome: 'Não recebe valor total por mais de 1 critério individual', color: '#c2cde3' },
-      { nome: 'Tempo de atuação', color: '#eaeef6' }
+      { nome: 'Atividades', color: '#6cc69d' },
+      { nome: 'Formação', color: '#6fa3ef' },
+      { nome: 'Frequência', color: '#6668d4' },
+      { nome: 'Mais de 1 critério individual', color: '#f16d91' },
+      { nome: 'Não recebe valor total por mais de 1 critério individual', color: '#f48e2f' },
+      { nome: 'Tempo de atuação', color: '#f4b72f' }
     ]
 
     // Escolas/Unidades (mais de 50 como na imagem)

@@ -45,12 +45,12 @@ export default {
     }
 
     const faixasFrequencia = {
-      '0%-29%': '#eaeef6',      // Vermelho
-      '30%-49%': '#aebdda',     // Laranja
-      '50%-69%': '#859bc7',     // Amarelo
-      '70%-79%': '#718abe',     // Verde claro
-      '80%-89%': '#4869ab',     // Verde
-      '90%-100%': '#3459a2'     // Azul
+      '0%-29%': '#6cc69d',     
+      '30%-49%': '#6fa3ef',     
+      '50%-69%': '#6668d4',     
+      '70%-79%': '#f16d91',    
+      '80%-89%': '#f48e2f',     
+      '90%-100%': '#f4b72f'     
     }
 
     const generateFrequencyData = () => {

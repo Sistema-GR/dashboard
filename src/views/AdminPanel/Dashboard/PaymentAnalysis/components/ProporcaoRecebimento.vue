@@ -61,12 +61,12 @@ export default {
     
     // Paleta de cores azuis (mesma do PorcentagemFrequencia)
     const colors = [
-      '#6fa3ef', // Azul muito claro (0%-29%)
-      '#f4b72f',
-      '#f16d91',
       '#6cc69d',
+      '#6fa3ef', // Azul muito claro (0%-29%)
+      '#6668d4', 
+      '#f16d91',
       '#f48e2f',
-      '#6668d4'  
+      '#f4b72f'
     ]
 
     const legendaData = computed(() => {

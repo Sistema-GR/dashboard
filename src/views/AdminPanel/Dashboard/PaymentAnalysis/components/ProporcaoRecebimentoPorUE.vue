@@ -55,10 +55,10 @@ export default {
 
     // Categorias de proporção com cores da imagem
     const categoriasProporcao = [
-      { nome: '0,00%', color: '#3459a2' },
-      { nome: '0,00%', color: '#6fa3ef' },
-      { nome: '40,00%', color: '#00b6cb' },
-      { nome: '55,00%', color: '#6cc69d' },
+      { nome: '0,00%', color: '#418b6a' },
+      { nome: '0,00%', color: '#6cc69d' },
+      { nome: '40,00%', color: '#6fa3ef' },
+      { nome: '55,00%', color: '#6668d4' },
       { nome: '70,00%', color: '#f16d91' },
       { nome: '85,00%', color: '#f48e2f' },
       { nome: '100,00%', color: '#f4b72f' }

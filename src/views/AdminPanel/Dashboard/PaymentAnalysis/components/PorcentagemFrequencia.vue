@@ -61,14 +61,14 @@ export default {
     
     // Paleta de cores azuis (do mais claro ao mais escuro)
     const colors = [
-      '#eaeef6', // Azul muito claro (0%-29%)
-      '#c2cde3',
-      '#99acd0',
-      '#859bc7',
-      '#5d7ab5',
-      '#3459a2'  
+      '#6cc69d',
+      '#6fa3ef', 
+      '#6668d4', 
+      '#f16d91',
+      '#f48e2f',
+      '#f4b72f'
     ]
-
+    
     const legendaData = computed(() => {
       return labels.map((label, i) => ({
         label,

@@ -75,12 +75,12 @@ export default {
     let chartInstance = null
 
     const motivosData = [
-      { nome: 'Frequência', quantidade: 1400, percentual: 56.0, color: '#3459a2' },
-      { nome: 'Tempo de atuação', quantidade: 400, percentual: 16.0, color: '#5d7ab5' },
-      { nome: 'Formação', quantidade: 300, percentual: 12.0, color: '#859bc7' },
-      { nome: 'Mais de 1 critério individual', quantidade: 200, percentual: 8.0, color: '#99acd0' },
-      { nome: 'Atividades', quantidade: 174, percentual: 7.0, color: '#c2cde3' },
-      { nome: 'Tempo de atuação permanente', quantidade: 26, percentual: 1.0, color: '#eaeef6' }
+      { nome: 'Frequência', quantidade: 1400, percentual: 56.0, color: '#6cc69d' },
+      { nome: 'Tempo de atuação', quantidade: 400, percentual: 16.0, color: '#6fa3ef' },
+      { nome: 'Formação', quantidade: 300, percentual: 12.0, color: '#6668d4' },
+      { nome: 'Mais de 1 critério individual', quantidade: 200, percentual: 8.0, color: '#f16d91' },
+      { nome: 'Atividades', quantidade: 174, percentual: 7.0, color: '#f48e2f' },
+      { nome: 'Tempo de atuação permanente', quantidade: 26, percentual: 1.0, color: '#f4b72f' }
     ]
 
     const totalGeral = {
