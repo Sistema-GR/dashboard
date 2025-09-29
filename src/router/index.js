@@ -79,7 +79,7 @@ const router = createRouter({
             { path: 'from-template', name: 'create-from-template', component: createfromtemplate },
             { path: 'selector', name: 'selector', component: selector },
             { path: 'editversion/:id', name: 'editversion', component: editversion, props: true },
-            { path: 'versionmanager/:id', name: 'versionmanager', component: versionmanager, props: true },
+            { path: 'versionmanager/:id?', name: 'versionmanager', component: versionmanager, props: true },
           ]
         }
       ]

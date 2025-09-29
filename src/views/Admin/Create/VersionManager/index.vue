@@ -65,12 +65,13 @@
 
 <script setup>
 import { ref, onMounted, computed, inject } from 'vue';
-import {  useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import { getAccessToken } from '@/service/token';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
 
+const route = useRoute();
 const router = useRouter();
 const isSidebarMinimized = inject('isSidebarMinimized', ref(false));
 
@@ -89,40 +90,43 @@ const hasDraftVersion = computed(() => {
   return versions.value.some(v => v.status === 'DRAFT');
 });
 
-// Função unificada para buscar o cálculo ativo e depois suas versões
-async function fetchActiveCalculusAndVersions() {
+async function fetchCalculusVersions() {
   isLoading.value = true;
   error.value = null;
+  let calculusIdToFetch = null;
+
   try {
     const token = await getAccessToken();
 
-    const activeCalcResponse = await axios.get('http://127.0.0.1:8000/csv/opencalc/get-active-info/', {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    
-    const activeCalculusId = activeCalcResponse.data.calculus_id;
-    if (!activeCalculusId) {
-      throw new Error("Nenhum cálculo ativo (OpenCalc) foi encontrado no sistema.");
+    if (route.params.id) {
+      calculusIdToFetch = route.params.id;
+      console.log(`[VersionManager] Modo Específico: Buscando versões para o cálculo ID ${calculusIdToFetch}`);
+    } else {
+      console.log("[VersionManager] Modo Padrão: Nenhum ID na URL, buscando OpenCalc ativo...");
+      const activeCalcResponse = await axios.get('http://127.0.0.1:8000/csv/opencalc/get-active-info/', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      
+      calculusIdToFetch = activeCalcResponse.data.calculus_id;
     }
 
-    const versionsResponse = await axios.get(`http://127.0.0.1:8000/csv/calculus/${activeCalculusId}/versions/`, {
+    if (!calculusIdToFetch) {
+        throw new Error("Não foi possível determinar um cálculo para buscar. Nenhum OpenCalc ativo encontrado ou ID inválido.");
+    }
+
+    const versionsResponse = await axios.get(`http://127.0.0.1:8000/csv/calculus/${calculusIdToFetch}/versions/`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     versions.value = versionsResponse.data;
 
   } catch (err) {
-    console.error("Erro ao buscar versões do cálculo ativo:", err);
-    if (err.response && err.response.status === 404) {
-      error.value = "Nenhum cálculo ativo (OpenCalc) foi encontrado para exibir o histórico de versões.";
-    } else {
-      error.value = "Não foi possível carregar o histórico de versões. Tente novamente mais tarde.";
-    }
+    console.error("[VersionManager] Erro ao buscar histórico de versões:", err);
+    error.value = err.message || "Não foi possível carregar o histórico de versões. Verifique se o cálculo existe ou se há um OpenCalc ativo.";
   } finally {
     isLoading.value = false;
   }
 }
 
-// Ação para criar uma nova versão
 async function createNewVersion(publishedId) {
   if (!confirm("Tem certeza que deseja criar uma nova versão para edição? Isso fará uma cópia de todos os arquivos do cálculo publicado.")) {
     return;
@@ -134,9 +138,8 @@ async function createNewVersion(publishedId) {
       { headers: { Authorization: `Bearer ${token}` } }
     );
     
-    const newDraftId = response.data.new_calculus.id;
+    await fetchCalculusVersions();
     alert('Nova versão de rascunho criada com sucesso!');
-    router.push({ name: 'editversion', params: { id: newDraftId } });
 
   } catch (err) {
     console.error("Erro ao criar nova versão:", err);
@@ -144,7 +147,6 @@ async function createNewVersion(publishedId) {
   }
 }
 
-// Função para navegar para a página de edição
 function goToEditPage(draftId) {
   router.push({ name: 'editversion', params: { id: draftId } });
 }
@@ -157,7 +159,6 @@ function goToViewPage(archivedId) {
   });
 }
 
-// Helper para estilização do status
 function getStatusClass(status) {
   const classes = {
     PUBLISHED: 'bg-green-100 text-green-800',
@@ -167,5 +168,5 @@ function getStatusClass(status) {
   return classes[status] || 'bg-gray-100';
 }
 
-onMounted(fetchActiveCalculusAndVersions);
+onMounted(fetchCalculusVersions);
 </script>
