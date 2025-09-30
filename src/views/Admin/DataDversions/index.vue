@@ -6,39 +6,70 @@
       </h1>
     </div>
 
-    <div class="flex flex-col gap-6 w-full pb-10 px-4 sm:px-10">
+    <div class="flex flex-col gap-8 w-full pb-10 px-4 sm:px-10">
       <!-- Loop sobre as "Famílias" de Cálculos -->
       <div v-for="family in calculusFamilies" :key="family.parent_id" class="border rounded-lg bg-white shadow-sm">
-        <Disclosure v-slot="{ open }">
-          <!-- Cabeçalho da Família -->
-          <DisclosureButton class="w-full flex justify-between items-center bg-gray-50 text-gray-800 px-4 py-3 text-lg font-semibold rounded-t-lg">
-            <span>{{ family.description }}</span>
-            <ChevronDownIcon class="w-6 h-6 transition-transform" :class="{ 'rotate-180': open }" />
-          </DisclosureButton>
-          
-          <!-- Lista de Versões Publicadas -->
-          <DisclosurePanel class="text-gray-900">
-            <div v-for="versao in family.versions" :key="versao.id" class="border-t border-gray-200 px-4 py-3">
-              <div class="flex justify-between items-center">
-                <div class="flex flex-col gap-1">
-                  <span class="font-medium">{{ versao.descricao }}</span>
-                </div>
-                <div class="flex items-center space-x-4">
-                   <span class="text-sm text-gray-500">{{ versao.data }}</span>
+        <!-- Cabeçalho da Família -->
+        <div class="bg-[#c2ddfd] px-6 py-4 rounded-t-lg border-b">
+          <h2 class="text-lg font-semibold text-gray-800">{{ family.description }}</h2>
+        </div>
+        
+        <!-- Tabela de Versões da Família -->
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <!-- Cabeçalho da Tabela -->
+            <thead class="bg-blue-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-sm font-semibold text-blue-900">Nome</th>
+                <th class="px-6 py-3 text-left text-sm font-semibold text-blue-900">Descrição</th>
+                <th class="px-6 py-3 text-left text-sm font-semibold text-blue-900">Criado em</th>
+                <th class="px-6 py-3 text-center text-sm font-semibold text-blue-900">Ativo</th>
+                <th class="px-6 py-3 text-center text-sm font-semibold text-blue-900">Ação</th>
+              </tr>
+            </thead>
+            <!-- Corpo da Tabela -->
+            <tbody>
+              <tr v-for="(versao, index) in family.versions" :key="versao.id" 
+                  class="border-b border-gray-200 hover:bg-gray-50">
+                <!-- Nome -->
+                <td class="px-6 py-4 text-sm font-medium text-gray-900">
+                  {{ versao.nome || 'funciona' }}
+                </td>
+                <!-- Descrição -->
+                <td class="px-6 py-4 text-sm text-gray-700">
+                  {{ versao.descricao }}
+                </td>
+                <!-- Data -->
+                <td class="px-6 py-4 text-sm text-gray-600">
+                  {{ formatDate(versao.data) }}
+                </td>
+                <!-- Status Ativo -->
+                <td class="px-6 py-4 text-center">
+                  <span v-if="versao.ativa" 
+                        class="inline-flex px-3 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                    Ativo
+                  </span>
+                  <span v-else 
+                        class="inline-flex px-3 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-full">
+                    Inativo
+                  </span>
+                </td>
+                <!-- Toggle Action -->
+                <td class="px-6 py-4 text-center">
                   <Toggle
                     class="scale-90"
                     :modelValue="versao.ativa"
                     @update:modelValue="() => handleToggle(versao)"
                   />
-                </div>
-              </div>
-            </div>
-          </DisclosurePanel>
-        </Disclosure>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
-    <!-- Modal de Confirmação (inalterado) -->
+    <!-- Modal de Confirmação -->
     <div v-if="showConfirmation" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
       <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
         <h3 class="text-lg font-semibold mb-4">Deseja realmente alterar a versão ativa?</h3>
@@ -58,8 +89,6 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import { ChevronDownIcon } from '@heroicons/vue/20/solid';
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import Toggle from '@/components/Toggle/Toggle.vue';
 import axios from 'axios';
@@ -67,7 +96,7 @@ import { getAccessToken } from '@/service/token';
 
 export default {
   name: 'DataVersions',
-  components: { Whiteboard, Toggle, ChevronDownIcon, Disclosure, DisclosureButton, DisclosurePanel },
+  components: { Whiteboard, Toggle },
   setup() {
     const calculusFamilies = ref([]);
     const showConfirmation = ref(false);
@@ -76,7 +105,7 @@ export default {
     const fetchData = async () => {
       try {
         const token = await getAccessToken();
-        const response = await axios.get('http://10.203.3.46:8000/csv/opencalc/list-opencalc/', {
+        const response = await axios.get('http://127.0.0.1:8000/csv/opencalc/list-versions/', {
           headers: { Authorization: `Bearer ${token}` },
         });
         calculusFamilies.value = response.data;
@@ -97,15 +126,15 @@ export default {
 
       const idParaAtivar = pendingVersion.value.id;
       
-        try {
-          const token = await getAccessToken();
-          
-          const response = await axios.post('http://10.203.3.46:8000/csv/opencalc/activate-opencalc/', 
-            { calc_id: idParaAtivar },
-            { headers: { Authorization: `Bearer ${token}` } }
-          );
+      try {
+        const token = await getAccessToken();
+        
+        const response = await axios.post('http://127.0.0.1:8000/csv/opencalc/activate-opencalc/', 
+          { calc_id: idParaAtivar },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
 
-          if (response.status === 200) {
+        if (response.status === 200) {
           // Atualiza o estado local para refletir a mudança imediatamente
           calculusFamilies.value.forEach(family => {
             family.versions.forEach(version => {
@@ -127,9 +156,22 @@ export default {
       pendingVersion.value = null;
     };
 
+    const formatDate = (dateString) => {
+      if (!dateString) return '';
+      const date = new Date(dateString);
+      return date.toLocaleDateString('pt-BR');
+    };
+
     onMounted(fetchData);
 
-    return { calculusFamilies, showConfirmation, handleToggle, confirmToggle, cancelToggle };
+    return { 
+      calculusFamilies, 
+      showConfirmation, 
+      handleToggle, 
+      confirmToggle, 
+      cancelToggle,
+      formatDate 
+    };
   }
 }
 </script>

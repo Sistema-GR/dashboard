@@ -1,72 +1,81 @@
 <template>
   <Whiteboard title="Biblioteca de Cálculos">
-    <div v-if="errorMessage" class="p-4 text-red-700 bg-red-100">{{ errorMessage }}</div>
+    <div v-if="errorMessage" class="p-4 text-15 text-white bg-red-600 rounded-[10px] mx-4 sm:mx-10 mt-4">
+      {{ errorMessage }}
+    </div>
 
     <!-- Seção para cada Ano -->
     <div v-for="(yearData, year) in calculusGroupsByYear" :key="year" class="w-full">
-      <div class="px-4 sm:px-10 py-4">
-        <h2 class="text-2xl font-bold text-gray-800 border-b pb-2">Ano de Referência: {{ year }}</h2>
+      <div class="px-4 sm:px-10 pt-8 pb-4">
+        <h2 class="text-25 font-bold text-[#003965] border-b border-[#e3f0ff] pb-2">Ano de Referência: {{ year }}</h2>
       </div>
 
       <!-- Lista de "Famílias" de Cálculo -->
-      <div v-if="yearData.length" class="px-4 sm:px-10 pb-8 space-y-6">
-        <div v-for="parent in yearData" :key="parent.id" class="bg-white rounded-lg border border-gray-200 shadow-md">
-          
+      <div v-if="yearData.length" class="px-4 sm:px-10 pb-8 space-y-8">
+        <div v-for="parent in yearData" :key="parent.id" class="bg-white rounded-[10px] border border-[#e3f0ff] shadow">
           <!-- Cabeçalho da Família de Versões -->
-          <div class="p-4 bg-gray-50 rounded-t-lg flex flex-col sm:flex-row justify-between items-start">
+          <div class="p-6 bg-[#c2ddfd] rounded-t-[10px] flex flex-col sm:flex-row justify-between items-start sm:items-center">
             <div>
-              <h3 class="text-lg font-semibold text-gray-900">{{ parent.description }}</h3>
-              <p class="text-sm text-gray-500">Iniciado em: {{ parent.createdAt }}</p>
+              <h3 class="text-20 font-semibold text-black">{{ parent.description }}</h3>
+              <p class="text-15 text-black">Iniciado em: {{ parent.createdAt }}</p>
             </div>
-            <SecondaryButton label="Gerenciar Versões" @click="goToVersionManager(parent.id)" class="mt-3 sm:mt-0" />
+            <SecondaryButton label="Gerenciar Versões" @click="goToVersionManager(parent.id)" class="mt-4 sm:mt-0 w-44 h-10 text-15 font-semibold bg-[#003965] text-black rounded-[10px]" />
           </div>
 
           <!-- Lista de Versões (incluindo o pai) -->
-          <ul class="divide-y divide-gray-200">
-            <li v-for="item in [parent, ...parent.versions]" :key="item.id" class="p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center">
-              <div class="flex items-center gap-3">
-                <span :class="getStatusClass(item.status)" class="text-xs font-semibold px-2.5 py-0.5 rounded-full">
+          <ul class="divide-y divide-[#e3f0ff]">
+            <li v-for="item in [parent, ...parent.versions]" :key="item.id" class="p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center">
+              <div class="flex items-center gap-4">
+                <span :class="getStatusClass(item.status) + ' text-15 font-semibold px-3 py-1 rounded-full'" style="min-width: 80px; text-align: center;">
                   {{ item.status }}
                 </span>
-                <p class="font-medium text-gray-800">Versão {{ item.version_number }}</p>
+                <p class="font-medium text-[#003965]">Versão {{ item.version_number }}</p>
               </div>
               
               <!-- Ações específicas da versão -->
+
               <div class="mt-3 sm:mt-0 flex items-center gap-2 flex-wrap">
-                <SecondaryButton 
-                  label="Ver no Dashboard" 
-                  v-if="item.status !== 'DRAFT'"
-                  @click="handleVisualizarClick(item.id)" 
+                 <SecondaryButton 
+                  label="Visualizar Relatório" 
+                  @click="openPreviewModal(item.id)" 
+
                 />
                 <SecondaryButton 
                   label="Excluir" 
                   @click="excluirCalculo(item.id)" 
-                  custom-class="!bg-red-600 hover:!bg-red-700 text-white"
+                  custom-class="!bg-red-600 hover:!bg-red-700 text-white w-32 h-10 text-15 font-semibold rounded-[10px]"
                 />
               </div>
             </li>
           </ul>
         </div>
       </div>
-       <div v-else class="px-4 sm:px-10 pb-8 text-gray-500">Nenhum cálculo encontrado para este ano.</div>
+      <div v-else class="px-4 sm:px-10 pb-8 text-15 text-[#3459a2]">Nenhum cálculo encontrado para este ano.</div>
     </div>
+    <CalculusPreviewModal 
+        :visible="isModalVisible" 
+        :calculus-id="selectedCalculusId" 
+        @close="isModalVisible = false"
+    />
   </Whiteboard>
 </template>
 
 <script>
-import { ChevronDownIcon, FolderIcon } from '@heroicons/vue/24/outline';
 import { getAccessToken } from '@/service/token.js';
 import axios from 'axios';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import SecondaryButton from '@/components/Buttons/SecondaryButton.vue';
+import CalculusPreviewModal from '@/components/Modal/CalculusPreviewModal.vue';
 
 export default {
   name: 'PreviousResults',
-  components: { Whiteboard, SecondaryButton },
+  components: { Whiteboard, SecondaryButton, CalculusPreviewModal },
   data() {
     return {
       calculusGroupsByYear: {},
       errorMessage: null,
+      isModalVisible: false,
+      selectedCalculusId: null,
     };
   },
   methods: {
@@ -165,8 +174,9 @@ export default {
         }
 
         const response = await axios.post(
-          "http://10.203.3.46:8000/csv/api/set-active-calculus/",
-          { calc_id: id },
+          "http://127.0.0.1:8000/csv/api/set-active-calculus/",
+          { calc_id: calculusId },
+
           {
             headers: { Authorization: `Bearer ${token}` }
           }
@@ -179,28 +189,25 @@ export default {
     },
 
     async excluirCalculo(calculusId) {
-      if (!confirm('Tem certeza que deseja excluir este cálculo? Esta ação não pode ser desfeita.')) {
+
+      if (!confirm('Tem certeza que deseja excluir esta versão? Esta ação não pode ser desfeita.')) {
+
         return;
       }
       try {
         const token = await getAccessToken();
         await axios.post(
-          `http://127.0.0.1:8000/csv/calculus/${calculusId}/delete/`,
+
+          `http://127.0.0.1:8000/csv/calculus/${calculusId}/delete/`, 
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );
+        
+        alert('Versão excluída com sucesso!');
+        
+        await this.fetchCalculus();
 
-        // Faz a requisição POST para excluir o cálculo
-        const response = await axios.post(
-              "http://10.203.3.46:8000/csv/delete-calculus/",
-              { calc_id: id }, // Envia o ID do cálculo no corpo da requisição
-              {
-                headers: { Authorization: `Bearer ${token}` }
-              }
-            );
 
-            // Atualiza a lista de cálculos após a exclusão
-            await this.fetchCalculus();
       } catch (error) {
         console.error('Erro ao excluir cálculo:', error);
         this.errorMessage = error.response?.data?.error || 'Erro ao excluir o cálculo.';
@@ -214,7 +221,13 @@ export default {
         ARCHIVED: 'bg-gray-100 text-gray-800',
       };
       return classes[status] || 'bg-gray-100';
-    }
+    },
+
+    openPreviewModal(calculusId) {
+      this.selectedCalculusId = calculusId;
+      this.isModalVisible = true;
+    },
+
   },
   async mounted() {
     await this.fetchCalculus();

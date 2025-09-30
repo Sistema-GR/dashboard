@@ -31,8 +31,13 @@ export default defineConfig({
             target: 'http://10.203.3.46:8000',
             changeOrigin: true,
         },
-        
+        '/api/': {
+            target: 'http://10.203.3.46:8000',
+
+            changeOrigin: true,
+        }
       }
     }
 })
+
 

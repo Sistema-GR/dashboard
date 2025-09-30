@@ -1,15 +1,27 @@
 <template>
-  <Whiteboard title="Relatórios Anuais" >
-    
+  <Whiteboard title="Analise de Pagamento">
+    <!-- Header visual -->
+    <div class="bg-[#003965] px-6 py-4 flex flex-col md:flex-row items-center justify-between rounded-t-[10px] mb-6">
+      <div class="flex items-center gap-4">
+        <img src="@/assets/logo-prefeitura.png" alt="Prefeitura" class="h-12" />
+        <div>
+          <h1 class="text-30 font-bold text-white leading-tight">Pagamento GR 2024-2025</h1>
+          <h2 class="text-20 text-white font-normal">Visão Geral</h2>
+        </div>
+      </div>
+    </div>
+
     <!-- Filtros -->
-    <Filtro 
-      v-model:filters="filters"
-      :availableUnits="availableUnits"
-      :availableAdmins="availableAdmins"
-    />
+    <div class="px-4 sm:px-10">
+      <Filtro 
+        v-model:filters="filters"
+        :availableUnits="availableUnits"
+        :availableAdmins="availableAdmins"
+      />
+    </div>
     
     <!-- Tabs de Anos -->
-    <div class="flex space-x-4 pt-3 border-b border-[#c2ddfd]">
+    <div class="flex space-x-4 pt-3 border-b border-[#c2ddfd] px-4 sm:px-10">
       <button
         v-for="year in [2024, 2025, 2026]"
         :key="year"
@@ -30,38 +42,50 @@
     <div v-else-if="error" class="text-center py-10 text-red-500">{{ error }}</div>
 
     <div v-else-if="dashboardData">
-    <!-- RecursosRespondidos -->
-      <RecursosRespondidos :stats="dashboardData.stats" />
+      <!-- Cards Totais -->
+      <div class="flex flex-col md:flex-row gap-6 px-4 sm:px-10 mt-8 mb-8 justify-center">
+        <div class="bg-white rounded-[10px] shadow p-6 flex-1 text-center border border-[#e3e8ee]">
+          <p class="text-16 text-[#003965] font-semibold mb-2">Total que recebe</p>
+          <p class="text-30 font-bold text-black">{{ dashboardData.stats?.total_recebe ?? '-' }}</p>
+        </div>
+        <div class="bg-white rounded-[10px] shadow p-6 flex-1 text-center border border-[#e3e8ee]">
+          <p class="text-16 text-[#003965] font-semibold mb-2">Total que não recebe</p>
+          <p class="text-30 font-bold text-black">{{ dashboardData.stats?.total_nao_recebe ?? '-' }}</p>
+        </div>
+        <div class="bg-white rounded-[10px] shadow p-6 flex-1 text-center border border-[#e3e8ee]">
+          <p class="text-16 text-[#003965] font-semibold mb-2">Valor a pagar</p>
+          <p class="text-30 font-bold text-black">{{ dashboardData.stats?.valor_pagar ?? '-' }}</p>
+        </div>
+      </div>
 
-      <!-- ValorPago -->
-      <ValorPago 
-        :distribuicao="valorPagoProps.distribuicao"
-        :pessoas-afetadas="valorPagoProps.pessoasAfetadas"
-        :valor-corrigido="valorPagoProps.valorCorrigido"
-      />
+      <!-- Componentes analíticos -->
+      <div class="px-4 sm:px-10">
+        <RecursosRespondidos :stats="dashboardData.stats" />
 
-      <!-- TipoRecurso  -->
-      <TipoRecurso 
-        :tipos-data="dashboardData.recursos_por_categoria"
-        :status-data="dashboardData.status_counts"
-        :conclusao-data="dashboardData.conclusao_counts"
-      />
+        <ValorPago 
+          :distribuicao="valorPagoProps.distribuicao"
+          :pessoas-afetadas="valorPagoProps.pessoasAfetadas"
+          :valor-corrigido="valorPagoProps.valorCorrigido"
+        />
 
-      <!-- RecursosTotais -->
-      <RecursosTotais 
-        :recursos-por-unidade="dashboardData.recursos_por_unidade"
-        :recursos-por-categoria="dashboardData.recursos_por_categoria"
-        :recursos-por-equipe="dashboardData.recursos_por_equipe"
-      />
+        <TipoRecurso 
+          :tipos-data="dashboardData.recursos_por_categoria"
+          :status-data="dashboardData.status_counts"
+          :conclusao-data="dashboardData.conclusao_counts"
+        />
 
-      <!-- Tabela de Responsáveis -->
-      <StatusEquipe 
-        :responsaveis="dashboardData.responsaveis_stats"
-      />
+        <RecursosTotais 
+          :recursos-por-unidade="dashboardData.recursos_por_unidade"
+          :recursos-por-categoria="dashboardData.recursos_por_categoria"
+          :recursos-por-equipe="dashboardData.recursos_por_equipe"
+        />
 
-      <!-- <RecursosUnidades :data="filteredResources" :availableUnits="availableUnits" /> -->
+        <StatusEquipe 
+          :responsaveis="dashboardData.responsaveis_stats"
+        />
 
-      <DadosCompletos :data="dashboardData.dados_completos" />
+        <DadosCompletos :data="dashboardData.dados_completos" />
+      </div>
     </div>
   </Whiteboard>
 </template>

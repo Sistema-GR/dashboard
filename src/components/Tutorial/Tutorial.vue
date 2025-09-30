@@ -56,8 +56,6 @@ const dynamicButtons = ref([]);
 const confettiCanvas = ref(null);
 let confettiInstance = null;
 
-
-
 const startConfettiBurst = () => {
   if (!confettiInstance) {
     confettiInstance = confetti.create(confettiCanvas.value, {
@@ -93,7 +91,7 @@ const startConfettiBurst = () => {
 };
 
 const driverObj = driver({
-  popoverClass: 'custom-tooltip',
+  popoverClass: 'custom-tooltip-centered',
   showProgress: true,
   showButtons: ["next", "previous", "close"],
   nextBtnText: "Próximo",
@@ -250,8 +248,8 @@ const driverObj = driver({
               <li><strong>Atividades</strong> – avalia se todas as atividades previstas foram cumpridas.</li>
             </ul>
             Para cada critério, a tabela indica se o participante está 
-            <strong>“Apto”</strong> (quando o requisito foi atendido) ou 
-            <strong>“Não Apto”</strong> (quando não alcançou o mínimo necessário).
+            <strong>"Apto"</strong> (quando o requisito foi atendido) ou 
+            <strong>"Não Apto"</strong> (quando não alcançou o mínimo necessário).
           </div>`,
         position: "top",
       },
@@ -313,259 +311,121 @@ defineExpose({
 </script>
 
 <style>
-
-.driver-popover-descrition {
-  font-size: 15px !important;
-  line-height: 1.5 !important;
-  color: #f0f9ff !important;
-}
-
-/* Força os estilos dos botões do driver.js popover */
-.driver-popover-next-btn {
-  background: linear-gradient(135deg, #152656 0%, #5cabfe 100%) !important;
-  color: #fff !important;
-  border-radius: 12px !important;
-  font-size: 15px !important;
-  font-weight: 700 !important;
+/* Estilos limpos e focados apenas na correção dos bugs */
+.driver-popover.custom-tooltip-centered,
+.driver-popover[data-popover-class="custom-tooltip-centered"] {
+  background: white !important;
+  color: black !important;
   border-radius: 10px !important;
-  min-width: 120px !important;
-  min-height: 48px !important;
-  text-align: center !important;
-  padding: 12px 32px !important;
-  text-shadow: none !important;
   border: none !important;
-  margin-left: 5px !important;
-}
-.driver-popover-next-btn:hover {
-  background: #3b6cae !important; 
-  color: #fff !important;
-}
-.driver-popover-prev-btn {
-  background:  linear-gradient(135deg, #222b44c2 0%, #92b5e7b0 100%) !important;
-  color: #fff !important;
-  border-radius: 12px !important;
-  font-size: 15px !important;
-  font-weight: 700 !important;
-  border-radius: 10px !important;
-  min-width: 120px !important;
-  min-height: 48px !important;
-  text-align: center !important;
-  padding: 12px 32px !important;
-  text-shadow: none !important;
-  border: none !important;
-  margin-right: 5px !important;
-}
-
-.driver-popover-prev-btn:hover {
-  background: linear-gradient(135deg, #152656 0%, #5cabfe 100%) !important;
-  color: #fff !important;
-}
-
-/* Tooltip customizado */
-.custom-tooltip {
-  background: white!important;
-  color: #000000 !important;
-  border-radius: 10px !important;
-  padding: 30px !important;
-  border: none !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3) !important;
   max-width: 500px !important;
   width: 90vw !important;
+  z-index: 10001 !important;
 }
 
+/* Centralização forçada para cards center */
+.driver-popover[data-position="center"] {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
 
-.custom-tooltip h3 {
-  font-size: 20px !important;
-  font-weight: 700 !important;
-  margin-bottom: 12px !important;
+/* Estrutura dos cards */
+.driver-popover-title {
+  background: white !important;
+  color: black !important;
+  padding: 20px !important;
+  margin: 0 !important;
+  border-radius: 10px 10px 0 0 !important;
+  border-bottom: none !important;
+}
+
+.driver-popover-description {
+  background: white !important;
+  color: black !important;
+  padding: 0 20px 20px 20px !important;
+}
+
+.driver-popover-footer {
+  background: white !important;
+  padding: 0 20px 20px 20px !important;
+  border-top: 1px solid #e0e0e0 !important;
+  border-radius: 0 0 10px 10px !important;
+}
+
+/* Botões */
+.driver-popover-next-btn {
+  background: linear-gradient(135deg, #152656 0%, #5cabfe 100%) !important;
   color: white !important;
+  border: none !important;
+  border-radius: 10px !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  min-width: 120px !important;
+  min-height: 48px !important;
+  padding: 12px 32px !important;
+  margin-left: 8px !important;
 }
 
+.driver-popover-prev-btn {
+  background: linear-gradient(135deg, #222b44c2 0%, #92b5e7b0 100%) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 10px !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  min-width: 120px !important;
+  min-height: 48px !important;
+  padding: 12px 32px !important;
+  margin-right: 8px !important;
+}
+
+.driver-popover-close-btn {
+  background: #ef4444 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 10px !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  min-width: 120px !important;
+  min-height: 48px !important;
+  padding: 12px 32px !important;
+}
+
+/* Classes customizadas */
 .titulo-img {
   display: grid;
-  justify-content: center;
-  align-items: center;
+  justify-items: center;
   gap: 20px;
   font-size: 20px;
   text-align: center;
   color: black;
-  justify-items: center;
 }
 
 .descricao {
-  font-size: 15px !important;
+  font-size: 15px;
   color: black;
   text-align: center;
-  padding-top: 20px;
-  padding-bottom: 20px;
+  padding: 20px 0;
+  line-height: 1.6;
 }
 
-.custom-tooltip p {
-  font-size: 15px !important;
-  margin-top: 12px !important;
-  line-height: 1.5 !important;
-  color: #e0f2fe !important;
-}
-
-.custom-tooltip .driver-popover-footer {
-  margin-top: 16px !important;
-}
-
-
-.custom-tooltip .driver-popover-close-btn {
-  background-color: #ef4444 !important;
-  color: white !important;
-}
-
-.custom-tooltip .driver-popover-close-btn:hover {
-  background-color: #dc2626 !important;
-}
-
-.custom-tooltip .driver-popover-progress-text {
-  color: #93c5fd !important;
-  font-weight: 500 !important;
-}
-
-/* Responsividade para imagens */
 .responsive-img {
   max-width: 380px;
   width: 100%;
   height: auto;
 }
 
-/* Tooltip customizado com melhor responsividade */
-.custom-tooltip {
-  background: white!important;
-  color: #000000 !important;
-  border-radius: 10px !important;
-  padding: 30px !important;
-  border: none !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
-  max-width: 500px !important;
-  width: 90vw !important;
-}
-
-/* Responsividade para título */
-.titulo-img {
-  display: grid;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  font-size: 20px;
-  text-align: center;
-  color: black;
-  justify-items: center;
-}
-
-/* Responsividade para descrição */
-.descricao {
-  font-size: 15px !important;
-  color: black;
-  text-align: center;
-  padding-top: 20px;
-  padding-bottom: 20px;
-  line-height: 1.6 !important;
-}
-
-/* Responsividade para botões do driver */
-.driver-popover-next-btn {
-  background: linear-gradient(135deg, #152656 0%, #5cabfe 100%) !important;
-  color: #fff !important;
-  border-radius: 12px !important;
-  font-size: 15px !important;
-  font-weight: 700 !important;
-  border-radius: 10px !important;
-  min-width: 120px !important;
-  min-height: 48px !important;
-  padding: 12px 32px !important;
-  text-shadow: none !important;
-  border: none !important;
-  margin-left: 5px !important;
-}
-
-.driver-popover-prev-btn {
-  background: linear-gradient(135deg, #222b44c2 0%, #92b5e7b0 100%) !important;
-  color: #fff !important;
-  border-radius: 12px !important;
-  font-size: 15px !important;
-  font-weight: 700 !important;
-  border-radius: 10px !important;
-  min-width: 120px !important;
-  min-height: 48px !important;
-  padding: 12px 32px !important;
-  text-shadow: none !important;
-  border: none !important;
-  margin-right: 5px !important;
-}
-
-/* Media queries para responsividade */
-@media (max-width: 640px) {
-  .custom-tooltip {
-    max-width: 95vw !important;
-    padding: 20px !important;
-    font-size: 0.95rem !important;
-  }
-  
-  .titulo-img {
-    font-size: 18px !important;
-    gap: 15px !important;
-  }
-  
-  .responsive-img {
-    max-width: 280px !important;
-  }
-  
-  .descricao {
-    font-size: 14px !important;
-    padding-top: 15px !important;
-    padding-bottom: 15px !important;
-  }
-  
-  .driver-popover-next-btn,
-  .driver-popover-prev-btn {
-    min-width: 100px !important;
-    min-height: 42px !important;
-    padding: 10px 20px !important;
-    font-size: 14px !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .custom-tooltip {
-    padding: 15px !important;
-  }
-  
-  .titulo-img {
-    font-size: 16px !important;
-    gap: 10px !important;
-  }
-  
-  .responsive-img {
-    max-width: 240px !important;
-  }
-  
-  .descricao {
-    font-size: 13px !important;
-  }
-  
-  .driver-popover-next-btn,
-  .driver-popover-prev-btn {
-    min-width: 80px !important;
-    min-height: 38px !important;
-    padding: 8px 16px !important;
-    font-size: 13px !important;
-  }
-}
-
-/* Highlight do elemento */
+/* Highlight */
 .driver-highlighted-element {
   box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.5) !important;
   border-radius: 8px !important;
-  transition: box-shadow 0.3s !important;
 }
 
+/* Canvas */
 canvas {
-  display: block;
   position: fixed;
   top: 0;
   left: 0;
@@ -575,5 +435,23 @@ canvas {
   z-index: 9999;
 }
 
-
+/* Responsividade */
+@media (max-width: 640px) {
+  .driver-popover.custom-tooltip-centered,
+  .driver-popover[data-popover-class="custom-tooltip-centered"] {
+    max-width: 95vw !important;
+  }
+  
+  .responsive-img {
+    max-width: 280px !important;
+  }
+  
+  .titulo-img {
+    font-size: 18px !important;
+  }
+  
+  .descricao {
+    font-size: 14px !important;
+  }
+}
 </style>

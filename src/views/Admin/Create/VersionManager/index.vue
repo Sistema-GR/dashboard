@@ -5,7 +5,6 @@
       <!-- Estado de Carregamento -->
       <div v-if="isLoading" class="text-center py-10">
         <p class="text-gray-600">Carregando histórico de versões...</p>
-        <!-- Você pode adicionar um componente de spinner aqui se tiver um -->
       </div>
 
       <!-- Estado de Erro -->
@@ -31,9 +30,8 @@
 
             <!-- Botões de Ação -->
             <div class="mt-4 sm:mt-0 sm:ml-4 flex-shrink-0 flex items-center gap-2">
-              <!-- Ação para versão PUBLICADA -->
               <PrimaryButton
-                v-if="version.status === 'PUBLISHED'"
+                v-if="version.status === 'PUBLISHED' && !hasDraftVersion"
                 value="Criar Nova Versão para Edição"
                 @click="createNewVersion(version.id)"
                 customColor="bg-blue-600 hover:bg-blue-700"
@@ -45,11 +43,6 @@
                   value="Editar Rascunho"
                   @click="goToEditPage(version.id)"
                   customColor="bg-green-600 hover:bg-green-700"
-                />
-                <PrimaryButton
-                  value="Publicar Versão"
-                  @click="publishVersion(version.id)"
-                  customColor="bg-indigo-600 hover:bg-indigo-700"
                 />
               </template>
               
@@ -86,7 +79,6 @@ const versions = ref([]);
 const isLoading = ref(true);
 const error = ref(null);
 
-const calculusId = computed(() => route.params.id);
 const pageTitle = computed(() => {
   if (versions.value.length > 0) {
     return `Gerenciador de Versões: ${versions.value[0].description}`;
@@ -94,25 +86,47 @@ const pageTitle = computed(() => {
   return 'Gerenciador de Versões';
 });
 
-// Função para buscar os dados da API
-async function fetchVersions() {
+const hasDraftVersion = computed(() => {
+  return versions.value.some(v => v.status === 'DRAFT');
+});
+
+async function fetchCalculusVersions() {
   isLoading.value = true;
   error.value = null;
+  let calculusIdToFetch = null;
+
   try {
     const token = await getAccessToken();
-    const response = await axios.get(`http://127.0.0.1:8000/csv/calculus/${calculusId.value}/versions/`, {
+
+    if (route.params.id) {
+      calculusIdToFetch = route.params.id;
+      console.log(`[VersionManager] Modo Específico: Buscando versões para o cálculo ID ${calculusIdToFetch}`);
+    } else {
+      console.log("[VersionManager] Modo Padrão: Nenhum ID na URL, buscando OpenCalc ativo...");
+      const activeCalcResponse = await axios.get('http://127.0.0.1:8000/csv/opencalc/get-active-info/', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      
+      calculusIdToFetch = activeCalcResponse.data.calculus_id;
+    }
+
+    if (!calculusIdToFetch) {
+        throw new Error("Não foi possível determinar um cálculo para buscar. Nenhum OpenCalc ativo encontrado ou ID inválido.");
+    }
+
+    const versionsResponse = await axios.get(`http://127.0.0.1:8000/csv/calculus/${calculusIdToFetch}/versions/`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    versions.value = response.data;
+    versions.value = versionsResponse.data;
+
   } catch (err) {
-    console.error("Erro ao buscar versões:", err);
-    error.value = "Não foi possível carregar o histórico de versões. Tente novamente mais tarde.";
+    console.error("[VersionManager] Erro ao buscar histórico de versões:", err);
+    error.value = err.message || "Não foi possível carregar o histórico de versões. Verifique se o cálculo existe ou se há um OpenCalc ativo.";
   } finally {
     isLoading.value = false;
   }
 }
 
-// Ação para criar uma nova versão
 async function createNewVersion(publishedId) {
   if (!confirm("Tem certeza que deseja criar uma nova versão para edição? Isso fará uma cópia de todos os arquivos do cálculo publicado.")) {
     return;
@@ -124,9 +138,8 @@ async function createNewVersion(publishedId) {
       { headers: { Authorization: `Bearer ${token}` } }
     );
     
-    const newDraftId = response.data.new_calculus.id;
+    await fetchCalculusVersions();
     alert('Nova versão de rascunho criada com sucesso!');
-    router.push({ name: 'editversion', params: { id: newDraftId } });
 
   } catch (err) {
     console.error("Erro ao criar nova versão:", err);
@@ -134,27 +147,6 @@ async function createNewVersion(publishedId) {
   }
 }
 
-// Ação para publicar um rascunho
-async function publishVersion(draftId) {
-  if (!confirm("Atenção: Publicar esta versão irá arquivar a versão publicada anterior. Deseja continuar?")) {
-    return;
-  }
-  try {
-    const token = await getAccessToken();
-    await axios.post(`http://127.0.0.1:8000/csv/calculus/${draftId}/publish/`, {}, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    
-    alert('Versão publicada com sucesso!');
-    await fetchVersions();
-    
-  } catch (err) {
-    console.error("Erro ao publicar versão:", err);
-    alert(`Falha ao publicar versão: ${err.response?.data?.error || 'Erro desconhecido'}`);
-  }
-}
-
-// Função para navegar para a página de edição
 function goToEditPage(draftId) {
   router.push({ name: 'editversion', params: { id: draftId } });
 }
@@ -167,7 +159,6 @@ function goToViewPage(archivedId) {
   });
 }
 
-// Helper para estilização do status
 function getStatusClass(status) {
   const classes = {
     PUBLISHED: 'bg-green-100 text-green-800',
@@ -177,5 +168,5 @@ function getStatusClass(status) {
   return classes[status] || 'bg-gray-100';
 }
 
-onMounted(fetchVersions);
+onMounted(fetchCalculusVersions);
 </script>

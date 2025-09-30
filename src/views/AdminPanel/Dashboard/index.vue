@@ -100,7 +100,7 @@
     <!-- Informações sobre a versão -->
     <div class="flex flex-col w-full mb-10">
       <div class="bg-[#3459A2] text-white text-center font-bold text-20 p-3">Informações sobre a Versão</div>
-      <div class="space-y-4">
+      <div class="mx-4 sm:mx-10 my-4 space-y-4">
         <div v-for="(field, index) in version" :key="index" class="flex justify-between">
           <span class="font-medium text-gray-700">{{ field.label }}:</span>
           <span class="text-gray-800">{{ field.value }}</span>
@@ -176,7 +176,8 @@ export default {
         chartDataFaixaPagamento.value = faixaPagamento;
 
         // Requisição para os motivos de não recebimento
-        const responseAnalysis = await axios.get('http://10.203.3.46:8000/csv/get-import-files/', {
+        const responseAnalysis = await axios.get('http://127.0.0.1:8000/csv/get-import-files/', {
+
           headers: { Authorization: `Bearer ${token}` },
         });
 
