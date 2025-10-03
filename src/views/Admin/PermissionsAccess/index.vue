@@ -171,7 +171,9 @@
 </template>
 
 <script>
-import { ref, inject } from 'vue'
+import { onMounted, ref } from 'vue'
+import axios from 'axios'
+import { getAccessToken } from '@/service/token'
 import { TrashIcon, PlusCircleIcon } from '@heroicons/vue/24/outline'
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue'
 
@@ -186,17 +188,15 @@ export default {
 
     const sugestoes = ref([
       '111.111.111-11 - servidor 1',
-      '222.222.222-22 - servidor 2',
-      '333.333.333-33 - servidor 3'
+      '222.222.222-22 - servidor 2'
     ])
 
     const sugestoesFiltradasPerfil = ref([])
     const sugestoesFiltradasExemplo = ref([])
 
-    const usuariosPerfil = ref([
-      { nome: 'Servidor 1', cpf: '111.111.111-11', setor: 'Setor 1' },
-      { nome: 'Servidor 2', cpf: '222.222.222-22', setor: 'Setor 2' }
-    ])
+    const usuariosPerfil = ref([])
+     // { nome: 'Servidor 1', cpf: '111.111.111-11', setor: 'Setor 1' },
+     // { nome: 'Servidor 2', cpf: '222.222.222-22', setor: 'Setor 2' }
 
     const usuariosExemplo = ref([
       { nome: 'Servidor 3', cpf: '333.333.333-33', setor: 'Setor 3' },
@@ -253,6 +253,26 @@ export default {
         if (tipo === 'exemplo') sugestoesFiltradasExemplo.value = []
       }
     }
+
+    const fetchUsers = async () => {
+      try {
+        const token = await getAccessToken()
+        const response = await axios.get('/auth/users/', {
+          headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+        })
+        usuariosPerfil.value = response.data.map(
+          user => `${user.cpf} - ${user.nome}`
+        )
+      } catch (error) {
+        console.error('Erro ao buscar usuários:', error)
+      }
+    }
+
+    onMounted(() => {
+      fetchUsers()
+    })
 
     return {
       novoCPFPerfil,
