@@ -60,13 +60,14 @@ export const fetchVersions = async () => {
 };
 
 // Função para criar um dataset
-export const createDataset = async (generalDataId, datasetName) => {
+export const createDataset = async (generalDataId) => {
   try {
     const token = await getAccessToken();
-    const response = await apiClient.post('/csv/api/create-dataset/', {
-      general_data_id: generalDataId,
-      name: datasetName
-    }, {
+    const payload = {
+      general_data_id: generalDataId
+    };
+
+    const response = await apiClient.post('/csv/api/create-dataset/', payload, {
       headers: {
         'Authorization': `Bearer ${token}`,
       }

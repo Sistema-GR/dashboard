@@ -62,48 +62,56 @@
           <div class="flex-1 flex items-center justify-center py-12">
             <div class="text-start space-y-5 w-4/6">
               <div class="space-y-2">
-                <div class="space-y-2">
-                  <p>Carga Horária</p>
-                    <TextInput
-                      v-model="formData.max_workload"
-                      :error="errorMessage"
-                      type="text"
-                    />
+                <p>Carga Horária Padrão</p>
+                <TextInput v-model="formData.max_workload" :error="errorMessage" type="number" />
+              </div>
+              <div class="space-y-2">
+                <p>IDEM Rede - Etapa 1</p>
+                <TextInput placeholder="%" v-model="formData.idem_network_step_1" :error="errorMessage" type="number" />
+              </div>
+              <div class="space-y-2">
+                <p>IDEM Rede - Etapa 2</p>
+                <TextInput placeholder="%" v-model="formData.idem_network_step_2" :error="errorMessage" type="number" />
+              </div>
+              <div class="space-y-2">
+                <p>IDEM Rede - Etapa 3</p>
+                <TextInput placeholder="%" v-model="formData.idem_network_step_3" :error="errorMessage" type="number" />
+              </div>
+              <div class="space-y-2">
+                <p>Valor Teto da Gratificação</p>
+                <TextInput placeholder="R$" v-model="formData.max_value" :error="errorMessage" type="number" />
+              </div>
+            </div>
+          </div>
+        </div>
+          <div class="border-t mx-10 my-5"></div>
+          <div class="px-10 py-5">
+            <h3 class="text-lg font-semibold mb-4 text-gray-700">Configuração dos Períodos de Frequência</h3>
+            
+            <div class="space-y-2 mb-6 max-w-xs">
+              <p>Número de Períodos para Apuração</p>
+              <select v-model="formData.numPeriods" class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="1">1 Período (Padrão)</option>
+                <option value="2">2 Períodos</option>
+                <option value="3">3 Períodos</option>
+                <option value="4">4 Períodos</option>
+              </select>
+            </div>
+
+            <!-- Inputs de data gerados dinamicamente -->
+            <div v-if="formData.numPeriods > 1" class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+              <div v-for="(period, index) in formData.frequencyPeriods" :key="index" class="p-4 border rounded-md">
+                <p class="font-semibold mb-3 text-gray-600">Período {{ index + 1 }}</p>
+                <div class="space-y-4">
+                  <div class="space-y-2">
+                    <p>Data de Início</p>
+                    <TextInput v-model="period.start_date" :error="errorMessage" type="date" />
                   </div>
-                <p>Etapa 1</p>
-                <TextInput
-                  placeholder="%"
-                  v-model="formData.idem_network_step_1"
-                  :error="errorMessage"
-                  type="text"
-                />
-              </div>
-              <div class="space-y-2">
-                <p>Etapa 2</p>
-                <TextInput
-                  placeholder="%"
-                  v-model="formData.idem_network_step_2"
-                  :error="errorMessage"
-                  type="text"
-                />
-              </div>
-              <div class="space-y-2">
-                <p>Etapa 3</p>
-                <TextInput
-                  placeholder="%"
-                  v-model="formData.idem_network_step_3"
-                  :error="errorMessage"
-                  type="text"
-                />
-              </div>
-              <div class="space-y-2">
-                <p>Valor Global</p>
-                <TextInput
-                  placeholder="R$"
-                  v-model="formData.max_value"
-                  :error="errorMessage"
-                  type="text"
-                />
+                  <div class="space-y-2">
+                    <p>Data de Fim</p>
+                    <TextInput v-model="period.end_date" :error="errorMessage" type="date" />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -120,12 +128,11 @@
           </div>
         </div>
       </div>
-    </div>
   </Whiteboard>
 </template>
 
 <script>
-import { ref, reactive } from "vue";
+import { ref, reactive, watch } from "vue";
 import { useRouter } from "vue-router";
 import { createGeneralData, createDataset } from "../../../../service/apiService"; 
 import PrimaryButton from "@/components/Buttons/PrimaryButton.vue";
@@ -153,7 +160,22 @@ export default {
       idem_network_step_1: "",
       idem_network_step_2: "",
       idem_network_step_3: "",
+      numPeriods: 1,
+      frequencyPeriods: [],
     });
+
+    watch(() => formData.numPeriods, (newVal, oldVal) => {
+      const newCount = parseInt(newVal, 10);
+      const currentCount = formData.frequencyPeriods.length;
+
+      if (newCount > currentCount) {
+        for (let i = currentCount; i < newCount; i++) {
+          formData.frequencyPeriods.push({ start_date: '', end_date: '' });
+        }
+      } else if (newCount < currentCount) {
+        formData.frequencyPeriods.splice(newCount);
+      }
+    }, { immediate: true });
 
     // Função para validar os inputs
     const validateInputs = () => {
@@ -168,21 +190,12 @@ export default {
         idem_network_step_1,
         idem_network_step_2,
         idem_network_step_3,
+        numPeriods,
+        frequencyPeriods,
       } = formData;
 
-      if (
-        !name ||
-        !description ||
-        !yearValue ||
-        !start_date ||
-        !end_date ||
-        !max_value ||
-        !max_workload ||
-        !idem_network_step_1 ||
-        !idem_network_step_2 ||
-        !idem_network_step_3
-      ) {
-        errorMessage.value = "Todos os campos são obrigatórios.";
+      if (!description || !yearValue || !start_date || !end_date || !max_value || !max_workload || !idem_network_step_1 || !idem_network_step_2 || !idem_network_step_3) {
+        errorMessage.value = "Todos os campos de dados gerais são obrigatórios.";
         return false;
       }
 
@@ -202,18 +215,47 @@ export default {
         return false;
       }
 
+      const globalStartDate = new Date(start_date);
+      const globalEndDate = new Date(end_date);
+
+      if (globalStartDate > globalEndDate) {
+        errorMessage.value = "A data inicial geral deve ser anterior à data final geral.";
+        return false;
+      }
+
+      // Nova validação para os períodos de frequência
+      if (numPeriods > 1) {
+        for (let i = 0; i < frequencyPeriods.length; i++) {
+          const period = frequencyPeriods[i];
+          if (!period.start_date || !period.end_date) {
+            errorMessage.value = `As datas de início e fim são obrigatórias para o Período ${i + 1}.`;
+            return false;
+          }
+          const periodStart = new Date(period.start_date);
+          const periodEnd = new Date(period.end_date);
+
+          if (periodStart > periodEnd) {
+            errorMessage.value = `No Período ${i + 1}, a data de início deve ser anterior à data de fim.`;
+            return false;
+          }
+          if (periodStart < globalStartDate || periodEnd > globalEndDate) {
+            errorMessage.value = `O Período ${i + 1} deve estar contido entre as datas gerais do cálculo.`;
+            return false;
+          }
+        }
+      }
+
       return true;
     };
 
     // Função para enviar os dados
     const submitData = async () => {
       errorMessage.value = "";
-
       if (!validateInputs()) return;
 
       try {
         const payload = {
-          name: formData.name.trim(),
+          // name é description no backend
           description: formData.description.trim(),
           year_value: parseInt(formData.yearValue, 10),
           start_date: new Date(formData.start_date).toISOString().split("T")[0],
@@ -225,36 +267,34 @@ export default {
           idem_network_step_3: parseFloat(formData.idem_network_step_3),
         };
 
-
-        // Enviar para criar o general data
-        const generalData = await createGeneralData(payload);
-
-        const generalDataId = generalData.general_data?.general_data_id;
-
-        if (!generalDataId) {
-          throw new Error(
-            `Nenhum general_data_id foi retornado pela API. Resposta completa: ${JSON.stringify(
-              generalData
-            )}`
-          );
+        // Adicionar os períodos ao payload apenas se houver mais de um
+        if (formData.numPeriods > 1) {
+          payload.frequency_periods = formData.frequencyPeriods.map((period, index) => ({
+            period_number: index + 1,
+            start_date: new Date(period.start_date).toISOString().split("T")[0],
+            end_date: new Date(period.end_date).toISOString().split("T")[0],
+          }));
         }
 
+        const generalDataResponse = await createGeneralData(payload);
+        const generalDataId = generalDataResponse.general_data?.general_data_id;
 
-        // Criar dataset
+        if (!generalDataId) {
+          throw new Error("ID do GeneralData não retornado pela API.");
+        }
+
         await createDataset(generalDataId);
 
-        // Redirecionar após o sucesso
         router.push({ path: "/home/imports" });
       } catch (error) {
         console.error("Erro ao enviar os dados:", error);
-        errorMessage.value = "Ocorreu um erro ao enviar os dados.";
+        errorMessage.value = "Ocorreu um erro ao enviar os dados. Verifique o console para mais detalhes.";
       }
     };
 
     return {
       formData,
       errorMessage,
-      validateInputs,
       submitData,
     };
   },

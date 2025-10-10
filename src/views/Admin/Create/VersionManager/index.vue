@@ -2,21 +2,17 @@
   <Whiteboard :title="pageTitle" :isSidebarMinimized="isSidebarMinimized">
     <div class="p-4 sm:p-6 lg:p-8 w-full">
 
-      <!-- Estado de Carregamento -->
       <div v-if="isLoading" class="text-center py-10">
         <p class="text-gray-600">Carregando histórico de versões...</p>
       </div>
 
-      <!-- Estado de Erro -->
       <div v-else-if="error" class="text-center py-10 bg-red-50 border border-red-200 rounded-lg">
         <p class="text-red-700 font-semibold">Ocorreu um erro</p>
         <p class="text-red-600 mt-1">{{ error }}</p>
       </div>
 
-      <!-- Conteúdo Principal -->
       <div v-else-if="versionTree.length > 0" class="max-w-5xl mx-auto">
-        <div class="space-y-4">
-          <!-- Usando o novo componente para renderizar a árvore -->
+        <ul class="version-tree-root space-y-4">
           <VersionItem
             v-for="version in versionTree"
             :key="version.id"
@@ -25,7 +21,7 @@
             @go-to-edit="goToEditPage"
             @go-to-view="goToViewPage"
           />
-        </div>
+        </ul>
       </div>
       
     </div>

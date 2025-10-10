@@ -1,6 +1,6 @@
 <template>
   <Teleport to="body">
-    <div v-if="visible" class="fixed inset-0 z-10 flex items-center justify-center mt-5 p-4 bg-black bg-opacity-50">
+    <div v-if="visible" class="fixed inset-0 z-51 flex items-center justify-center  p-4 bg-black bg-opacity-50">
       <!-- Ajustar posição para ficar centralizado no conteúdo principal -->
       <div class="ml-64 w-full flex items-center justify-center">
         <div class="bg-white rounded-[10px] shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden">
