@@ -14,48 +14,17 @@
       </div>
 
       <!-- Conteúdo Principal -->
-      <div v-else-if="versions.length > 0" class="max-w-5xl mx-auto">
+      <div v-else-if="versionTree.length > 0" class="max-w-5xl mx-auto">
         <div class="space-y-4">
-          <div v-for="version in versions" :key="version.id" class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between">
-            <!-- Informações da Versão -->
-            <div class="flex-grow">
-              <div class="flex items-center gap-3">
-                <h3 class="text-lg font-bold text-gray-800">Versão {{ version.version_number }}</h3>
-                <span :class="getStatusClass(version.status)" class="text-xs font-semibold px-2.5 py-0.5 rounded-full">
-                  {{ version.status_display }}
-                </span>
-              </div>
-              <p class="text-sm text-gray-500 mt-1">Criado em: {{ version.created_at }}</p>
-            </div>
-
-            <!-- Botões de Ação -->
-            <div class="mt-4 sm:mt-0 sm:ml-4 flex-shrink-0 flex items-center gap-2">
-              <PrimaryButton
-                v-if="version.status === 'PUBLISHED' && !hasDraftVersion"
-                value="Criar Nova Versão para Edição"
-                @click="createNewVersion(version.id)"
-                customColor="bg-blue-600 hover:bg-blue-700"
-              />
-
-              <!-- Ações para versão RASCUNHO -->
-              <template v-if="version.status === 'DRAFT'">
-                <PrimaryButton
-                  value="Editar Rascunho"
-                  @click="goToEditPage(version.id)"
-                  customColor="bg-green-600 hover:bg-green-700"
-                />
-              </template>
-              
-              <!-- Ações para versão ARQUIVADA -->
-              <PrimaryButton
-                v-if="version.status === 'ARCHIVED'"
-                value="Visualizar Versão"
-                @click="goToViewPage(version.id)"
-                customColor="bg-gray-500 hover:bg-gray-600"
-              />
-
-            </div>
-          </div>
+          <!-- Usando o novo componente para renderizar a árvore -->
+          <VersionItem
+            v-for="version in versionTree"
+            :key="version.id"
+            :version="version"
+            @create-new-version="createNewVersion"
+            @go-to-edit="goToEditPage"
+            @go-to-view="goToViewPage"
+          />
         </div>
       </div>
       
@@ -69,7 +38,7 @@ import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import { getAccessToken } from '@/service/token';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
-import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
+import VersionItem from '@/components/VersionItem/VersionItem.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -86,8 +55,23 @@ const pageTitle = computed(() => {
   return 'Gerenciador de Versões';
 });
 
-const hasDraftVersion = computed(() => {
-  return versions.value.some(v => v.status === 'DRAFT');
+const versionTree = computed(() => {
+  if (!versions.value.length) return [];
+
+  const versionMap = new Map(versions.value.map(v => [v.id, { ...v, children: [] }]));
+  const tree = [];
+
+  for (const version of versionMap.values()) {
+    if (version.created_from_id && versionMap.has(version.created_from_id)) {
+      const parent = versionMap.get(version.created_from_id);
+      parent.children.push(version);
+    } else {
+      tree.push(version);
+    }
+  }
+  tree.sort((a, b) => a.version_number - b.version_number);
+  
+  return tree;
 });
 
 async function fetchCalculusVersions() {
@@ -127,8 +111,8 @@ async function fetchCalculusVersions() {
   }
 }
 
-async function createNewVersion(publishedId) {
-  if (!confirm("Tem certeza que deseja criar uma nova versão para edição? Isso fará uma cópia de todos os arquivos do cálculo publicado.")) {
+async function createNewVersion(sourceId) {
+  if (!confirm("Tem certeza que deseja criar uma nova versão para edição a partir deste ponto?")) {
     return;
   }
   try {
