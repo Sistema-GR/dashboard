@@ -103,7 +103,7 @@ async function fetchCalculusVersions() {
       console.log(`[VersionManager] Modo Específico: Buscando versões para o cálculo ID ${calculusIdToFetch}`);
     } else {
       console.log("[VersionManager] Modo Padrão: Nenhum ID na URL, buscando OpenCalc ativo...");
-      const activeCalcResponse = await axios.get('http://127.0.0.1:8000/csv/opencalc/get-active-info/', {
+      const activeCalcResponse = await axios.get('/csv/opencalc/get-active-info/', {
         headers: { Authorization: `Bearer ${token}` },
       });
       
@@ -114,7 +114,7 @@ async function fetchCalculusVersions() {
         throw new Error("Não foi possível determinar um cálculo para buscar. Nenhum OpenCalc ativo encontrado ou ID inválido.");
     }
 
-    const versionsResponse = await axios.get(`http://127.0.0.1:8000/csv/calculus/${calculusIdToFetch}/versions/`, {
+    const versionsResponse = await axios.get(`/csv/calculus/${calculusIdToFetch}/versions/`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     versions.value = versionsResponse.data;
@@ -133,7 +133,7 @@ async function createNewVersion(publishedId) {
   }
   try {
     const token = await getAccessToken();
-    const response = await axios.post('http://127.0.0.1:8000/csv/calculus/create-version/', 
+    const response = await axios.post('/csv/calculus/create-version/', 
       { calculus_id: publishedId },
       { headers: { Authorization: `Bearer ${token}` } }
     );

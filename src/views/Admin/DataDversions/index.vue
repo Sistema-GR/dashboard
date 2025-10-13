@@ -105,7 +105,7 @@ export default {
     const fetchData = async () => {
       try {
         const token = await getAccessToken();
-        const response = await axios.get('http://127.0.0.1:8000/csv/opencalc/list-versions/', {
+        const response = await axios.get('/csv/opencalc/list-versions/', {
           headers: { Authorization: `Bearer ${token}` },
         });
         calculusFamilies.value = response.data;
@@ -129,7 +129,7 @@ export default {
       try {
         const token = await getAccessToken();
         
-        const response = await axios.post('http://127.0.0.1:8000/csv/opencalc/activate-opencalc/', 
+        const response = await axios.post('/csv/opencalc/activate-opencalc/', 
           { calc_id: idParaAtivar },
           { headers: { Authorization: `Bearer ${token}` } }
         );

@@ -68,7 +68,7 @@ async function handleSubmit() {
   try {
     const token = await getAccessToken();
     await axios.post(
-      `http://127.0.0.1:8000/csv/calculus/${props.calculusId}/replace-file/${selectedFileKey.value}/`,
+      `/csv/calculus/${props.calculusId}/replace-file/${selectedFileKey.value}/`,
       formData,
       {
         headers: {
