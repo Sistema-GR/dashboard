@@ -148,7 +148,7 @@ const fetchSummary = async (id) => {
   isLoading.value = true;
   try {
     const token = await getAccessToken();
-    const response = await axios.get(`http://127.0.0.1:8000/csv/calculus/${id}/summary/`, {
+    const response = await axios.get(`/csv/calculus/${id}/summary/`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     summaryData.value = response.data.analysis_result;

@@ -104,7 +104,7 @@ async function fetchCalculusList() {
     isLoading.value = true;
     try {
         const token = await getAccessToken();
-        const response = await axios.get('http://127.0.0.1:8000/csv/calculus/list-eligible-for-promotion/', {
+        const response = await axios.get('/csv/calculus/list-eligible-for-promotion/', {
             headers: { Authorization: `Bearer ${token}` },
         });
         calculusByYear.value = response.data;
@@ -149,7 +149,7 @@ export default {
                     return;
                 }
                 await axios.post(
-                    'http://127.0.0.1:8000/csv/opencalc/create-opencalc/',                    
+                    '/csv/opencalc/create-opencalc/',                    
                     { calc_id: this.calcId },
                     {
                         headers: {
@@ -179,7 +179,7 @@ export default {
                     return;
                 }
                 const response = await axios.get(
-                    'http://127.0.0.1:8000/csv/opencalc/list-opencalc/',
+                    '/csv/opencalc/list-opencalc/',
                     {
                         headers: {
                             Authorization: `Bearer ${token}`
@@ -213,8 +213,8 @@ export default {
                     return;
                 }
                 const url = calc.ativa
-                    ? 'http://127.0.0.1:8000/csv/opencalc/deactivate-opencalc/'
-                    : 'http://127.0.0.1:8000/csv/opencalc/activate-opencalc/';
+                    ? '/csv/opencalc/deactivate-opencalc/'
+                    : '/csv/opencalc/activate-opencalc/';
                 const request = calc.ativa
                     ? { reference_year: calc.referencia }
                     : { calc_id: calc.id };
@@ -250,7 +250,7 @@ async function promoteToOpenCalc(calcId) {
 
     try {
         const token = await getAccessToken();
-        const response = await axios.post('http://127.0.0.1:8000/csv/opencalc/create-opencalc/',
+        const response = await axios.post('/csv/opencalc/create-opencalc/',
             { calc_id: calcId },
             { headers: { Authorization: `Bearer ${token}` } }
         );

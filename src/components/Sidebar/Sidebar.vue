@@ -352,7 +352,7 @@ async function fetchUserName() {
     }
 
     // Requisição com token no header
-    axios.get('http://127.0.0.1:8000/auth/user-info/', {
+    axios.get('/auth/user-info/', {
       headers: {
         'Authorization': `Bearer ${token}`  // Corrigir o nome do token para "accessToken"
       }

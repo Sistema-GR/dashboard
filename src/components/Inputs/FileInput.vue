@@ -89,10 +89,6 @@ export default {
       type: String,
       default: '/csv/process/unified-upload/',
     },
-    baseUrl: {
-      type: String,
-      default: window.__VUE__API_BASE_URL || 'http://127.0.0.1:8000',
-    },
     isUploading: {
       type: Boolean,
       default: false,
@@ -307,11 +303,8 @@ export default {
         'Authorization': `Bearer ${token}`
       };
 
-      // If you use a base URL, use it. Otherwise axios will use default base.
-      const url = (this.baseUrl || '') + this.endpoint;
-
       try {
-        await axios.post(url, form, {
+        await axios.post(endpoint, form, {
           headers,
           onUploadProgress: (progressEvent) => {
             const loaded = progressEvent.loaded;

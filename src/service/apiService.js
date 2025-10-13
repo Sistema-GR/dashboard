@@ -1,9 +1,11 @@
 import axios from 'axios';
 import { getAccessToken, setupAxiosInterceptors } from './token';
 
+const BASE_URL = import.meta.env.VITE_APP_BASE_URL || 'http://10.203.2.249:8000';
+
 // Configuração do axios
 const apiClient = axios.create({
-  baseURL: 'http://127.0.0.1:8000/',  
+  baseURL: BASE_URL,  
   headers: {
     'Content-Type': 'application/json',
   },

@@ -326,7 +326,7 @@ const fetchRewardsData = async () => {
             payload.cpf = targetCpfFromStorage;
         }
 
-        const response = await axios.post('http://127.0.0.1:8000/csv/user-get/', 
+        const response = await axios.post('/csv/user-get/', 
             payload,
             {
                 headers: { Authorization: `Bearer ${token}` } 

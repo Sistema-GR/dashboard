@@ -53,6 +53,7 @@
           <ChevronDownIcon class="h-5 w-5 text-gray-500 transition-transform" :class="{ 'rotate-180': isImportedOpen }" />
         </div>
         <transition name="fade">
+          <!-- MODIFICADO v-for para usar importedFiles -->
           <div v-show="isImportedOpen">
             <div v-for="file in importedFiles" :key="file.id" class="bg-white border border-gray-200 rounded-[10px] shadow-md p-4 mt-2">
               <div class="flex flex-col">

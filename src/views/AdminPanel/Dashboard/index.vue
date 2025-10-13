@@ -144,7 +144,7 @@ export default {
         }
 
         // Requisição para critérios para calcular quem recebe/não recebe
-        const responseCriterios = await axios.get('http://127.0.0.1:8000/csv/process/criterios/', {
+        const responseCriterios = await axios.get('/csv/process/criterios/', {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -176,7 +176,7 @@ export default {
         chartDataFaixaPagamento.value = faixaPagamento;
 
         // Requisição para os motivos de não recebimento
-        const responseAnalysis = await axios.get('http://127.0.0.1:8000/csv/get-import-files/', {
+        const responseAnalysis = await axios.get('/csv/get-import-files/', {
 
           headers: { Authorization: `Bearer ${token}` },
         });
