@@ -115,21 +115,43 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody class="text-15">
-                                                    <tr class="hover:bg-gray-50 transition-shadow hover:shadow-md">
-                                                        <td class="border border-gray-200 px-4 py-3 text-gray-700">Frequência</td>
-                                                        <td class="border border-gray-200 px-4 py-3 text-gray-700">
-                                                            {{ item?.frequencia[0]?.percentual_frequencia ? Number(item.frequencia[0].percentual_frequencia).toFixed(2) + '%' : '100%' }}
-                                                        </td>
-                                                        <td 
-                                                            :class="{
-                                                                'text-red-600 font-semibold': item?.frequencia[0]?.percentual_frequencia !== undefined && Number(item.frequencia[0].percentual_frequencia) < 96,
-                                                                'text-green-600 font-semibold': !item?.frequencia[0]?.percentual_frequencia || Number(item.frequencia[0].percentual_frequencia) >= 96
-                                                            }"
-                                                            class="border border-gray-200 px-4 py-3"
-                                                        >
-                                                            {{ item?.frequencia[0]?.percentual_frequencia ? (Number(item.frequencia[0].percentual_frequencia) >= 96 ? 'Apto' : 'Não Apto') : 'Apto' }}
-                                                        </td>
-                                                    </tr>
+                                                    <template v-if="item.dados.periodos_frequencia && item.dados.periodos_frequencia.length > 0">
+                                                        <tr v-for="(periodo, pIndex) in item.dados.periodos_frequencia" :key="pIndex" class="hover:bg-gray-50 transition-shadow hover:shadow-md">
+                                                            <td class="border border-gray-200 px-4 py-3 text-gray-700 font-medium">
+                                                                Frequência (Período {{ periodo.numero_periodo }})
+                                                            </td>
+                                                            <td class="border border-gray-200 px-4 py-3 text-gray-700">
+                                                                {{ periodo.percentual ? Number(periodo.percentual).toFixed(2) + '%' : 'N/A' }}
+                                                            </td>
+                                                            <td 
+                                                                :class="{
+                                                                    'text-red-600 font-semibold': !periodo.apto,
+                                                                    'text-green-600 font-semibold': periodo.apto
+                                                                }"
+                                                                class="border border-gray-200 px-4 py-3"
+                                                            >
+                                                                {{ periodo.apto ? 'Apto' : 'Não Apto' }}
+                                                            </td>
+                                                        </tr>
+                                                    </template>
+
+                                                    <template v-else>
+                                                        <tr class="hover:bg-gray-50 transition-shadow hover:shadow-md">
+                                                            <td class="border border-gray-200 px-4 py-3 text-gray-700">Frequência</td>
+                                                            <td class="border border-gray-200 px-4 py-3 text-gray-700">
+                                                                {{ item?.frequencia[0]?.percentual_frequencia ? Number(item.frequencia[0].percentual_frequencia).toFixed(2) + '%' : '100%' }}
+                                                            </td>
+                                                            <td 
+                                                                :class="{
+                                                                    'text-red-600 font-semibold': item?.frequencia[0]?.percentual_frequencia !== undefined && Number(item.frequencia[0].percentual_frequencia) < 96,
+                                                                    'text-green-600 font-semibold': !item?.frequencia[0]?.percentual_frequencia || Number(item.frequencia[0].percentual_frequencia) >= 96
+                                                                }"
+                                                                class="border border-gray-200 px-4 py-3"
+                                                            >
+                                                                {{ item?.frequencia[0]?.percentual_frequencia ? (Number(item.frequencia[0].percentual_frequencia) >= 96 ? 'Apto' : 'Não Apto') : 'Apto' }}
+                                                            </td>
+                                                        </tr>
+                                                    </template>
 
                                                     <tr class="hover:bg-gray-50 transition-shadow hover:shadow-md">
                                                         <td class="border border-gray-200 px-4 py-3 text-gray-700">Tempo de atuação</td>

@@ -270,7 +270,8 @@ export default {
     const version = computed(() => {
       if (!dashboardAnalysisData.value?.version_info) return [];
       const { version_info } = dashboardAnalysisData.value;
-      return [
+      
+      const fields = [
         { label: 'Versão', value: version_info.description || 'Desconhecido' },
         { label: 'Data de Criação', value: new Date(version_info.created_at).toLocaleDateString('pt-BR') },
         { 
@@ -282,11 +283,11 @@ export default {
             value: version_info.max_workload ? `${version_info.max_workload} horas` : "Não disponível"
         },
         { 
-            label: 'Data de Início', 
+            label: 'Data de Início (Geral)', 
             value: version_info.start_date ? new Date(version_info.start_date + 'T00:00:00').toLocaleDateString('pt-BR') : 'Não disponível'
         },
         { 
-            label: 'Data de Fim', 
+            label: 'Data de Fim (Geral)', 
             value: version_info.end_date ? new Date(version_info.end_date + 'T00:00:00').toLocaleDateString('pt-BR') : 'Não disponível'
         },
         { 
@@ -295,9 +296,29 @@ export default {
                 version_info.idem_network_step_1 !== undefined ? `Etapa 01: ${version_info.idem_network_step_1}%` : null,
                 version_info.idem_network_step_2 !== undefined ? `Etapa 02: ${version_info.idem_network_step_2}%` : null,
                 version_info.idem_network_step_3 !== undefined ? `Etapa 03: ${version_info.idem_network_step_3}%` : null,
-            ].filter(Boolean).join('\n') || "Não disponível"
+            ].filter(Boolean).join(' | ') || "Não disponível"
         },
       ];
+
+      if (version_info.frequency_periods && version_info.frequency_periods.length > 0) {
+        fields[4].label = 'Data de Início (Geral)';
+        fields[5].label = 'Data de Fim (Geral)';
+        
+        const periodsValue = version_info.frequency_periods
+          .map(period => {
+            const startDate = new Date(period.start_date + 'T00:00:00').toLocaleDateString('pt-BR');
+            const endDate = new Date(period.end_date + 'T00:00:00').toLocaleDateString('pt-BR');
+            return `Período ${period.period_number}: ${startDate} a ${endDate}`;
+          })
+          .join(' | ');
+
+        fields.push({
+          label: 'Períodos de Frequência',
+          value: periodsValue
+        });
+      }
+
+      return fields;
     });
 
     return {
