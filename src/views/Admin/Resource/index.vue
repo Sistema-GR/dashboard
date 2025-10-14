@@ -17,7 +17,6 @@
           </button>
           <button 
               @click="navigateToVersionManager"
-              :disabled="!activeCalculusId"
               class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-[10px] transition-colors duration-200 flex items-center gap-2 font-medium shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
               <!-- Ícone de versionamento (opcional, mas legal) -->
@@ -104,19 +103,6 @@ export default {
         const recursos = ref([])
         const selectedStatus = ref('aguardando_resposta')
         const isLoading = ref(true)
-        const activeCalculusId = ref(null)
-
-        async function fetchActiveCalculusInfo() {
-            try {
-                const response = await axios.get('/csv/calculus/get-active-for-admin/', {
-                    headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-                });
-                activeCalculusId.value = response.data.calculus_id;
-            } catch (error) {
-                console.error("Não foi possível obter informações do cálculo ativo:", error);
-
-            }
-        }
 
         async function fetchRecursos() {
             isLoading.value = true;
@@ -139,15 +125,10 @@ export default {
 
         onMounted(() => {
             fetchRecursos();
-            fetchActiveCalculusInfo();
         });
 
         function navigateToVersionManager() {
-            if (activeCalculusId.value) {
-                router.push({ name: 'versionmanager', params: { id: activeCalculusId.value } });
-            } else {
-                alert("A informação do cálculo ativo não pôde ser carregada. Não é possível gerenciar versões.");
-            }
+            router.push({ name: 'versionmanager' });
         }
 
 
@@ -218,7 +199,6 @@ export default {
             activeStatusStyle,
             STATUS_DEFINITIONS,
             activeStatusColorClass,
-            activeCalculusId,
             navigateToVersionManager,
         }
     },

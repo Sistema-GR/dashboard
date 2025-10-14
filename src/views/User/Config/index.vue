@@ -131,7 +131,7 @@ export default {
             }
 
             try {
-                const response = await fetch("http://10.203.3.46:8000/auth/user-info/", {
+                const response = await fetch("/auth/user-info/", {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -165,7 +165,7 @@ export default {
             const token = localStorage.getItem('accessToken')
 
             try {
-                const response = await fetch('http://127.0.0.1:8000/auth/user-update/', {
+                const response = await fetch('/auth/user-update/', {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',

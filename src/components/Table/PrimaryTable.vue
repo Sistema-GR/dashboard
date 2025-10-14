@@ -225,15 +225,15 @@ async function fetchPeople() {
 
     let requestUrl;
     if (props.isDynamicRoute) {
-      requestUrl = `http://127.0.0.1:8000/csv/${props.route}`;
+      requestUrl = `/csv/${props.route}`;
     } else {
       const endpoint = await getEndpointForRoute(props.route);
-      requestUrl = `http://127.0.0.1:8000/csv/${endpoint}`;
+      requestUrl = `/csv/${endpoint}`;
     }
 
     if (props.isDynamicRoute) {
       const token = await getAccessToken();
-      const response = await axios.get(`http://127.0.0.1:8000/csv/${props.route}`, {
+      const response = await axios.get(`/csv/${props.route}`, {
           headers: { Authorization: `Bearer ${token}` }
       });
       peopleData = response.data;

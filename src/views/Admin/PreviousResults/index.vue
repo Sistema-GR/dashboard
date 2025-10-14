@@ -24,21 +24,22 @@
 
           <!-- Lista de Versões (incluindo o pai) -->
           <ul class="divide-y divide-[#e3f0ff]">
-            <li v-for="item in [parent, ...parent.versions]" :key="item.id" class="p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center">
+            <li v-for="item in parent.all_versions" :key="item.id" class="p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center">
               <div class="flex items-center gap-4">
                 <span :class="getStatusClass(item.status) + ' text-15 font-semibold px-3 py-1 rounded-full'" style="min-width: 80px; text-align: center;">
                   {{ item.status }}
                 </span>
-                <p class="font-medium text-[#003965]">Versão {{ item.version_number }}</p>
+                <div>
+                  <p class="font-medium text-[#003965]">Versão {{ item.version_number }}</p>
+                  <p v-if="item.created_from_version_number" class="text-xs text-gray-500 italic">
+                    (Criado a partir da V{{ item.created_from_version_number }})
+                  </p>
+                </div>
               </div>
-              
-              <!-- Ações específicas da versão -->
-
               <div class="mt-3 sm:mt-0 flex items-center gap-2 flex-wrap">
-                 <SecondaryButton 
+                <SecondaryButton 
                   label="Visualizar Relatório" 
                   @click="openPreviewModal(item.id)" 
-
                 />
                 <SecondaryButton 
                   label="Excluir" 
@@ -48,6 +49,7 @@
               </div>
             </li>
           </ul>
+
         </div>
       </div>
       <div v-else class="px-4 sm:px-10 pb-8 text-15 text-[#3459a2]">Nenhum cálculo encontrado para este ano.</div>
@@ -82,69 +84,74 @@ export default {
     async fetchCalculus() {
       try {
         const token = await getAccessToken();
-        
         if (!token) {
           this.errorMessage = 'Usuário não autenticado ou token expirado.';
           return;
         }
 
-        const response = await axios.get("http://10.203.3.46:8000/csv/get-list-calculus/", {
+        const response = await axios.get("/csv/get-list-calculus/", {
           headers: { Authorization: `Bearer ${token}` }
         });
-        
+        if (Object.keys(response.data).length === 0) {
+            this.calculusGroupsByYear = {};
+            return;
+        }
         this.processCalculusData(response.data);
       } catch (error) {
         console.error('Erro ao buscar cálculos:', error);
-        this.errorMessage = 'Erro ao buscar cálculos.';
+        this.errorMessage = error.response?.data?.message || 'Erro ao buscar cálculos.';
       }
     },
 
     processCalculusData(apiData) {
       const allCalculus = {};
-      const parentCalculusByYear = {};
+      const calculusFamilies = {};
 
-      // 1ª Passada: Mapear todos os cálculos e identificar os pais
       for (const year in apiData) {
-        parentCalculusByYear[year] = [];
-        for (const key in apiData[year]) {
-          const calc = apiData[year][key];
-          const formattedCalc = {
+        const yearCalculationsObject = apiData[year];
+        
+        const calculationsArray = Object.values(yearCalculationsObject);
+
+        for (const calc of calculationsArray) {
+          allCalculus[calc.calculus_id] = {
             id: calc.calculus_id,
             description: calc.description,
             createdAt: new Date(calc.created_at).toLocaleDateString('pt-BR'),
             status: calc.status,
             version_number: calc.version_number,
             parent_calculus_id: calc.parent_calculus_id,
-            versions: [] // Array para abrigar as versões filhas
+            year: year,
+            created_from_version_number: calc.created_from_version_number
           };
-          
-          allCalculus[calc.calculus_id] = formattedCalc;
-
-          if (!calc.parent_calculus_id) {
-            parentCalculusByYear[year].push(formattedCalc);
-          }
         }
       }
 
-      // 2ª Passada: Aninhar os filhos em seus respectivos pais
-      for (const id in allCalculus) {
-        const calc = allCalculus[id];
-        if (calc.parent_calculus_id) {
-          const parent = allCalculus[calc.parent_calculus_id];
-          if (parent) {
-            parent.versions.push(calc);
-          }
+      for (const calc of Object.values(allCalculus)) {
+        const familyId = calc.parent_calculus_id || calc.id;
+        if (!calculusFamilies[familyId]) {
+          calculusFamilies[familyId] = {
+            ...allCalculus[familyId],
+            all_versions: []
+          };
         }
+        calculusFamilies[familyId].all_versions.push(calc);
       }
 
-      // Ordenar as versões filhas por número
-      for (const year in parentCalculusByYear) {
-        for (const parent of parentCalculusByYear[year]) {
-          parent.versions.sort((a, b) => a.version_number - b.version_number);
+      const groupsByYear = {};
+      for (const family of Object.values(calculusFamilies)) {
+        const year = family.year;
+        if (!groupsByYear[year]) {
+          groupsByYear[year] = [];
         }
+        family.all_versions.sort((a, b) => a.version_number - b.version_number);
+        groupsByYear[year].push(family);
       }
 
-      this.calculusGroupsByYear = parentCalculusByYear;
+      for (const year in groupsByYear) {
+          groupsByYear[year].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+      }
+
+      this.calculusGroupsByYear = groupsByYear;
     },
 
     goToVersionManager(parentId) {
@@ -153,12 +160,11 @@ export default {
     async copiarCalculo(item) {
       try {
         const token = await getAccessToken();
-        const response = await axios.post("http://10.203.3.46:8000/csv/copy-calculus/", { calc_id: item.id }, {
+        const response = await axios.post("/csv/copy-calculus/", { calc_id: item.id }, {
           headers: { Authorization: `Bearer ${token}` }
         });
         alert(`Cálculo copiado com sucesso! Novo ID: ${response.data.new_calculus_id}`);
         
-        // Recarregar a página
         window.location.reload();
       } catch (error) {
         console.error('Erro ao copiar cálculo:', error);
@@ -174,7 +180,7 @@ export default {
         }
 
         const response = await axios.post(
-          "http://127.0.0.1:8000/csv/api/set-active-calculus/",
+          "/csv/api/set-active-calculus/",
           { calc_id: calculusId },
 
           {
@@ -198,7 +204,7 @@ export default {
         const token = await getAccessToken();
         await axios.post(
 
-          `http://127.0.0.1:8000/csv/calculus/${calculusId}/delete/`, 
+          `/csv/calculus/${calculusId}/delete/`, 
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );

@@ -269,7 +269,7 @@ async function handleRowUpdate(updatedData) {
   try {
     const token = await getAccessToken();
     await axios.patch(
-      `http://127.0.0.1:8000/csv/calculus/${calculusId.value}/update-cleaned-file/`,
+      `/csv/calculus/${calculusId.value}/update-cleaned-file/`,
       {
         file_key: selectedFileToEdit.value,
         row_identifier: { [identifierKey]: identifierValue },
@@ -296,7 +296,7 @@ async function publishVersion() {
   try {
     const token = await getAccessToken();
     await axios.post(
-      `http://127.0.0.1:8000/csv/calculus/${calculusId.value}/publish/`,
+      `/csv/calculus/${calculusId.value}/publish/`,
       {},
       { headers: { Authorization: `Bearer ${token}` } }
     );

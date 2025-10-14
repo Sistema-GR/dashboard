@@ -3,6 +3,8 @@ import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
+const BASE_URL = import.meta.env.VITE_APP_BASE_URL || 'http://10.203.2.249:8000';
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -19,20 +21,20 @@ export default defineConfig({
     proxy: {
         // Redireciona qualquer chamada para /recursos/...
         '/recursos': {
-            target: 'http://10.203.3.46:8000',
+            target: BASE_URL,
             changeOrigin: true,
         },
 
         '/auth': {
-            target: 'http://10.203.3.46:8000',
+            target: BASE_URL,
             changeOrigin: true,
         },
         '/csv': {
-            target: 'http://10.203.3.46:8000',
+            target: BASE_URL,
             changeOrigin: true,
         },
         '/api/': {
-            target: 'http://10.203.3.46:8000',
+            target: BASE_URL,
 
             changeOrigin: true,
         }
