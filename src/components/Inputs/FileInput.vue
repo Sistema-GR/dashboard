@@ -85,10 +85,6 @@ export default {
       required: true,
       default: "Importar Arquivos em .CSV",
     },
-    endpoint: {
-      type: String,
-      default: '/csv/process/unified-upload/',
-    },
     isUploading: {
       type: Boolean,
       default: false,
@@ -304,7 +300,7 @@ export default {
       };
 
       try {
-        await axios.post(endpoint, form, {
+        await axios.post('/csv/process/unified-upload/', form, {
           headers,
           onUploadProgress: (progressEvent) => {
             const loaded = progressEvent.loaded;

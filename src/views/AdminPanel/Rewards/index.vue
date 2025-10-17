@@ -340,8 +340,13 @@ const fetchRewardsData = async () => {
             throw new Error("Token de autenticação não encontrado.");
         }
 
-        const referenceYear = new Date().getFullYear();
-        
+        const fetchYear = await axios.get('/csv/opencalc/active-reference-year/',            
+            {
+                headers: { Authorization: `Bearer ${token}` } 
+            }
+        )
+        const referenceYear = fetchYear.data.reference_year;
+
         let payload = { reference: referenceYear };
 
         if (targetCpfFromStorage) {

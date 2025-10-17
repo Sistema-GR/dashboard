@@ -114,7 +114,7 @@ async function createNewVersion(sourceId) {
   try {
     const token = await getAccessToken();
     const response = await axios.post('/csv/calculus/create-version/', 
-      { calculus_id: publishedId },
+      { calculus_id: sourceId },
       { headers: { Authorization: `Bearer ${token}` } }
     );
     

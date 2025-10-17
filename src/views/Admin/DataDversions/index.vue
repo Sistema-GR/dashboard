@@ -63,7 +63,8 @@ export default {
      const processedFamilies = computed(() => {
       return calculusFamilies.value.map(family => {
         const versions = family.versions;
-        const versionMap = new Map(versions.map(v => [v.id, { ...v, children: [] }]));
+        
+        const versionMap = new Map(versions.map(v => [v.calculus_id, { ...v, children: [] }]));
         const tree = [];
 
         for (const version of versionMap.values()) {
@@ -85,6 +86,7 @@ export default {
           headers: { Authorization: `Bearer ${token}` },
         });
         calculusFamilies.value = response.data;
+        console.log(response.data);
       } catch (error) {
         console.error("Erro ao buscar as famílias de cálculo:", error);
       }
@@ -101,11 +103,11 @@ export default {
       if (!pendingVersion.value) return;
 
       const idParaAtivar = pendingVersion.value.calculus_id;
-      
+      console.log(pendingVersion)
        try {
         const token = await getAccessToken();
         
-        const response = await axios.post('/csv/opencalc/activate-opencalc/', 
+        const response = await axios.post('/csv/opencalc/activate-opencalc/',
           { calc_id: idParaAtivar },
           { headers: { Authorization: `Bearer ${token}` } }
         );

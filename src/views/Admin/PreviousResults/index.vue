@@ -16,7 +16,7 @@
           <!-- Cabeçalho da Família de Versões -->
           <div class="p-6 bg-[#c2ddfd] rounded-t-[10px] flex flex-col sm:flex-row justify-between items-start sm:items-center">
             <div>
-              <h3 class="text-20 font-semibold text-black">{{ parent.description }}</h3>
+              <h3 class="text-20 font-semibold text-black">{{ parent.name }}</h3>
               <p class="text-15 text-black">Iniciado em: {{ parent.createdAt }}</p>
             </div>
             <SecondaryButton label="Gerenciar Versões" @click="goToVersionManager(parent.id)" class="mt-4 sm:mt-0 w-44 h-10 text-15 font-semibold bg-[#003965] text-black rounded-[10px]" />
@@ -114,6 +114,7 @@ export default {
 
         for (const calc of calculationsArray) {
           allCalculus[calc.calculus_id] = {
+            name: calc.name,
             id: calc.calculus_id,
             description: calc.description,
             createdAt: new Date(calc.created_at).toLocaleDateString('pt-BR'),
