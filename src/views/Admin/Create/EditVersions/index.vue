@@ -38,18 +38,27 @@
               customColor="bg-[#f7b731] hover:bg-[#e0a800] w-48 h-12 text-15 font-semibold text-white rounded-[10px]"
               title="Substituir um arquivo de entrada completo por uma nova versão."
             />
-            <PrimaryButton
-              :value="isAppealsModeActive ? 'Sair do Modo Recurso' : 'Ativar Modo Recurso'"
-              @click="toggleAppealsMode"
-              :customColor="isAppealsModeActive ? 'bg-[#fa8231] hover:bg-[#e17055] w-48 h-12 text-15 font-semibold text-white rounded-[10px]' : 'bg-[#3459a2] hover:bg-[#27477a] w-48 h-12 text-15 font-semibold text-white rounded-[10px]'"
-              title="Filtra a visualização para focar apenas em usuários com recursos abertos."
+            <PrimaryButton 
+              value="Visualizar Criterios"
+              @click="showSummaryModal = true"
+              customColor="bg-[#5a67d8] hover:bg-[#434190] w-48 h-12 text-15 font-semibold text-white rounded-[10px]"
+              title="Abre uma visualização dos resultados processados (critérios) com base nos dados atuais."
             />
             <PrimaryButton 
-              value="Processar e publicar versão"
+              value="Reprocessar Dados"
+              @click="reprocessVersion"
+              customColor="bg-[#3459a2] hover:bg-[#27477a] w-48 h-12 text-15 font-semibold text-white rounded-[10px]"
+              title="Executa novamente o cálculo com os dados atuais, sem publicar a versão."
+            />
+            <PrimaryButton 
+              value="Finalizar Edição"
               @click="publishVersion"
               customColor="bg-[#2d8f4b] hover:bg-[#23703a] w-48 h-12 text-15 font-semibold text-white rounded-[10px]"
+              title="Marca esta versão como finalizada e a envia para a tela de promoção."
             />
           </div>
+        </div>
+
         </div>
         <!-- Filtros -->
         <div class="mb-8 px-4 sm:px-10 flex flex-col md:flex-row gap-6">
@@ -77,7 +86,6 @@
           :is-appeals-mode="isAppealsModeActive"
         />
       </div>
-    </div>
   </Whiteboard>
 
   <FileReplaceModal
@@ -87,6 +95,23 @@
     @close="showReplaceModal = false"
     @file-replaced="handleFileReplaced"
   />
+
+  <div v-if="showSummaryModal" class="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 p-4">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-7xl h-[90vh] flex flex-col">
+      <header class="p-4 border-b flex justify-between items-center">
+        <h2 class="text-xl font-bold text-[#3459a2]">Resumo-Critérios-Processado</h2>
+        <button @click="showSummaryModal = false" class="text-gray-500 hover:text-gray-800 text-2xl font-bold">&times;</button>
+      </header>
+      <main class="flex-grow overflow-auto p-1">
+        <PrimaryTable
+            :key="'summary-table-' + calculusId"
+            :route="`calculus/${calculusId}/processed-file/criterios`"
+            :isDynamicRoute="true"
+            :is-view-only="true"
+        />
+      </main>
+    </div>
+  </div>
 
   <Teleport to="body">
     <EditHover
@@ -129,6 +154,8 @@ const filterableColumns = ref([]);
 const isAppealsModeActive = ref(false);
 const hoveredAppealData = ref(null);
 const hoverPosition = ref({ top: '0px', left: '0px' });
+
+const showSummaryModal = ref(false);
 
 const hoverStyle = computed(() => ({
   position: 'fixed', 
@@ -286,12 +313,35 @@ async function handleRowUpdate(updatedData) {
   }
 }
 
-async function publishVersion() {
-  if (!confirm('Tem certeza que deseja publicar esta versão? Todos os dados serão reprocessados com base nas suas edições e esta versão se tornará a oficial.')) {
+async function reprocessVersion() {
+  if (!confirm('Deseja reprocessar os dados desta versão? As edições salvas serão usadas para gerar novos resultados, mas a versão continuará como rascunho.')) {
     return;
   }
   
-  loadingMessage.value = 'Reprocessando e publicando...';
+  loadingMessage.value = 'Reprocessando dados...';
+  isLoading.value = true;
+  try {
+    const token = await getAccessToken();
+    await axios.post(
+      `/csv/calculus/${calculusId.value}/reprocess/`,
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    alert('Dados reprocessados com sucesso! Você pode visualizar os novos resultados na aba "Resumo".');
+  } catch (err) {
+    console.error("Erro ao reprocessar:", err);
+    alert(`Falha no reprocessamento: ${err.response?.data?.error || 'Erro desconhecido'}`);
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+async function publishVersion() {
+  if (!confirm('Tem certeza que deseja finalizar a edição desta versão? Ela será marcada como "Publicada" e enviada para a tela de promoção, não podendo mais ser editada.')) {
+    return;
+  }
+  
+  loadingMessage.value = 'Finalizando e publicando...';
   isLoading.value = true;
   try {
     const token = await getAccessToken();
@@ -300,11 +350,11 @@ async function publishVersion() {
       {},
       { headers: { Authorization: `Bearer ${token}` } }
     );
-    alert('Versão publicada com sucesso!');
-    router.push('/dashboard');
+    alert('Versão finalizada com sucesso! Redirecionando para a tela de promoção.');
+    router.push('/allocCalc');
   } catch (err) {
     console.error("Erro ao publicar a versão:", err);
-    alert(`Falha ao publicar: ${err.response?.data?.error || 'Erro desconhecido'}`);
+    alert(`Falha ao finalizar: ${err.response?.data?.error || 'Erro desconhecido'}`);
   } finally {
     isLoading.value = false;
   }
