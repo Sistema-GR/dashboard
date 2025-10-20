@@ -99,15 +99,37 @@
   <div v-if="showSummaryModal" class="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 p-4">
     <div class="bg-white rounded-lg shadow-xl w-full max-w-7xl h-[90vh] flex flex-col">
       <header class="p-4 border-b flex justify-between items-center">
-        <h2 class="text-xl font-bold text-[#3459a2]">Resumo-Critérios-Processado</h2>
-        <button @click="showSummaryModal = false" class="text-gray-500 hover:text-gray-800 text-2xl font-bold">&times;</button>
+        <div>
+          <h2 class="text-xl font-bold text-[#3459a2]">Resumo do Cálculo - Critérios Processados</h2>
+        </div>
+        <div class="flex items-center gap-4">
+          <button
+            @click="downloadSummaryFile"
+            :disabled="isDownloading"
+            class="flex items-center gap-2 px-4 py-2 text-15 bg-gray-100 text-gray-700 rounded-[10px] hover:bg-gray-200 transition disabled:opacity-50"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            <span>{{ isDownloading ? 'Baixando...' : 'Baixar CSV' }}</span>
+          </button>
+          <button @click="showSummaryModal = false" class="text-gray-500 hover:text-gray-800 text-2xl font-bold">&times;</button>
+        </div>
       </header>
+      <div class="p-4 border-b">
+        <Search
+          :columns="summaryTableColumns"
+          @search="handleSummarySearch"
+        />
+      </div>
       <main class="flex-grow overflow-auto p-1">
         <PrimaryTable
             :key="'summary-table-' + calculusId"
             :route="`calculus/${calculusId}/processed-file/criterios`"
             :isDynamicRoute="true"
             :is-view-only="true"
+            :searchCriteria="summarySearchCriteria"
+            @columns-loaded="handleSummaryColumnsLoaded"
         />
       </main>
     </div>
@@ -133,11 +155,11 @@ import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
 import PrimaryTable from '@/components/Table/PrimaryTable.vue';
 import Search from '@/components/Search/Search.vue';
 import EditHover from '@/components/EditHover/EditHover.vue';
-
 import FileReplaceModal from '@/components/FileReplaceModal/FileReplaceModal.vue';
 
 const route = useRoute();
 const router = useRouter();
+
 const isSidebarMinimized = inject('isSidebarMinimized', ref(false));
 const tableKey = ref(0);
 const isLoading = ref(false);
@@ -156,6 +178,61 @@ const hoveredAppealData = ref(null);
 const hoverPosition = ref({ top: '0px', left: '0px' });
 
 const showSummaryModal = ref(false);
+const summarySearchCriteria = ref({ query: '', column: 'all' });
+const summaryTableColumns = ref([]);
+
+const isDownloading = ref(false);
+
+const downloadSummaryFile = async () => {
+  isDownloading.value = true;
+  try {
+    const token = await getAccessToken();
+
+    const infoResponse = await axios.get(
+      `/csv/calculus/${calculusId.value}/file-info/criterios/`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    const fileId = infoResponse.data.file_id;
+    if (!fileId) {
+      throw new Error("ID do arquivo não foi encontrado.");
+    }
+
+    const downloadResponse = await axios.get(
+        `/csv/api/data-files/${fileId}/download/`,
+        {
+            headers: { Authorization: `Bearer ${token}` },
+            responseType: 'blob', 
+        }
+    );
+
+    const url = window.URL.createObjectURL(new Blob([downloadResponse.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    
+    const contentDisposition = downloadResponse.headers['content-disposition'];
+    let filename = 'criterios_processados.csv'; // Nome padrão
+    if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+        if (filenameMatch && filenameMatch.length === 2) {
+            filename = filenameMatch[1];
+        }
+    }
+
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+
+  } catch (err) {
+    console.error("Erro ao baixar o arquivo:", err);
+    alert("Não foi possível baixar o arquivo de resumo. Verifique o console para mais detalhes.");
+  } finally {
+    isDownloading.value = false;
+  }
+};
 
 const hoverStyle = computed(() => ({
   position: 'fixed', 
@@ -193,6 +270,14 @@ const handleSearch = (criteria) => {
 const handleColumnsLoaded = (columns) => {
   filterableColumns.value = columns;
 }
+
+const handleSummarySearch = (criteria) => {
+  summarySearchCriteria.value = criteria;
+};
+
+const handleSummaryColumnsLoaded = (columns) => {
+  summaryTableColumns.value = columns;
+};
 
 const pageTitle = computed(() => {
   return isViewOnlyMode.value ? "Visualizando Versão Arquivada" : "Editando Rascunho";

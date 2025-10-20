@@ -32,7 +32,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="calc in eligibleCalculations" :key="calc.id" class="border-b hover:bg-[#f0f4fa] transition">
+                        <tr v-for="calc in eligibleCalculations" :key="calc.calc_id" class="border-b hover:bg-[#f0f4fa] transition">
                             <td class="py-2 px-3">{{ calc.nome || '-' }}</td>
                             <td class="py-2 px-3">{{ calc.descricao || '-' }}</td>
                             <td class="py-2 px-3">{{ calc.data }}</td>
@@ -40,8 +40,8 @@
                                 <PrimaryButton
                                     customColor="bg-[#2d8f4b] hover:bg-[#23703a] text-white font-semibold py-1 px-4 rounded"
                                     value="Promover"
-                                    :disabled="isPromoting[calc.id]"
-                                    @click="promoteToOpenCalc(calc.id)"
+                                    :disabled="isPromoting[calc.calc_id]"
+                                    @click="promoteToOpenCalc(calc.calc_id)"
                                 />
                             </td>
                         </tr>
