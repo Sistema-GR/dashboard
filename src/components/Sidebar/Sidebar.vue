@@ -267,10 +267,8 @@ import {
   RectangleStackIcon,
   Square3Stack3DIcon,
   Squares2X2Icon,
-  UserCircleIcon,
   UserGroupIcon,
   UsersIcon,
-  UserIcon,
   XMarkIcon
 } from '@heroicons/vue/24/outline'
 import axios from 'axios'
@@ -284,11 +282,11 @@ const routes = {
   'admin': [
     { name: 'Dashboard', route: '/admin/dashboard', icon: Squares2X2Icon, current: false },
     { name: 'Novo Cálculo', route: '/home/create/selector', icon: CalculatorIcon, current: false },
-    { name: 'Cálcular Alocação', route: '/home/alloc', icon: RectangleStackIcon, current: false },
-    { name: 'Cálculo Anteriores', route: '/home/previousresults', icon: ChartBarIcon, current: false },
-    { name: 'Recurso', route: '/resource', icon: ExclamationCircleIcon, current: false },
-    { name: 'Painel do Usuário', route: '/home/dataversions', icon: CircleStackIcon, current: false },
-    { name: 'Permissões Acessos', route: '/home/permissionsaccess', icon: UsersIcon , current: false },
+    { name: 'Listar Cálculos', route: '/home/previousresults', icon: ChartBarIcon, current: false },
+    { name: 'Publicar Cálculo', route: '/home/alloc', icon: RectangleStackIcon, current: false },
+    { name: 'Versões Publicadas', route: '/home/dataversions', icon: CircleStackIcon, current: false },
+    { name: 'Recursos', route: '/resource', icon: ExclamationCircleIcon, current: false },
+    { name: 'Permissões de Acesso', route: '/home/permissionsaccess', icon: UsersIcon , current: false },
     { name: 'Detalhes do Cálculo', icon: RectangleStackIcon,
       children: [        
         { name: 'Resultados IDEM', id: 'Results', icon: CalculatorIcon, current: false },
