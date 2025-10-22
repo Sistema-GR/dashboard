@@ -301,7 +301,7 @@ async function publishVersion() {
       { headers: { Authorization: `Bearer ${token}` } }
     );
     alert('Versão publicada com sucesso!');
-    router.push('/dashboard');
+    router.push({name: 'dash'});
   } catch (err) {
     console.error("Erro ao publicar a versão:", err);
     alert(`Falha ao publicar: ${err.response?.data?.error || 'Erro desconhecido'}`);

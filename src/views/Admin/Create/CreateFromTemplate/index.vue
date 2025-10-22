@@ -142,7 +142,7 @@ export default {
 
         // Passar o generalDataId e a versão selecionada para a página de imports
         router.push({ 
-          path: "/home/imports", 
+          name: "create-imports", 
           query: { generalDataId, versionId: selectedVersionId.value }
         });
       } catch (error) {
