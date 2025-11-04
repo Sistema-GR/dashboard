@@ -98,11 +98,11 @@ export default {
       default: () => [
         { key: 'funcionarios', label: '1. Funcionários', patterns: ['funcionario', 'funcionarios', 'employees'] },
         { key: 'demissoes', label: '2. Demissões', patterns: ['demissao', 'demissoes'] },
-        { key: 'frequencia', label: '3. Frequência', patterns: ['frequenciaXD'] },
-        { key: 'atividades', label: '4. Atividades', patterns: ['atividade', 'atividades'] },
-        { key: 'formacoes', label: '5. Formações', patterns: ['formacoes', 'formacao'] },
-        { key: 'dias_nao_contabilizados', label: '6. Dias Não Contabilizados', patterns: ['dias_nao', 'nao_contabilizados'] },
-        { key: 'motivos_infrequencia', label: '7. Motivos de Infrequência', patterns: ['motivos_infrequencia'] },
+        { key: 'motivos_infrequencia', label: '3. Motivos de Infrequência', patterns: ['motivos_infrequencia'] },
+        { key: 'frequencia', label: '4. Frequência', patterns: ['frequencia'] },
+        { key: 'atividades', label: '5. Atividades', patterns: ['atividade', 'atividades'] },
+        { key: 'formacoes', label: '6. Formações', patterns: ['formacoes', 'formacao'] },
+        { key: 'dias_nao_contabilizados', label: '7. Dias Não Contabilizados', patterns: ['dias_nao', 'nao_contabilizados'] },
         { key: 'etapas_metas_ue', label: '8. Metas por Unidade Escolar', patterns: ['etapas_metas'] },
         { key: 'ues_perc_gr', label: '9. Percentual de Gratificação por UE', patterns: ['ues_perc_gr'] },
         { key: 'tipo_local', label: '10. Tipo de Local', patterns: ['local', 'tipo_local'] },
@@ -143,6 +143,24 @@ export default {
       await this.validateAndAddFiles(files);
     },    
     
+    sortPreviewFiles() {
+      const orderMap = new Map(
+        this.expectedFiles.map((file, index) => [file.key, index])
+      );
+
+      const sortedFiles = [...this.previewFiles].sort((a, b) => {
+        const orderA = a.mappedKey ? orderMap.get(a.mappedKey) : Infinity;
+        const orderB = b.mappedKey ? orderMap.get(b.mappedKey) : Infinity;
+
+        if (orderA === orderB) {
+          return a.name.localeCompare(b.name);
+        }
+        
+        return orderA - orderB;
+      });
+      this.previewFiles = sortedFiles;
+    },
+
     // Validar arquivos (apenas .csv)
     async validateAndAddFiles(fileList) {
       if (!fileList || fileList.length === 0) return;
@@ -185,6 +203,9 @@ export default {
             console.error('hash error', err);
           });
       }
+
+      this.sortPreviewFiles();
+
       this.$emit("file-change", this.previewFiles);
     },
 
@@ -207,6 +228,7 @@ export default {
     removeFile(index) {
       if (this.isUploading) return;
       this.previewFiles.splice(index, 1);
+      this.sortPreviewFiles();
       this.$emit("file-change", this.previewFiles);
     },
 
@@ -247,6 +269,7 @@ export default {
         await new Promise(r => setTimeout(r, 200));
       }
     },
+
     /**
      * uploadAll
      * - builds a manifest with file metadata (name, mappedKey, hash)

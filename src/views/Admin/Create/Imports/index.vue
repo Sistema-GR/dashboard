@@ -40,7 +40,7 @@ export default {
       requiredFiles: [
         'funcionarios.csv',
         'demissoes.csv',
-        'frequenciaXD.csv',
+        'frequencia.csv',
         'atividades.csv',
         'formacoes.csv',
         'dias_nao_contabilizados.csv',
