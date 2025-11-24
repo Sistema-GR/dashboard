@@ -30,10 +30,6 @@
       {{ btn.label }}
     </button>
   </transition-group>
-  <!-- Canvas fixo para confetti -->
-  <canvas ref="confettiCanvas" 
-          class="fixed top-0 left-0 w-full h-full pointer-events-none z-[9999]"
-          :style="{ width: '100%', height: '100%' }"></canvas>
 </template>
 
 <script setup>
@@ -47,48 +43,12 @@ const openAccordion = (selector) => {
     accordion.dispatchEvent(new Event('change'));
   }
 };
+
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
-import confetti from "canvas-confetti";
 import { ref, onMounted } from "vue";
 
 const dynamicButtons = ref([]);
-const confettiCanvas = ref(null);
-let confettiInstance = null;
-
-const startConfettiBurst = () => {
-  if (!confettiInstance) {
-    confettiInstance = confetti.create(confettiCanvas.value, {
-      resize: true,
-      useWorker: true,
-      disableForReducedMotion: true
-    });
-  }
-
-  const count = 1000;
-  const defaults = {
-    origin: { y: 0.9 },
-    spread: 90,
-    ticks: 120,
-    zIndex: 9999,
-    resize: true
-  };
-
-  function fire(particleRatio, opts) {
-    confetti({
-      ...defaults,
-      ...opts,
-      particleCount: Math.floor(count * particleRatio),
-      scalar: window.innerWidth < 768 ? 0.8 : 1
-    });
-  }
-
-  fire(0.25, { spread: 26, startVelocity: 55 });
-  fire(0.2, { spread: 60 });
-  fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
-  fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
-  fire(0.1, { spread: 120, startVelocity: 45 });
-};
 
 const driverObj = driver({
   popoverClass: 'custom-tooltip-centered',
@@ -103,20 +63,18 @@ const driverObj = driver({
   allowClose: false,
   onDestroyed: () => {
     dynamicButtons.value = [];
-    startConfettiBurst();
   },
   steps: [
     // Step 1
     {
       popover: {
         title: '<div class="titulo-img"><img src="/src/assets/images/inicioTutorial.png" class="responsive-img" />👋 Bem-vindo ao painel de gratificação</div>',
-        description: '<div class="descricao">Estamos felizes por você estar aqui! Este tutorial rápido vai te ajudar a entender todas as informações importantes sobre sua gratificação.<br><br><strong>Verifique se seus dados estão corretos.</strong></div>',
+        description: '<div class="descricao">Estamos felizes por você estar aqui! Este tutorial rápido vai te ajudar a entender todas as informações importantes sobre sua gratificação.<br><br><strong>Após o tutorial, verifique seus dados com atenção!</strong></div>',
         position: "center",
       },
       onNext: () => {
         dynamicButtons.value = [
-          { label: "Botão Extra", action: () => alert("Extra acionado!") },
-          { label: "Pular Tutorial", action: () => driverObj.moveNext(16) }
+          { label: "Pular Tutorial", action: () => driverObj.drive(16) }
         ];
       },
     },
@@ -125,7 +83,7 @@ const driverObj = driver({
       element: "#tutorial-server-name",
       popover: {
         title: '<div class="titulo-img">Nome do servidor</div>',
-        description: '<div class="descricao">Este é o nome registrado no sistema para a gratificação.</div>',
+        description: '<div class="descricao">Este é o nome do usuário a quem as informações exibidas no painel pertencem.</div>',
         position: "bottom",
       },
       onNext: () => {
@@ -137,12 +95,12 @@ const driverObj = driver({
       element: "#tutorial-value",
       popover: {
         title: '<div class="titulo-img">Seu Valor de Gratificação</div>',
-        description: '<div class="descricao">Aqui você visualiza o valor bruto da sua gratificação. Lembre-se que este valor não inclui os descontos de impostos.</div>',
+        description: '<div class="descricao">Aqui você visualiza o valor bruto da sua gratificação, já avaliado conforme os critérios individuais e somando todos os vínculos que possuam valores a receber. Lembre-se de que este valor não inclui os descontos de impostos.</div>',
         position: "bottom",
       },
       onNext: () => {
         dynamicButtons.value = [
-          { label: "Ver Detalhes", action: () => driverObj.moveNext(3) }
+          { label: "Ver Detalhes", action: () => driverObj.drive(4) }
         ];
       },
     },
@@ -160,19 +118,16 @@ const driverObj = driver({
       element: "#tutorial-details",
       popover: {
         title: '',
-        description: '<div class="descricao">Aqui mostrar todas as suas matriculas ativas e os detalhes de cada uma.</div>',
+        description: '<div class="descricao">Abaixo de "Detalhamento por matrícula" são exibidas separadamente as informações de cada um dos seus vínculos com a Secretaria de Educação, referentes ao ano de competência da gratificação.</div>',
         position: "top",
       },
-      onHighlightStarted: () => {
-        openAccordion("#tutorial-details");
-      }
     },
     // Step 6
     {
       element: "#tutorial-matricula-0",
       popover: {
         title: '<div class="titulo-img">Detalhamento por matrícula</div>',
-        description: '<div class="descricao">Visualize neste campo uma das suas matrículas que estão atualmente ativas no sistema.</div>',
+        description: '<div class="descricao">Visualize neste campo cada uma das suas matrículas ativas durante o ano de competência da gratificação. <br><br>Não se esqueça de clicar na matrícula desejada para expandir as informações!</div>',
         position: "top",
       },
       onHighlightStarted: () => {
@@ -184,7 +139,7 @@ const driverObj = driver({
       element: "#painel-infos",
       popover: {
         title: '<div class="titulo-img">Matrícula</div>',
-        description: '<div class="descricao">Aqui estão os seus dados da sua matrícula</div>',
+        description: '<div class="descricao">Aqui está o resumo das informações pessoais e a receber da matrícula selecionada.</div>',
         position: "top",
       },
     },
@@ -202,7 +157,7 @@ const driverObj = driver({
       element: "#tutorial-valor-rede",
       popover: {
         title: '',
-        description: '<div class="descricao">Aqui mostra o valor total da sua rede.</div>',
+        description: '<div class="descricao">Aqui está o <strong>valor máximo</strong> que você <strong>poderá</strong> receber pelo resultado da rede como um todo.</div>',
         position: "top",
       },
     },
@@ -211,7 +166,7 @@ const driverObj = driver({
       element: "#tutorial-valor-unidade",
       popover: {
         title: '',
-        description: '<div class="descricao">Aqui mostra o valor máximo recebido por unidade.</div>',
+        description: '<div class="descricao">Aqui está o <strong>valor máximo</strong> que você <strong>poderá</strong> receber pelo resultados das unidades e etapas em que atuou.</div>',
         position: "top",
       },
     },
@@ -220,7 +175,7 @@ const driverObj = driver({
       element: "#tutorial-desconto",
       popover: {
         title: '',
-        description: '<div class="descricao">Nesse campo mostra o desconto caso não tenha completado 100% dos critérios.</div>',
+        description: '<div class="descricao">Aqui está o <strong>valor descontado</strong> caso <strong>não tenha atingido</strong> 100% do critério individual de frequência.</div>',
         position: "top",
       },
     },
@@ -229,7 +184,7 @@ const driverObj = driver({
       element: "#tutorial-valor-total",
       popover: {
         title: '',
-        description: '<div class="descricao">É aqui, mostra o valor total que você ira receber.</div>',
+        description: '<div class="descricao">Este é o valor total que você tem direito de receber nesta matrícula.</div>',
         position: "top",
       },
     },
@@ -237,19 +192,18 @@ const driverObj = driver({
     {
       element: "#tutorial-criteria",
       popover: {
-        title: '<div class="titulo-img">Critérios de aptidão</div>',
+        title: '<div class="titulo-img">Critérios Individuais</div>',
         description: `
-          <div class="descricao">
-            A tabela apresenta quatro critérios principais de avaliação:
+          <div class="descricao criterios-description">
+            <p>A tabela apresenta o resultado dos critérios individuais avaliados para o recebimento:</p>
             <ul>
-              <li><strong>Frequência</strong> – exige no mínimo 96% de presença.</li>
-              <li><strong>Tempo de atuação</strong> – requer no mínimo 6 meses de experiência.</li>
-              <li><strong>Formação</strong> – considera a escolaridade ou cursos exigidos para a função.</li>
-              <li><strong>Atividades</strong> – avalia se todas as atividades previstas foram cumpridas.</li>
+              <li><strong>Frequência</strong> – exige no mínimo 96% de atuação, proporcionada conforme a Lei 90214/2022.</li>
+              <li><strong>Tempo de atuação</strong> – requer no mínimo 6 meses de atuação na Secretaria de educação para a matrícula avaliada.</li>
+              <li><strong>Formação</strong> – resultado da frequência da participação nas formações continuadas, paradas pedagógicas e outras atividades formativas obrigatórias.</li>
+              <li><strong>Atividades</strong> – avalia se todas as atividades previstas foram entregues conforme cronogramas.</li>
             </ul>
-            Para cada critério, a tabela indica se o participante está 
-            <strong>"Apto"</strong> (quando o requisito foi atendido) ou 
-            <strong>"Não Apto"</strong> (quando não alcançou o mínimo necessário).
+            <p>Para cada critério, a tabela indica se o participante está <strong>"Apto"</strong> (quando o requisito foi atendido), <strong>"Não Apto"</strong> (quando não alcançou o mínimo necessário), ou <strong>"Parcialmente Apto"</strong> quando atingido parcialmente.</p>
+            <p><strong>Atenção!</strong> Lembre-se que todos os critérios individuais levam em consideração apenas o ano da competência do cálculo e não os anos anteriores!</p>
           </div>`,
         position: "top",
       },
@@ -259,7 +213,7 @@ const driverObj = driver({
       element: "#tutorial-allocations",
       popover: {
         title: '<div class="titulo-img">Alocações</div>',
-        description: '<div class="descricao">Aqui você vê onde trabalhou durante o período, incluindo: unidade escolar, período (início/fim), função exercida, carga horária e grupo de gratificação.</div>',
+        description: '<div class="descricao">Aqui está o registro de onde trabalhou durante o período, incluindo: unidade escolar, período (início/fim), função exercida, carga horária e grupo de gratificação. <br><br>Atenção! Lembre-se que todos os critérios individuais levam em consideração apenas o ano da competência do cálculo e não os anos anteriores!</div>',
         position: "top",
       },
     },
@@ -277,7 +231,7 @@ const driverObj = driver({
       element: "#tutorial-resource",
       popover: {
         title: '<div class="titulo-img">Recurso</div>',
-        description: '<div class="descricao">Se você acha que alguma informação está incorreta ou quer contestar algum critério, clique em "Recurso". Você pode anexar documentos para comprovar seu ponto de vista.</div>',
+        description: '<div class="descricao">Caso tenha identificado algum erro no cálculo, você pode entrar com recurso administrativo clicando neste botão.<br><br>Mas antes, lembre-se de analisar com atenção todas as informações do painel!</div>',
         position: "left",
       },
     },
@@ -297,12 +251,7 @@ const startTutorial = () => {
 };
 
 onMounted(() => {
-  confettiInstance = confetti.create(confettiCanvas.value, {
-    resize: true,
-    useWorker: true,
-    disableForReducedMotion: true
-  });
-  window.dispatchEvent(new Event('resize'));
+  // Removido todo o código do confetti
 });
 
 defineExpose({
@@ -320,7 +269,7 @@ defineExpose({
   border: none !important;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3) !important;
   max-width: 500px !important;
-  width: 90vw !important;
+  width: 95vw !important;
   z-index: 10001 !important;
 }
 
@@ -350,8 +299,7 @@ defineExpose({
 
 .driver-popover-footer {
   background: white !important;
-  padding: 0 20px 20px 20px !important;
-  border-top: 1px solid #e0e0e0 !important;
+  padding: 0 10px 10px 10px !important;
   border-radius: 0 0 10px 10px !important;
 }
 
@@ -408,8 +356,27 @@ defineExpose({
   font-size: 15px;
   color: black;
   text-align: center;
-  padding: 20px 0;
   line-height: 1.6;
+}
+
+/* Estilo específico para critérios - alinhado à esquerda como na imagem */
+.criterios-description {
+  text-align: left !important;
+}
+
+.criterios-description ul {
+  margin: 15px 0;
+  padding-left: 20px;
+}
+
+.criterios-description li {
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.criterios-description p {
+  margin-bottom: 12px;
+  line-height: 1.5;
 }
 
 .responsive-img {
@@ -422,17 +389,6 @@ defineExpose({
 .driver-highlighted-element {
   box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.5) !important;
   border-radius: 8px !important;
-}
-
-/* Canvas */
-canvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 9999;
 }
 
 /* Responsividade */
