@@ -206,7 +206,6 @@ export default {
                 decisao: templateForm.value.decisao,
                 unidade_responsavel: templateForm.value.unidade_responsavel
             };
-            console.log(payload);
 
             isGenerating.value = true;
             try {

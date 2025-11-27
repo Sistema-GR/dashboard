@@ -150,7 +150,7 @@ export default {
     const fetchDashboardData = async () => {
       try {
         const token = await getAccessToken();
-        console.log(token)
+        
         if (!token) {
           console.error("Erro: Token de acesso não encontrado.");
           return;

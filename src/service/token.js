@@ -1,9 +1,6 @@
-import axios from 'axios';
-
-// URLs da API
-const API_BASE_URL = "http://127.0.0.1:8000";  // Defina o valor diretamente
-const REFRESH_TOKEN_URL = `${API_BASE_URL}/auth/token/refresh/`;
-
+// Computar a URL base da API em tempo de execução
+const getApiBase = () => import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+const REFRESH_TOKEN_URL = () => `${getApiBase()}/auth/token/refresh/`;
 
 /**
  * Decodifica o payload de um token JWT.
@@ -49,7 +46,7 @@ export const renewAccessToken = async (refreshToken) => {
   if (!refreshToken) return null;
 
   try {
-    const response = await fetch(REFRESH_TOKEN_URL, {
+    const response = await fetch(REFRESH_TOKEN_URL(), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ refresh: refreshToken })

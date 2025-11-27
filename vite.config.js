@@ -2,6 +2,7 @@ import { fileURLToPath, URL } from 'node:url'
 
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import { apiClient } from '@/service/apiService'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -18,24 +19,24 @@ export default defineConfig({
     port: 5173,
     proxy: {
         '/recursos': {
-            target: 'http://127.0.0.1:8000',
+            target: apiClient.defaults.baseURL,
             changeOrigin: true,
         },
 
         '/auth': {
-            target: 'http://127.0.0.1:8000',
+            target: apiClient.defaults.baseURL,
             changeOrigin: true,
         },
         '/csv': {
-            target: 'http://127.0.0.1:8000',
+            target: apiClient.defaults.baseURL,
             changeOrigin: true,
         },
         '/api/': {
-            target: 'http://127.0.0.1:8000',
+            target: apiClient.defaults.baseURL,
             changeOrigin: true,
         },
         '/process': {
-            target: 'http://127.0.0.1:8000',
+            target: apiClient.defaults.baseURL,
             changeOrigin: true,
         },
       }
