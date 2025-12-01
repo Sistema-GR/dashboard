@@ -124,7 +124,7 @@
 
                   <ul role="list" class="flex flex-1 flex-col gap-y-5">
                       <li>
-                          <ul role="list" class="-mx-2 grid gap-1">
+                          <ul role="list" class="-mx-3 grid gap-1">
                               <li v-for="item in filteredNavigation" :key="item.name" class="cursor-pointer">
                                 <!-- If item has children, render as expandable -->
                                 <div v-if="item.children" class="relative">

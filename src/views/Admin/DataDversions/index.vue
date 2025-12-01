@@ -86,7 +86,6 @@ export default {
           headers: { Authorization: `Bearer ${token}` },
         });
         calculusFamilies.value = response.data;
-        console.log(response.data);
       } catch (error) {
         console.error("Erro ao buscar as famílias de cálculo:", error);
       }

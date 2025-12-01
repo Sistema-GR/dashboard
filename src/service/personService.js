@@ -1,25 +1,24 @@
 import { getAccessToken } from './token';
+import { apiClient } from './apiService';
 
 export default function usePersonService(){
-  // Usando a variável global $apiBaseUrl
-  const BASE_URL = window.__VUE__API_BASE_URL || 'http://127.0.0.1:8000/csv';
 
   const routeJsonMapping = {
-    'Results': `${BASE_URL}/process/percentual-gratificacao/`,
-    'Calendar': `${BASE_URL}/process/dias-nao-contabilizados/`,
-    'Profissional': `${BASE_URL}/process/filtered-funcionarios/`,
-    'Groups': `${BASE_URL}/process/aprender-mais/`,
-    'Steps': `${BASE_URL}/process/etapas-metas/`,
-    'StageGroup': `${BASE_URL}/process/grupos-atualizado/`,
-    'Frequency': `${BASE_URL}/process/frequencia/`,
-    'Infrequency': `${BASE_URL}/process/motivos-infrequencia/`,
-    'Resignation': `${BASE_URL}/process/demissoes/`,
-    'Activities': `${BASE_URL}/process/atividades/`,
-    'Service': `${BASE_URL}/process/tempo-atuacao/`,
-    'Training': `${BASE_URL}/process/atividades/`,
-    'General': `${BASE_URL}/process/dados-gerais/`,
-    'Local': `${BASE_URL}/process/tipo-local/`,
-    'Report': `${BASE_URL}/process/criterios/`
+    'Results': `${apiClient.defaults.baseURL}/csv/process/percentual-gratificacao/`,
+    'Calendar': `${apiClient.defaults.baseURL}/csv/process/dias-nao-contabilizados/`,
+    'Profissional': `${apiClient.defaults.baseURL}/csv/process/filtered-funcionarios/`,
+    'Groups': `${apiClient.defaults.baseURL}/csv/process/aprender-mais/`,
+    'Steps': `${apiClient.defaults.baseURL}/csv/process/etapas-metas/`,
+    'StageGroup': `${apiClient.defaults.baseURL}/csv/process/grupos-atualizado/`,
+    'Frequency': `${apiClient.defaults.baseURL}/csv/process/frequencia/`,
+    'Infrequency': `${apiClient.defaults.baseURL}/csv/process/motivos-infrequencia/`,
+    'Resignation': `${apiClient.defaults.baseURL}/csv/process/demissoes/`,
+    'Activities': `${apiClient.defaults.baseURL}/csv/process/atividades/`,
+    'Service': `${apiClient.defaults.baseURL}/csv/process/tempo-atuacao/`,
+    'Training': `${apiClient.defaults.baseURL}/csv/process/atividades/`,
+    'General': `${apiClient.defaults.baseURL}/csv/process/dados-gerais/`,
+    'Local': `${apiClient.defaults.baseURL}/csv/process/tipo-local/`,
+    'Report': `${apiClient.defaults.baseURL}/csv/process/criterios/`
   };
 
   const loadPeopleData = async (route) => {
@@ -120,7 +119,7 @@ export default function usePersonService(){
 
   const getMatriculasPorCPF = async (cpf, year) => {
     try {
-        const jsonUrl = `${BASE_URL}/process/matriculas/${year}/${cpf}/`;
+        const jsonUrl = `${apiClient.defaults.baseURL}/csv/process/matriculas/${year}/${cpf}/`;
         const accessToken = await getAccessToken();
         if (!accessToken) throw new Error('Token de acesso não encontrado');
 
