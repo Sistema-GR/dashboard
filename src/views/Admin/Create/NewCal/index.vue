@@ -268,6 +268,7 @@ export default {
 
       try {
         const payload = {
+          name: formData.name.trim(),
           description: formData.description.trim(),
           year_value: parseInt(formData.yearValue, 10),
           start_date: new Date(formData.start_date).toISOString().split("T")[0],
