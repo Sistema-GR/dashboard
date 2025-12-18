@@ -15,7 +15,7 @@ export default function usePersonService(){
     'Resignation': `${apiClient.defaults.baseURL}/csv/process/demissoes/`,
     'Activities': `${apiClient.defaults.baseURL}/csv/process/atividades/`,
     'Service': `${apiClient.defaults.baseURL}/csv/process/tempo-atuacao/`,
-    'Training': `${apiClient.defaults.baseURL}/csv/process/atividades/`,
+    'Training': `${apiClient.defaults.baseURL}/csv/process/formacoes/`,
     'General': `${apiClient.defaults.baseURL}/csv/process/dados-gerais/`,
     'Local': `${apiClient.defaults.baseURL}/csv/process/tipo-local/`,
     'Report': `${apiClient.defaults.baseURL}/csv/process/criterios/`
