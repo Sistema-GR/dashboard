@@ -1,45 +1,35 @@
 import { fileURLToPath, URL } from 'node:url'
-
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
 const BASE_URL = process.env.VITE_APP_BASE_URL || 'http://localhost:8000';
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [
-    vue(),
-  ],
+export default ({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+  const API_BASE = env.VITE_API_BASE_URL || 'http://localhost:8000';
+
+  return defineConfig({
+    plugins: [
+      vue(),
+    ],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  server: {
-    host: true,
-    port: 5173,
-    proxy: {
-        // Redireciona qualquer chamada para /recursos/...
-        '/recursos': {
-            target: BASE_URL,
-            changeOrigin: true,
-        },
-
-        '/auth': {
-            target: BASE_URL,
-            changeOrigin: true,
-        },
-        '/csv': {
-            target: BASE_URL,
-            changeOrigin: true,
-        },
-        '/api/': {
-            target: BASE_URL,
-
-            changeOrigin: true,
-        }
+    server: {
+      host: true,
+      port: 5173,
+      proxy: {
+        '/recursos': { target: API_BASE, changeOrigin: true },
+        '/auth': { target: API_BASE, changeOrigin: true },
+        '/csv': { target: API_BASE, changeOrigin: true },
+        '/api/': { target: API_BASE, changeOrigin: true },
+        '/process': { target: API_BASE, changeOrigin: true },
       }
     }
-})
+  });
+}
 
 

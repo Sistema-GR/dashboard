@@ -7,7 +7,7 @@
           @click="navigateTo('create-newcal')"
         />
         <PrimaryButton 
-          value="Criar a partir de dados existentes"
+          value="Criar a partir de Versão Publicada"
           customColor="bg-[#4168b5] shadow-md hover:shadow-lg"
           @click="navigateTo('create-from-template')"
         />

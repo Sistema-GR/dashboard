@@ -30,10 +30,7 @@
       {{ btn.label }}
     </button>
   </transition-group>
-  <!-- Canvas fixo para confetti -->
-  <canvas ref="confettiCanvas" 
-          class="fixed top-0 left-0 w-full h-full pointer-events-none z-[9999]"
-          :style="{ width: '100%', height: '100%' }"></canvas>
+ 
 </template>
 
 <script setup>
@@ -49,48 +46,9 @@ const openAccordion = (selector) => {
 };
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
-import confetti from "canvas-confetti";
 import { ref, onMounted } from "vue";
 
 const dynamicButtons = ref([]);
-const confettiCanvas = ref(null);
-let confettiInstance = null;
-
-
-
-const startConfettiBurst = () => {
-  if (!confettiInstance) {
-    confettiInstance = confetti.create(confettiCanvas.value, {
-      resize: true,
-      useWorker: true,
-      disableForReducedMotion: true
-    });
-  }
-
-  const count = 1000;
-  const defaults = {
-    origin: { y: 0.9 },
-    spread: 90,
-    ticks: 120,
-    zIndex: 9999,
-    resize: true
-  };
-
-  function fire(particleRatio, opts) {
-    confetti({
-      ...defaults,
-      ...opts,
-      particleCount: Math.floor(count * particleRatio),
-      scalar: window.innerWidth < 768 ? 0.8 : 1
-    });
-  }
-
-  fire(0.25, { spread: 26, startVelocity: 55 });
-  fire(0.2, { spread: 60 });
-  fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
-  fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
-  fire(0.1, { spread: 120, startVelocity: 45 });
-};
 
 const driverObj = driver({
   popoverClass: 'custom-tooltip',
@@ -105,7 +63,6 @@ const driverObj = driver({
   allowClose: false,
   onDestroyed: () => {
     dynamicButtons.value = [];
-    startConfettiBurst();
   },
   steps: [
     // Step 1
@@ -181,11 +138,6 @@ const startTutorial = () => {
 };
 
 onMounted(() => {
-  confettiInstance = confetti.create(confettiCanvas.value, {
-    resize: true,
-    useWorker: true,
-    disableForReducedMotion: true
-  });
   window.dispatchEvent(new Event('resize'));
 });
 

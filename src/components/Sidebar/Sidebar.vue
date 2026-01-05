@@ -124,7 +124,7 @@
 
                   <ul role="list" class="flex flex-1 flex-col gap-y-5">
                       <li>
-                          <ul role="list" class="-mx-2 grid gap-1">
+                          <ul role="list" class="-mx-3 grid gap-1">
                               <li v-for="item in filteredNavigation" :key="item.name" class="cursor-pointer">
                                 <!-- If item has children, render as expandable -->
                                 <div v-if="item.children" class="relative">
@@ -267,10 +267,8 @@ import {
   RectangleStackIcon,
   Square3Stack3DIcon,
   Squares2X2Icon,
-  UserCircleIcon,
   UserGroupIcon,
   UsersIcon,
-  UserIcon,
   XMarkIcon
 } from '@heroicons/vue/24/outline'
 import axios from 'axios'
@@ -284,11 +282,11 @@ const routes = {
   'admin': [
     { name: 'Dashboard', route: '/calculus/dashboard', icon: Squares2X2Icon, current: false },
     { name: 'Novo Cálculo', route: '/calculus/create', icon: CalculatorIcon, current: false },
-    { name: 'Cálcular Alocação', route: '/calculus/alloc', icon: RectangleStackIcon, current: false },
-    { name: 'Cálculo Anteriores', route: '/calculus/previousresults', icon: ChartBarIcon, current: false },
-    { name: 'Recurso', route: '/resource', icon: ExclamationCircleIcon, current: false },
-    { name: 'Painel do Usuário', route: '/calculus/dataversions', icon: CircleStackIcon, current: false },
-    { name: 'Permissões Acessos', route: '/user/permissionsaccess', icon: UsersIcon , current: false },
+    { name: 'Listar Cálculos', route: '/calculus/previousresults', icon: ChartBarIcon, current: false },
+    { name: 'Publicar Cálculo', route: '/calculus/alloc', icon: RectangleStackIcon, current: false },
+    { name: 'Versões Publicadas', route: '/calculus/dataversions', icon: CircleStackIcon, current: false },
+    { name: 'Recursos', route: '/resource', icon: ExclamationCircleIcon, current: false },
+    { name: 'Permissões de Acesso', route: '/user/permissionsaccess', icon: UsersIcon , current: false },
     { name: 'Detalhes do Cálculo', icon: RectangleStackIcon,
       children: [        
         { name: 'Resultados IDEM', id: 'Results', icon: CalculatorIcon, current: false },

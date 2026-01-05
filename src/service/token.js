@@ -1,9 +1,12 @@
-import axios from 'axios';
-
-// URLs da API
-const API_BASE_URL = import.meta.env.VITE_APP_BASE_URL || 'http://localhost:8000';  // Defina o valor diretamente
-const REFRESH_TOKEN_URL = `${API_BASE_URL}/auth/token/refresh/`;
-
+// Computar a URL base da API
+const getApiBase = () => {
+  try {
+    return import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+  } catch (e) {
+    return 'http://localhost:8000';
+  }
+};
+const REFRESH_TOKEN_URL = () => `${getApiBase()}/auth/token/refresh/`;
 
 /**
  * Decodifica o payload de um token JWT.
@@ -12,10 +15,20 @@ const REFRESH_TOKEN_URL = `${API_BASE_URL}/auth/token/refresh/`;
  */
 const decodeTokenPayload = (token) => {
   try {
-    const payload = atob(token.split('.')[1]);
-    return JSON.parse(payload);
-  } catch {
-    console.error("decodeTokenPayload: Token inválido ou malformado.");
+    const b64 = token.split('.')[1] || '';
+    // Preferir o `atob` do navegador, mas fallback para o Buffer do Node se não estiver presente.
+    let payloadStr;
+    if (typeof atob === 'function') {
+      payloadStr = atob(b64);
+    } else if (typeof Buffer !== 'undefined') {
+      payloadStr = Buffer.from(b64, 'base64').toString('utf-8');
+    } else {
+      console.error('decodeTokenPayload: No base64 decoder available.');
+      return null;
+    }
+    return JSON.parse(payloadStr);
+  } catch (err) {
+    console.error("decodeTokenPayload: Token inválido ou malformado.", err);
     return null;
   }
 };
@@ -49,7 +62,7 @@ export const renewAccessToken = async (refreshToken) => {
   if (!refreshToken) return null;
 
   try {
-    const response = await fetch(REFRESH_TOKEN_URL, {
+    const response = await fetch(REFRESH_TOKEN_URL(), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ refresh: refreshToken })
@@ -70,7 +83,9 @@ export const renewAccessToken = async (refreshToken) => {
       localStorage.removeItem('refreshToken');
       localStorage.removeItem('isAuthenticated');
       // Redirecionar para a página de login ou exibir uma mensagem
-      window.location.href = '/'; // ou o caminho da sua página de login
+      if (typeof window !== 'undefined' && window.location) {
+        window.location.href = '/'; // ou o caminho da sua página de login
+      }
     } else {
       console.error("renewAccessToken: Erro ao renovar o token:", response.status, await response.text());
     }
@@ -122,11 +137,15 @@ export const setupAxiosInterceptors = (axiosInstance) => {
  * Sincroniza tokens entre abas usando eventos de localStorage.
  */
 const synchronizeTokensAcrossTabs = () => {
+  if (typeof window === 'undefined') return;
   window.addEventListener('storage', (event) => {
     if (event.key === 'accessToken' || event.key === 'refreshToken') {
+      // no-op placeholder for cross-tab sync actions (kept intentionally minimal)
     }
   });
 };
 
-// Inicializa a sincronização de tokens.
-synchronizeTokensAcrossTabs();
+// Inicializa a sincronização de tokens apenas em ambientes de navegador.
+if (typeof window !== 'undefined') {
+  synchronizeTokensAcrossTabs();
+}
