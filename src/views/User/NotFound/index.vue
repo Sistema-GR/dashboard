@@ -2,11 +2,11 @@
     <div class="not-found">
         <div class="card">
             <div class="code">404</div>
-            <h1 class="title">Page Not Found</h1>
-            <p class="desc">The page you are looking for doesn't exist or has been moved.</p>
+            <h1 class="title">Página Não Encontrada</h1>
+            <p class="desc">A página que está procurando não existe ou foi movida.</p>
             <div class="actions">
-                <button class="btn primary" @click="goHome">Go Home</button>
-                <button class="btn" @click="goBack">Go Back</button>
+                <button class="btn primary" @click="goHome">Ir para Home</button>
+                <button class="btn" @click="goBack">Voltar</button>
             </div>
         </div>
     </div>
@@ -17,7 +17,7 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 function goHome() {
-    router.push({ path: '/' })
+    router.push({ name: 'home' })
 }
 
 function goBack() {

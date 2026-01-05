@@ -156,7 +156,7 @@ export default {
     },
 
     goToVersionManager(parentId) {
-      this.$router.push({ name: 'versionmanager', params: { id: parentId } });
+      this.$router.push({ name: 'versionmanager-home', params: { id: parentId } });
     },
     async copiarCalculo(item) {
       try {

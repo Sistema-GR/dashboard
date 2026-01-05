@@ -128,7 +128,7 @@ export default {
         });
 
         function navigateToVersionManager() {
-            router.push({ name: 'versionmanager' });
+            router.push({ name: 'versionmanager-home' });
         }
 
 
@@ -167,7 +167,7 @@ export default {
         }
 
         const navigateToAnnualReports = () => {
-            router.push('/admin/recursos/relatorios-anuais')
+            router.push({name: 'annual-reports'});
         }
 
         const activeStatusStyle = computed(() => {

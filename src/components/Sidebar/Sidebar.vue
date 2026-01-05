@@ -86,7 +86,7 @@
                                             leave-to="opacity-0 translate-y-4"
                                           >
                                             <div class="flex flex-col mt-2 space-y-2 bg-gray-800 rounded-[10px] shadow-lg text-white py-2 px-4 relative z-50">
-                                              <router-link to="/home/config" class="flex flex-row items-center gap-2 text-15 hover:text-gray-300 transition">
+                                              <router-link to="/user/config" class="flex flex-row items-center gap-2 text-15 hover:text-gray-300 transition">
                                                 <PencilIcon class="w-4 h-auto" /> 
                                                 Acessar Perfil
                                               </router-link>
@@ -205,7 +205,7 @@
                             leave-to="opacity-0 translate-y-4"
                           >
                             <div class="flex flex-col mt-2 space-y-2 bg-gray-800 rounded-[10px] shadow-lg text-white py-2 px-4 relative z-50">
-                              <router-link to="/home/config" class="flex flex-row items-center gap-2 text-15 hover:text-gray-300 transition">
+                              <router-link to="/user/config" class="flex flex-row items-center gap-2 text-15 hover:text-gray-300 transition">
                                 <PencilIcon class="w-4 h-auto" /> 
                                 Acessar Perfil
                               </router-link>
@@ -306,7 +306,7 @@ const routes = {
   ],
   'user': [
     { name: 'Resultados', route: '/user/rewards', icon: ChartBarIcon, current: true },
-    { name: 'Status', route: '/user/status', icon: InboxIcon, current: false },
+    { name: 'Status', route: '/resource/form/status', icon: InboxIcon, current: false },
     { name: 'FAQ', route: '/user/faqs', icon: QuestionMarkCircleIcon, current: false },
   ],
 }
