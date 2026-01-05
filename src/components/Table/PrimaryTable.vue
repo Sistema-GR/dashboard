@@ -319,7 +319,7 @@ async function saveRowData(person) {
   localStorage.setItem('tempTargetCpf', cpfDoUsuario);
 
   router.push({
-    name: 'admin-view-rewards',
+    name: 'rewards'
   });
 }
 

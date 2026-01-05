@@ -112,8 +112,8 @@ export default {
         await createDataset(generalDataId);
 
         router.push({ 
-          path: "/home/imports", 
-          query: { generalDataId }
+          name: "create-imports", 
+          query: { generalDataId, versionId: selectedVersionId.value }
         });
       } catch (error) {
         console.error("Erro ao enviar os dados:", error);

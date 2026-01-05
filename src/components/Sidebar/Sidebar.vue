@@ -280,13 +280,13 @@ import { useSidebarStore } from '@/stores/sidebarStore'
 const sidebarStore = useSidebarStore()
 const routes = {
   'admin': [
-    { name: 'Dashboard', route: '/admin/dashboard', icon: Squares2X2Icon, current: false },
-    { name: 'Novo Cálculo', route: '/home/create/selector', icon: CalculatorIcon, current: false },
-    { name: 'Listar Cálculos', route: '/home/previousresults', icon: ChartBarIcon, current: false },
-    { name: 'Publicar Cálculo', route: '/home/alloc', icon: RectangleStackIcon, current: false },
-    { name: 'Versões Publicadas', route: '/home/dataversions', icon: CircleStackIcon, current: false },
+    { name: 'Dashboard', route: '/calculus/dashboard', icon: Squares2X2Icon, current: false },
+    { name: 'Novo Cálculo', route: '/calculus/create', icon: CalculatorIcon, current: false },
+    { name: 'Listar Cálculos', route: '/calculus/previousresults', icon: ChartBarIcon, current: false },
+    { name: 'Publicar Cálculo', route: '/calculus/alloc', icon: RectangleStackIcon, current: false },
+    { name: 'Versões Publicadas', route: '/calculus/dataversions', icon: CircleStackIcon, current: false },
     { name: 'Recursos', route: '/resource', icon: ExclamationCircleIcon, current: false },
-    { name: 'Permissões de Acesso', route: '/home/permissionsaccess', icon: UsersIcon , current: false },
+    { name: 'Permissões de Acesso', route: '/user/permissionsaccess', icon: UsersIcon , current: false },
     { name: 'Detalhes do Cálculo', icon: RectangleStackIcon,
       children: [        
         { name: 'Resultados IDEM', id: 'Results', icon: CalculatorIcon, current: false },
@@ -325,8 +325,8 @@ function selectRoute(route) {
   if (route.id) {
     sidebarStore.setReportPage(route.id)
   } 
-  if(router.currentRoute.value.path != '/admin/report'){
-    router.push('/admin/report')
+  if(router.currentRoute.value.name != 'report'){
+    router.push({name: 'report'})
   }
 }
 
@@ -404,23 +404,7 @@ const filteredNavigation = computed(() => {
 })
 
 const route = useRoute(); 
-const hiddenRoutes = [
-      //'/admin/dashboard',
-      '/admin/results',
-      '/admin/calendar',
-      '/admin/professional',
-      '/admin/groups',
-      '/admin/steps',
-      '/admin/stagegroup',
-      '/admin/frequency',
-      '/admin/resignation',
-      '/admin/activities',
-      '/admin/service',
-      '/admin/training',
-      '/admin/report/',
-      '/admin/rewards/',
-      '/admin/permissionsaccess/',
-];
+const hiddenRoutes = [];
 
 const showConfigLink = computed(() => !hiddenRoutes.includes(route.path));
 const isProfileMenuOpen = ref(false)
@@ -447,7 +431,7 @@ function logout() {
 
 const router = useRouter();
 function goBack() {
-  router.push('/home/overview');
+  router.push({name: 'home'});
 }
 
 watch(() => sidebarStore.isSidebarMinimized, (minimized) => {

@@ -4,12 +4,12 @@
         <PrimaryButton 
           value="Criar novo cálculo"
           customColor="bg-[#4168b5] shadow-md hover:shadow-lg"
-          @click="navigateTo('/home/create/newcal')"
+          @click="navigateTo('create-newcal')"
         />
         <PrimaryButton 
           value="Criar a partir de Versão Publicada"
           customColor="bg-[#4168b5] shadow-md hover:shadow-lg"
-          @click="navigateTo('/home/create/from-template')"
+          @click="navigateTo('create-from-template')"
         />
       </div>
     </Whiteboard>
@@ -27,7 +27,7 @@
       const router = useRouter();
   
       const navigateTo = (route) => {
-        router.push(route);
+        router.push({name: route});
       };
   
       return {

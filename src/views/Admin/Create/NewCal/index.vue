@@ -296,8 +296,8 @@ export default {
         }
 
         await createDataset(generalDataId);
-        router.push({ path: "/home/imports" });
 
+        router.push({ name: 'create-imports' });
       } catch (error) {
         console.error("Erro ao enviar os dados:", error);
         globalErrorMessage.value = "Ocorreu um erro ao enviar os dados. Por favor, tente novamente.";
