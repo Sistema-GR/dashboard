@@ -249,7 +249,6 @@ function handleFileReplaced() {
 }
 
 function handleShowHover(appealData, event) {
-  console.log('%cEvento recebido em editVersion!', 'color: green; font-weight: bold;', appealData);
   if (!appealData || Object.keys(appealData).length === 0) return;
   
   hoveredAppealData.value = appealData;

@@ -102,7 +102,6 @@ export default {
       if (!pendingVersion.value) return;
 
       const idParaAtivar = pendingVersion.value.calculus_id;
-      console.log(pendingVersion)
        try {
         const token = await getAccessToken();
         

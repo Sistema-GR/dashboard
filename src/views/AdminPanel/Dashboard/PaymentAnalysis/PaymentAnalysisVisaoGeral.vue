@@ -13,19 +13,19 @@
   <div v-else-if="dashboardData">
     <!-- Indicadores -->
     <VisaoGeralIndicadores 
-      :totalRecebe="dashboardData.totalRecebe"
-      :totalNaoRecebe="dashboardData.totalNaoRecebe"
-      :valorPagar="dashboardData.valorPagar"
+      :totalRecebe="dashboardData.analysis_result.registros_maiores_que_zero"
+      :totalNaoRecebe="dashboardData.analysis_result.registros_iguais_a_zero"
+      :valorPagar="dashboardData.analysis_result.soma_valor_total"
     />
 
     <!-- Faixas de Pagamento -->
     <FaixasPagamento 
-      :data="dashboardData.faixasPagamento"
+      :data="dashboardData.analysis_result.faixa_counts"
     />
 
     <!-- Motivo de não recebimento -->
     <MotivosNaoRecebimento 
-      :data="dashboardData.motivosNaoRecebimento"
+      :data="dashboardData.analysis_result.motivo_combinado_counts"
     />
 
     <!-- Proporção de recebimento -->
@@ -73,9 +73,9 @@ export default {
     })
     
     const dashboardData = ref({
-      totalRecebe: 4019,
-      totalNaoRecebe: 3474,
-      valorPagar: 17327762.52,
+      totalRecebe: {},
+      totalNaoRecebe: {},
+      valorPagar: {},
       faixasPagamento: {},
       motivosNaoRecebimento: {},
       proporcaoRecebimento: {},
@@ -99,8 +99,10 @@ export default {
         Object.entries(filters.value).forEach(([key, value]) => {
           if (value) queryParams.append(key, value)
         })
-        
-        const response = await axios.get(`/pagamentos/dashboard/visao-geral/?${queryParams.toString()}`, {
+         
+        // `/pagamentos/dashboard/visao-geral/?${queryParams.toString()}`
+
+        const response = await axios.get('/csv/get-import-files/', {
           headers: { Authorization: `Bearer ${token}` }
         })
 
@@ -118,11 +120,7 @@ export default {
       }
     }
 
-    // Para desenvolvimento, use dados mockados
-    loading.value = false
-
-    // Para produção, descomente a linha abaixo:
-    // watch(filters, fetchDashboardData, { deep: true, immediate: true })
+    watch(filters, fetchDashboardData, { deep: true, immediate: true })
     
     return {
       filters,

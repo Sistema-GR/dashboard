@@ -188,7 +188,7 @@ export default {
             headers: { Authorization: `Bearer ${token}` }
           }
         );
-        this.$router.push({ path: '/admin/dashboard' });
+        this.$router.push({ name: 'dash' });
       } catch (error) {
         console.error('Erro ao ativar o cálculo:', error);
         this.errorMessage = 'Erro ao ativar o cálculo para visualização.';

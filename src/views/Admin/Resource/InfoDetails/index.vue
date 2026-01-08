@@ -199,7 +199,6 @@ export default {
         async function generateAndSendResponse() {
             if (!selectedTemplateId.value) return alert("Por favor, selecione um template.");
 
-            console.log("--- ENVIANDO PARA A API ---");
             const payload = {
                 template_id: selectedTemplateId.value,
                 contexto_variaveis: templateForm.value,
