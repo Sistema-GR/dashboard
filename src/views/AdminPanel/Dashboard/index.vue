@@ -104,7 +104,7 @@
         Aqui você pode gerenciar os arquivos importados. Clique no botão abaixo para visualizar os detalhes.
       </p>
       <button class="self-start bg-[#3459A2] hover:bg-[#203661] text-white font-semibold py-2 px-4 rounded-[10px] transition duration-300"
-        @click="$router.push('files-manager')">
+        @click="$router.push({name: 'files-manager'})">
         Visualizar arquivos
       </button>
       </div>
@@ -335,7 +335,7 @@ export default {
     });
 
     const navigateToPaymentAnalysis = () => {
-      router.push('/admin/payment-analysis');
+      router.push({name: 'payment-analysis'});
     };
 
     return {
