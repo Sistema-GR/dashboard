@@ -3,9 +3,7 @@ export default [
     { path: '/resource', name: 'resource', meta: { public: false, requiresAuth: true, roles: ['user','admin'] },
       children: [
         { path: '', name: 'resource-home', component: () => import('@/views/Admin/Resource/index.vue') },
-        { path: 'info', name: 'info',
-            children: { path: '/:id', name: 'resource-details', component: () => import('@/views/Admin/Resource/InfoDetails/index.vue'), props: true }, 
-        },
+        { path: 'info/:id', name: 'info', component: () => import('@/views/Admin/Resource/InfoDetails/index.vue'), props: true },         
         { path: 'relatorios-anuais', name: 'annual-reports', component: () => import('@/views/Admin/Resource/AnnualResource/AnnualReportsDashboard.vue') },
         { path: 'form', name: 'form',
           children: [

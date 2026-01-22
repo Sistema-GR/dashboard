@@ -11,7 +11,7 @@
        
         <div v-else-if="resources.length === 0" class="text-center p-10">
              <p class="text-gray-700">Você ainda não abriu nenhum recurso.</p>
-             <router-link :to="{name: 'form'}" class="text-blue-600 hover:underline mt-2 inline-block">
+             <router-link :to="{name: 'form-home'}" class="text-blue-600 hover:underline mt-2 inline-block">
                 Clique aqui para abrir seu primeiro recurso.
              </router-link>
         </div>

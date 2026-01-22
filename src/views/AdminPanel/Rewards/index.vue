@@ -298,7 +298,7 @@
         </Disclosure>
 
         <div class="flex w-full items-center justify-end mr-3 mb-3">
-            <router-link to="/user/form">
+            <router-link to="/resource/form">
                 <div id="tutorial-resource" class="flex flex-row items-center justify-center px-5 py-2 mt-10 gap-1 bg-tropical-blue-200 hover:bg-gray-400 ease-in-out duration-200 cursor-pointer rounded-[10px]">
                     <ExclamationCircleIcon class="w-6 h-auto" />
                     <p class="font-medium">Recurso</p>

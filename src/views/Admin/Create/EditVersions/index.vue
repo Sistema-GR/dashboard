@@ -33,6 +33,13 @@
           
           <div class="md:text-right flex items-center justify-end gap-4">
             <PrimaryButton
+              :value="isAppealsModeActive ? 'Sair do Modo Recurso' : 'Ativar Modo Recurso'"
+              @click="toggleAppealsMode"
+              :customColor="isAppealsModeActive ? 'bg-[#fa8231] hover:bg-[#e17055] w-48 h-12 text-15 font-semibold text-white rounded-[10px]' : 'bg-[#3459a2] hover:bg-[#27477a] w-48 h-12 text-15 font-semibold text-white rounded-[10px]'"
+              title="Filtra a visualização para focar apenas em usuários com recursos abertos."
+            />
+            
+            <PrimaryButton
               value="Substituir Arquivo"
               @click="showReplaceModal = true"
               customColor="bg-[#f7b731] hover:bg-[#e0a800] w-48 h-12 text-15 font-semibold text-white rounded-[10px]"
