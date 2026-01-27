@@ -72,7 +72,7 @@ import ValoresMaisRecebem from './components/ValoresMaisRecebem.vue'
 import PorcentagemFrequenciaPorUE from './components/PorcentagemFrequenciaPorUE.vue'
 import ProporcaoRecebimentoPorUE from './components/ProporcaoRecebimentoPorUE.vue'
 import { ref, watch } from 'vue'
-import axios from 'axios'
+import { apiClient } from '@/service/apiService'
 import { getAccessToken } from '@/service/token'
 
 export default {
@@ -134,7 +134,7 @@ export default {
           if (value) queryParams.append(key, value)
         })
         
-        const response = await axios.get(`/pagamentos/dashboard/dados-unidade/?${queryParams.toString()}`, {
+        const response = await apiClient.get(`/pagamentos/dashboard/dados-unidade/?${queryParams.toString()}`, {
           headers: { Authorization: `Bearer ${token}` }
         })
 

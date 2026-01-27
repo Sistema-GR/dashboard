@@ -136,7 +136,7 @@
 
 <script>
 import { ref, onMounted, computed } from 'vue';
-import axios from 'axios';
+import { apiClient } from '@/service/apiService';
 import Badges from '@/components/Badges/Badges.vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import { UserIcon, ChevronDownIcon, TrashIcon, ExclamationTriangleIcon, PaperClipIcon  } from "@heroicons/vue/24/outline";
@@ -175,7 +175,7 @@ export default {
         async function fetchData() {
             isLoading.value = true;
             try {
-                const response = await axios.get(`/recursos/${resourceId}/`, {
+                const response = await apiClient.get(`/recursos/${resourceId}/`, {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
                 });
 
@@ -191,7 +191,7 @@ export default {
 
         async function fetchTemplates() {
             try {
-                const response = await axios.get('/recursos/templates/', { headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` } });
+                const response = await apiClient.get('/recursos/templates/', { headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` } });
                 templates.value = response.data;
             } catch (err) { console.error("Erro ao buscar templates:", err); }
         }
@@ -208,7 +208,7 @@ export default {
 
             isGenerating.value = true;
             try {
-                const response = await axios.post(`/recursos/${resourceId}/gerar-resposta-pdf/`, {
+                const response = await apiClient.post(`/recursos/${resourceId}/gerar-resposta-pdf/`, {
                     template_id: selectedTemplateId.value,
                     contexto_variaveis: templateForm.value,
                     decisao: templateForm.value.decisao,
@@ -237,7 +237,7 @@ export default {
                 : [...currentCriterios, criterioText];
             
             try {
-                const response = await axios.patch(`/recursos/${resourceId}/`, { criterios_selecionados: newCriterios }, {
+                const response = await apiClient.patch(`/recursos/${resourceId}/`, { criterios_selecionados: newCriterios }, {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
                 });
                 recurso.value = response.data;
@@ -250,7 +250,7 @@ export default {
         async function submitReportResponse() {
             if (!newResponseText.value.trim()) return;
             try {
-                await axios.post(`/recursos/${resourceId}/responder/`, { texto: newResponseText.value }, {
+                await apiClient.post(`/recursos/${resourceId}/responder/`, { texto: newResponseText.value }, {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
                 });
                 newResponseText.value = '';
@@ -270,7 +270,7 @@ export default {
 
             try {
 
-                await axios.delete(`/recursos/resposta/${responseId}/`, {
+                await apiClient.delete(`/recursos/resposta/${responseId}/`, {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
                 });
 

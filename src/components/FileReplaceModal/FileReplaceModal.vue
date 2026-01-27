@@ -33,7 +33,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import axios from 'axios';
+import { apiClient } from '@/service/apiService';
 import { getAccessToken } from '@/service/token';
 
 const props = defineProps({
@@ -67,7 +67,7 @@ async function handleSubmit() {
 
   try {
     const token = await getAccessToken();
-    await axios.post(
+    await apiClient.post(
       `/csv/calculus/${props.calculusId}/replace-file/${selectedFileKey.value}/`,
       formData,
       {

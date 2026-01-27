@@ -183,7 +183,7 @@ import { ArrowDownTrayIcon, PaperClipIcon, XMarkIcon, InformationCircleIcon } fr
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
+import { apiClient } from '@/service/apiService';
 import TutorialRecurso from '@/components/Tutorial/TutorialRecurso.vue';
 import usePersonService from '@/service/personService.js';
 
@@ -242,7 +242,7 @@ export default {
         const fetchUserData = async () => {
             isLoadingUserData.value = true;
             try {
-                const response = await axios.get('/auth/user-info/', {
+                const response = await apiClient.get('/auth/user-info/', {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
                 });
                 const userData = response.data;
@@ -334,7 +334,7 @@ export default {
                 });
 
                 try {
-                    await axios.post('/recursos/criar/', formData, {
+                    await apiClient.post('/recursos/criar/', formData, {
                         headers: {
                             'Content-Type': 'multipart/form-data',
                             'Authorization': `Bearer ${localStorage.getItem('accessToken')}` 

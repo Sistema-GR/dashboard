@@ -105,7 +105,7 @@ import Whiteboard from "@/components/Whiteboard/Whiteboard.vue";
 import Badge from "@/components/Badges/Badges.vue";
 
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import { apiClient } from '@/service/apiService';
 
 export default {
     name: "Status",
@@ -158,7 +158,7 @@ export default {
             isLoading.value = true;
             error.value = null;
             try {
-                const response = await axios.get('/recursos/meu-status/', {
+                const response = await apiClient.get('/recursos/meu-status/', {
                      headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
                 });
                 resources.value = response.data;

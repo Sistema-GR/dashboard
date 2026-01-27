@@ -316,7 +316,7 @@ import { ChevronDownIcon, ExclamationCircleIcon, ArrowDownIcon } from "@heroicon
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import Tutorial from '@/components/Tutorial/Tutorial.vue';
-import axios from 'axios'; 
+import { apiClient } from '@/service/apiService'; 
 import { getAccessToken } from '@/service/token';
 import { useRoute } from 'vue-router';
 
@@ -340,7 +340,7 @@ const fetchRewardsData = async () => {
             throw new Error("Token de autenticação não encontrado.");
         }
 
-        const fetchYear = await axios.get('/csv/opencalc/active-reference-year/',            
+        const fetchYear = await apiClient.get('/csv/opencalc/active-reference-year/',            
             {
                 headers: { Authorization: `Bearer ${token}` } 
             }
@@ -353,7 +353,7 @@ const fetchRewardsData = async () => {
             payload.cpf = targetCpfFromStorage;
         }
 
-        const response = await axios.post('/csv/user-get/', 
+        const response = await apiClient.post('/csv/user-get/', 
             payload,
             {
                 headers: { Authorization: `Bearer ${token}` } 

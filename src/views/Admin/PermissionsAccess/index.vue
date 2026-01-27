@@ -26,7 +26,7 @@
 
 <script>
 import { onMounted, ref } from 'vue'
-import axios from 'axios'
+import { apiClient } from '@/service/apiService'
 import { getAccessToken } from '@/service/token'
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue'
 import UserTable from '@/components/UserTable/UserTable.vue'
@@ -40,7 +40,7 @@ export default {
     const fetchUsers = async () => {
       try {
         const token = await getAccessToken()
-        const response = await axios.get('/auth/users/', {
+        const response = await apiClient.get('/auth/users/', {
           headers: {
                         'Authorization': `Bearer ${token}`
                     }

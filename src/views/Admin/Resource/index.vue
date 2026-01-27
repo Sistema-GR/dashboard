@@ -91,7 +91,7 @@ import Block from '@/views/Admin/Resource/components/Block/index.vue'
 import infoCard from '@/views/Admin/Resource/components/infoCard/index.vue'
 import AnnualReportsDashboard from '@/views/Admin/Resource/AnnualResource/AnnualReportsDashboard.vue'
 import { FunnelIcon } from "@heroicons/vue/24/outline";
-import axios from 'axios';
+import { apiClient } from '@/service/apiService';
 import { STATUS_DEFINITIONS } from '@/config/resourceConstants.js';
 
 export default {
@@ -107,7 +107,7 @@ export default {
         async function fetchRecursos() {
             isLoading.value = true;
             try {
-                const response = await axios.get('/recursos/admin/todos/', {
+                const response = await apiClient.get('/recursos/admin/todos/', {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                     }
@@ -154,7 +154,7 @@ export default {
                     return;
                 }
                 
-                const response = await axios.patch(`/recursos/${recursoId}/`, { status: newStatus }, {
+                const response = await apiClient.patch(`/recursos/${recursoId}/`, { status: newStatus }, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                     }

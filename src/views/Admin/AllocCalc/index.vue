@@ -58,7 +58,7 @@
 import { ref, onMounted } from 'vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
-import axios from 'axios';
+import { apiClient } from '@/service/apiService';
 import { getAccessToken } from '@/service/token.js';
 
 export default {
@@ -77,7 +77,7 @@ export default {
             successMessage.value = '';
             try {
                 const token = await getAccessToken();
-                const response = await axios.get('/csv/calculus/list-eligible-for-promotion/', {
+                const response = await apiClient.get('/csv/calculus/list-eligible-for-promotion/', {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 eligibleCalculations.value = response.data;
@@ -100,7 +100,7 @@ export default {
 
             try {
                 const token = await getAccessToken();
-                const response = await axios.post('/csv/opencalc/create-opencalc/',
+                const response = await apiClient.post('/csv/opencalc/create-opencalc/',
                     { calc_id: calc_id },
                     { headers: { Authorization: `Bearer ${token}` } }
                 );

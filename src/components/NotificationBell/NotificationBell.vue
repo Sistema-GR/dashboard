@@ -26,7 +26,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
+import { apiClient } from '@/service/apiService';
 
 const router = useRouter();
 const notifications = ref([]);
@@ -37,7 +37,7 @@ const unreadCount = computed(() => notifications.value.length);
 
 const fetchUnreadNotifications = async () => {
   try {
-    const response = await axios.get('/api/notifications/unread/', {
+    const response = await apiClient.get('/notifications/unread/', {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     });
     notifications.value = response.data;
@@ -65,7 +65,7 @@ const formatDate = (dateString) => {
 
 const markAsRead = async (notificationId) => {
   try {
-    await axios.post(`/api/notifications/${notificationId}/mark-as-read/`, {}, {
+    await apiClient.post(`/api/notifications/${notificationId}/mark-as-read/`, {}, {
       headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     });
   } catch (error) {

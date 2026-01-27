@@ -129,7 +129,7 @@
 <script>
 import { ref, onMounted, reactive, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import axios from 'axios'; 
+import { apiClient } from '@/service/apiService'; 
 
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
@@ -168,7 +168,7 @@ export default {
         const fetchResourceData = async () => {
             isLoading.value = true;
             try {
-                const response = await axios.get(`/recursos/${resourceId}/`, {
+                const response = await apiClient.get(`/recursos/${resourceId}/`, {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
                 });
                 resource.value = response.data;                 
@@ -205,7 +205,7 @@ export default {
             });
 
             try {
-                await axios.patch(`/recursos/${resourceId}/`, formData, {
+                await apiClient.patch(`/recursos/${resourceId}/`, formData, {
                     headers: { 
                         'Content-Type': 'multipart/form-data',
                         'Authorization': `Bearer ${localStorage.getItem('accessToken')}`

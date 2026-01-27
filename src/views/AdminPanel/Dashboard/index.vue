@@ -130,7 +130,7 @@
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import { downloadCriteriosCSV } from '@/service/download';
 import { ArrowDownTrayIcon, BanknotesIcon, DocumentDuplicateIcon, UsersIcon } from "@heroicons/vue/24/outline";
-import axios from 'axios';
+import { apiClient } from '@/service/apiService';
 import { computed, onMounted, ref } from 'vue';
 import { getAccessToken } from '../../../service/token';
 import { useRouter } from 'vue-router';
@@ -157,7 +157,7 @@ export default {
         }
 
         // Requisição para critérios para calcular quem recebe/não recebe
-        const responseCriterios = await axios.get('/csv/process/criterios/', {
+        const responseCriterios = await apiClient.get('/csv/process/criterios/', {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -189,7 +189,7 @@ export default {
         chartDataFaixaPagamento.value = faixaPagamento;
 
         // Requisição para os motivos de não recebimento
-        const responseAnalysis = await axios.get('/csv/get-import-files/', {
+        const responseAnalysis = await apiClient.get('/csv/get-import-files/', {
 
           headers: { Authorization: `Bearer ${token}` },
         });

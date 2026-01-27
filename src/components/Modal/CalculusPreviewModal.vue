@@ -104,7 +104,7 @@
 <script setup>
 import { ref, watch, computed } from 'vue';
 import { getAccessToken } from '@/service/token';
-import axios from 'axios';
+import { apiClient } from '@/service/apiService';
 import PrimaryTable from '../Table/PrimaryTable.vue';
 import Loading from '../Loading/Loading.vue';
 import Search from '@/components/Search/Search.vue';
@@ -148,7 +148,7 @@ const fetchSummary = async (id) => {
   isLoading.value = true;
   try {
     const token = await getAccessToken();
-    const response = await axios.get(`/csv/calculus/${id}/summary/`, {
+    const response = await apiClient.get(`/csv/calculus/${id}/summary/`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     summaryData.value = response.data.analysis_result;
