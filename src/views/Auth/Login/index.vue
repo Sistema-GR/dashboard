@@ -56,7 +56,7 @@
             <p v-if="errors.global" class="text-red-500 text-15 mt-1">{{ errors.global }}</p>
 
             <div class="w-full flex justify-center pt-3">
-              <router-link to="/auth/register" class="text-15 text-amber-50 hover:underline mt-0 -translate-y-5">Não possui cadastro? Clique aqui</router-link>
+              <router-link to="/auth/signup" class="text-15 text-amber-50 hover:underline mt-0 -translate-y-5">Não possui cadastro? Clique aqui</router-link>
             </div>
           </div>
         </div>

@@ -64,7 +64,7 @@
 
 <script>
 import { getAccessToken } from '@/service/token.js';
-import axios from 'axios';
+import { apiClient } from '@/service/apiService';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import SecondaryButton from '@/components/Buttons/SecondaryButton.vue';
 import CalculusPreviewModal from '@/components/Modal/CalculusPreviewModal.vue';
@@ -89,7 +89,7 @@ export default {
           return;
         }
 
-        const response = await axios.get("/csv/get-list-calculus/", {
+        const response = await apiClient.get("/csv/get-list-calculus/", {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (Object.keys(response.data).length === 0) {
@@ -161,7 +161,7 @@ export default {
     async copiarCalculo(item) {
       try {
         const token = await getAccessToken();
-        const response = await axios.post("/csv/copy-calculus/", { calc_id: item.id }, {
+        const response = await apiClient.post("/csv/copy-calculus/", { calc_id: item.id }, {
           headers: { Authorization: `Bearer ${token}` }
         });
         alert(`Cálculo copiado com sucesso! Novo ID: ${response.data.new_calculus_id}`);
@@ -180,7 +180,7 @@ export default {
           return;
         }
 
-        const response = await axios.post(
+        const response = await apiClient.post(
           "/csv/api/set-active-calculus/",
           { calc_id: calculusId },
 
@@ -203,7 +203,7 @@ export default {
       }
       try {
         const token = await getAccessToken();
-        await axios.post(
+        await apiClient.post(
 
           `/csv/calculus/${calculusId}/delete/`, 
           {},

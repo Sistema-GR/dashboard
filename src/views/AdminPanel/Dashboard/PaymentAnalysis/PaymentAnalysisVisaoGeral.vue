@@ -48,7 +48,7 @@ import MotivosNaoRecebimento from './components/MotivosNaoRecebimento.vue'
 import ProporcaoRecebimento from './components/ProporcaoRecebimento.vue'
 import PorcentagemFrequencia from './components/PorcentagemFrequencia.vue'
 import { ref, watch } from 'vue'
-import axios from 'axios'
+import { apiClient } from '@/service/apiService'
 import { getAccessToken } from '@/service/token'
 
 export default {
@@ -102,7 +102,7 @@ export default {
          
         // `/pagamentos/dashboard/visao-geral/?${queryParams.toString()}`
 
-        const response = await axios.get('/csv/get-import-files/', {
+        const response = await apiClient.get('/csv/get-import-files/', {
           headers: { Authorization: `Bearer ${token}` }
         })
 

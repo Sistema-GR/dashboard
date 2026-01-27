@@ -154,7 +154,7 @@
 <script setup>
 import { ref, computed, watch, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import axios from 'axios';
+import { apiClient } from '@/service/apiService';
 import { getAccessToken } from '@/service/token';
 
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
@@ -195,7 +195,7 @@ const downloadSummaryFile = async () => {
   try {
     const token = await getAccessToken();
 
-    const infoResponse = await axios.get(
+    const infoResponse = await apiClient.get(
       `/csv/calculus/${calculusId.value}/file-info/criterios/`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -205,7 +205,7 @@ const downloadSummaryFile = async () => {
       throw new Error("ID do arquivo não foi encontrado.");
     }
 
-    const downloadResponse = await axios.get(
+    const downloadResponse = await apiClient.get(
         `/csv/api/data-files/${fileId}/download/`,
         {
             headers: { Authorization: `Bearer ${token}` },
@@ -386,7 +386,7 @@ async function handleRowUpdate(updatedData) {
   isLoading.value = true;
   try {
     const token = await getAccessToken();
-    await axios.patch(
+    await apiClient.patch(
       `/csv/calculus/${calculusId.value}/update-cleaned-file/`,
       {
         file_key: selectedFileToEdit.value,
@@ -413,7 +413,7 @@ async function reprocessVersion() {
   isLoading.value = true;
   try {
     const token = await getAccessToken();
-    await axios.post(
+    await apiClient.post(
       `/csv/calculus/${calculusId.value}/reprocess/`,
       {},
       { headers: { Authorization: `Bearer ${token}` } }
@@ -436,7 +436,7 @@ async function publishVersion() {
   isLoading.value = true;
   try {
     const token = await getAccessToken();
-    await axios.post(
+    await apiClient.post(
       `/csv/calculus/${calculusId.value}/publish/`,
       {},
       { headers: { Authorization: `Bearer ${token}` } }

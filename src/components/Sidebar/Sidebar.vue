@@ -271,7 +271,7 @@ import {
   UsersIcon,
   XMarkIcon
 } from '@heroicons/vue/24/outline'
-import axios from 'axios'
+import { apiClient } from '@/service/apiService'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getUserType, clearUserType } from '@/service/userType'
@@ -350,7 +350,7 @@ async function fetchUserName() {
     }
 
     // Requisição com token no header
-    axios.get('/auth/user-info/', {
+    apiClient.get('/auth/user-info/', {
       headers: {
         'Authorization': `Bearer ${token}`  // Corrigir o nome do token para "accessToken"
       }

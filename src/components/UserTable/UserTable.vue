@@ -73,7 +73,7 @@
 
 <script setup>
 import { computed, ref, onBeforeUnmount, onMounted } from 'vue'
-import axios from 'axios'
+import { apiClient } from '@/service/apiService'
 import { getAccessToken } from '@/service/token'
 import { TrashIcon, PlusCircleIcon } from '@heroicons/vue/24/outline'
 
@@ -121,7 +121,7 @@ const adicionarUsuario = async(user) => {
         :`/auth/users/${user.id}/unset-user-staff/`
     try {
         const token = await getAccessToken()          
-        const response = await axios.post(url, {}, {
+        const response = await apiClient.post(url, {}, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }

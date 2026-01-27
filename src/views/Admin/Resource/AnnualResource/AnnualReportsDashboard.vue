@@ -76,7 +76,7 @@ import RecursosTotais from '@/views/Admin/Resource/AnnualResource/components/Rec
 import TipoRecurso from '@/views/Admin/Resource/AnnualResource/components/TipoRecurso.vue'
 import DadosCompletos from './components/DadosCompletos.vue'
 import { ref, watch, computed } from 'vue'
-import axios from 'axios'
+import { apiClient } from '@/service/apiService'
 import { getAccessToken } from '@/service/token'
 
 export default {
@@ -129,7 +129,7 @@ export default {
           }
         })
         
-        const response = await axios.get(`/recursos/dashboard/?${queryParams.toString()}`, {
+        const response = await apiClient.get(`/recursos/dashboard/?${queryParams.toString()}`, {
           headers: { Authorization: `Bearer ${token}` }
         })
 
@@ -153,7 +153,7 @@ export default {
     const fetchComparisonData = async () => {
       try {
         const token = await getAccessToken();
-        const response = await axios.get(`/recursos/dashboard/comparison/?year=${filters.value.year}`, {
+        const response = await apiClient.get(`/recursos/dashboard/comparison/?year=${filters.value.year}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         comparisonData.value = response.data; 

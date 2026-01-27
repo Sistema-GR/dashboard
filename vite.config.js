@@ -2,7 +2,6 @@ import { fileURLToPath, URL } from 'node:url'
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
-const BASE_URL = process.env.VITE_APP_BASE_URL || 'http://localhost:8000';
 
 // https://vitejs.dev/config/
 export default ({ mode }) => {
@@ -22,11 +21,7 @@ export default ({ mode }) => {
       host: true,
       port: 5173,
       proxy: {
-        '/recursos': { target: API_BASE, changeOrigin: true },
-        '/auth': { target: API_BASE, changeOrigin: true },
-        '/csv': { target: API_BASE, changeOrigin: true },
-        '/api/': { target: API_BASE, changeOrigin: true },
-        '/process': { target: API_BASE, changeOrigin: true },
+        '/api': { target: API_BASE, changeOrigin: true }
       }
     }
   });

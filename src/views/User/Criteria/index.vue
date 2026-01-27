@@ -50,7 +50,7 @@
 <script>
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import { QuestionMarkCircleIcon } from "@heroicons/vue/24/outline";
-import axios from 'axios';
+import { apiClient } from '@/service/apiService';
 import { getAccessToken } from '@/service/token';
 
 export default {
@@ -77,7 +77,7 @@ export default {
         const token = await getAccessToken();
         if (!token) throw new Error("Token de autenticação não encontrado.");
 
-        const fetchYear = await axios.get('/csv/opencalc/active-reference-year/', {
+        const fetchYear = await apiClient.get('/csv/opencalc/active-reference-year/', {
             headers: { Authorization: `Bearer ${token}` }
         });
         const referenceYear = fetchYear.data.reference_year;
@@ -87,7 +87,7 @@ export default {
             payload.cpf = targetCpfFromStorage;
         }
 
-        const response = await axios.post('/csv/user-get/', payload, {
+        const response = await apiClient.post('/csv/user-get/', payload, {
             headers: { Authorization: `Bearer ${token}` }
         });
         

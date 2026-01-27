@@ -31,7 +31,7 @@
 <script setup>
 import { ref, onMounted, computed, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import axios from 'axios';
+import { apiClient } from '@/service/apiService';
 import { getAccessToken } from '@/service/token';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import VersionItem from '@/components/VersionItem/VersionItem.vue';
@@ -83,7 +83,7 @@ async function fetchCalculusVersions() {
       console.log(`[VersionManager] Modo Específico: Buscando versões para o cálculo ID ${calculusIdToFetch}`);
     } else {
       console.log("[VersionManager] Modo Padrão: Nenhum ID na URL, buscando OpenCalc ativo...");
-      const activeCalcResponse = await axios.get('/csv/opencalc/get-active-info/', {
+      const activeCalcResponse = await apiClient.get('/csv/opencalc/get-active-info/', {
         headers: { Authorization: `Bearer ${token}` },
       });
       
@@ -94,7 +94,7 @@ async function fetchCalculusVersions() {
         throw new Error("Não foi possível determinar um cálculo para buscar. Nenhum OpenCalc ativo encontrado ou ID inválido.");
     }
 
-    const versionsResponse = await axios.get(`/csv/calculus/${calculusIdToFetch}/versions/`, {
+    const versionsResponse = await apiClient.get(`/csv/calculus/${calculusIdToFetch}/versions/`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     versions.value = versionsResponse.data;
@@ -113,7 +113,7 @@ async function createNewVersion(sourceId) {
   }
   try {
     const token = await getAccessToken();
-    const response = await axios.post('/csv/calculus/create-version/', 
+    const response = await apiClient.post('/csv/calculus/create-version/', 
       { calculus_id: sourceId },
       { headers: { Authorization: `Bearer ${token}` } }
     );
