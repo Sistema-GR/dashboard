@@ -319,7 +319,8 @@ export default {
 
       const token = await getAccessToken();
       const headers = {
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data'
       };
 
       try {
