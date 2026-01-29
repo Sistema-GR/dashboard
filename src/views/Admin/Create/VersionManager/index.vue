@@ -139,13 +139,9 @@ function goToViewPage(archivedId) {
   });
 }
 
-function getStatusClass(status) {
-  const classes = {
-    PUBLISHED: 'bg-green-100 text-green-800',
-    DRAFT: 'bg-yellow-100 text-yellow-800',
-    ARCHIVED: 'bg-gray-100 text-gray-800',
-  };
-  return classes[status] || 'bg-gray-100';
+function getStatusClass(isFinalized) {
+  if (isFinalized) return 'bg-green-100 text-green-800';
+  return 'bg-yellow-100 text-yellow-800';
 }
 
 onMounted(fetchCalculusVersions);

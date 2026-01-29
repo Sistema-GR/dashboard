@@ -26,8 +26,8 @@
           <ul class="divide-y divide-[#e3f0ff]">
             <li v-for="item in parent.all_versions" :key="item.id" class="p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center">
               <div class="flex items-center gap-4">
-                <span :class="getStatusClass(item.status) + ' text-15 font-semibold px-3 py-1 rounded-full'" style="min-width: 80px; text-align: center;">
-                  {{ item.status }}
+                <span :class="getStatusClass(item.is_finalized) + ' text-15 font-semibold px-3 py-1 rounded-full'" style="min-width: 80px; text-align: center;">
+                  {{ item.status_label }}
                 </span>
                 <div>
                   <p class="font-medium text-[#003965]">Versão {{ item.version_number }}</p>
@@ -118,7 +118,8 @@ export default {
             id: calc.calculus_id,
             description: calc.description,
             createdAt: new Date(calc.created_at).toLocaleDateString('pt-BR'),
-            status: calc.status,
+            is_finalized: calc.is_finalized,
+            status_label: calc.is_finalized ? 'Finalizado' : 'Em Edição',
             version_number: calc.version_number,
             parent_calculus_id: calc.parent_calculus_id,
             year: year,
@@ -221,14 +222,11 @@ export default {
       }
     },
 
-    getStatusClass(status) {
-      const classes = {
-        PUBLISHED: 'bg-green-100 text-green-800',
-        DRAFT: 'bg-yellow-100 text-yellow-800',
-        ARCHIVED: 'bg-gray-100 text-gray-800',
-      };
-      return classes[status] || 'bg-gray-100';
+    getStatusClass(isFinalized) {
+      if (isFinalized) return 'bg-green-100 text-green-800';
+      return 'bg-yellow-100 text-yellow-800';
     },
+
 
     openPreviewModal(calculusId) {
       this.selectedCalculusId = calculusId;

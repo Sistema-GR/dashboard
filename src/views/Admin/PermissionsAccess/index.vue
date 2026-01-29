@@ -1,24 +1,16 @@
 <template>
   <Whiteboard title="PERMISSÕES PARA ADMINISTRADORES" >
     <!-- Bloco 1 -->
-    <section class="flex flex-row items-center justify-between shadow-ms w-full mb-5 bg-[#c2ddfd] text-black px-4 lg:px-10 p-5">
+    <!-- <section class="flex flex-row items-center justify-between shadow-ms w-full mb-5 bg-[#c2ddfd] text-black px-4 lg:px-10 p-5">
       <h2 class="text-25 font-semibold text-black">Perfil do administrador</h2>
-    </section>
+    </section> -->
 
     <!-- Alteração -->
+    <!-- Tabela de usuários com seletor de status -->
     <UserTable 
-      titulo="Perfil de Alteração"
-      type="set"
+      titulo="Gerenciar Permissões"
       @update="fetchUsers"
       :usuarios="usuarios">
-    </UserTable>
-
-    <!-- Visualização -->
-    <UserTable 
-    titulo="Perfil de Visualização"
-    type="unset"
-    @update="fetchUsers"
-    :usuarios="usuarios">
     </UserTable>
 
   </Whiteboard>
