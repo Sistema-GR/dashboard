@@ -325,7 +325,7 @@ const isLoading = ref(true);
 const errorMessage = ref(null);
 const route = useRoute();
 const tutorialComponent = ref(null);
-
+const referenceYear = ref(null);
 
 const fetchRewardsData = async () => {
     
@@ -345,9 +345,9 @@ const fetchRewardsData = async () => {
                 headers: { Authorization: `Bearer ${token}` } 
             }
         )
-        const referenceYear = fetchYear.data.reference_year;
+        referenceYear.value = fetchYear.data.reference_year;
 
-        let payload = { reference: referenceYear };
+        let payload = { reference: referenceYear.value };
 
         if (targetCpfFromStorage) {
             payload.cpf = targetCpfFromStorage;
@@ -636,7 +636,6 @@ watch(
   () => route.params.cpf, 
   (newCpf, oldCpf) => {
     if (newCpf !== oldCpf) {
-      console.log(`Parâmetro CPF mudou para ${newCpf}. Buscando novos dados...`);
       fetchRewardsData();
     }
   }

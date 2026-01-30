@@ -14,7 +14,7 @@ export const apiClient = axios.create({
 // Configuração dos interceptores de requisição
 setupAxiosInterceptors(apiClient);
 
-// Função genérica para tratamento de erross
+// Função genérica para tratamento de erros
 const handleApiError = (error) => {
   console.error("Erro na requisição:", error.response || error.message);
   throw error.response ? error.response.data : error.message;
@@ -92,37 +92,6 @@ export const createGeneralData = async (data) => {
   } catch (error) {
     handleApiError(error);
   }
-};
-
-export const uploadFile = async (file, endpoint) => {
-    const token = await getAccessToken();
-    const formData = new FormData();
-    formData.append('funcionarios', funcionariosFile);
-    formData.append('demissoes', demissoesFile);
-    formData.append('frequencia', frequenciaFile);
-    formData.append('atividades', atividadesFile);
-    formData.append('tipoLocal', tipoLocalFile);
-    formData.append('dadosGerais', atividadesFile);
-    formData.append('funcoesGruposEtapas', funcoesGruposEtapasFile);
-    formData.append('aprenderMais', aprenderMaisFile);
-    formData.append('etapasMetas', etapasMetasFile);
-    formData.append('uesPercGr', uesPercGrFile);
-    formData.append('definicaoEtapas', definicaoEtapasFile);
-    formData.append('formacoes', formacoesFile);
-    formData.append('motivosInfrequencia', motivosInfrequenciaFile);
-    formData.append('dias_nao_contabilizados', diasNaoContabilizadosFile);
-
-    fetch('/csv/process/unified-upload/', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-      body: formData,
-    })
-    .then(response => response.json())
-    .catch(error => {
-      console.error('Error:', error);
-    });
 };
 
 // Função para processar todos os arquivos

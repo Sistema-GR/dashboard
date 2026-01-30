@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { getUserType, canAccessRoute, getDashboardRoute } from '@/service/userType'
+import { getUserType } from '@/service/userType'
 import authRoutes from './routes/auth'
 import adminRoutes from './routes/calculus'
 import userRoutes from './routes/user'
@@ -36,10 +36,8 @@ router.beforeEach((to, from, next) => {
     //return next({ path: getDashboardRoute() })
   }
 
-  if (from.name == 'rewards') {
-    if (to.name != 'rewards') {
+  if (from.name === 'rewards' && to.name !== 'rewards') {
       localStorage.removeItem('tempTargetCpf');
-    }
   }
   next()
 });

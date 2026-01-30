@@ -186,8 +186,6 @@ export default {
       }
       const initial = comparisonData.value.initial_data;
       const final = comparisonData.value.final_data;
-      console.log('Initial Data:', initial);
-      console.log('Final Data:', final);
 
       const diffPessoas = final.pessoas_pagas - initial.pessoas_pagas;
       const diffValor = final.valor_pago - initial.valor_pago;

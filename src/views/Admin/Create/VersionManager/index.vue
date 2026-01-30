@@ -80,9 +80,7 @@ async function fetchCalculusVersions() {
 
     if (route.params.id) {
       calculusIdToFetch = route.params.id;
-      console.log(`[VersionManager] Modo Específico: Buscando versões para o cálculo ID ${calculusIdToFetch}`);
     } else {
-      console.log("[VersionManager] Modo Padrão: Nenhum ID na URL, buscando OpenCalc ativo...");
       const activeCalcResponse = await apiClient.get('/csv/opencalc/get-active-info/', {
         headers: { Authorization: `Bearer ${token}` },
       });

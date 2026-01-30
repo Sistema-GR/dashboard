@@ -81,14 +81,6 @@ const columnRenamingMap = {
       etapa_1: 'Atua na Etapa 1',
       etapa_2: 'Atua na Etapa 2',
       etapa_3: 'Atua na Etapa 3'
-
-      // classe_local: 'Tipo Local',
-      // disciplinas_atualizadas: 'Função',
-      // funcao_tipo_local: 'Tipo Unidade Função',
-      // grupo: 'Grupo',
-      // atua_na_etapa_1: 'Atua na Etapa 1',
-      // atua_na_etapa_2: 'Atua na Etapa 2',
-      // atua_na_etapa_3: 'Atua na Etapa 3'
   },
   Frequency: {
       matricula: 'Matrícula',
@@ -194,7 +186,7 @@ const columnRenamingMap = {
 
 const currencyKeys = ['valor_total', 'valor_bruto', 'gr_unidade_max', 'gr_rede_max', 'valor_gr_unidade', 'valor_gr_rede', 'valor_etapa', 'valor_rede', 'valor_unidade_maximo', 'valor_rede_maximo', 'valor_gratificacao_unidade', 'valor_gratificacao_rede', 'valor_gratificacao_registro', 'valor_bruto_total', 'valor_a_pagar_criterios', 'desconto'];
 const dateKeys = ['dia', 'data_inicio', 'data_fim', 'admissao', 'demissao', 'inicio_afastamento', 'fim_afastamento', 'dias_nao_contabilizados', 'inicio_atividade_local', 'fim_atividade_local', 'data_inicial_trabalho', 'data_final_trabalho', 'demissoes', 'inicio_ajustado', 'fim_ajustado', 'inicio_considerar', 'final_considerar'];
-const boleanKeys = ['contabiliza', 'tem_gratificacao_unidade', 'atua_na_etapa_1', 'atua_na_etapa_2', 'atua_na_etapa_3', 'tem_anos_iniciais_1', 'tem_anos_iniciais_2', 'tem_anos_finais', 'sim', 'nao', 'exerceu_suas_atividades_na_unidade', 'recebe_atividade', 'recebe_formacao', 'percentual_atividade', 'atividades', 'formacoes','tempo_atuacao', 'criterio_tempo_atuacao', 'cumpriu_atividades', 'mais_malvado', 'recebe_gratificacao'];  
+const booleanKeys = ['contabiliza', 'tem_gratificacao_unidade', 'atua_na_etapa_1', 'atua_na_etapa_2', 'atua_na_etapa_3', 'tem_anos_iniciais_1', 'tem_anos_iniciais_2', 'tem_anos_finais', 'sim', 'nao', 'exerceu_suas_atividades_na_unidade', 'recebe_atividade', 'recebe_formacao', 'percentual_atividade', 'atividades', 'formacoes','tempo_atuacao', 'criterio_tempo_atuacao', 'cumpriu_atividades', 'mais_malvado', 'recebe_gratificacao'];  
 
 function formatCurrency(value) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
@@ -206,7 +198,6 @@ function formatDate(value) {
   return `${day}/${month}/${year}`;
 }
 
-// Função para formatar booleanos como 'Sim' ou 'Não'
 function formatBoolean(value) {
   return value ? 'Sim' : 'Não';
 }
@@ -219,18 +210,15 @@ export function renameColumns(columns, route) {
       label: renamingMap[column.key] || column.label,
     };
 
-    // Aplica formatação de moeda
     if (currencyKeys.includes(newColumn.key)) {
       newColumn.format = (value) => formatCurrency(value);
     }
 
-    // Aplica formatação de data
     if (dateKeys.includes(newColumn.key)) {
       newColumn.format = (value) => formatDate(value);
     }
 
-    // Aplica formatação de booleano para 'Sim' ou 'Não'
-    if (boleanKeys.includes(newColumn.key)) {
+    if (booleanKeys.includes(newColumn.key)) {
       newColumn.format = (value) => formatBoolean(value);
     }
 
