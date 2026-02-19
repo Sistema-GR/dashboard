@@ -5,7 +5,7 @@
         <div class="w-full px-4 sm:px-10 mt-8">
             <div class="bg-[#f5faff] rounded-[10px] shadow-lg p-6">
                 <div class="flex items-center justify-between mb-6">
-                    <div>
+                    <!-- <div>
                         <h2 class="text-20 font-bold text-[#4168b5]">Cálculos Prontos para Promoção</h2>
                         <p class="text-15 text-gray-600 mt-1">
                             Estes cálculos foram finalizados e estão aguardando para serem promovidos a 'OpenCalc'.
@@ -16,7 +16,7 @@
                         value="Atualizar lista"
                         @click="fetchEligibleCalculations"
                         :disabled="isLoading"
-                    />
+                    /> -->
                 </div>
                 <div v-if="isLoading" class="text-gray-500 py-6 text-center">Carregando cálculos...</div>
                 <div v-else-if="eligibleCalculations.length === 0" class="text-gray-500 py-6 text-center">

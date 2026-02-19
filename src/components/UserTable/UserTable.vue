@@ -1,34 +1,7 @@
 <template>
-    <!-- Campo para adicionar perfis -->
-    <div class="flex flex-row items-center justify-between shadow-ms w-full mb-5 bg-[#e3f0ff] text-black px-4 lg:px-10 p-4">
+    <!-- Seção do título -->
+    <div class="flex flex-row items-center shadow-ms w-full mb-5 bg-[#e3f0ff] text-black px-4 lg:px-10 p-4">
       <label class="text-20 font-semibold">{{titulo}}</label>
-      <div class="relative flex flex-row items-center w-full max-w-80 gap-3">
-        <div class="relative w-full">
-          <input
-            v-model="searchCpf"
-            @focus="mostrarSugestoes = true"
-            @click="mostrarSugestoes = true"
-            @blur="handleBlur"
-            type="text"
-            class="w-full p-2 pl-4 border border-gray-300 rounded-[10px] focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Buscar usuário por CPF"/>
-          <ul v-if="mostrarSugestoes && usuarios.length" class="absolute z-10 bg-white border rounded-[10px] shadow w-full max-h-40 overflow-y-auto">
-            <li
-              v-for="(sugestao, index) in filteredSugestoes.filter(u => u.staff === (type == 'unset'))"
-              :key="index"
-              class="px-3 py-2 hover:bg-gray-100 cursor-pointer"
-              @mousedown.prevent="selecionarSugestao(sugestao)"
-            >
-              {{ sugestao.nome }} - {{ sugestao.cpf }}
-            </li>
-          </ul>
-        </div>
-        <button
-          @click="adicionarUsuario(targetUser)"
-          class="bg-transparent text-black m-2 hover:text-[#003965]">
-          <PlusCircleIcon class="w-8 h-8 inline text-black hover:text-[#003965]" />
-        </button>
-      </div>
     </div>
     
     <!-- Tabela de perfis -->
@@ -39,15 +12,29 @@
             <tr>
               <th class="text-left px-5 py-3 w-[33%]">Nome</th>
               <th class="text-left px-5 py-3 w-[25%]">CPF</th>
-              <th class="text-left px-5 py-3 w-[33%]">Setor</th>
+              <th class="text-left px-5 py-3 w-[33%]">Status</th>
               <th class="text-center px-5 py-3 w-[%]"></th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(usuario) in usuarios.filter(u => u.staff === (type === 'set'))" :key="usuario.cpf" class="border-t">
+            <tr v-for="(usuario) in usuarios" :key="usuario.cpf" class="border-t">
               <td class="px-5 py-3 truncate">{{ usuario.nome }}</td>
               <td class="px-5 py-3 truncate">{{ usuario.cpf }}</td>
-              <td class="px-5 py-3 truncate">{{ usuario.setor }}</td>
+              <td class="px-5 py-3">
+                <div class="relative inline-block w-full select-wrapper">
+                  <select
+                    :value="usuario.staff ? 'administrador' : 'usuario'"
+                    @change="(e) => mudarStatusUsuario(usuario, e.target.value)"
+                    class="custom-select w-full px-3 py-2 border border-gray-300 rounded-[10px] appearance-none"
+                  >
+                    <option value="usuario">Usuário</option>
+                    <option value="administrador">Administrador</option>
+                  </select>
+                  <svg class="select-arrow" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                    <path d="M6 8L10 12L14 8" stroke="#1F2937" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </div>
+              </td>
               <td class="px-5 py-3 text-center">
                 <button @click="confirmarRemocao(usuario)" class="text-gray-600 hover:text-red-600">
                   <TrashIcon class="w-5 h-5 inline" />
@@ -72,10 +59,10 @@
 </template>
 
 <script setup>
-import { computed, ref, onBeforeUnmount, onMounted } from 'vue'
+import { ref, onBeforeUnmount, onMounted } from 'vue'
 import { apiClient } from '@/service/apiService'
 import { getAccessToken } from '@/service/token'
-import { TrashIcon, PlusCircleIcon } from '@heroicons/vue/24/outline'
+import { TrashIcon } from '@heroicons/vue/24/outline'
 
 const { usuarios, type, titulo } = defineProps({
   titulo: String,
@@ -84,20 +71,29 @@ const { usuarios, type, titulo } = defineProps({
 })
 
 const emit = defineEmits(['update']);
-const mostrarSugestoes = ref(false)
-const searchCpf = ref('')
-
-const targetUser = ref([])
 
 const indexRemocao = ref(null)
 const modalAberto = ref(false)
+
+  // Função para mudar o status do usuário
+  const mudarStatusUsuario = async (usuario, novoStatus) => {
+    const isAdmin = novoStatus === 'administrador'
+    const url = isAdmin
+      ? `/auth/users/${usuario.id}/set-user-staff/`
+      : `/auth/users/${usuario.id}/unset-user-staff/`
     
-const filteredSugestoes = computed(() =>
-    usuarios.filter(
-        u => u.cpf.includes(searchCpf.value.trim())
-    )
-)
-// FUNCOES DE REMOÇÃO SEM UTILIDADE
+    try {
+      const token = await getAccessToken()
+      await apiClient.post(url, {}, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      emit('update')
+    } catch (error) {
+      console.error('Erro ao alterar status:', error)
+    }
+  }
 const confirmarRemocao = (usuario) => {
     indexRemocao.value = usuarios.findIndex(u => u.cpf === usuario.cpf)
     modalAberto.value = true
@@ -108,54 +104,39 @@ const removerUsuarioConfirmado = () => {
     modalAberto.value = false
 }
 
-const selecionarSugestao = (valor) => {  
-    targetUser.value = valor    
-    mostrarSugestoes.value = false
-    searchCpf.value = valor.nome
-}
-
-const adicionarUsuario = async(user) => { 
-    if (!user) return
-    const url = type === 'set'
-        ?`/auth/users/${user.id}/set-user-staff/`
-        :`/auth/users/${user.id}/unset-user-staff/`
-    try {
-        const token = await getAccessToken()          
-        const response = await apiClient.post(url, {}, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        })
-        targetUser.value = ''
-        emit('update')
-    } catch (error) {
-        console.error('Erro ao definir permissões:', error)
-    }
-}
-
-const handleClickOutside = (event) => {
-    // If the click is not inside an input or the ul, close suggestions
-    if (
-        !event.target.closest('.input-sugestao') &&
-        !(event.type === 'mousedown' && event.target.closest('li')) &&
-        !event.target.closest('.ul-sugestoes')
-    ) {
-        mostrarSugestoes.value = false
-    }
-}
-
-const handleBlur = () => {
-  setTimeout(() => {
-    mostrarSugestoes.value = false
-  }, 150)
-}
 
 onMounted(() => {
-    document.addEventListener('mousedown', handleClickOutside)
+    // Limpeza se necessária
 })
 
 onBeforeUnmount(() => {
-    document.removeEventListener('mousedown', handleClickOutside)
+    // Limpeza se necessária
 })
 
 </script>
+
+<style scoped>
+/* Smooth select focus and arrow animation */
+.custom-select{
+  transition: box-shadow 160ms ease, transform 120ms ease, border-color 160ms ease;
+  background-color: white;
+}
+.select-wrapper:focus-within .custom-select{
+  box-shadow: 0 8px 20px rgba(52,89,162,0.12);
+  transform: translateY(-2px);
+  border-color: #2b63a8;
+}
+.select-wrapper{ position: relative; }
+.select-arrow{
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  transition: transform 160ms ease, opacity 160ms ease;
+  opacity: 0.9;
+}
+.select-wrapper:focus-within .select-arrow{
+  transform: translateY(-50%) rotate(180deg) translateY(1px);
+}
+</style>
