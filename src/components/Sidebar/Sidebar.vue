@@ -86,7 +86,7 @@
                                             leave-to="opacity-0 translate-y-4"
                                           >
                                             <div class="flex flex-col mt-2 space-y-2 bg-gray-800 rounded-[10px] shadow-lg text-white py-2 px-4 relative z-50">
-                                              <router-link to="/home/config" class="flex flex-row items-center gap-2 text-15 hover:text-gray-300 transition">
+                                              <router-link to="/user/config" class="flex flex-row items-center gap-2 text-15 hover:text-gray-300 transition">
                                                 <PencilIcon class="w-4 h-auto" /> 
                                                 Acessar Perfil
                                               </router-link>
@@ -124,7 +124,7 @@
 
                   <ul role="list" class="flex flex-1 flex-col gap-y-5">
                       <li>
-                          <ul role="list" class="-mx-2 grid gap-1">
+                          <ul role="list" class="-mx-3 grid gap-1">
                               <li v-for="item in filteredNavigation" :key="item.name" class="cursor-pointer">
                                 <!-- If item has children, render as expandable -->
                                 <div v-if="item.children" class="relative">
@@ -205,7 +205,7 @@
                             leave-to="opacity-0 translate-y-4"
                           >
                             <div class="flex flex-col mt-2 space-y-2 bg-gray-800 rounded-[10px] shadow-lg text-white py-2 px-4 relative z-50">
-                              <router-link to="/home/config" class="flex flex-row items-center gap-2 text-15 hover:text-gray-300 transition">
+                              <router-link to="/user/config" class="flex flex-row items-center gap-2 text-15 hover:text-gray-300 transition">
                                 <PencilIcon class="w-4 h-auto" /> 
                                 Acessar Perfil
                               </router-link>
@@ -271,7 +271,7 @@ import {
   UsersIcon,
   XMarkIcon
 } from '@heroicons/vue/24/outline'
-import axios from 'axios'
+import { apiClient } from '@/service/apiService'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getUserType, clearUserType } from '@/service/userType'
@@ -280,13 +280,13 @@ import { useSidebarStore } from '@/stores/sidebarStore'
 const sidebarStore = useSidebarStore()
 const routes = {
   'admin': [
-    { name: 'Dashboard', route: '/admin/dashboard', icon: Squares2X2Icon, current: false },
-    { name: 'Novo Cálculo', route: '/home/create/selector', icon: CalculatorIcon, current: false },
-    { name: 'Listar Cálculos', route: '/home/previousresults', icon: ChartBarIcon, current: false },
-    { name: 'Publicar Cálculo', route: '/home/alloc', icon: RectangleStackIcon, current: false },
-    { name: 'Versões Publicadas', route: '/home/dataversions', icon: CircleStackIcon, current: false },
+    { name: 'Dashboard', route: '/calculus/dashboard', icon: Squares2X2Icon, current: false },
+    { name: 'Novo Cálculo', route: '/calculus/create', icon: CalculatorIcon, current: false },
+    { name: 'Listar Cálculos', route: '/calculus/previousresults', icon: ChartBarIcon, current: false },
+    { name: 'Publicar Cálculo', route: '/calculus/alloc', icon: RectangleStackIcon, current: false },
+    { name: 'Versões Publicadas', route: '/calculus/dataversions', icon: CircleStackIcon, current: false },
     { name: 'Recursos', route: '/resource', icon: ExclamationCircleIcon, current: false },
-    { name: 'Permissões de Acesso', route: '/home/permissionsaccess', icon: UsersIcon , current: false },
+    { name: 'Permissões de Acesso', route: '/user/permissionsaccess', icon: UsersIcon , current: false },
     { name: 'Detalhes do Cálculo', icon: RectangleStackIcon,
       children: [        
         { name: 'Resultados IDEM', id: 'Results', icon: CalculatorIcon, current: false },
@@ -306,7 +306,7 @@ const routes = {
   ],
   'user': [
     { name: 'Resultados', route: '/user/rewards', icon: ChartBarIcon, current: true },
-    { name: 'Status', route: '/user/status', icon: InboxIcon, current: false },
+    { name: 'Recurso', route: '/resource/form/status', icon: InboxIcon, current: false },
     { name: 'FAQ', route: '/user/faqs', icon: QuestionMarkCircleIcon, current: false },
   ],
 }
@@ -325,8 +325,8 @@ function selectRoute(route) {
   if (route.id) {
     sidebarStore.setReportPage(route.id)
   } 
-  if(router.currentRoute.value.path != '/admin/report'){
-    router.push('/admin/report')
+  if(router.currentRoute.value.name != 'report'){
+    router.push({name: 'report'})
   }
 }
 
@@ -350,7 +350,7 @@ async function fetchUserName() {
     }
 
     // Requisição com token no header
-    axios.get('/auth/user-info/', {
+    apiClient.get('/auth/user-info/', {
       headers: {
         'Authorization': `Bearer ${token}`  // Corrigir o nome do token para "accessToken"
       }
@@ -404,23 +404,7 @@ const filteredNavigation = computed(() => {
 })
 
 const route = useRoute(); 
-const hiddenRoutes = [
-      //'/admin/dashboard',
-      '/admin/results',
-      '/admin/calendar',
-      '/admin/professional',
-      '/admin/groups',
-      '/admin/steps',
-      '/admin/stagegroup',
-      '/admin/frequency',
-      '/admin/resignation',
-      '/admin/activities',
-      '/admin/service',
-      '/admin/training',
-      '/admin/report/',
-      '/admin/rewards/',
-      '/admin/permissionsaccess/',
-];
+const hiddenRoutes = [];
 
 const showConfigLink = computed(() => !hiddenRoutes.includes(route.path));
 const isProfileMenuOpen = ref(false)
@@ -447,7 +431,7 @@ function logout() {
 
 const router = useRouter();
 function goBack() {
-  router.push('/home/overview');
+  router.push({name: 'home'});
 }
 
 watch(() => sidebarStore.isSidebarMinimized, (minimized) => {

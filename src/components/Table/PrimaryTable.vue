@@ -84,7 +84,7 @@ import { debounce } from 'lodash';
 import { renameColumns } from '@/service/columnRenaming';
 import { useRouter } from 'vue-router';
 import { getAccessToken } from '@/service/token';
-import axios from 'axios';
+import { apiClient } from '@/service/apiService';
 
 import Drawer from '../Drawer/Drawer.vue';
 import Pagination from '../Pagination/Pagination.vue';
@@ -233,7 +233,7 @@ async function fetchPeople() {
 
     if (props.isDynamicRoute) {
       const token = await getAccessToken();
-      const response = await axios.get(`/csv/${props.route}`, {
+      const response = await apiClient.get(`/csv/${props.route}`, {
           headers: { Authorization: `Bearer ${token}` }
       });
       peopleData = response.data;
@@ -319,7 +319,7 @@ async function saveRowData(person) {
   localStorage.setItem('tempTargetCpf', cpfDoUsuario);
 
   router.push({
-    name: 'admin-view-rewards',
+    name: 'rewards'
   });
 }
 

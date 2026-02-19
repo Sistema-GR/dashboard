@@ -58,9 +58,8 @@ export default {
 
   methods: {
     onUnifiedUploaded({ manifest }) {
-      console.log('Unified upload manifest', manifest);
       this.isUploading = false;
-      this.$router.push({ path: '/admin/dashboard' });
+      this.$router.push({ name: 'dash' });
     },
     loadingUpdate(valor) {
       this.isUploading = valor;      

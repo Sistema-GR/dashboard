@@ -49,7 +49,7 @@ import { ref, onMounted, computed } from 'vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import Toggle from '@/components/Toggle/Toggle.vue';
 import ActivationItem from '@/components/ActivationItem/ActivationItem.vue';
-import axios from 'axios';
+import { apiClient } from '@/service/apiService';
 import { getAccessToken } from '@/service/token';
 
 export default {
@@ -82,11 +82,10 @@ export default {
     const fetchData = async () => {
       try {
         const token = await getAccessToken();
-        const response = await axios.get('/csv/opencalc/list-versions/', {
+        const response = await apiClient.get('/csv/opencalc/list-versions/', {
           headers: { Authorization: `Bearer ${token}` },
         });
         calculusFamilies.value = response.data;
-        console.log(response.data);
       } catch (error) {
         console.error("Erro ao buscar as famílias de cálculo:", error);
       }
@@ -103,11 +102,10 @@ export default {
       if (!pendingVersion.value) return;
 
       const idParaAtivar = pendingVersion.value.calculus_id;
-      console.log(pendingVersion)
        try {
         const token = await getAccessToken();
         
-        const response = await axios.post('/csv/opencalc/activate-opencalc/',
+        const response = await apiClient.post('/csv/opencalc/activate-opencalc/',
           { calc_id: idParaAtivar },
           { headers: { Authorization: `Bearer ${token}` } }
         );

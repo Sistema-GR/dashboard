@@ -62,12 +62,13 @@ const templateSkeleton = computed(() => {
       return `<select data-variable-name="unidade_responsavel" class="..."><option value="" disabled selected>Selecione...</option>${optionsHtml}</select>`;
     }
 
-    return `<textarea
+    return `<input
+      type="text"
       data-variable-name="${variableName}"
       class="inline-block ..."
       rows="1"
       placeholder="[${variableName.replace(/_/g, ' ')}]"
-    ></textarea>`;
+    ></input>`;
   });
 });
 

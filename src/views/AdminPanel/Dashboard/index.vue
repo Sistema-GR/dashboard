@@ -1,7 +1,7 @@
 <template>
   <Whiteboard title="Dashboard" >
     <!-- Total Recebe, Total Não Recebe e Total a Pagar -->
-    <div class="grid w-full py-8">
+    <div class="grid w-full pt-8 pb-3">
       <div class="flex flex-wrap justify-center gap-6 sm:gap-8 xl:justify-between px-4 sm:px-10">
         <div
           v-for="(card, index) in cards"
@@ -27,6 +27,19 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="flex justify-end items-center px-4 sm:px-10 py-4 margin-between-sections gap-3">
+          
+      <button 
+        @click="navigateToPaymentAnalysis"
+        class="bg-[#3459A2] hover:bg-[#2a4a8a] text-white px-4 py-2 rounded-[10px] transition-colors duration-200 flex items-center gap-2 font-medium shadow-md"
+      >
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"/>
+        </svg>
+        Análise de Pagamento
+      </button>
     </div>
 
     <!-- Seções do gráfico -->
@@ -91,7 +104,7 @@
         Aqui você pode gerenciar os arquivos importados. Clique no botão abaixo para visualizar os detalhes.
       </p>
       <button class="self-start bg-[#3459A2] hover:bg-[#203661] text-white font-semibold py-2 px-4 rounded-[10px] transition duration-300"
-        @click="$router.push('files-manager')">
+        @click="$router.push({name: 'files-manager'})">
         Visualizar arquivos
       </button>
       </div>
@@ -117,7 +130,7 @@
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import { downloadCriteriosCSV } from '@/service/download';
 import { ArrowDownTrayIcon, BanknotesIcon, DocumentDuplicateIcon, UsersIcon } from "@heroicons/vue/24/outline";
-import axios from 'axios';
+import { apiClient } from '@/service/apiService';
 import { computed, onMounted, ref } from 'vue';
 import { getAccessToken } from '../../../service/token';
 import { useRouter } from 'vue-router';
@@ -137,14 +150,14 @@ export default {
     const fetchDashboardData = async () => {
       try {
         const token = await getAccessToken();
-        console.log(token)
+        
         if (!token) {
           console.error("Erro: Token de acesso não encontrado.");
           return;
         }
 
         // Requisição para critérios para calcular quem recebe/não recebe
-        const responseCriterios = await axios.get('/csv/process/criterios/', {
+        const responseCriterios = await apiClient.get('/csv/process/criterios/', {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -176,7 +189,7 @@ export default {
         chartDataFaixaPagamento.value = faixaPagamento;
 
         // Requisição para os motivos de não recebimento
-        const responseAnalysis = await axios.get('/csv/get-import-files/', {
+        const responseAnalysis = await apiClient.get('/csv/get-import-files/', {
 
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -264,7 +277,7 @@ export default {
     });
 
     const files = [
-      { name: 'Relatório Criterios.pdf', size: '3.4 MB', url: '/path/to/apresentacao.pptx' }
+      { name: 'Relatório Criterios.csv', size: '3.4 MB', url: '/path/to/apresentacao.pptx' }
     ];
 
     const version = computed(() => {
@@ -321,6 +334,10 @@ export default {
       return fields;
     });
 
+    const navigateToPaymentAnalysis = () => {
+      router.push({name: 'payment-analysis'});
+    };
+
     return {
       updatedChartSections,
       files,
@@ -328,6 +345,7 @@ export default {
       cards,
       downloadCriteriosCSV,
       formattedDashboardData,
+      navigateToPaymentAnalysis,
     };
   }
 };

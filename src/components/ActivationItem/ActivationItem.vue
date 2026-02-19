@@ -5,7 +5,6 @@
       <div class="flex-grow pl-4" :style="{ paddingLeft: `${depth * 24}px` }">
         <p class="font-semibold text-gray-800">{{ version.nome }}</p>
         <p class="text-sm text-gray-500">{{ version.descricao }}</p>
-        <p class="text-xs text-gray-400">Criado em: {{ formatDate(version.data) }}</p>
       </div>
       <div class="w-24 text-center">
         <span v-if="version.ativa" class="inline-flex px-3 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">Ativo</span>

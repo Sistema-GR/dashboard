@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { apiClient } from '@/service/apiService';
 import { getAccessToken } from '@/service/token.js';
 
 export default {
@@ -319,11 +319,12 @@ export default {
 
       const token = await getAccessToken();
       const headers = {
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data'
       };
 
       try {
-        await axios.post('/csv/process/unified-upload/', form, {
+        await apiClient.post('/csv/process/unified-upload/', form, {
           headers,
           onUploadProgress: (progressEvent) => {
             const loaded = progressEvent.loaded;

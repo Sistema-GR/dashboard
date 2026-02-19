@@ -250,8 +250,8 @@ const startTutorial = () => {
   driverObj.drive();
 };
 
-onMounted(() => {
-  // Removido todo o código do confetti
+onMounted(() => {  
+  window.dispatchEvent(new Event('resize'));
 });
 
 defineExpose({

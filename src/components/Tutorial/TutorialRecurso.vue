@@ -30,6 +30,7 @@
       {{ btn.label }}
     </button>
   </transition-group>
+ 
 </template>
 
 <script setup>
@@ -137,6 +138,7 @@ const startTutorial = () => {
 };
 
 onMounted(() => {
+  window.dispatchEvent(new Event('resize'));
 });
 
 defineExpose({

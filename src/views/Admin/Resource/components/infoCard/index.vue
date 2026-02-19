@@ -89,7 +89,7 @@ import { ref, computed, onMounted, watch  } from 'vue';
 import { UserIcon, ExclamationTriangleIcon } from "@heroicons/vue/24/outline";
 import Badges from '@/components/Badges/Badges.vue';
 import { STATUS_DEFINITIONS } from '@/config/resourceConstants.js';
-import axios from 'axios';
+import { apiClient } from '@/service/apiService';
 
 export default {
     name: "infoCard",
@@ -135,7 +135,7 @@ setup(props, { emit }) {
 
     async function fetchStaffUsers() {
         try {
-            const response = await axios.get('/auth/staff-users/', {
+            const response = await apiClient.get('/auth/staff-users/', {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
             });
             staffList.value = response.data;
@@ -153,7 +153,7 @@ setup(props, { emit }) {
         const dataToSend = { responsavel: userId };
         
         try {
-            const response = await axios.patch(`/recursos/${props.recurso.id}/`, dataToSend, {
+            const response = await apiClient.patch(`/recursos/${props.recurso.id}/`, dataToSend, {
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
             });
             props.recurso.responsavel = response.data.responsavel;

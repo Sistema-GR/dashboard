@@ -33,6 +33,13 @@
           
           <div class="md:text-right flex items-center justify-end gap-4">
             <PrimaryButton
+              :value="isAppealsModeActive ? 'Sair do Modo Recurso' : 'Ativar Modo Recurso'"
+              @click="toggleAppealsMode"
+              :customColor="isAppealsModeActive ? 'bg-[#fa8231] hover:bg-[#e17055] w-48 h-12 text-15 font-semibold text-white rounded-[10px]' : 'bg-[#3459a2] hover:bg-[#27477a] w-48 h-12 text-15 font-semibold text-white rounded-[10px]'"
+              title="Filtra a visualização para focar apenas em usuários com recursos abertos."
+            />
+            
+            <PrimaryButton
               value="Substituir Arquivo"
               @click="showReplaceModal = true"
               customColor="bg-[#f7b731] hover:bg-[#e0a800] w-48 h-12 text-15 font-semibold text-white rounded-[10px]"
@@ -147,7 +154,7 @@
 <script setup>
 import { ref, computed, watch, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import axios from 'axios';
+import { apiClient } from '@/service/apiService';
 import { getAccessToken } from '@/service/token';
 
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
@@ -188,7 +195,7 @@ const downloadSummaryFile = async () => {
   try {
     const token = await getAccessToken();
 
-    const infoResponse = await axios.get(
+    const infoResponse = await apiClient.get(
       `/csv/calculus/${calculusId.value}/file-info/criterios/`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -198,7 +205,7 @@ const downloadSummaryFile = async () => {
       throw new Error("ID do arquivo não foi encontrado.");
     }
 
-    const downloadResponse = await axios.get(
+    const downloadResponse = await apiClient.get(
         `/csv/api/data-files/${fileId}/download/`,
         {
             headers: { Authorization: `Bearer ${token}` },
@@ -249,7 +256,6 @@ function handleFileReplaced() {
 }
 
 function handleShowHover(appealData, event) {
-  console.log('%cEvento recebido em editVersion!', 'color: green; font-weight: bold;', appealData);
   if (!appealData || Object.keys(appealData).length === 0) return;
   
   hoveredAppealData.value = appealData;
@@ -380,7 +386,7 @@ async function handleRowUpdate(updatedData) {
   isLoading.value = true;
   try {
     const token = await getAccessToken();
-    await axios.patch(
+    await apiClient.patch(
       `/csv/calculus/${calculusId.value}/update-cleaned-file/`,
       {
         file_key: selectedFileToEdit.value,
@@ -407,7 +413,7 @@ async function reprocessVersion() {
   isLoading.value = true;
   try {
     const token = await getAccessToken();
-    await axios.post(
+    await apiClient.post(
       `/csv/calculus/${calculusId.value}/reprocess/`,
       {},
       { headers: { Authorization: `Bearer ${token}` } }
@@ -430,13 +436,13 @@ async function publishVersion() {
   isLoading.value = true;
   try {
     const token = await getAccessToken();
-    await axios.post(
+    await apiClient.post(
       `/csv/calculus/${calculusId.value}/publish/`,
       {},
       { headers: { Authorization: `Bearer ${token}` } }
     );
     alert('Versão finalizada com sucesso! Redirecionando para a tela de promoção.');
-    router.push('/allocCalc');
+    router.push({name: 'alloc'});
   } catch (err) {
     console.error("Erro ao publicar a versão:", err);
     alert(`Falha ao finalizar: ${err.response?.data?.error || 'Erro desconhecido'}`);

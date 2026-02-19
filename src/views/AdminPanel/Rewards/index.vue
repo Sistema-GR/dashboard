@@ -285,23 +285,39 @@
                                         </tbody>
                                     </table>
                                 </div>
-                            </div>
-                        </div>
-                        
-                    </DisclosurePanel>
-                </template>
-            </Disclosure>
-        </div>
 
-        <div class="flex w-full items-center justify-end mr-3 mb-3">
-            <router-link to="/user/form">
-                <div id="tutorial-resource" class="flex flex-row items-center justify-center px-5 py-2 mt-10 gap-1 bg-tropical-blue-200 hover:bg-gray-400 ease-in-out duration-200 cursor-pointer rounded-[10px]">
-                    <ExclamationCircleIcon class="w-6 h-auto" />
-                    <p class="font-medium">Recurso</p>
-                </div>
-            </router-link>
-        </div>
+                            </DisclosurePanel>
+                        </template>
+                    </Disclosure>
+
+                </DisclosurePanel>
+            </template>
+        </Disclosure>
         
+        <div class="w-full bg-solitude-200 py-10 px-6 mt-7">
+            <div class="flex flex-col items-start justify-start text-left gap-2">
+            <p class="w-full text-15 mx-20 sm:text-20 lg:text-25 font-medium gap-3 lg:gap-0">
+                Percebeu algum problema e deseja contestar o valor?
+            </p>
+            <p class="w-full mx-20 text-black text-20 sm:text-23 lg:text-27 flex items-center gap-2">
+                Clique abaixo para abrir um recurso.
+                <span class="inline-flex items-center justify-center p-1 border-2 border-black rounded-full">
+                <ArrowDownIcon class="w-4 h-4 stroke-black stroke-2" />
+                </span>
+            </p>
+            </div>
+            <div class="flex justify-center mt-5">
+            <router-link to="/resource/form">
+                <button 
+                id="tutorial-resource" 
+                class="min-w-[760px] flex items-center justify-center px-8 lg:px-20 py-3 gap-2 bg-gray-400 hover:bg-gray-500 text-black font-bold text-16 sm:text-18 rounded-[8px] transition-colors duration-200 shadow-md"
+                >
+                ABRIR RECURSO
+                </button>
+            </router-link>
+            </div>
+        </div>
+              
     </Whiteboard>
     <Tutorial ref="tutorialComponent"/>
 </template>
@@ -312,17 +328,17 @@ import { ChevronDownIcon, ExclamationCircleIcon, ArrowDownIcon } from "@heroicon
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import Tutorial from '@/components/Tutorial/Tutorial.vue';
-import axios from 'axios'; 
+import { apiClient } from '@/service/apiService'; 
 import { getAccessToken } from '@/service/token';
 import { useRoute } from 'vue-router';
+import { formatUnidade } from './unidadeMap';
 
 const savedData = ref([]);
 const isLoading = ref(true); 
 const errorMessage = ref(null);
 const route = useRoute();
 const tutorialComponent = ref(null);
-const referenceYear = ref(2024); // Adicione esta variável se não existir
-
+const referenceYear = ref(null);
 
 const fetchRewardsData = async () => {
     
@@ -337,7 +353,7 @@ const fetchRewardsData = async () => {
             throw new Error("Token de autenticação não encontrado.");
         }
 
-        const fetchYear = await axios.get('/csv/opencalc/active-reference-year/',            
+        const fetchYear = await apiClient.get('/csv/opencalc/active-reference-year/',            
             {
                 headers: { Authorization: `Bearer ${token}` } 
             }
@@ -350,7 +366,7 @@ const fetchRewardsData = async () => {
             payload.cpf = targetCpfFromStorage;
         }
 
-        const response = await axios.post('/csv/user-get/', 
+        const response = await apiClient.post('/csv/user-get/', 
             payload,
             {
                 headers: { Authorization: `Bearer ${token}` } 
@@ -371,6 +387,11 @@ const fetchRewardsData = async () => {
     }
 };
 
+const formatCurrency = (value) => {
+  if (value === null || value === undefined) return 'R$ 0,00';
+  return parseFloat(value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
 onMounted(() => {
     fetchRewardsData();
 });
@@ -381,9 +402,11 @@ watch(route, (to, from) => {
     }
 });
 
-const formatCurrency = (value) => {
-    if (value === null || value === undefined) {
-        return 'R$0,00';
+watch(
+  () => route.params.cpf, 
+  (newCpf, oldCpf) => {
+    if (newCpf !== oldCpf) {
+      fetchRewardsData();
     }
     return `R$${parseFloat(value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 };

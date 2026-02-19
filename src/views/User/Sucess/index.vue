@@ -27,7 +27,7 @@ export default {
         const router = useRouter();
 
         const goToStatus = () => {
-            router.push('status');  
+            router.push({name: 'status'});  
         };
 
         return {
