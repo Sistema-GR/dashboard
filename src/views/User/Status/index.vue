@@ -101,7 +101,7 @@
 <script>
 import { UserIcon, PencilSquareIcon, ChatBubbleBottomCenterTextIcon, PaperClipIcon, ChevronDownIcon } from "@heroicons/vue/24/outline";
 import Whiteboard from "@/components/Whiteboard/Whiteboard.vue";
-
+import axios from 'axios';
 import Badge from "@/components/Badges/Badges.vue";
 
 import { ref, onMounted } from 'vue';

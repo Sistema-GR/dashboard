@@ -202,8 +202,9 @@ export default {
 
             newFiles.value.forEach(file => {
                 formData.append('documentos', file);
+                console.log("Appending file to FormData:", file.name, file.size, file.type);
             });
-
+            console.log("FormData being sent:", newFiles);
             try {
                 await apiClient.patch(`/recursos/${resourceId}/`, formData, {
                     headers: { 

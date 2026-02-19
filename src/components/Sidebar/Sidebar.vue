@@ -306,7 +306,7 @@ const routes = {
   ],
   'user': [
     { name: 'Resultados', route: '/user/rewards', icon: ChartBarIcon, current: true },
-    { name: 'Status', route: '/resource/form/status', icon: InboxIcon, current: false },
+    { name: 'Recurso', route: '/resource/form/status', icon: InboxIcon, current: false },
     { name: 'FAQ', route: '/user/faqs', icon: QuestionMarkCircleIcon, current: false },
   ],
 }

@@ -136,6 +136,7 @@
 
 <script>
 import { ref, onMounted, computed } from 'vue';
+import axios from 'axios';
 import { apiClient } from '@/service/apiService';
 import Badges from '@/components/Badges/Badges.vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';

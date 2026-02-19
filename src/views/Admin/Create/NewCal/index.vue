@@ -212,7 +212,7 @@ export default {
         errors.max_workload = "A carga horária é obrigatória.";
         isValid = false;
       }
-      if (!formData.idem_network_step_1) {
+      /*if (!formData.idem_network_step_1) {
         errors.idem_network_step_1 = "O valor para a Etapa 1 é obrigatório.";
         isValid = false;
       }
@@ -223,7 +223,7 @@ export default {
       if (!formData.idem_network_step_3) {
         errors.idem_network_step_3 = "O valor para a Etapa 3 é obrigatório.";
         isValid = false;
-      }
+      }*/
       if (!formData.max_value) {
         errors.max_value = "O valor teto da gratificação é obrigatório.";
         isValid = false;

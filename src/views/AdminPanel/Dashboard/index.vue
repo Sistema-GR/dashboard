@@ -277,7 +277,7 @@ export default {
     });
 
     const files = [
-      { name: 'Relatório Criterios.pdf', size: '3.4 MB', url: '/path/to/apresentacao.pptx' }
+      { name: 'Relatório Criterios.csv', size: '3.4 MB', url: '/path/to/apresentacao.pptx' }
     ];
 
     const version = computed(() => {
