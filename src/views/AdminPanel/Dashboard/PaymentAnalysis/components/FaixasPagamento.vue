@@ -63,14 +63,14 @@ export default {
     const open = ref(true)
     const chartDistribuicao = ref(null)
     let chartInstance = null
-
+    
     const faixasData = [
-      { nome: 'Não recebe nada', quantidade: 3474, percentual: 85.4, valorMedio: 'R$ 0,00' },
-      { nome: 'Até R$ 1.000', quantidade: 300, percentual: 7.4, valorMedio: 'R$ 500,00' },
-      { nome: 'De R$ 1.000 a R$ 2.000', quantidade: 150, percentual: 3.7, valorMedio: 'R$ 1.500,00' },
-      { nome: 'De R$ 2.000 a R$ 4.000', quantidade: 100, percentual: 2.5, valorMedio: 'R$ 3.000,00' },
-      { nome: 'De R$ 4.000 a R$ 6.000', quantidade: 30, percentual: 0.7, valorMedio: 'R$ 5.000,00' },
-      { nome: 'Mais que R$ 6.000', quantidade: 15, percentual: 0.4, valorMedio: 'R$ 8.000,00' }
+      { nome: 'Não recebe nada', quantidade: props.data.faixa_0, percentual: 85.4, valorMedio: 'R$ 0,00' },
+      { nome: 'Até R$ 1.500', quantidade: props.data.faixa_0_1500, percentual: 7.4, valorMedio: 'R$ 500,00' },
+      { nome: 'De R$ 1.500 a R$ 3.000', quantidade: props.data.faixa_1500_3000, percentual: 3.7, valorMedio: 'R$ 1.500,00' },
+      { nome: 'De R$ 3.000 a R$ 4.500', quantidade: props.data.faixa_3000_4500, percentual: 2.5, valorMedio: 'R$ 3.000,00' },
+      { nome: 'De R$ 4.500 a R$ 6.000', quantidade: props.data.faixa_4500_6000, percentual: 0.7, valorMedio: 'R$ 5.000,00' },
+      { nome: 'Mais que R$ 6.000', quantidade: props.data.faixa_6000_mais, percentual: 0.4, valorMedio: 'R$ 8.000,00' }
     ]
 
     const totalGeral = {

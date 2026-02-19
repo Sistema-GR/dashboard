@@ -2,63 +2,26 @@
   <Whiteboard :title="pageTitle" :isSidebarMinimized="isSidebarMinimized">
     <div class="p-4 sm:p-6 lg:p-8 w-full">
 
-      <!-- Estado de Carregamento -->
       <div v-if="isLoading" class="text-center py-10">
         <p class="text-gray-600">Carregando histórico de versões...</p>
-        <!-- Você pode adicionar um componente de spinner aqui se tiver um -->
       </div>
 
-      <!-- Estado de Erro -->
       <div v-else-if="error" class="text-center py-10 bg-red-50 border border-red-200 rounded-lg">
         <p class="text-red-700 font-semibold">Ocorreu um erro</p>
         <p class="text-red-600 mt-1">{{ error }}</p>
       </div>
 
-      <!-- Conteúdo Principal -->
-      <div v-else-if="versions.length > 0" class="max-w-5xl mx-auto">
-        <div class="space-y-4">
-          <div v-for="version in versions" :key="version.id" class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between">
-            <!-- Informações da Versão -->
-            <div class="flex-grow">
-              <div class="flex items-center gap-3">
-                <h3 class="text-lg font-bold text-gray-800">Versão {{ version.version_number }}</h3>
-                <span :class="getStatusClass(version.status)" class="text-xs font-semibold px-2.5 py-0.5 rounded-full">
-                  {{ version.status_display }}
-                </span>
-              </div>
-              <p class="text-sm text-gray-500 mt-1">Criado em: {{ version.created_at }}</p>
-            </div>
-
-            <!-- Botões de Ação -->
-            <div class="mt-4 sm:mt-0 sm:ml-4 flex-shrink-0 flex items-center gap-2">
-              <!-- Ação para versão PUBLICADA -->
-              <PrimaryButton
-                v-if="version.status === 'PUBLISHED'"
-                value="Criar Nova Versão para Edição"
-                @click="createNewVersion(version.id)"
-                customColor="bg-blue-600 hover:bg-blue-700"
-              />
-
-              <!-- Ações para versão RASCUNHO -->
-              <template v-if="version.status === 'DRAFT'">
-                <PrimaryButton
-                  value="Editar Rascunho"
-                  @click="goToEditPage(version.id)"
-                  customColor="bg-green-600 hover:bg-green-700"
-                />
-              </template>
-              
-              <!-- Ações para versão ARQUIVADA -->
-              <PrimaryButton
-                v-if="version.status === 'ARCHIVED'"
-                value="Visualizar Versão"
-                @click="goToViewPage(version.id)"
-                customColor="bg-gray-500 hover:bg-gray-600"
-              />
-
-            </div>
-          </div>
-        </div>
+      <div v-else-if="versionTree.length > 0" class="max-w-5xl mx-auto">
+        <ul class="version-tree-root space-y-4">
+          <VersionItem
+            v-for="version in versionTree"
+            :key="version.id"
+            :version="version"
+            @create-new-version="createNewVersion"
+            @go-to-edit="goToEditPage"
+            @go-to-view="goToViewPage"
+          />
+        </ul>
       </div>
       
     </div>
@@ -68,10 +31,10 @@
 <script setup>
 import { ref, onMounted, computed, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import axios from 'axios';
+import { apiClient } from '@/service/apiService';
 import { getAccessToken } from '@/service/token';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
-import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
+import VersionItem from '@/components/VersionItem/VersionItem.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -81,7 +44,6 @@ const versions = ref([]);
 const isLoading = ref(true);
 const error = ref(null);
 
-const calculusId = computed(() => route.params.id);
 const pageTitle = computed(() => {
   if (versions.value.length > 0) {
     return `Gerenciador de Versões: ${versions.value[0].description}`;
@@ -89,39 +51,73 @@ const pageTitle = computed(() => {
   return 'Gerenciador de Versões';
 });
 
-// Função para buscar os dados da API
-async function fetchVersions() {
+const versionTree = computed(() => {
+  if (!versions.value.length) return [];
+
+  const versionMap = new Map(versions.value.map(v => [v.id, { ...v, children: [] }]));
+  const tree = [];
+
+  for (const version of versionMap.values()) {
+    if (version.created_from_id && versionMap.has(version.created_from_id)) {
+      const parent = versionMap.get(version.created_from_id);
+      parent.children.push(version);
+    } else {
+      tree.push(version);
+    }
+  }
+  tree.sort((a, b) => a.version_number - b.version_number);
+  
+  return tree;
+});
+
+async function fetchCalculusVersions() {
   isLoading.value = true;
   error.value = null;
+  let calculusIdToFetch = null;
+
   try {
     const token = await getAccessToken();
-    const response = await axios.get(`http://127.0.0.1:8000/csv/calculus/${calculusId.value}/versions/`, {
+
+    if (route.params.id) {
+      calculusIdToFetch = route.params.id;
+    } else {
+      const activeCalcResponse = await apiClient.get('/csv/opencalc/get-active-info/', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      
+      calculusIdToFetch = activeCalcResponse.data.calculus_id;
+    }
+
+    if (!calculusIdToFetch) {
+        throw new Error("Não foi possível determinar um cálculo para buscar. Nenhum OpenCalc ativo encontrado ou ID inválido.");
+    }
+
+    const versionsResponse = await apiClient.get(`/csv/calculus/${calculusIdToFetch}/versions/`, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    versions.value = response.data;
+    versions.value = versionsResponse.data;
+
   } catch (err) {
-    console.error("Erro ao buscar versões:", err);
-    error.value = "Não foi possível carregar o histórico de versões. Tente novamente mais tarde.";
+    console.error("[VersionManager] Erro ao buscar histórico de versões:", err);
+    error.value = err.message || "Não foi possível carregar o histórico de versões. Verifique se o cálculo existe ou se há um OpenCalc ativo.";
   } finally {
     isLoading.value = false;
   }
 }
 
-// Ação para criar uma nova versão
-async function createNewVersion(publishedId) {
-  if (!confirm("Tem certeza que deseja criar uma nova versão para edição? Isso fará uma cópia de todos os arquivos do cálculo publicado.")) {
+async function createNewVersion(sourceId) {
+  if (!confirm("Tem certeza que deseja criar uma nova versão para edição a partir deste ponto?")) {
     return;
   }
   try {
     const token = await getAccessToken();
-    const response = await axios.post('http://127.0.0.1:8000/csv/calculus/create-version/', 
-      { calculus_id: publishedId },
+    const response = await apiClient.post('/csv/calculus/create-version/', 
+      { calculus_id: sourceId },
       { headers: { Authorization: `Bearer ${token}` } }
     );
     
-    const newDraftId = response.data.new_calculus.id;
+    await fetchCalculusVersions();
     alert('Nova versão de rascunho criada com sucesso!');
-    router.push({ name: 'editversion', params: { id: newDraftId } });
 
   } catch (err) {
     console.error("Erro ao criar nova versão:", err);
@@ -129,7 +125,6 @@ async function createNewVersion(publishedId) {
   }
 }
 
-// Função para navegar para a página de edição
 function goToEditPage(draftId) {
   router.push({ name: 'editversion', params: { id: draftId } });
 }
@@ -142,7 +137,6 @@ function goToViewPage(archivedId) {
   });
 }
 
-// Helper para estilização do status
 function getStatusClass(status) {
   const classes = {
     PUBLISHED: 'bg-green-100 text-green-800',
@@ -152,5 +146,5 @@ function getStatusClass(status) {
   return classes[status] || 'bg-gray-100';
 }
 
-onMounted(fetchVersions);
+onMounted(fetchCalculusVersions);
 </script>

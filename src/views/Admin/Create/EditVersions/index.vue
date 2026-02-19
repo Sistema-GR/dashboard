@@ -33,23 +33,39 @@
           
           <div class="md:text-right flex items-center justify-end gap-4">
             <PrimaryButton
-              value="Substituir Arquivo"
-              @click="showReplaceModal = true"
-              customColor="bg-[#f7b731] hover:bg-[#e0a800] w-48 h-12 text-15 font-semibold text-white rounded-[10px]"
-              title="Substituir um arquivo de entrada completo por uma nova versão."
-            />
-            <PrimaryButton
               :value="isAppealsModeActive ? 'Sair do Modo Recurso' : 'Ativar Modo Recurso'"
               @click="toggleAppealsMode"
               :customColor="isAppealsModeActive ? 'bg-[#fa8231] hover:bg-[#e17055] w-48 h-12 text-15 font-semibold text-white rounded-[10px]' : 'bg-[#3459a2] hover:bg-[#27477a] w-48 h-12 text-15 font-semibold text-white rounded-[10px]'"
               title="Filtra a visualização para focar apenas em usuários com recursos abertos."
             />
+            
+            <PrimaryButton
+              value="Substituir Arquivo"
+              @click="showReplaceModal = true"
+              customColor="bg-[#f7b731] hover:bg-[#e0a800] w-48 h-12 text-15 font-semibold text-white rounded-[10px]"
+              title="Substituir um arquivo de entrada completo por uma nova versão."
+            />
             <PrimaryButton 
-              value="Processar e publicar versão"
+              value="Visualizar Criterios"
+              @click="showSummaryModal = true"
+              customColor="bg-[#5a67d8] hover:bg-[#434190] w-48 h-12 text-15 font-semibold text-white rounded-[10px]"
+              title="Abre uma visualização dos resultados processados (critérios) com base nos dados atuais."
+            />
+            <PrimaryButton 
+              value="Reprocessar Dados"
+              @click="reprocessVersion"
+              customColor="bg-[#3459a2] hover:bg-[#27477a] w-48 h-12 text-15 font-semibold text-white rounded-[10px]"
+              title="Executa novamente o cálculo com os dados atuais, sem publicar a versão."
+            />
+            <PrimaryButton 
+              value="Finalizar Edição"
               @click="publishVersion"
               customColor="bg-[#2d8f4b] hover:bg-[#23703a] w-48 h-12 text-15 font-semibold text-white rounded-[10px]"
+              title="Marca esta versão como finalizada e a envia para a tela de promoção."
             />
           </div>
+        </div>
+
         </div>
         <!-- Filtros -->
         <div class="mb-8 px-4 sm:px-10 flex flex-col md:flex-row gap-6">
@@ -77,7 +93,6 @@
           :is-appeals-mode="isAppealsModeActive"
         />
       </div>
-    </div>
   </Whiteboard>
 
   <FileReplaceModal
@@ -87,6 +102,45 @@
     @close="showReplaceModal = false"
     @file-replaced="handleFileReplaced"
   />
+
+  <div v-if="showSummaryModal" class="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 p-4">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-7xl h-[90vh] flex flex-col">
+      <header class="p-4 border-b flex justify-between items-center">
+        <div>
+          <h2 class="text-xl font-bold text-[#3459a2]">Resumo do Cálculo - Critérios Processados</h2>
+        </div>
+        <div class="flex items-center gap-4">
+          <button
+            @click="downloadSummaryFile"
+            :disabled="isDownloading"
+            class="flex items-center gap-2 px-4 py-2 text-15 bg-gray-100 text-gray-700 rounded-[10px] hover:bg-gray-200 transition disabled:opacity-50"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            <span>{{ isDownloading ? 'Baixando...' : 'Baixar CSV' }}</span>
+          </button>
+          <button @click="showSummaryModal = false" class="text-gray-500 hover:text-gray-800 text-2xl font-bold">&times;</button>
+        </div>
+      </header>
+      <div class="p-4 border-b">
+        <Search
+          :columns="summaryTableColumns"
+          @search="handleSummarySearch"
+        />
+      </div>
+      <main class="flex-grow overflow-auto p-1">
+        <PrimaryTable
+            :key="'summary-table-' + calculusId"
+            :route="`calculus/${calculusId}/processed-file/criterios`"
+            :isDynamicRoute="true"
+            :is-view-only="true"
+            :searchCriteria="summarySearchCriteria"
+            @columns-loaded="handleSummaryColumnsLoaded"
+        />
+      </main>
+    </div>
+  </div>
 
   <Teleport to="body">
     <EditHover
@@ -100,7 +154,7 @@
 <script setup>
 import { ref, computed, watch, inject } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import axios from 'axios';
+import { apiClient } from '@/service/apiService';
 import { getAccessToken } from '@/service/token';
 
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
@@ -108,11 +162,11 @@ import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
 import PrimaryTable from '@/components/Table/PrimaryTable.vue';
 import Search from '@/components/Search/Search.vue';
 import EditHover from '@/components/EditHover/EditHover.vue';
-
 import FileReplaceModal from '@/components/FileReplaceModal/FileReplaceModal.vue';
 
 const route = useRoute();
 const router = useRouter();
+
 const isSidebarMinimized = inject('isSidebarMinimized', ref(false));
 const tableKey = ref(0);
 const isLoading = ref(false);
@@ -130,6 +184,63 @@ const isAppealsModeActive = ref(false);
 const hoveredAppealData = ref(null);
 const hoverPosition = ref({ top: '0px', left: '0px' });
 
+const showSummaryModal = ref(false);
+const summarySearchCriteria = ref({ query: '', column: 'all' });
+const summaryTableColumns = ref([]);
+
+const isDownloading = ref(false);
+
+const downloadSummaryFile = async () => {
+  isDownloading.value = true;
+  try {
+    const token = await getAccessToken();
+
+    const infoResponse = await apiClient.get(
+      `/csv/calculus/${calculusId.value}/file-info/criterios/`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    const fileId = infoResponse.data.file_id;
+    if (!fileId) {
+      throw new Error("ID do arquivo não foi encontrado.");
+    }
+
+    const downloadResponse = await apiClient.get(
+        `/csv/api/data-files/${fileId}/download/`,
+        {
+            headers: { Authorization: `Bearer ${token}` },
+            responseType: 'blob', 
+        }
+    );
+
+    const url = window.URL.createObjectURL(new Blob([downloadResponse.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    
+    const contentDisposition = downloadResponse.headers['content-disposition'];
+    let filename = 'criterios_processados.csv'; // Nome padrão
+    if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+        if (filenameMatch && filenameMatch.length === 2) {
+            filename = filenameMatch[1];
+        }
+    }
+
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+
+  } catch (err) {
+    console.error("Erro ao baixar o arquivo:", err);
+    alert("Não foi possível baixar o arquivo de resumo. Verifique o console para mais detalhes.");
+  } finally {
+    isDownloading.value = false;
+  }
+};
+
 const hoverStyle = computed(() => ({
   position: 'fixed', 
   top: hoverPosition.value.top,
@@ -145,7 +256,6 @@ function handleFileReplaced() {
 }
 
 function handleShowHover(appealData, event) {
-  console.log('%cEvento recebido em editVersion!', 'color: green; font-weight: bold;', appealData);
   if (!appealData || Object.keys(appealData).length === 0) return;
   
   hoveredAppealData.value = appealData;
@@ -166,6 +276,14 @@ const handleSearch = (criteria) => {
 const handleColumnsLoaded = (columns) => {
   filterableColumns.value = columns;
 }
+
+const handleSummarySearch = (criteria) => {
+  summarySearchCriteria.value = criteria;
+};
+
+const handleSummaryColumnsLoaded = (columns) => {
+  summaryTableColumns.value = columns;
+};
 
 const pageTitle = computed(() => {
   return isViewOnlyMode.value ? "Visualizando Versão Arquivada" : "Editando Rascunho";
@@ -268,8 +386,8 @@ async function handleRowUpdate(updatedData) {
   isLoading.value = true;
   try {
     const token = await getAccessToken();
-    await axios.patch(
-      `http://127.0.0.1:8000/csv/calculus/${calculusId.value}/update-cleaned-file/`,
+    await apiClient.patch(
+      `/csv/calculus/${calculusId.value}/update-cleaned-file/`,
       {
         file_key: selectedFileToEdit.value,
         row_identifier: { [identifierKey]: identifierValue },
@@ -286,25 +404,48 @@ async function handleRowUpdate(updatedData) {
   }
 }
 
-async function publishVersion() {
-  if (!confirm('Tem certeza que deseja publicar esta versão? Todos os dados serão reprocessados com base nas suas edições e esta versão se tornará a oficial.')) {
+async function reprocessVersion() {
+  if (!confirm('Deseja reprocessar os dados desta versão? As edições salvas serão usadas para gerar novos resultados, mas a versão continuará como rascunho.')) {
     return;
   }
   
-  loadingMessage.value = 'Reprocessando e publicando...';
+  loadingMessage.value = 'Reprocessando dados...';
   isLoading.value = true;
   try {
     const token = await getAccessToken();
-    await axios.post(
-      `http://127.0.0.1:8000/csv/calculus/${calculusId.value}/publish/`,
+    await apiClient.post(
+      `/csv/calculus/${calculusId.value}/reprocess/`,
       {},
       { headers: { Authorization: `Bearer ${token}` } }
     );
-    alert('Versão publicada com sucesso!');
-    router.push('/dashboard');
+    alert('Dados reprocessados com sucesso! Você pode visualizar os novos resultados na aba "Resumo".');
+  } catch (err) {
+    console.error("Erro ao reprocessar:", err);
+    alert(`Falha no reprocessamento: ${err.response?.data?.error || 'Erro desconhecido'}`);
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+async function publishVersion() {
+  if (!confirm('Tem certeza que deseja finalizar a edição desta versão? Ela será marcada como "Publicada" e enviada para a tela de promoção, não podendo mais ser editada.')) {
+    return;
+  }
+  
+  loadingMessage.value = 'Finalizando e publicando...';
+  isLoading.value = true;
+  try {
+    const token = await getAccessToken();
+    await apiClient.post(
+      `/csv/calculus/${calculusId.value}/publish/`,
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    alert('Versão finalizada com sucesso! Redirecionando para a tela de promoção.');
+    router.push({name: 'alloc'});
   } catch (err) {
     console.error("Erro ao publicar a versão:", err);
-    alert(`Falha ao publicar: ${err.response?.data?.error || 'Erro desconhecido'}`);
+    alert(`Falha ao finalizar: ${err.response?.data?.error || 'Erro desconhecido'}`);
   } finally {
     isLoading.value = false;
   }

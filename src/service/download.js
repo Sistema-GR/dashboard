@@ -1,10 +1,6 @@
-import axios from 'axios';
+import { apiClient } from './apiService';
 import { getAccessToken } from './token'; // Importa a função que obtém o token
 
-// Configuração do axios com baseURL
-const api = axios.create({
-  baseURL: 'http://127.0.0.1:8000/csv/process/', // URL base para todos os endpoints
-});
 
 // Função genérica para fazer o download do CSV
 export const downloadCSV = async (endpoint, filename) => {
@@ -18,7 +14,7 @@ export const downloadCSV = async (endpoint, filename) => {
     }
 
     // Faz a requisição para a API com o token de acesso
-    const response = await api.get(endpoint, {
+    const response = await apiClient.get(endpoint, {
       headers: {
         Authorization: `Bearer ${token}`,  // Passando o token no cabeçalho
       },
@@ -64,79 +60,79 @@ export const downloadCSV = async (endpoint, filename) => {
 
 // Funções específicas para cada endpoint
 export const downloadCriteriosCSV = () => {
-  downloadCSV('criterios/', 'criterios.csv');
+  downloadCSV('csv/process/criterios/', 'criterios.csv');
 };
 
 export const downloadTipoLocalCSV = () => {
-  downloadCSV('tipo-local/', 'tipo-local.csv');
+  downloadCSV('csv/process/tipo-local/', 'tipo-local.csv');
 };
 
 export const downloadDadosGeraisCSV = () => {
-  downloadCSV('dados-gerais/', 'dados-gerais.csv');
+  downloadCSV('csv/process/dados-gerais/', 'dados-gerais.csv');
 };
 
 export const downloadFuncoesGrupoCSV = () => {
-  downloadCSV('funcoes-grupo/', 'funcoes-grupo.csv');
+  downloadCSV('csv/process/funcoes-grupo/', 'funcoes-grupo.csv');
 };
 
 export const downloadAprenderMaisCSV = () => {
-  downloadCSV('aprender-mais/', 'aprender-mais.csv');
+  downloadCSV('csv/process/aprender-mais/', 'aprender-mais.csv');
 };
 
 export const downloadAtividadesCSV = () => {
-  downloadCSV('atividades/', 'atividades.csv');
+  downloadCSV('csv/process/atividades/', 'atividades.csv');
 };
 
 
 export const downloadEtapasMetasCSV = () => {
-  downloadCSV('etapas-metas/', 'etapas-metas.csv');
+  downloadCSV('csv/process/etapas-metas/', 'etapas-metas.csv');
 };
 
 export const downloadPercentualGratificacaoCSV = () => {
-  downloadCSV('percentual-gratificacao/', 'percentual-gratificacao.csv');
+  downloadCSV('csv/process/percentual-gratificacao/', 'percentual-gratificacao.csv');
 };
 
 export const downloadDefinicaoEtapasCSV = () => {
-  downloadCSV('definicao-etapas/', 'definicao-etapas.csv');
+  downloadCSV('csv/process/definicao-etapas/', 'definicao-etapas.csv');
 };
 
 export const downloadDiasNaoContabilizadosCSV = () => {
-  downloadCSV('dias-nao-contabilizados/', 'dias-nao-contabilizados.csv');
+  downloadCSV('csv/process/dias-nao-contabilizados/', 'dias-nao-contabilizados.csv');
 };
 
 export const downloadDemissoesCSV = () => {
-  downloadCSV('demissoes/', 'demissoes.csv');
+  downloadCSV('csv/process/demissoes/', 'demissoes.csv');
 };
 
 export const downloadFormacoesCSV = () => {
-  downloadCSV('formacoes/', 'formacoes.csv');
+  downloadCSV('csv/process/formacoes/', 'formacoes.csv');
 };
 
 export const downloadFuncionariosCSV = () => {
-  downloadCSV('funcionarios/', 'funcionarios.csv');
+  downloadCSV('csv/process/funcionarios/', 'funcionarios.csv');
 };
 
 
 export const downloadMotivosInfrequenciaCSV = () => {
-  downloadCSV('motivos-infrequencia/', 'motivos-infrequencia.csv');
+  downloadCSV('csv/process/motivos-infrequencia/', 'motivos-infrequencia.csv');
 };
 
 export const downloadFrequenciaCSV = () => {
-  downloadCSV('frequencia/', 'frequencia.csv');
+  downloadCSV('csv/process/frequencia/', 'frequencia.csv');
 };
 
 export const downloadGruposAtualizadoCSV = () => {
-  downloadCSV('grupos-atualizado/', 'grupos-atualizado.csv');
+  downloadCSV('csv/process/grupos-atualizado/', 'grupos-atualizado.csv');
 };
 
 export const downloadTempoAtuacaoCSV = () => {
-  downloadCSV('tempo-atuacao/', 'tempo-atuacao.csv');
+  downloadCSV('csv/process/tempo-atuacao/', 'tempo-atuacao.csv');
 };
 
 export const downloadFilteredFuncionariosCSV = () => {
-  downloadCSV('filtered-funcionarios/', 'filtered-funcionarios.csv');
+  downloadCSV('csv/process/filtered-funcionarios/', 'filtered-funcionarios.csv');
 };
 
 export const downloadErrosGruposCSV = () => {
-  downloadCSV('erros-grupos/', 'erros-grupos.csv');
+  downloadCSV('csv/process/erros-grupos/', 'erros-grupos.csv');
 };

@@ -104,7 +104,7 @@
         Aqui você pode gerenciar os arquivos importados. Clique no botão abaixo para visualizar os detalhes.
       </p>
       <button class="self-start bg-[#3459A2] hover:bg-[#203661] text-white font-semibold py-2 px-4 rounded-[10px] transition duration-300"
-        @click="$router.push('files-manager')">
+        @click="$router.push({name: 'files-manager'})">
         Visualizar arquivos
       </button>
       </div>
@@ -130,7 +130,7 @@
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import { downloadCriteriosCSV } from '@/service/download';
 import { ArrowDownTrayIcon, BanknotesIcon, DocumentDuplicateIcon, UsersIcon } from "@heroicons/vue/24/outline";
-import axios from 'axios';
+import { apiClient } from '@/service/apiService';
 import { computed, onMounted, ref } from 'vue';
 import { getAccessToken } from '../../../service/token';
 import { useRouter } from 'vue-router';
@@ -150,14 +150,14 @@ export default {
     const fetchDashboardData = async () => {
       try {
         const token = await getAccessToken();
-        console.log(token)
+        
         if (!token) {
           console.error("Erro: Token de acesso não encontrado.");
           return;
         }
 
         // Requisição para critérios para calcular quem recebe/não recebe
-        const responseCriterios = await axios.get('http://127.0.0.1:8000/csv/process/criterios/', {
+        const responseCriterios = await apiClient.get('/csv/process/criterios/', {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -189,7 +189,7 @@ export default {
         chartDataFaixaPagamento.value = faixaPagamento;
 
         // Requisição para os motivos de não recebimento
-        const responseAnalysis = await axios.get('http://127.0.0.1:8000/csv/get-import-files/', {
+        const responseAnalysis = await apiClient.get('/csv/get-import-files/', {
 
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -277,13 +277,14 @@ export default {
     });
 
     const files = [
-      { name: 'Relatório Criterios.pdf', size: '3.4 MB', url: '/path/to/apresentacao.pptx' }
+      { name: 'Relatório Criterios.csv', size: '3.4 MB', url: '/path/to/apresentacao.pptx' }
     ];
 
     const version = computed(() => {
       if (!dashboardAnalysisData.value?.version_info) return [];
       const { version_info } = dashboardAnalysisData.value;
-      return [
+      
+      const fields = [
         { label: 'Versão', value: version_info.description || 'Desconhecido' },
         { label: 'Data de Criação', value: new Date(version_info.created_at).toLocaleDateString('pt-BR') },
         { 
@@ -295,11 +296,11 @@ export default {
             value: version_info.max_workload ? `${version_info.max_workload} horas` : "Não disponível"
         },
         { 
-            label: 'Data de Início', 
+            label: 'Data de Início (Geral)', 
             value: version_info.start_date ? new Date(version_info.start_date + 'T00:00:00').toLocaleDateString('pt-BR') : 'Não disponível'
         },
         { 
-            label: 'Data de Fim', 
+            label: 'Data de Fim (Geral)', 
             value: version_info.end_date ? new Date(version_info.end_date + 'T00:00:00').toLocaleDateString('pt-BR') : 'Não disponível'
         },
         { 
@@ -308,13 +309,33 @@ export default {
                 version_info.idem_network_step_1 !== undefined ? `Etapa 01: ${version_info.idem_network_step_1}%` : null,
                 version_info.idem_network_step_2 !== undefined ? `Etapa 02: ${version_info.idem_network_step_2}%` : null,
                 version_info.idem_network_step_3 !== undefined ? `Etapa 03: ${version_info.idem_network_step_3}%` : null,
-            ].filter(Boolean).join('\n') || "Não disponível"
+            ].filter(Boolean).join(' | ') || "Não disponível"
         },
       ];
+
+      if (version_info.frequency_periods && version_info.frequency_periods.length > 0) {
+        fields[4].label = 'Data de Início (Geral)';
+        fields[5].label = 'Data de Fim (Geral)';
+        
+        const periodsValue = version_info.frequency_periods
+          .map(period => {
+            const startDate = new Date(period.start_date + 'T00:00:00').toLocaleDateString('pt-BR');
+            const endDate = new Date(period.end_date + 'T00:00:00').toLocaleDateString('pt-BR');
+            return `Período ${period.period_number}: ${startDate} a ${endDate}`;
+          })
+          .join(' | ');
+
+        fields.push({
+          label: 'Períodos de Frequência',
+          value: periodsValue
+        });
+      }
+
+      return fields;
     });
 
     const navigateToPaymentAnalysis = () => {
-      router.push('/admin/payment-analysis');
+      router.push({name: 'payment-analysis'});
     };
 
     return {

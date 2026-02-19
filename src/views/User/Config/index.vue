@@ -89,6 +89,7 @@
 
 <script>
 import { ref, onMounted, reactive } from 'vue'
+import { apiClient } from '@/service/apiService'
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue'
 import { getAccessToken } from '@/service/token'
 
@@ -114,47 +115,44 @@ export default {
             valor = valor.replace(/(\d{3})(\d)/, '$1.$2')
             valor = valor.replace(/(\d{3})(\d)/, '$1.$2')
             valor = valor.replace(/(\d{3})(\d{1,2})$/, '$1-$2')
-            formData.value.cpf = valor
+            formData.cpf = valor
         }
 
         const validarSenhas = () => {
-            senhasNaoConferem.value = formData.value.novaSenha !== formData.value.confirmarSenha
+            senhasNaoConferem.value = formData.novaSenha !== formData.confirmarSenha
         }
 
         // Carregar dados do usuário
         const carregarDadosUsuario = async () => {
-            
             const token = await getAccessToken();
             if (!token) {
-                console.error("Token de autenticação não encontrado");
+                console.error('Token de autenticação não encontrado');
                 return;
             }
 
             try {
-                const response = await fetch("http://127.0.0.1:8000/auth/user-info/", {
+                const response = await apiClient.get('/auth/user-info/', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
 
-                if (!response.ok) {
-                    throw new Error("Erro ao buscar informações do usuário");
+                if (response.status < 200 || response.status >= 300) {
+                    throw new Error('Erro ao buscar informações do usuário');
                 }
 
-                const data = await response.json();
-                
-                // Garantir que os dados estão sendo atribuídos corretamente
-                const firstName = data.first_name.charAt(0).toUpperCase() + data.first_name.slice(1).toLowerCase();
-                const lastName = data.last_name.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
-                
-                formData.nomeCompleto = `${firstName} ${lastName}`;
-                //userRole.value = data.role || 'Cargo não disponível';
+                const data = response.data || {};
+
+                const firstName = data.first_name ? data.first_name.charAt(0).toUpperCase() + data.first_name.slice(1).toLowerCase() : '';
+                const lastName = data.last_name ? data.last_name.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ') : '';
+
+                formData.nomeCompleto = `${firstName} ${lastName}`.trim();
                 formData.cpf = data.cpf || 'Não disponível';
                 formData.email = data.email || 'Não disponível';
             }
             catch (error) {
-                console.error("Erro ao obter dados:", error);
-                alert(`Erro ao salvar configurações: ${error.message}`)
+                console.error('Erro ao obter dados:', error);
+                alert(`Erro ao carregar configurações: ${error.message}`)
             } finally {
                 salvando.value = false
             }
@@ -162,38 +160,38 @@ export default {
 
         const salvarConfiguracoes = async () => {
             salvando.value = true
-            const token = localStorage.getItem('accessToken')
+            const token = await getAccessToken()
 
             try {
-                const response = await fetch('http://127.0.0.1:8000/auth/user-update/', {
-                    method: 'PUT',
+                const payload = {
+                    cpf: formData.cpf,
+                    email: formData.email,
+                    password: formData.novaSenha,
+                    current_password: formData.senhaAtual
+                }
+
+                const response = await apiClient.put('/auth/user-update/', payload, {
                     headers: {
                         'Content-Type': 'application/json',
                         Authorization: `Bearer ${token}`
-                    },
-                    body: JSON.stringify({
-                        cpf: formData.value.cpf,
-                        email: formData.value.email,
-                        password: formData.value.novaSenha,
-                        current_password: formData.value.senhaAtual
-                    })
+                    }
                 })
 
-                if (!response.ok) {
-                    const errData = await response.json()
+                if (response.status < 200 || response.status >= 300) {
+                    const errData = response.data
                     console.error('Erro:', errData)
-                    throw new Error(errData.message || 'Erro ao salvar')
+                    throw new Error(errData?.message || 'Erro ao salvar')
                 }
 
                 alert('Configurações salvas com sucesso!')
             } catch (error) {
-                console.error("Erro ao obter dados:", error);
-                alert(`Erro ao salvar configurações: ${error.message}`)
+                console.error('Erro ao salvar dados:', error)
+                alert(`Erro ao salvar configurações: ${error.message || error}`)
             } finally {
                 salvando.value = false
             }
         }
-        const capitalize = (str) => str.split(' ').map(capitalize).join(' ')
+        const capitalize = (str) => str.split(' ').map(s => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase()).join(' ')
 
         onMounted(() => {
             carregarDadosUsuario()

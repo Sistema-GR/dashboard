@@ -6,39 +6,27 @@
       </h1>
     </div>
 
-    <div class="flex flex-col gap-6 w-full pb-10 px-4 sm:px-10">
+    <div class="flex flex-col gap-8 w-full pb-10 px-4 sm:px-10">
       <!-- Loop sobre as "Famílias" de Cálculos -->
-      <div v-for="family in calculusFamilies" :key="family.parent_id" class="border rounded-lg bg-white shadow-sm">
-        <Disclosure v-slot="{ open }">
-          <!-- Cabeçalho da Família -->
-          <DisclosureButton class="w-full flex justify-between items-center bg-gray-50 text-gray-800 px-4 py-3 text-lg font-semibold rounded-t-lg">
-            <span>{{ family.description }}</span>
-            <ChevronDownIcon class="w-6 h-6 transition-transform" :class="{ 'rotate-180': open }" />
-          </DisclosureButton>
-          
-          <!-- Lista de Versões Publicadas -->
-          <DisclosurePanel class="text-gray-900">
-            <div v-for="versao in family.versions" :key="versao.id" class="border-t border-gray-200 px-4 py-3">
-              <div class="flex justify-between items-center">
-                <div class="flex flex-col gap-1">
-                  <span class="font-medium">{{ versao.descricao }}</span>
-                </div>
-                <div class="flex items-center space-x-4">
-                   <span class="text-sm text-gray-500">{{ versao.data }}</span>
-                  <Toggle
-                    class="scale-90"
-                    :modelValue="versao.ativa"
-                    @update:modelValue="() => handleToggle(versao)"
-                  />
-                </div>
-              </div>
-            </div>
-          </DisclosurePanel>
-        </Disclosure>
+      <div v-for="family in processedFamilies" :key="family.parent_id" class="border rounded-lg bg-white shadow-sm overflow-hidden">
+        <!-- Cabeçalho da Família -->
+        <div class="bg-[#c2ddfd] px-6 py-4 rounded-t-lg border-b">
+          <h2 class="text-lg font-semibold text-gray-800">{{ family.description }}</h2>
+        </div>
+        
+        <!-- Renderização da Árvore de Versões -->
+        <div>
+          <ActivationItem
+            v-for="rootVersion in family.versionTree"
+            :key="rootVersion.id"
+            :version="rootVersion"
+            @toggle-version="handleToggle"
+          />
+        </div>
       </div>
     </div>
 
-    <!-- Modal de Confirmação (inalterado) -->
+    <!-- Modal de Confirmação -->
     <div v-if="showConfirmation" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
       <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
         <h3 class="text-lg font-semibold mb-4">Deseja realmente alterar a versão ativa?</h3>
@@ -57,27 +45,44 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
-import { ChevronDownIcon } from '@heroicons/vue/20/solid';
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
+import { ref, onMounted, computed } from 'vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import Toggle from '@/components/Toggle/Toggle.vue';
-import axios from 'axios';
+import ActivationItem from '@/components/ActivationItem/ActivationItem.vue';
+import { apiClient } from '@/service/apiService';
 import { getAccessToken } from '@/service/token';
 
 export default {
   name: 'DataVersions',
-  components: { Whiteboard, Toggle, ChevronDownIcon, Disclosure, DisclosureButton, DisclosurePanel },
+  components: { Whiteboard, Toggle, ActivationItem },
   setup() {
     const calculusFamilies = ref([]);
     const showConfirmation = ref(false);
     const pendingVersion = ref(null);
 
+     const processedFamilies = computed(() => {
+      return calculusFamilies.value.map(family => {
+        const versions = family.versions;
+        
+        const versionMap = new Map(versions.map(v => [v.calculus_id, { ...v, children: [] }]));
+        const tree = [];
+
+        for (const version of versionMap.values()) {
+          if (version.created_from_id && versionMap.has(version.created_from_id)) {
+            versionMap.get(version.created_from_id).children.push(version);
+          } else {
+            tree.push(version);
+          }
+        }
+        tree.sort((a,b) => a.version_number - b.version_number);
+        return { ...family, versionTree: tree };
+      });
+    });
+
     const fetchData = async () => {
       try {
         const token = await getAccessToken();
-        const response = await axios.get('http://127.0.0.1:8000/csv/opencalc/list-versions/', {
-
+        const response = await apiClient.get('/csv/opencalc/list-versions/', {
           headers: { Authorization: `Bearer ${token}` },
         });
         calculusFamilies.value = response.data;
@@ -96,23 +101,22 @@ export default {
     const confirmToggle = async () => {
       if (!pendingVersion.value) return;
 
-      const idParaAtivar = pendingVersion.value.id;
-      
-        try {
-          const token = await getAccessToken();
-          
-          const response = await axios.post('http://127.0.0.1:8000/csv/opencalc/activate-opencalc/', 
-            { calc_id: idParaAtivar },
-            { headers: { Authorization: `Bearer ${token}` } }
-          );
+      const idParaAtivar = pendingVersion.value.calculus_id;
+       try {
+        const token = await getAccessToken();
+        
+        const response = await apiClient.post('/csv/opencalc/activate-opencalc/',
+          { calc_id: idParaAtivar },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
 
-          if (response.status === 200) {
-          // Atualiza o estado local para refletir a mudança imediatamente
+        if (response.status === 200) {
           calculusFamilies.value.forEach(family => {
             family.versions.forEach(version => {
-              version.ativa = (version.id === idParaAtivar);
+              version.ativa = (version.calculus_id === idParaAtivar);
             });
           });
+
         }
       } catch (error) {
         console.error("Erro detalhado ao ativar a versão:", error.response || error);
@@ -128,9 +132,17 @@ export default {
       pendingVersion.value = null;
     };
 
+
     onMounted(fetchData);
 
-    return { calculusFamilies, showConfirmation, handleToggle, confirmToggle, cancelToggle };
+    return { 
+      calculusFamilies, 
+      processedFamilies,
+      showConfirmation, 
+      handleToggle, 
+      confirmToggle, 
+      cancelToggle,
+    };
   }
 }
 </script>
