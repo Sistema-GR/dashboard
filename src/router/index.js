@@ -36,9 +36,9 @@ router.beforeEach((to, from, next) => {
     //return next({ path: getDashboardRoute() })
   }
 
-  if (from.name === 'rewards' && to.name !== 'rewards') {
-      localStorage.removeItem('tempTargetCpf');
-  }
+  //if (from.name === 'rewards' && (to.name !== 'rewards' || to.name !== 'form-home' || to.name !== 'criteria')) {
+  //    localStorage.removeItem('tempTargetCpf');
+  //}
   next()
 });
 

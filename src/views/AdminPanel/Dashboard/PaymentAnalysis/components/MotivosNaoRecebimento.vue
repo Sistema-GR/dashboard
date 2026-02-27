@@ -73,15 +73,37 @@ export default {
     const open = ref(true)
     const chartMotivos = ref(null)
     let chartInstance = null
+    const dataMap = computed(() => {
+      if (!props.data) return {}
+      if (Array.isArray(props.data)) {
+        return props.data.reduce((acc, item) => {
+          acc[item.key] = item.count
+          return acc
+        }, {})
+      }
+      // if backend returns an object already, use it directly
+      return props.data
+    })
 
-    const motivosData = [
-      { nome: 'Frequência', quantidade: 1400, percentual: 56.0, color: '#6cc69d' },
-      { nome: 'Tempo de atuação', quantidade: 400, percentual: 16.0, color: '#6fa3ef' },
-      { nome: 'Formação', quantidade: 300, percentual: 12.0, color: '#6668d4' },
-      { nome: 'Mais de 1 critério individual', quantidade: 200, percentual: 8.0, color: '#f16d91' },
-      { nome: 'Atividades', quantidade: 174, percentual: 7.0, color: '#f48e2f' },
-      { nome: 'Tempo de atuação permanente', quantidade: 26, percentual: 1.0, color: '#f4b72f' }
-    ]
+    const keys = {
+      frequencia: 'Frequência',
+      tempo_de_atuacao: 'Tempo de atuação',
+      formacoes: 'Formação',
+      mais_de_um_criterio: 'Mais de 1 critério individual',
+      atividade: 'Atividades'
+    }
+
+    const total = computed(() => {
+      return Object.keys(keys).reduce((sum, k) => sum + (dataMap.value[k] || 0), 0)
+    })
+
+    const motivosData = computed(() => [
+      { nome: keys.frequencia, quantidade: dataMap.value.frequencia || 0, percentual: total.value > 0 ? ((dataMap.value.frequencia || 0) / total.value * 100).toFixed(1) : '0.0', color: '#6cc69d' },
+      { nome: keys.tempo_de_atuacao, quantidade: dataMap.value.tempo_de_atuacao || 0, percentual: total.value > 0 ? ((dataMap.value.tempo_de_atuacao || 0) / total.value * 100).toFixed(1) : '0.0', color: '#6fa3ef' },
+      { nome: keys.formacoes, quantidade: dataMap.value.formacoes || 0, percentual: total.value > 0 ? ((dataMap.value.formacoes || 0) / total.value * 100).toFixed(1) : '0.0', color: '#6668d4' },
+      { nome: keys.mais_de_um_criterio, quantidade: dataMap.value.mais_de_um_criterio || 0, percentual: total.value > 0 ? ((dataMap.value.mais_de_um_criterio || 0) / total.value * 100).toFixed(1) : '0.0', color: '#f16d91' },
+      { nome: keys.atividade, quantidade: dataMap.value.atividade || 0, percentual: total.value > 0 ? ((dataMap.value.atividade || 0) / total.value * 100).toFixed(1) : '0.0', color: '#f48e2f' }
+    ])
 
     const totalGeral = {
       quantidade: 2500,
@@ -102,14 +124,14 @@ export default {
       chartInstance = new Chart(chartMotivos.value, {
         type: "pie",
         data: {
-          labels: motivosData.map(d => d.nome),
+          labels: motivosData.value.map(d => d.nome),
           datasets: [{
-            data: motivosData.map(d => d.quantidade),
-            backgroundColor: motivosData.map(d => d.color),
+            data: motivosData.value.map(d => d.quantidade),
+            backgroundColor: motivosData.value.map(d => d.color),
             borderWidth: 2,
             borderColor: '#ffffff',
             hoverBorderWidth: 3,
-            hoverBackgroundColor: motivosData.map(motivo => {
+            hoverBackgroundColor: motivosData.value.map(motivo => {
               // Escurece a cor no hover
               const hex = motivo.color.replace('#', '')
               const r = Math.max(0, parseInt(hex.substr(0, 2), 16) - 20)
@@ -128,7 +150,8 @@ export default {
             tooltip: {
               callbacks: {
                 label: function(context) {
-                  return `${context.label}: ${context.parsed.toLocaleString()} (${motivosData[context.dataIndex].percentual}%)`
+                  const item = motivosData.value[context.dataIndex]
+                  return `${context.label}: ${context.parsed.toLocaleString()} (${item ? item.percentual : '0.0'}%)`
                 }
               }
             }

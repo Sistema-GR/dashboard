@@ -99,8 +99,6 @@ export default {
         Object.entries(filters.value).forEach(([key, value]) => {
           if (value) queryParams.append(key, value)
         })
-         
-        // `/pagamentos/dashboard/visao-geral/?${queryParams.toString()}`
 
         const response = await apiClient.get('/csv/get-import-files/', {
           headers: { Authorization: `Bearer ${token}` }

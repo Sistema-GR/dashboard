@@ -238,20 +238,21 @@ export default {
     ]);
 
     const chartSections = computed(() => {
-        const motivoCombinadoCounts = dashboardAnalysisData.value?.analysis_result?.motivo_combinado_counts || {};
+        const motivoArray = dashboardAnalysisData.value?.analysis_result?.motivo_combinado_counts || []
+        const motivoCounts = Object.fromEntries(motivoArray.map(m => [m.key, m.count]))
         
         return [
             {
                 title: "Motivo de Não Recebimento",
                 data: [
-                  { label: "Estagiário", value: motivoCombinadoCounts["Estagiário"] || 0 },
-                  { label: "Atividade", value: motivoCombinadoCounts["Atividade"] || 0 },
-                  { label: "Formações", value: motivoCombinadoCounts["Formações"] || 0 },
-                  { label: "Frequência", value: motivoCombinadoCounts["Frequência"] || 0 },
-                  { label: "Tempo de Atuação", value: motivoCombinadoCounts["Tempo de atuação"] || 0 },
-                  { label: "Mais de um critério", value: motivoCombinadoCounts["Mais de um critério"] || 0 },
-                  { label: "Mais de dois critérios", value: motivoCombinadoCounts["Mais de dois critérios"] || 0 },
-                  { label: "Secretário e Diretores Executivos", value: motivoCombinadoCounts["Diretor Executivo"] + motivoCombinadoCounts["Secretário"] || 0 },
+                  { label: "Estagiário", value: motivoCounts.estagiario || 0 },
+                  { label: "Atividade", value: motivoCounts.atividade || 0 },
+                  { label: "Formações", value: motivoCounts.formacoes || 0 },
+                  { label: "Frequência", value: motivoCounts.frequencia || 0 },
+                  { label: "Tempo de Atuação", value: motivoCounts.tempo_de_atuacao || 0 },
+                  { label: "Mais de um critério", value: motivoCounts.mais_de_um_criterio || 0 },
+                  { label: "Mais de dois critérios", value: motivoCounts.mais_de_dois_criterios || 0 },
+                  { label: "Secretário e Diretores Executivos", value: motivoCounts.diretor_executivo + motivoCounts.secretario || 0 },
                 ].sort((a, b) => b.value - a.value)
             },
             {

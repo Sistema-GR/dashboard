@@ -7,7 +7,7 @@
                         <InformationCircleIcon class="w-20 h-20 text-black items-center" />
                     <div>
                         <h3 class="font-medium text-gray-900 text-20">Não recebeu?</h3>
-                        <RouterLink to="criteria">
+                        <RouterLink to="form/criteria">
                             <span class="text-blue-600 underline hover:text-blue-800 cursor-pointer text-15">Clique aqui e veja o detalhamento</span>
                         </RouterLink>
                     </div>

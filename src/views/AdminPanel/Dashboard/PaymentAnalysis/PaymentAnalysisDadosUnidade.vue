@@ -103,9 +103,9 @@ export default {
     })
     
     const dashboardData = ref({
-      servidores: 7494,
-      naoRecebem: 3474,
-      percentualNaoRecebe: 46.29,
+      servidores: {},
+      naoRecebem: {},
+      percentualNaoRecebe: {},
       motivosParaNaoRecebimentoXUE: {},
       motivosMenosRecebem: {},
       motivosMaisRecebem: {},
@@ -134,11 +134,15 @@ export default {
           if (value) queryParams.append(key, value)
         })
         
-        const response = await apiClient.get(`/pagamentos/dashboard/dados-unidade/?${queryParams.toString()}`, {
+        const response = await apiClient.get(`/csv/get-import-files`, {
           headers: { Authorization: `Bearer ${token}` }
         })
 
-        dashboardData.value = response.data
+        dashboardData.value = {
+          servidores: response.data.registros_maiores_que_zero + response.data.registros_iguais_a_zero,
+          naoRecebem: response.data.registros_iguais_a_zero,
+          percentualNaoRecebe: (naoRecebem / servidores) * 100
+        }
         
         if (availableUnits.value.length === 0) {
           availableUnits.value = response.data.available_units || []
@@ -152,11 +156,10 @@ export default {
       }
     }
 
-    // Para desenvolvimento, use dados mockados
     loading.value = false
 
     // Para produção, descomente a linha abaixo:
-    // watch(filters, fetchDashboardData, { deep: true, immediate: true })
+    watch(filters, fetchDashboardData, { deep: true, immediate: true })
     
     return {
       filters,

@@ -285,15 +285,12 @@
                                         </tbody>
                                     </table>
                                 </div>
-
-                            </DisclosurePanel>
-                        </template>
-                    </Disclosure>
-
-                </DisclosurePanel>
-            </template>
-        </Disclosure>
-        
+                            </div>
+                        </div>                   
+                    </DisclosurePanel>
+                </template>
+            </Disclosure>
+        </div>
         <div class="w-full bg-solitude-200 py-10 px-6 mt-7">
             <div class="flex flex-col items-start justify-start text-left gap-2">
             <p class="w-full text-15 mx-20 sm:text-20 lg:text-25 font-medium gap-3 lg:gap-0">
@@ -409,12 +406,8 @@ watch(
       fetchRewardsData();
     }
     return `R$${parseFloat(value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-};
+});
 
-const formatUnidade = (unidade) => {
-    if (!unidade) return '';
-    const unidadeFormatada = unidade.charAt(0).toUpperCase() + unidade.slice(1).toLowerCase();
-    return unidadeFormatada;
-};
+
 
 </script>
