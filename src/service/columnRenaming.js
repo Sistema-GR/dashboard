@@ -108,7 +108,7 @@ const columnRenamingMap = {
   },
   Infrequency: {
     motivo: 'Motivo',
-    contabiliza: 'Conabiliza?',
+    contabiliza: 'Contabiliza?',
 },
   Resignation: {
       matricula: 'Matrícula',

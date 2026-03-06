@@ -156,35 +156,30 @@ export default {
           return;
         }
 
+        const responseIdCalculo = await apiClient.get(`/csv/opencalc/get-active-info/`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        let idCalculo = responseIdCalculo.data?.calculus_id;
+
         // Requisição para critérios para calcular quem recebe/não recebe
-        const responseCriterios = await apiClient.get('/csv/process/criterios/', {
+        const responseCriterios = await apiClient.get(`/csv/calculus/${idCalculo}/summary/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
         const dataCriterios = responseCriterios.data;
-
-        totalRecebem.value = dataCriterios.filter(item => item.recebe_gratificacao === true).length;
-        totalNaoRecebem.value = dataCriterios.filter(item => item.recebe_gratificacao === false).length;
-        totalAPagar.value = dataCriterios.reduce((sum, item) => sum + parseFloat(item.valor_total || 0), 0);
+                    
+        totalRecebem.value = dataCriterios.analysis_result.registros_maiores_que_zero;
+        totalNaoRecebem.value = dataCriterios.analysis_result.registros_iguais_a_zero;
+        totalAPagar.value = dataCriterios.analysis_result.soma_valor_total;
         
         const faixaPagamento = [
-          { label: "Até R$ 1.500", value: 0 },
-          { label: "De R$ 1.500 a R$ 3.000", value: 0 },
-          { label: "De R$ 3.000 a R$ 4.500", value: 0 },
-          { label: "De R$ 4.500 a R$ 6.000", value: 0 },
-          { label: "Mais que R$ 6.000", value: 0 },
-          { label: "Não recebem nada", value: 0 },
+          { label: "Até R$ 1.500", value: dataCriterios.analysis_result.faixa_counts.faixa_0_1500 },
+          { label: "De R$ 1.500 a R$ 3.000", value: dataCriterios.analysis_result.faixa_counts.faixa_1500_3000 },
+          { label: "De R$ 3.000 a R$ 4.500", value: dataCriterios.analysis_result.faixa_counts.faixa_3000_4500 },
+          { label: "De R$ 4.500 a R$ 6.000", value: dataCriterios.analysis_result.faixa_counts.faixa_4500_6000 },
+          { label: "Mais que R$ 6.000", value: dataCriterios.analysis_result.faixa_counts.faixa_6000_mais },
+          { label: "Não recebem nada", value: dataCriterios.analysis_result.faixa_counts.faixa_0 },
         ];
-
-        dataCriterios.forEach(item => {
-          const valorTotal = parseFloat(item.valor_total || 0);
-          if (valorTotal === 0) faixaPagamento[5].value++;
-          else if (valorTotal <= 1500) faixaPagamento[0].value++;
-          else if (valorTotal <= 3000) faixaPagamento[1].value++;
-          else if (valorTotal <= 4500) faixaPagamento[2].value++;
-          else if (valorTotal <= 6000) faixaPagamento[3].value++;
-          else faixaPagamento[4].value++;
-        });
 
         chartDataFaixaPagamento.value = faixaPagamento;
 
@@ -264,7 +259,7 @@ export default {
 
     const calculatePercentages = (sections) => {
       return sections.map(section => {
-        const total = section.data.reduce((acc, curr) => acc + curr.value, 0);
+        const total = section.data.reduce((acc, curr) => acc + curr.value, 0);        
         const dataWithPercentage = section.data.map(item => ({
           ...item,
           percentage: total > 0 ? ((item.value / total) * 100).toFixed(2) : "0.00"

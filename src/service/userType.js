@@ -5,10 +5,10 @@
 
 /**
  * Get the current user type from localStorage
- * @returns {string} 'admin' or 'regular'
+ * @returns {string} 'admin' or 'user'
  */
 export const getUserType = () => {
-  return localStorage.getItem('userType') || 'regular';
+  return localStorage.getItem('userType') || 'user';
 };
 
 /**
@@ -21,10 +21,10 @@ export const isAdmin = () => {
 
 /**
  * Check if the current user is a regular user
- * @returns {boolean} true if user is regular, false otherwise
+ * @returns {boolean} true if user is user, false otherwise
  */
 export const isRegularUser = () => {
-  return getUserType() === 'regular';
+  return getUserType() === 'user';
 };
 
 /**
