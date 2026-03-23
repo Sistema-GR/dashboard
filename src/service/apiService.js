@@ -50,7 +50,7 @@ export const register = async (email, senha, confirmarSenha, matricula, cpf) => 
 export const fetchVersions = async () => {
   try {
     const token = await getAccessToken();
-    const response = await apiClient.get('/csv/api/general-data/', {
+    const response = await apiClient.get('/csv/general-data/', {
       headers: {
         'Authorization': `Bearer ${token}`,
       }
@@ -69,7 +69,7 @@ export const createDataset = async (generalDataId) => {
       general_data_id: generalDataId
     };
 
-    const response = await apiClient.post('/csv/api/create-dataset/', payload, {
+    const response = await apiClient.post('/csv/create-dataset/', payload, {
       headers: {
         'Authorization': `Bearer ${token}`,
       }
@@ -80,10 +80,25 @@ export const createDataset = async (generalDataId) => {
   }
 };
 
+//Obter dataset com base no calculus_id
+export const getDatasetByCalculusId = async (calculusId) => {
+  try {
+    const token = await getAccessToken();
+    const response = await apiClient.get(`/csv/get-dataset/${calculusId}/`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      }
+    });
+    return response.data;
+  } catch (error) {
+    handleApiError(error);
+  }
+}
+
 export const createGeneralData = async (data) => {
   try {
     const token = await getAccessToken();
-    const response = await apiClient.post('/csv/api/general-data/', data, {
+    const response = await apiClient.post('/csv/general-data/', data, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -125,18 +140,9 @@ export const fetchEmployeeData = async () => {
 };
 
 
-export const getActiveCalculusFiles = async () => {
-  try {
-    const response = await apiClient.get('/csv/api/calculus/active/files/');
-    return response.data;
-  } catch (error) {
-    handleApiError(error);
-  }
-};
-
 export const getActiveOpenCalcFiles = async () => {
   try {
-    const response = await apiClient.get('/csv/api/opencalc/active/files/');
+    const response = await apiClient.get('/csv/opencalc/active/files/');
     return response.data;
   } catch (error) {
     handleApiError(error);
@@ -145,7 +151,7 @@ export const getActiveOpenCalcFiles = async () => {
 
 export const downloadFileById = async (fileId) => {
   try {
-    const response = await apiClient.get(`/csv/api/data-files/${fileId}/download/`, {
+    const response = await apiClient.get(`/csv/data-files/${fileId}/download/`, {
       responseType: 'blob',
     });
 
@@ -173,3 +179,16 @@ export const downloadFileById = async (fileId) => {
     handleApiError(error);
   }
 };
+
+export function base64ToFile(base64String, fileName) {
+      const byteString = atob(base64String);
+      const arrayBuffer = new ArrayBuffer(byteString.length);
+      const int8Array = new Uint8Array(arrayBuffer);
+      
+      for (let i = 0; i < byteString.length; i++) {
+        int8Array[i] = byteString.charCodeAt(i);
+      }
+      
+      const blob = new Blob([int8Array], { type: 'text/csv' });
+      return new File([blob], fileName, { type: 'text/csv' });
+    }

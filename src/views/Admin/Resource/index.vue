@@ -153,9 +153,9 @@ export default {
                     console.error("Recurso não encontrado na lista local.");
                     return;
                 }
-                
                 const response = await apiClient.patch(`/recursos/${recursoId}/`, { status: newStatus }, {
                     headers: {
+                        'Content-Type': 'multipart/form-data',
                         'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                     }
                 });

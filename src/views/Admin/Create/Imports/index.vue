@@ -19,6 +19,8 @@
       </div>
 
       <FileInput Label="Importar Arquivos em .CSV"
+      :initialFiles="existingFiles"
+      :generalDataId="$route.query.generalDataId"
       @isUploading="loadingUpdate"
       @uploaded="onUnifiedUploaded"/>
     </div>
@@ -30,6 +32,9 @@
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import FileInput from '@/components/Inputs/FileInput.vue';
 import Loading from '@/components/Loading/Loading.vue';
+import { apiClient } from '@/service/apiService';
+import { getAccessToken } from '@/service/token';
+import { base64ToFile } from '@/service/apiService';
 
 export default {
   components: { FileInput, Whiteboard, Loading },
@@ -37,6 +42,7 @@ export default {
   data() {
     return {     
       isUploading: false,
+      existingFiles: [],
       requiredFiles: [
         'funcionarios.csv',
         'demissoes.csv',
@@ -55,8 +61,40 @@ export default {
       ],
     };
   },
-
+  async mounted() {
+    const existingVersionId = this.$route.query.versionId;
+    if (existingVersionId) {
+      await this.fetchExistingFiles(existingVersionId);
+    }
+  },
   methods: {
+    async fetchExistingFiles(existingVersionId) {
+      try {
+        const token = getAccessToken();
+        let payload = { calculus_id: existingVersionId, state: "raw" };
+
+        const response = await apiClient.get(`csv/calculus/get-files/`, {          
+          params: payload,
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        // Map the API response to the format FileInput expects
+        this.existingFiles = response.data.map(fileData => {
+          const reconstructedFile = base64ToFile(fileData.content, fileData.name);
+
+          return {
+            file: reconstructedFile,
+            name: fileData.name,
+            size: fileData.size,
+            isRemote: true,
+          };
+        });
+        console.log("Arquivos existentes carregados:", this.existingFiles);
+
+      } catch (error) {
+        console.error("Erro ao carregar arquivos existentes:", error);
+      }
+    },
     onUnifiedUploaded({ manifest }) {
       this.isUploading = false;
       this.$router.push({ name: 'dash' });
