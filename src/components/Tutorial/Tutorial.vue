@@ -68,7 +68,7 @@ const driverObj = driver({
     // Step 1
     {
       popover: {
-        title: '<div class="titulo-img"><img src="/src/assets/images/inicioTutorial.png" class="responsive-img" />👋 Bem-vindo ao painel de gratificação</div>',
+        title: '<div class="titulo-img"><img src="/src/assets/images/inicio-tutorial.png" class="responsive-img" />👋 Bem-vindo ao painel de gratificação</div>',
         description: '<div class="descricao">Estamos felizes por você estar aqui! Este tutorial rápido vai te ajudar a entender todas as informações importantes sobre sua gratificação.<br><br><strong>Após o tutorial, verifique seus dados com atenção!</strong></div>',
         position: "center",
       },
@@ -238,7 +238,7 @@ const driverObj = driver({
     // Step 17 - Final
     {
       popover: {
-        title: '<div class="titulo-img"><img src="/src/assets/images/TutorialConcluido.png" class="responsive-img" />Você concluiu o tutorial!</div>',
+        title: '<div class="titulo-img"><img src="/src/assets/images/tutorial-concluido.png" class="responsive-img" />Você concluiu o tutorial!</div>',
         description: '<div class="descricao">Agora você está pronto para navegar pelo painel de gratificação e acompanhar as informações com facilidade.</div>',
         position: "center",
       }

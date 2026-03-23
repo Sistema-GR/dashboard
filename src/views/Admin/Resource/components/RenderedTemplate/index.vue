@@ -10,7 +10,7 @@
 
 <script setup>
 import { computed, watch, nextTick } from 'vue';
-import logoUrl from '@/assets/images/logo_prefeitura.png'; 
+import logoUrl from '@/assets/images/logo-prefeitura.png'; 
 
 const props = defineProps({
   htmlContent: { type: String, required: true },
