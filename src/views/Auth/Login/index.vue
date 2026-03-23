@@ -7,7 +7,10 @@
           <div class="w-full max-w-md space-y-3 px-5">
 
             <!-- Google Sign-In Button -->
-            <div id="google-signin-button" ></div>
+            <div id="google-signin-button" class="pt-4"></div>
+            <div class="flex items-center justify-center mt-4">
+              <span class="text-gray-300 text-sm">@2026 SED-APT, All rights reserved.</span>
+            </div>
 
             <!-- OLD BUTTONS
 
@@ -28,9 +31,6 @@
 
             <p v-if="errors.global" class="text-red-500 text-15 mt-1">{{ errors.global }}</p>
 
-            <div class="w-full flex justify-center pt-3">
-              <router-link to="/auth/signup" class="text-15 text-amber-50 hover:underline mt-0 -translate-y-5">Não possui cadastro? Clique aqui</router-link>
-            </div>
           </div>
         </div>
       </div>
@@ -63,6 +63,7 @@ export default {
       errors: {
         email: null,
         senha: null,
+        cpf: null,
         global: null,
       },
     };
@@ -97,12 +98,25 @@ export default {
 
       try {
         const token = response.credential;
+        this.pendingGoogleToken = token;
         console.log('Google token received, sending to backend...');
       
         // Send to backend
         const axiosResponse = await apiClient.post('/auth/googleauth/', { token });
         const data = axiosResponse.data;  // Extract the actual response data from axios wrapper
-        
+        console.log('Backend response:', data);
+        // If backend asks for CPF completion, save token and redirect to signup
+        if (data.action === 'require_cpf') {
+          // save token and optional prefill info
+          localStorage.setItem('googlePendingToken', token);
+          if (data.email) localStorage.setItem('googlePendingEmail', data.email);
+          if (data.first_name) localStorage.setItem('googlePendingFirstName', data.first_name);
+          if (data.last_name) localStorage.setItem('googlePendingLastName', data.last_name);
+          console.log('Backend requires CPF completion. Redirecting to signup with Google flow...');
+          this.$router.push({ name: 'signup', query: { google: 1 } });
+          return;
+        }
+
         // Check if response contains tokens
         if (!data.access || !data.refresh) {
           console.error('Backend did not return tokens. Response:', data);
@@ -136,6 +150,8 @@ export default {
         this.loading = false;
       }
     },
+
+    
   },
 };
 </script>
