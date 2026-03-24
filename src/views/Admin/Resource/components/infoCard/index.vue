@@ -95,10 +95,8 @@ export default {
     name: "infoCard",
     components: { UserIcon, Badges, ExclamationTriangleIcon },
     props: {
-        recurso: {
-            type: Object,
-            required: true
-        }
+        recurso: { type: Object, required: true },
+        staffList: { type: Array, required: true }
     },
     emits: ['status-updated', 'responsavel-updated'],
 setup(props, { emit }) {
@@ -131,21 +129,6 @@ setup(props, { emit }) {
 
     watch(() => props.recurso.responsavel, (newId) => {
         selectedResponsavelId.value = newId;
-    });
-
-    async function fetchStaffUsers() {
-        try {
-            const response = await apiClient.get('/auth/staff-users/', {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-            });
-            staffList.value = response.data;
-        } catch (err) {
-            console.error("Erro ao buscar lista de administradores:", err);
-        }
-    }
-
-    onMounted(() => {
-        fetchStaffUsers();
     });
 
     async function updateResponsavel() {
