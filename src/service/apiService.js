@@ -30,21 +30,6 @@ export const login = async (email, senha) => {
   }
 };
 
-// Função para registro de novo usuário
-export const register = async (email, senha, confirmarSenha, matricula, cpf) => {
-  try {
-    const response = await apiClient.post('/auth/register/', {
-      email,
-      password: senha,
-      confirm_password: confirmarSenha,
-      employeeCode: matricula,
-      cpf,
-    });
-    return response.data;
-  } catch (error) {
-    handleApiError(error);
-  }
-};
 
 // Função para buscar versões
 export const fetchVersions = async () => {

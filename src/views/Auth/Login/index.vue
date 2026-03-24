@@ -139,7 +139,7 @@ export default {
         if (!redirectTo) {
           redirectTo = getDashboardRoute();
         }
-        
+        localStorage.setItem('tempTargetCpf', data.user.cpf);
         this.$router.push(redirectTo);
         
       } catch (error) {
