@@ -199,6 +199,7 @@ import { useRouter } from 'vue-router';
 import { apiClient } from '@/service/apiService';
 import TutorialRecurso from '@/components/Tutorial/TutorialRecurso.vue';
 import usePersonService from '@/service/personService.js';
+import { listaDeSetores } from '@/config/resourceConstants.js';
 
 export default {
     name: "ResourceForm",
@@ -218,23 +219,6 @@ export default {
         const matriculasDisponiveis = ref([]);
         const isLoadingMatriculas = ref(false);
 
-         const listaDeSetores = ref([
-            "Administração e Finanças", "Apoio Educacional", "Apoio Jurídico",
-            "Assessoria Pedagógica - Apoio Pedagógico", "Assessoria Pedagógica - Supervisão Escolar", "Avaliação Escolar",
-            "Comunicação", "Contraturno e tempo integral", "Convênios e Credenciamento de CEIs",
-            "Desenvolvimento Profissional", "Diretoria de Formação e Inovação", "Diretoria de Gestão",
-            "Diretoria de Políticas Educacionais", "Diretoria de Suprimentos e Infraestruturaa", "Educação Especial",
-            "Educação Infantil", "EJA / Ed. Profissional", "Ensino Fundamental",
-            "Escritório de Projetos, Processos e Inovação", "Folha de Pagamento", "Formação e Currículo",
-            "Formação e Currículo - Nucleação", "Gabinete", "Gerência Apoio à Aprendizagerm",
-            "Gestão Democrática e Articulação", "Gestão do Trabalho", "Gestão Escolar - Educação Infantil",
-            "Gestão Escolar - Ensino Fundamental", "Inovação e Tecnologia", "Matrículas e Atendimento",
-            "Mídias e Tecnologias Educacionais", "Nucleo de Apoio aos Conselhos", "Núcleo de Apoio aos Conselhos",
-            "Núcleo de Desenvolvimento Integral", "Núcleo de Educação Ambiental", "Orçamento",
-            "PDDE Federal", "PDDE Federal / Programa Dinheiro na Escola Municipal", "Planejamento",
-            "Prestação de Contas das Parceirias", "Programa Dinheiro na Escola Municipal", "Quadro Funcional",
-            "Recomposição da Aprendizagem", "Requisição de Compras", "Sistemas e Estatisticas"
-        ]);
 
         const form = reactive({
             nome_completo: '',
