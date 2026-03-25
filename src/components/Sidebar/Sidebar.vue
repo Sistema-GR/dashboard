@@ -123,7 +123,7 @@
                   </div>
 
                   <ul role="list" class="flex flex-1 flex-col gap-y-5">
-                      <li>
+                      <li id="lista-desktop">
                           <ul role="list" class="-mx-3 grid gap-1">
                               <li v-for="item in filteredNavigation" :key="item.name" class="cursor-pointer">
                                 <!-- If item has children, render as expandable -->
@@ -157,6 +157,7 @@
                                 <!-- Otherwise, render as normal link -->
                                 <router-link
                                   v-else
+                                  :title="hoverTxt(item.name)"
                                   :to="item.route"
                                   class="group flex gap-x-3 rounded-[10px] p-1.5 text-15 font-semibold leading-6 transition-all duration-200"
                                   :class="{ 
@@ -277,6 +278,20 @@ import { useRoute, useRouter } from 'vue-router'
 import { getUserType, clearUserType } from '@/service/userType'
 import { useSidebarStore } from '@/stores/sidebarStore'
 
+const hoverTxt = (hoveredText) => {
+  const nameDict = {
+    "Dashboard" : "Painel com informações sobre a última gratificação",
+    "Novo Cálculo" : "Criar novo cálculo",
+    "Listar Cálculos" : "Lista todos os cálculos existentes",
+    "Publicar Cálculo" : "Promover um cálculo finalizado para versão ativa",
+    "Versões Publicadas" : "Versões ativas disponíveis",
+    "Recursos" : "Painel de recursos",
+    "Permissões de Acesso" : "Painel de controle de usuários",
+    "Detalhes do Cálculo" : "Expandir para ver o detalhamento do cálculo ativo"
+    
+  };
+  return nameDict[hoveredText] || hoveredText;
+}
 const sidebarStore = useSidebarStore()
 const routes = {
   'admin': [

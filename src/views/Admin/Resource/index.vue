@@ -66,7 +66,7 @@
             </div>
         </div>
 
-        <div class="px-4 sm:px-10 mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="px-4 sm:px-10 mb-5 mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Filtro por Motivo (Dropdown) -->
             <div class="flex flex-col">
                 <label class="text-sm font-bold text-gray-700 mb-1">Filtrar por Motivo</label>
@@ -83,7 +83,7 @@
 
             <!-- Filtro por Responsável -->
             <div class="relative">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Filtrar por Responsável</label>
+                <label class="text-sm font-bold text-gray-700 mb-1">Filtrar por Responsável</label>
                 <select 
                     v-model="filterResponsavel" 
                     class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-blue-500 focus:border-blue-500"

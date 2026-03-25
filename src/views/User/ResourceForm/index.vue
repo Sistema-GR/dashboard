@@ -51,21 +51,34 @@
 
                     <!-- Matrícula -->
                     <div>
-                        <label for="matricula" class="block text-15 font-medium text-gray-700 mb-1">Matrícula</label>
-                        <select 
-                            id="matricula" 
-                            v-model="form.matricula"
-                            multiple
-                            :disabled="isLoadingMatriculas || matriculasDisponiveis.length === 0"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-[10px] text-15 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white"
-                        >
-                            <option disabled value="">
-                                {{ isLoadingMatriculas ? 'Buscando matrículas...' : 'Selecione uma matrícula' }}
-                            </option>
-                            <option v-for="mat in matriculasDisponiveis" :key="mat" :value="mat">
-                                {{ mat }}
-                            </option>
-                        </select>
+                        <label class="block text-15 font-medium text-gray-700 mb-2">Matrícula(s)</label>
+                        
+                        <!-- Estado de Carregamento -->
+                        <div v-if="isLoadingMatriculas" class="text-sm text-gray-500 animate-pulse">
+                            Buscando matrículas...
+                        </div>
+
+                        <!-- Lista de Checkboxes -->
+                        <div v-else-if="matriculasDisponiveis.length > 0" class="grid grid-cols-1 sm:grid-cols-2 gap-2 p-3 border border-gray-300 rounded-[10px] bg-white">
+                            <div v-for="mat in matriculasDisponiveis" :key="mat" class="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-md transition-colors">
+                                <input 
+                                    type="checkbox" 
+                                    :id="'mat-' + mat"
+                                    :value="mat" 
+                                    v-model="form.matricula"
+                                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded cursor-pointer"
+                                />
+                                <label :for="'mat-' + mat" class="text-15 text-gray-700 cursor-pointer flex-1">
+                                    {{ mat }}
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Caso não encontre matrículas -->
+                        <div v-else class="p-3 border border-dashed border-gray-300 rounded-[10px] bg-gray-50 text-15 text-gray-500 text-center">
+                            Nenhuma matrícula encontrada para este CPF.
+                        </div>
+
                         <p v-if="errors.matricula" class="text-red-500 text-xs mt-1">{{ errors.matricula }}</p>
                     </div>
 
@@ -186,6 +199,7 @@ import { useRouter } from 'vue-router';
 import { apiClient } from '@/service/apiService';
 import TutorialRecurso from '@/components/Tutorial/TutorialRecurso.vue';
 import usePersonService from '@/service/personService.js';
+import { listaDeSetores } from '@/config/resourceConstants.js';
 
 export default {
     name: "ResourceForm",
@@ -205,23 +219,6 @@ export default {
         const matriculasDisponiveis = ref([]);
         const isLoadingMatriculas = ref(false);
 
-         const listaDeSetores = ref([
-            "Administração e Finanças", "Apoio Educacional", "Apoio Jurídico",
-            "Assessoria Pedagógica - Apoio Pedagógico", "Assessoria Pedagógica - Supervisão Escolar", "Avaliação Escolar",
-            "Comunicação", "Contraturno e tempo integral", "Convênios e Credenciamento de CEIs",
-            "Desenvolvimento Profissional", "Diretoria de Formação e Inovação", "Diretoria de Gestão",
-            "Diretoria de Políticas Educacionais", "Diretoria de Suprimentos e Infraestruturaa", "Educação Especial",
-            "Educação Infantil", "EJA / Ed. Profissional", "Ensino Fundamental",
-            "Escritório de Projetos, Processos e Inovação", "Folha de Pagamento", "Formação e Currículo",
-            "Formação e Currículo - Nucleação", "Gabinete", "Gerência Apoio à Aprendizagerm",
-            "Gestão Democrática e Articulação", "Gestão do Trabalho", "Gestão Escolar - Educação Infantil",
-            "Gestão Escolar - Ensino Fundamental", "Inovação e Tecnologia", "Matrículas e Atendimento",
-            "Mídias e Tecnologias Educacionais", "Nucleo de Apoio aos Conselhos", "Núcleo de Apoio aos Conselhos",
-            "Núcleo de Desenvolvimento Integral", "Núcleo de Educação Ambiental", "Orçamento",
-            "PDDE Federal", "PDDE Federal / Programa Dinheiro na Escola Municipal", "Planejamento",
-            "Prestação de Contas das Parceirias", "Programa Dinheiro na Escola Municipal", "Quadro Funcional",
-            "Recomposição da Aprendizagem", "Requisição de Compras", "Sistemas e Estatisticas"
-        ]);
 
         const form = reactive({
             nome_completo: '',
@@ -250,7 +247,7 @@ export default {
                 form.nome_completo = (userData.first_name + ' ' + userData.last_name) || '';
                 form.email = userData.email || '';
                 form.cpf = userData.cpf || '';
-                form.matricula = userData.employeeCode || '';
+                form.matricula = userData.employeeCode ? [userData.employeeCode] : [];
                 
                 if (form.cpf) {
                     isLoadingMatriculas.value = true;
@@ -261,12 +258,12 @@ export default {
                         
                         matriculasDisponiveis.value = todasAsMatriculas;
 
-                        if (todasAsMatriculas.length > 0 && !todasAsMatriculas.includes(form.matricula)) {
-                            form.matricula = '';
+                        if (form.matricula.length > 0 && !todasAsMatriculas.includes(form.matricula[0])) {
+                            form.matricula = [];
                         }
                     } catch (e) {
                         console.error("Erro ao buscar a lista de matrículas:", e);
-                        matriculasDisponiveis.value = [form.matricula].filter(Boolean);
+                        matriculasDisponiveis.value = form.matricula;
                     } finally {
                         isLoadingMatriculas.value = false;
                     }
