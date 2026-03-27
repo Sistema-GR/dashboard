@@ -181,7 +181,7 @@ export default {
 
           if (data.user) setUserType(data.user);
 
-          window.warn('Cadastro concluído com sucesso!');
+          alert('Cadastro concluído com sucesso!');
           this.$router.push("/");
           return;
       } catch (error) {

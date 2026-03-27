@@ -101,6 +101,7 @@
               v-for="recurso in filteredRecursos" 
               :key="recurso.id" 
               :recurso="recurso"
+              :staffList="staffList"
               @status-updated="handleStatusUpdate"              
             />
           <div v-if="!filteredRecursos.length && !isLoading" class="text-center text-gray-500 py-10">

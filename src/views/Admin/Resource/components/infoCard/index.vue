@@ -50,6 +50,10 @@
                         <span v-if="recurso.responsavel_nome" class="text-15 text-gray-700 font-semibold">
                             {{ recurso.responsavel_nome }}
                         </span>
+                        <span v-else="recurso.responsavel_email" class="text-15 text-gray-700 font-semibold">
+                            {{ recurso.responsavel_email }}
+                        </span>
+   
                         <select v-model="selectedResponsavelId"  @change="updateResponsavel" class="w-36 text-xs border rounded px-1 py-0.5"  @click.stop>
                             <option :value="null">Selecione...</option>
                             <option v-for="staff in staffList" :key="staff.id" :value="staff.id">
@@ -124,7 +128,6 @@ setup(props, { emit }) {
         return result;
     });
 
-    const staffList = ref([]);
     const selectedResponsavelId = ref(props.recurso.responsavel);
 
     watch(() => props.recurso.responsavel, (newId) => {
@@ -160,7 +163,6 @@ setup(props, { emit }) {
         isHoveringBadges,
         remainingBadgesCount,
         selectedResponsavelId,
-        staffList,
         updateResponsavel,
     };
 }
