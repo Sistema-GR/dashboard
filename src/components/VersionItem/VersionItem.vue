@@ -10,7 +10,7 @@
             {{ version.is_finalized ? 'Finalizado' : 'Em Edição' }}
           </span>
         </div>
-        <p class="text-sm text-gray-500 mt-1">Criado em: {{ new Date(version.created_at).toLocaleString() }}</p>
+        <p class="text-sm text-gray-500 mt-1">Criado em: {{ version.created_at }}</p>
       </div>
 
       <div class="mt-4 sm:mt-0 sm:ml-4 flex-shrink-0 flex items-center gap-2">

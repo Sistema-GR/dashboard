@@ -43,7 +43,7 @@
                 :class="['border-b', 'border-blue-500', 'focus:outline-none', 'bg-blue-50', 'p-1']"
                 autoFocus
               />
-              <p v-else class="p-1">{{ editableData[field.name] }}</p>
+              <p v-else class="p-1" @click="setEditing(field.name)">{{ editableData[field.name] }}</p>
           </div>
 
         </div>
@@ -51,7 +51,7 @@
 
       <div class="flex mt-4">
         <button @click="submitData" class="bg-green-500 text-white px-6 py-3 rounded-[10px] font-bold">
-          Continuar com novos valores
+          Continuar
         </button>
       </div>
     </div>
@@ -63,7 +63,7 @@
 import { ref, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { getAccessToken } from '@/service/token';
-import { fetchVersions, createDataset, createGeneralData, apiClient, getDatasetByCalculusId } from '../../../../service/apiService';
+import { fetchVersions, createDataset, createGeneralData, apiClient } from '../../../../service/apiService';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 
 export default {
@@ -80,6 +80,7 @@ export default {
     const loading = ref(false);
     const errorMessage = ref("");
     const fields = [
+      { name: 'name', label: 'Nome' },
       { name: 'description', label: 'Descrição' },
       { name: 'year_value', label: 'Ano Pagamento' },
       { name: 'max_value', label: 'Valor Máximo' },

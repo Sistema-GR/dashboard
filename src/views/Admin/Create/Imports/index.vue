@@ -97,6 +97,7 @@ export default {
     },
     onUnifiedUploaded({ manifest }) {
       this.isUploading = false;
+      alert("Upload concluído com sucesso!");
       this.$router.push({ name: 'dash' });
     },
     loadingUpdate(valor) {
