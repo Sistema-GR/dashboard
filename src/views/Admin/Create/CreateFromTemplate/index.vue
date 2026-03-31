@@ -6,7 +6,7 @@
       <div class="w-full p-3 shadow-lg rounded-[10px] bg-white">
         <select
           id="version"
-          v-model="selectedVersionId"
+          v-model="selectedGeneralDataId"
           @change="handleVersionChange"
           class="w-full p-3 border border-gray-300 rounded-[10px] focus:ring-2 focus:ring-blue-500 focus:outline-none"
         >
@@ -23,39 +23,47 @@
 
       <!-- Detalhes da versão -->
       <div v-if="selectedVersionDetails" class="w-full">
-        <div class="bg-white shadow-lg rounded-[10px] p-6 space-y-4">
-          <h3 class="text-15 font-semibold text-blue-600">Detalhes da Versão Selecionada</h3>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-black p-4 border rounded-md">
-            <div><strong class="font-semibold">Descrição:</strong> <p>{{ selectedVersionDetails.description }}</p></div>
-            <div><strong class="font-semibold">Ano Pagamento:</strong> <p>{{ selectedVersionDetails.year_value }}</p></div>
-            <div><strong class="font-semibold">Valor Máximo:</strong> <p>{{ selectedVersionDetails.max_value }}</p></div>
-            <div><strong class="font-semibold">Data de Início:</strong> <p>{{ selectedVersionDetails.start_date }}</p></div>
-            <div><strong class="font-semibold">Data de Fim:</strong> <p>{{ selectedVersionDetails.end_date }}</p></div>
-            <div><strong class="font-semibold">Carga Máxima:</strong> <p>{{ selectedVersionDetails.max_workload }}</p></div>
-            <div><strong class="font-semibold">Rede Etapa 1:</strong> <p>{{ selectedVersionDetails.idem_network_step_1 }}%</p></div>
-            <div><strong class="font-semibold">Rede Etapa 2:</strong> <p>{{ selectedVersionDetails.idem_network_step_2 }}%</p></div>
-            <div><strong class="font-semibold">Rede Etapa 3:</strong> <p>{{ selectedVersionDetails.idem_network_step_3 }}%</p></div>
-          </div>
-        </div>
+      <div class="bg-white shadow-lg rounded-[10px] p-6 space-y-4">
+        <h3 class="text-15 font-semibold text-blue-600">Detalhes da Versão Selecionada (Edição)</h3>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-black p-4 border rounded-md">
+          
+          <div v-for="field in fields" :key="field.name" class="flex flex-col space-y-1 group">
+              <div class="flex justify-between items-center">
+                <strong class="font-semibold text-sm text-gray-600">{{ field.label }}:</strong>
+                <button @click="setEditing(field.name)" class="text-blue-400 hover:text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                  editar
+                </button>
+              </div>
 
-        <!-- Botões de ação -->
-        <div class="flex flex-col sm:flex-row w-full space-y-4 sm:space-y-0 sm:space-x-4 mt-4">
-          <button
-            @click="submitData"
-            class="w-full sm:w-auto px-6 py-3 bg-green-500 text-white font-bold rounded-[10px] hover:bg-green-600 focus:outline-none"
-          >
-            Continuar
-          </button>
+              <input 
+                v-if="editingField === field.name"
+                v-model="editableData[field.name]"
+                @blur="editingField = null"
+                :class="['border-b', 'border-blue-500', 'focus:outline-none', 'bg-blue-50', 'p-1']"
+                autoFocus
+              />
+              <p v-else class="p-1">{{ editableData[field.name] }}</p>
+          </div>
+
         </div>
       </div>
+
+      <div class="flex mt-4">
+        <button @click="submitData" class="bg-green-500 text-white px-6 py-3 rounded-[10px] font-bold">
+          Continuar com novos valores
+        </button>
+      </div>
+    </div>
     </div>
   </Whiteboard>
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { fetchVersions, createDataset, createGeneralData } from '../../../../service/apiService';
+import { getAccessToken } from '@/service/token';
+import { fetchVersions, createDataset, createGeneralData, apiClient, getDatasetByCalculusId } from '../../../../service/apiService';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 
 export default {
@@ -64,15 +72,36 @@ export default {
   setup() {
     const router = useRouter();
     const versions = ref([]);
-    const selectedVersionId = ref(null); 
-    const selectedVersionDetails = ref(null); 
+    const selectedGeneralDataId = ref(null); 
+    let selectedCalcId = ref(null);
+    const selectedVersionDetails = ref(null);
+    const editableData = ref(null);
+    const editingField = ref(null);    
     const loading = ref(false);
     const errorMessage = ref("");
+    const fields = [
+      { name: 'description', label: 'Descrição' },
+      { name: 'year_value', label: 'Ano Pagamento' },
+      { name: 'max_value', label: 'Valor Máximo' },
+      { name: 'start_date', label: 'Data de Início' },
+      { name: 'end_date', label: 'Data de Fim' },
+      { name: 'max_workload', label: 'Carga Máxima' },
+      { name: 'idem_network_step_1', label: 'Rede Etapa 1 (%)' },
+      { name: 'idem_network_step_2', label: 'Rede Etapa 2 (%)' },
+      { name: 'idem_network_step_3', label: 'Rede Etapa 3 (%)' },
+    ];
+
+    const setEditing  = (fieldName) => {
+      editingField.value = fieldName;
+    };
 
     const fetchVersionsData = async () => {
       loading.value = true;
       try {
         versions.value = await fetchVersions();
+        selectedCalcId.value = (await fetchCalculus()).find(c => c.general_data_id == selectedGeneralDataId.value)?.calculus_id;
+        console.log("Versões disponíveis:", versions.value);
+        console.log("calculo: ", selectedCalcId)
       } catch (error) {
         console.error("Erro ao buscar versões:", error);
       } finally {
@@ -80,12 +109,31 @@ export default {
       }
     };
 
-    const handleVersionChange = () => {
+    const fetchCalculus = async () => {
+      try {
+        const token = getAccessToken();
+
+        const calcList = await apiClient.get(`/csv/get-list-calculus/`,{
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        const calcAtivos = Object.values(calcList.data).flatMap(yearObject => Object.values(yearObject)).filter(calc => calc.is_finalized === true);
+        return calcAtivos
+
+      } catch (error) {
+        console.error("Erro ao buscar detalhes da versão:", error);
+      }
+    };
+
+    const handleVersionChange = async () => {
       const selectedVersion = versions.value.find(
-        version => version.general_data_id === selectedVersionId.value
+        version => version.general_data_id === selectedGeneralDataId.value
       );
+      
       if (selectedVersion) {
         selectedVersionDetails.value = { ...selectedVersion };
+        editableData.value = { ...selectedVersion };
+        selectedCalcId.value = (await fetchCalculus()).find(c => c.general_data_id == selectedGeneralDataId.value)?.calculus_id;
       }
     };
 
@@ -96,24 +144,26 @@ export default {
 
       try {
         const payload = {
-          ...selectedVersionDetails.value,
-          description: selectedVersionDetails.value.description.trim() 
+          ...editableData.value,
+          description: editableData.value.description.trim() 
         };
-
         delete payload.general_data_id;
-
+        if (payload.general_data_id) {
+          fetchFilesFromCalc(payload.general_data_id);
+        }
         const response = await createGeneralData(payload);
 
         const generalDataId = response.general_data?.general_data_id;
         if (!generalDataId) {
           throw new Error(`Erro: Nenhum general_data_id foi retornado pela API.`);
         }
-
+        selectedCalcId.value = (await fetchCalculus()).find(c => c.general_data_id == selectedGeneralDataId.value)?.calculus_id;
         await createDataset(generalDataId);
 
         router.push({ 
           name: "create-imports", 
-          query: { generalDataId, versionId: selectedVersionId.value }
+          query: {  generalDataId,
+                    versionId: selectedCalcId.value}
         });
       } catch (error) {
         console.error("Erro ao enviar os dados:", error);
@@ -121,12 +171,24 @@ export default {
       }
     };
 
+    watch(selectedVersionDetails, (newVal) => {
+      if (newVal) {
+        editableData.value = { ...newVal };
+      }
+    }, { immediate: true });
+
     onMounted(fetchVersionsData);
 
      return {
       versions,
-      selectedVersionId,
+      selectedGeneralDataId,
       selectedVersionDetails,
+      editableData,
+      editingField,
+      fields,
+      selectedCalcId,
+      fetchCalculus,
+      setEditing,
       handleVersionChange,
       submitData,
       loading,

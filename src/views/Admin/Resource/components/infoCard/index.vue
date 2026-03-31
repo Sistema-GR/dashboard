@@ -50,6 +50,10 @@
                         <span v-if="recurso.responsavel_nome" class="text-15 text-gray-700 font-semibold">
                             {{ recurso.responsavel_nome }}
                         </span>
+                        <span v-else="recurso.responsavel_email" class="text-15 text-gray-700 font-semibold">
+                            {{ recurso.responsavel_email }}
+                        </span>
+   
                         <select v-model="selectedResponsavelId"  @change="updateResponsavel" class="w-36 text-xs border rounded px-1 py-0.5"  @click.stop>
                             <option :value="null">Selecione...</option>
                             <option v-for="staff in staffList" :key="staff.id" :value="staff.id">
@@ -95,10 +99,8 @@ export default {
     name: "infoCard",
     components: { UserIcon, Badges, ExclamationTriangleIcon },
     props: {
-        recurso: {
-            type: Object,
-            required: true
-        }
+        recurso: { type: Object, required: true },
+        staffList: { type: Array, required: true }
     },
     emits: ['status-updated', 'responsavel-updated'],
 setup(props, { emit }) {
@@ -126,26 +128,10 @@ setup(props, { emit }) {
         return result;
     });
 
-    const staffList = ref([]);
     const selectedResponsavelId = ref(props.recurso.responsavel);
 
     watch(() => props.recurso.responsavel, (newId) => {
         selectedResponsavelId.value = newId;
-    });
-
-    async function fetchStaffUsers() {
-        try {
-            const response = await apiClient.get('/auth/staff-users/', {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-            });
-            staffList.value = response.data;
-        } catch (err) {
-            console.error("Erro ao buscar lista de administradores:", err);
-        }
-    }
-
-    onMounted(() => {
-        fetchStaffUsers();
     });
 
     async function updateResponsavel() {
@@ -177,7 +163,6 @@ setup(props, { emit }) {
         isHoveringBadges,
         remainingBadgesCount,
         selectedResponsavelId,
-        staffList,
         updateResponsavel,
     };
 }

@@ -1,5 +1,9 @@
 # dashboard
 
+SPA do projeto de Gratificação da Prefeitura de Joinville.
+Este repositório conta com o frontend da aplicação, desenvolvido em Vue 3.
+
+
 This template should help get you started developing with Vue 3 in Vite.
 
 ## Recommended IDE Setup

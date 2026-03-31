@@ -8,7 +8,7 @@
         </div>
         <div class="bg-blue-50 p-4 rounded-b-[10px]">
           <div class="flex flex-row items-center justify-center mb-1">
-            <span class="text-20 font-bold text-gray-800 leading-none">{{ totalRecebe?.toLocaleString() || '514.4' }}</span>
+            <span class="text-20 font-bold text-gray-800 leading-none">{{ totalRecebe?.toLocaleString() }}</span>
           </div>
         </div>
       </div>
@@ -20,7 +20,7 @@
         </div>
         <div class="bg-blue-50 p-4 rounded-b-[10px]">
           <div class="flex flex-row items-center justify-center mb-1">
-            <span class="text-20 font-bold text-gray-800 leading-none">{{ totalNaoRecebe?.toLocaleString() || '3545' }}</span>
+            <span class="text-20 font-bold text-gray-800 leading-none">{{ totalNaoRecebe?.toLocaleString() }}</span>
           </div>
         </div>
       </div>
@@ -32,7 +32,7 @@
         </div>
         <div class="bg-blue-50 p-4 rounded-b-[10px]">
           <div class="flex flex-row items-center justify-center mb-1">
-            <span class="text-20 font-bold text-gray-800 leading-none">R$ {{ valorPagar?.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) || '12.854,60' }}</span>
+            <span class="text-20 font-bold text-gray-800 leading-none">R$ {{ valorPagar?.toLocaleString('pt-BR', { minimumFractionDigits: 2 }) }}</span>
           </div>
         </div>
       </div>
@@ -44,9 +44,9 @@
 export default {
   name: 'VisaoGeralIndicadores',
   props: {
-    totalRecebe: { type: Number, default: 514.4 },
-    totalNaoRecebe: { type: Number, default: 3545 },
-    valorPagar: { type: Number, default: 12854.60 }
+    totalRecebe: { type: Number },
+    totalNaoRecebe: { type: Number },
+    valorPagar: { type: Number }
   }
 }
 </script>

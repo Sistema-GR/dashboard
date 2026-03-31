@@ -20,7 +20,7 @@
 
     <!-- Faixas de Pagamento -->
     <FaixasPagamento 
-      :data="dashboardData.analysis_result.faixa_counts"
+      :data="dashboardData.analysis_result"
     />
 
     <!-- Motivo de não recebimento -->

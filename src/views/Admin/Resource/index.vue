@@ -66,11 +66,42 @@
             </div>
         </div>
 
+        <div class="px-4 sm:px-10 mb-5 mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Filtro por Motivo (Dropdown) -->
+            <div class="flex flex-col">
+                <label class="text-sm font-bold text-gray-700 mb-1">Filtrar por Motivo</label>
+                <select 
+                    v-model="filterMotivo" 
+                    class="border border-gray-300 rounded-[10px] px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none"
+                >
+                    <option value="">Todos os Motivos</option>
+                    <option v-for="motivo in MOTIVOS_RECURSO" :key="motivo.text" :value="motivo.text">
+                        {{ motivo.text }}
+                    </option>
+                </select>
+            </div>
+
+            <!-- Filtro por Responsável -->
+            <div class="relative">
+                <label class="text-sm font-bold text-gray-700 mb-1">Filtrar por Responsável</label>
+                <select 
+                    v-model="filterResponsavel" 
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                    <option value="">Todos os Responsáveis</option>
+                    <option v-for="staff in staffList" :key="staff.id" :value="staff.id">
+                        {{ staff.full_name }}
+                    </option>
+                </select>
+            </div>
+        </div>
+
         <div class="py-5 w-full space-y-4 px-4 sm:px-10">
             <infoCard 
               v-for="recurso in filteredRecursos" 
               :key="recurso.id" 
               :recurso="recurso"
+              :staffList="staffList"
               @status-updated="handleStatusUpdate"              
             />
           <div v-if="!filteredRecursos.length && !isLoading" class="text-center text-gray-500 py-10">
@@ -92,7 +123,7 @@ import infoCard from '@/views/Admin/Resource/components/infoCard/index.vue'
 import AnnualReportsDashboard from '@/views/Admin/Resource/AnnualResource/AnnualReportsDashboard.vue'
 import { FunnelIcon } from "@heroicons/vue/24/outline";
 import { apiClient } from '@/service/apiService';
-import { STATUS_DEFINITIONS } from '@/config/resourceConstants.js';
+import { STATUS_DEFINITIONS, MOTIVOS_RECURSO } from '@/config/resourceConstants.js';
 
 export default {
     name: "Recurso",
@@ -103,6 +134,9 @@ export default {
         const recursos = ref([])
         const selectedStatus = ref('aguardando_resposta')
         const isLoading = ref(true)
+        const filterMotivo = ref('');
+        const filterResponsavel = ref('');
+        const staffList = ref([]);
 
         async function fetchRecursos() {
             isLoading.value = true;
@@ -122,21 +156,43 @@ export default {
                 isLoading.value = false;
             }
         }
+        async function fetchStaffUsers() {
+            try {
+                const response = await apiClient.get('/auth/staff-users/', {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
+                });
+                staffList.value = response.data;
+            } catch (err) {
+                console.error("Erro ao buscar staff:", err);
+            }
+        }
+
+        const filteredRecursos = computed(() => {
+            if (!recursos.value) return [];
+            return recursos.value.filter(r => {
+                const matchesStatus = r.status === selectedStatus.value;
+                
+                // Filtro de Motivo (Verifica se o motivo selecionado está no array do recurso)
+                const matchesMotivo = filterMotivo.value === '' || 
+                    (r.criterios_selecionados && r.criterios_selecionados.includes(filterMotivo.value));
+                
+                // Filtro de Responsável
+                const matchesResponsavel = filterResponsavel.value === '' || 
+                    r.responsavel === Number(filterResponsavel.value);
+
+                return matchesStatus && matchesMotivo && matchesResponsavel;
+            });
+        });
 
         onMounted(() => {
             fetchRecursos();
+            fetchStaffUsers();
         });
 
         function navigateToVersionManager() {
             router.push({ name: 'versionmanager-home' });
         }
 
-
-        const filteredRecursos = computed(() => {
-            if (!recursos.value) return [];
-            return recursos.value.filter(r => r.status === selectedStatus.value);
-        });
-        
         const countByStatus = (status) => {
             if (!recursos.value) return 0;
             return recursos.value.filter(r => r.status === status).length;
@@ -153,9 +209,9 @@ export default {
                     console.error("Recurso não encontrado na lista local.");
                     return;
                 }
-                
                 const response = await apiClient.patch(`/recursos/${recursoId}/`, { status: newStatus }, {
                     headers: {
+                        'Content-Type': 'multipart/form-data',
                         'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                     }
                 });
@@ -200,6 +256,11 @@ export default {
             STATUS_DEFINITIONS,
             activeStatusColorClass,
             navigateToVersionManager,
+            MOTIVOS_RECURSO,
+            filterMotivo,
+            filterResponsavel,
+            staffList,
+            filteredRecursos,
         }
     },
 }

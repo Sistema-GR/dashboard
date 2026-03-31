@@ -7,6 +7,7 @@ const getApiBase = () => {
     return 'http://localhost:8000';
   }
 };
+
 const REFRESH_TOKEN_URL = () => `${getApiBase()}/auth/token/refresh/`;
 
 /**
@@ -14,6 +15,7 @@ const REFRESH_TOKEN_URL = () => `${getApiBase()}/auth/token/refresh/`;
  * @param {string} token - O token JWT.
  * @returns {object|null} O payload decodificado ou null se inválido.
  */
+
 const decodeTokenPayload = (token) => {
   try {
     const b64 = token.split('.')[1] || '';
@@ -34,6 +36,12 @@ const decodeTokenPayload = (token) => {
   }
 };
 
+const cleanLocalStorage = () => {
+  localStorage.removeItem('accessToken');
+  localStorage.removeItem('refreshToken');
+  localStorage.removeItem('isAuthenticated');
+};
+
 /**
  * Obtém o token de acesso do localStorage e verifica se está expirado.
  * Se estiver expirado, tenta renovar utilizando o refreshToken.
@@ -43,7 +51,21 @@ export const getAccessToken = async () => {
   const token = localStorage.getItem('accessToken');
   if (!token) return null;
 
+  // Validate token format before decoding
+  if (typeof token !== 'string' || token.split('.').length !== 3) {
+    console.error('getAccessToken: Invalid token format in localStorage');
+    cleanLocalStorage();
+    return null;
+  }
+
   const tokenPayload = decodeTokenPayload(token);
+  
+  // If token payload is invalid, clear storage and return null
+  if (!tokenPayload) {
+    cleanLocalStorage();
+    return null;
+  }
+
   const isExpired = tokenPayload?.exp && tokenPayload.exp < Math.floor(Date.now() / 1000);
 
   if (isExpired) {
@@ -80,9 +102,7 @@ export const renewAccessToken = async (refreshToken) => {
     } else if (response.status === 401) {
       // Se o token for blacklisted ou inválido, limpar os tokens e redirecionar o usuário
       console.error("renewAccessToken: Token blacklisted ou inválido.");
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('isAuthenticated');
+      cleanLocalStorage();
       // Redirecionar para a página de login ou exibir uma mensagem
       if (typeof window !== 'undefined' && window.location) {
         window.location.href = '/'; // ou o caminho da sua página de login

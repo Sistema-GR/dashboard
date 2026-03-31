@@ -182,7 +182,7 @@ export default {
         }
 
         const response = await apiClient.post(
-          "/csv/api/set-active-calculus/",
+          "/csv/set-active-calculus/",
           { calc_id: calculusId },
 
           {

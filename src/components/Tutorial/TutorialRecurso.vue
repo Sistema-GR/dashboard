@@ -69,7 +69,7 @@ const driverObj = driver({
     // Step 1
     {
       popover: {
-        title: '<div class="titulo-img"><img src="/src/assets/images/inicioTutorial.png" class="responsive-img" />Bem-vindo ao formulário de recurso</div>',
+        title: '<div class="titulo-img"><img src="/src/assets/images/inicio-tutorial.png" class="responsive-img" />Bem-vindo ao formulário de recurso</div>',
         description: '<div class="descricaoo">Este tutorial te guiará através do Formulário de Recurso. <br><br><strong>Para que serve esta tela?</strong> <br><br> Esta tela permite que você conteste formalmente informações relacionadas à sua gratificação por resultados quando: <br>❌ Há dados incorretos em seu cadastro. <br>❌ Detectou uma falha na aplicação das regras de cálculo.</div>',
         position: "center",
       },

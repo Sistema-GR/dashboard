@@ -206,7 +206,7 @@ const downloadSummaryFile = async () => {
     }
 
     const downloadResponse = await apiClient.get(
-        `/csv/api/data-files/${fileId}/download/`,
+        `/csv/data-files/${fileId}/download/`,
         {
             headers: { Authorization: `Bearer ${token}` },
             responseType: 'blob', 

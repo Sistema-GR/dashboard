@@ -33,7 +33,7 @@
 
         <div class="flex flex-row w-full items-center bg-solitude-200">
             <div class="flex w-full items-center justify-center">
-                <img src="@/assets/images/Ilustração.png" class="w-full lg:w-2/4 lg:-translate-x-8 pt-4"/>
+                <img src="@/assets/images/ilustracao.png" class="w-full lg:w-2/4 lg:-translate-x-8 pt-4"/>
             </div>
             
             <div class="flex flex-col items-center text-center justify-center w-full text-15 mx-2 sm:text-20 lg:text-25 gap-3 lg:gap-0">
@@ -88,7 +88,7 @@
                                             
                                             <td class="p-4 text-gray-700 font-semibold whitespace-nowrap">
                                                 <p id="tutorial-valor-rede">{{ formatCurrency(item?.profissionais[0]?.valor_gr_rede) }}</p>
-                                                <p id="tutorial-valor-unidade">{{ formatCurrency(item?.profissionais[0]?.valor_gr_unidade) }}</p>
+                                                <p id="tutorial-valor-unidade">{{ formatCurrency(totalUnidade) }}</p>
                                                 <p id="tutorial-desconto">{{ formatCurrency(item?.dados?.desconto) }}</p>
                                                 <p id="tutorial-valor-total">{{ formatCurrency(item?.dados?.valor_total) }}</p>
                                             </td>
@@ -331,6 +331,7 @@ import { useRoute } from 'vue-router';
 import { formatUnidade } from './unidadeMap';
 
 const savedData = ref([]);
+const totalUnidade = ref(null);
 const isLoading = ref(true); 
 const errorMessage = ref(null);
 const route = useRoute();
@@ -371,6 +372,13 @@ const fetchRewardsData = async () => {
         );
         
         savedData.value = response.data;
+        // Somativa dos valores de todas as unidades onde o profissional trabalha
+        totalUnidade.value = savedData.value[0]?.profissionais.reduce((acc, curr) => {
+            return acc + (curr.valor_gr_unidade || 0);
+        }, 0);
+        //Garatindo que não ultrapasse o teto de unidades (75% do teto geral)
+        totalUnidade.value > savedData.value[0]?.dados?.valor_total ? totalUnidade.value = savedData.value[0]?.dados?.valor_total : null;
+
 
     } catch (error) {
         console.error('Erro ao buscar dados da gratificação:', error);

@@ -63,21 +63,28 @@ export default {
     const open = ref(true)
     const chartDistribuicao = ref(null)
     let chartInstance = null
-    
-    const faixasData = [
-      { nome: 'Não recebe nada', quantidade: props.data.faixa_0, percentual: 85.4, valorMedio: 'R$ 0,00' },
-      { nome: 'Até R$ 1.500', quantidade: props.data.faixa_0_1500, percentual: 7.4, valorMedio: 'R$ 500,00' },
-      { nome: 'De R$ 1.500 a R$ 3.000', quantidade: props.data.faixa_1500_3000, percentual: 3.7, valorMedio: 'R$ 1.500,00' },
-      { nome: 'De R$ 3.000 a R$ 4.500', quantidade: props.data.faixa_3000_4500, percentual: 2.5, valorMedio: 'R$ 3.000,00' },
-      { nome: 'De R$ 4.500 a R$ 6.000', quantidade: props.data.faixa_4500_6000, percentual: 0.7, valorMedio: 'R$ 5.000,00' },
-      { nome: 'Mais que R$ 6.000', quantidade: props.data.faixa_6000_mais, percentual: 0.4, valorMedio: 'R$ 8.000,00' }
-    ]
 
     const totalGeral = {
-      quantidade: 4069,
+      quantidade: Object.keys(props.data.faixa_counts).filter(key => key.startsWith('faixa_')).reduce((sum, key) => sum + (props.data.faixa_counts[key] || 0), 0),
       percentual: 100.0,
-      valorMedio: 'R$ 1.254,32'
+      valorMedio: '000'
     }
+
+    function calcPercentual(quantidade){
+      return ((quantidade / totalGeral.quantidade) * 100).toFixed(1)
+    }
+
+    const faixas = props.data.faixa_counts
+
+    const faixasData = [
+      { nome: 'Não recebe nada', quantidade: faixas.faixa_0, percentual: calcPercentual(faixas.faixa_0), valorMedio: 'R$ 0,00' },
+      { nome: 'Até R$ 1.500', quantidade: faixas.faixa_0_1500, percentual: calcPercentual(faixas.faixa_0_1500), valorMedio: 'R$ 500,00' },
+      { nome: 'De R$ 1.500 a R$ 3.000', quantidade: faixas.faixa_1500_3000, percentual: calcPercentual(faixas.faixa_1500_3000), valorMedio: 'R$ 1.500,00' },
+      { nome: 'De R$ 3.000 a R$ 4.500', quantidade: faixas.faixa_3000_4500, percentual: calcPercentual(faixas.faixa_3000_4500), valorMedio: 'R$ 3.000,00' },
+      { nome: 'De R$ 4.500 a R$ 6.000', quantidade: faixas.faixa_4500_6000, percentual: calcPercentual(faixas.faixa_4500_6000), valorMedio: 'R$ 5.000,00' },
+      { nome: 'Mais que R$ 6.000', quantidade: faixas.faixa_6000_mais, percentual: calcPercentual(faixas.faixa_6000_mais), valorMedio: 'R$ 8.000,00' }
+    ]
+
 
     const labels = faixasData.map(f => f.nome)
     const data = faixasData.map(f => f.quantidade)
@@ -165,7 +172,7 @@ export default {
       })
     }
 
-    watch(() => props.data, () => {
+    watch(() => props.data.faixa_counts, () => {
       if (open.value) setTimeout(() => createChart(), 100)
     }, { deep: true })
 

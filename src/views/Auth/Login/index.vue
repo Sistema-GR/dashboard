@@ -5,43 +5,17 @@
         <div class="flex flex-col h-screen items-center justify-center">
           <img src="@/assets/images/logo.png" alt="Logo" class="w-3/12 scale-90 drop-shadow-lg py-0" />
           <div class="w-full max-w-md space-y-3 px-5">
-            <TextInput 
-              type="email" 
-              label="E-mail" 
-              placeholder="Digite seu e-mail" 
-              v-model="email" 
-              @keydown.enter="login"
-              :aria-label="'Campo de e-mail'" 
-              :error="errors.email"
-            />
-            
-            <div class="relative">
-              <TextInput 
-                :type="showPassword ? 'text' : 'password'" 
-                label="Senha" 
-                placeholder="Senha" 
-                v-model="senha" 
-                @keydown.enter="login"
-                :aria-label="'Campo de senha'" 
-                :error="errors.senha"
-              />
-              <button
-                type="button"
-                class="absolute right-3 top-14 transform -translate-y-1/2 text-gray-500"
-                @click="togglePasswordVisibility"
-                aria-label="Mostrar ou ocultar senha"
-              >
-                <span v-if="showPassword">
-                  <EyeSlashIcon class="w-5 h-5" />
-                </span>
-                <span v-else>
-                  <EyeIcon class="w-5 h-5" />
-                </span>
-              </button>
+
+            <!-- Google Sign-In Button -->
+            <div id="google-signin-button" class="pt-4"></div>
+            <div class="flex items-center justify-center mt-4">
+              <span class="text-gray-300 text-sm">@2026 SED-APT, All rights reserved.</span>
             </div>
 
-            <div class="w-full flex justify-end mt-2">
-              <router-link to="/auth/forgotpassword" class="text-15 text-amber-50 hover:underline mt-0">Esqueceu sua senha?</router-link>
+            <!-- OLD BUTTONS
+
+            <div 
+            class="flex w-full items-center justify-center px-2 py-4 text-white rounded-[10px] font-bold bg-azure-500 mt-8 mb-4">
             </div>
 
             <PrimaryButton
@@ -53,11 +27,10 @@
               aria-label="Botão de login"
             />
 
+            -->
+
             <p v-if="errors.global" class="text-red-500 text-15 mt-1">{{ errors.global }}</p>
 
-            <div class="w-full flex justify-center pt-3">
-              <router-link to="/auth/signup" class="text-15 text-amber-50 hover:underline mt-0 -translate-y-5">Não possui cadastro? Clique aqui</router-link>
-            </div>
           </div>
         </div>
       </div>
@@ -73,8 +46,9 @@
 import TextInput from "@/components/Inputs/TextInput.vue";
 import PrimaryButton from "@/components/Buttons/PrimaryButton.vue";
 import { EyeSlashIcon, EyeIcon } from "@heroicons/vue/24/outline";
-import { login } from "@/service/apiService";  
 import { setUserType, getDashboardRoute } from "@/service/userType";
+import { apiClient } from "@/service/apiService";
+
 
 export default {
   name: 'Login',
@@ -89,49 +63,68 @@ export default {
       errors: {
         email: null,
         senha: null,
+        cpf: null,
         global: null,
       },
     };
   },
 
+  mounted() {
+    // Load Google Identity Services script
+    const script = document.createElement('script');
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+
+    // Initialize Google Sign-In after script loads
+    script.onload = () => {
+      google.accounts.id.initialize({
+        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+        callback: this.handleGoogleSignIn
+      });
+      
+      google.accounts.id.renderButton(
+        document.getElementById('google-signin-button'),
+        { theme: 'filled_blue', size: 'large' }
+      );
+    };
+  },
+
   methods: {
-    togglePasswordVisibility() {
-      this.showPassword = !this.showPassword;
-    },
-
-    validateForm() {
-      this.errors.email = null;
-      this.errors.senha = null;
-      this.errors.global = null;
-
-      let valid = true;
-
-      if (!this.email) {
-        this.errors.email = 'E-mail é obrigatório.';
-        valid = false;
-      }
-
-      if (!this.senha) {
-        this.errors.senha = 'Senha é obrigatória.';
-        valid = false;
-      }
-
-      return valid;
-    },
-
-    async login() {
-      if (!this.validateForm()) {
-        return;
-      }
-
+    async handleGoogleSignIn(response) {
       this.loading = true;
       this.errors.global = null;
 
       try {
+        const token = response.credential;
+        this.pendingGoogleToken = token;
+        console.log('Google token received, sending to backend...');
+      
+        // Send to backend
+        const axiosResponse = await apiClient.post('/auth/googleauth/', { token });
+        const data = axiosResponse.data;  // Extract the actual response data from axios wrapper
+        console.log('Backend response:', data);
+        // If backend asks for CPF completion, save token and redirect to signup
+        if (data.action === 'require_cpf') {
+          // save token and optional prefill info
+          localStorage.setItem('googlePendingToken', token);
+          if (data.email) localStorage.setItem('googlePendingEmail', data.email);
+          if (data.first_name) localStorage.setItem('googlePendingFirstName', data.first_name);
+          if (data.last_name) localStorage.setItem('googlePendingLastName', data.last_name);
+          console.log('Backend requires CPF completion. Redirecting to signup with Google flow...');
+          this.$router.push({ name: 'signup', query: { google: 1 } });
+          return;
+        }
 
-        const data = await login(this.email, this.senha);
-
-
+        // Check if response contains tokens
+        if (!data.access || !data.refresh) {
+          console.error('Backend did not return tokens. Response:', data);
+          this.errors.global = 'Erro ao processar autenticação. Resposta inválida do servidor.';
+          return;
+        }
+        
+        // Store JWT tokens (same as traditional login)
         localStorage.setItem('accessToken', data.access);
         localStorage.setItem('refreshToken', data.refresh);
         localStorage.setItem('isAuthenticated', 'true');
@@ -140,21 +133,25 @@ export default {
         if (data.user) {
           setUserType(data.user);
         }
-        
 
         // Determine redirect based on user type
         let redirectTo = this.$route.query.redirect;
         if (!redirectTo) {
           redirectTo = getDashboardRoute();
         }
-        
+        localStorage.setItem('tempTargetCpf', data.user.cpf);
         this.$router.push(redirectTo);
+        
       } catch (error) {
-        this.errors.global = error.message || 'Erro desconhecido. Tente novamente.';
+        console.error('Google sign-in error:', error);
+        console.error('Error response:', error.response?.data);
+        this.errors.global = error.response?.data?.error || 'Falha no login com Google. Tente novamente.';
       } finally {
         this.loading = false;
       }
     },
+
+    
   },
 };
 </script>

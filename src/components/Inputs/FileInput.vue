@@ -93,6 +93,10 @@ export default {
       type: Number,
       default: 14,
     },
+    initialFiles: {
+      type: Array,
+      default: () => [],
+    },
     expectedFiles: {
       type: Array,
       default: () => [
@@ -112,6 +116,7 @@ export default {
         { key: 'funcao_grupo_etapas', label: '14. Função, Grupo e Etapas', patterns: ['funcao_grupo_etapas'] },  
       ],
     },
+    generalDataId: [String, Number],
   },
   data() {
     return {
@@ -121,6 +126,30 @@ export default {
       uploadResult: '',
       errorMessage: '',
     };
+  },
+  watch: {
+    initialFiles: {
+      handler(newFiles) {
+        if (newFiles && newFiles.length > 0) {
+          newFiles.forEach(file => {
+            // Check if file already exists in preview list to avoid duplicates
+            if (!this.previewFiles.find(f => f.name === file.name)) {
+              this.previewFiles.push({
+                ...file,
+                id: this.makeId(),
+                file: file.file,
+                name: file.name,
+                size: file.size,
+                progress: 100,
+                mappedKey: file.mappedKey || this.autoMapFilename(file.name)
+              });
+            }
+          });
+          this.sortPreviewFiles();
+        }
+      },
+      immediate: true
+    }
   },
   methods: {
     // Drag events
@@ -224,7 +253,7 @@ export default {
       }
       return null; // not mapped
     },
-
+    
     removeFile(index) {
       if (this.isUploading) return;
       this.previewFiles.splice(index, 1);
@@ -282,8 +311,7 @@ export default {
 
       // ensure all hashes are computed before uploading (or at least give a short timeout)
       const missingHash = this.previewFiles.filter(f => !f.hash && !f.error);
-      if (missingHash.length > 0) {
-        // wait for outstanding hash computations but not indefinitely
+      if (missingHash.length > 0) {        
         await this.waitForHashes(5000); // wait up to 5s for remaining hashes
       }
 
@@ -296,26 +324,27 @@ export default {
       const form = new FormData();
       const manifest = [];
 
-      // append files with clear keys
-      this.previewFiles.forEach((f, idx) => {
-        const key = f.mappedKey ? f.mappedKey : `unmapped_${idx}`;
-        const formKey = key; // use raw key, like 'funcionarios'
-        form.append(formKey, f.file, f.name);
+      const filesToUpload = this.previewFiles;
 
+      filesToUpload.forEach((f, idx) => {
+        const key = f.mappedKey ? f.mappedKey : `unmapped_${idx}`;
+        form.append(key, f.file, f.name);
         manifest.push({
-          formKey,
+          formKey: key,
           mappedKey: f.mappedKey,
           originalName: f.name,
-          size: f.size,
           hash: f.hash,
         });
       });
 
+      // Include info about remote files in the manifest
+      const remoteFiles = this.previewFiles.filter(f => f.isRemote);
+      form.append('existing_files', JSON.stringify(remoteFiles));
+
       // metadata
       form.append('manifest', JSON.stringify(manifest));
-
-      // add any other metadata needed
       form.append('count', String(this.previewFiles.length));
+
 
       const token = await getAccessToken();
       const headers = {
@@ -360,6 +389,7 @@ export default {
         this.$emit('isUploading', false);
       }
     },
+
     getMappedLabel(mappedKey) {
       if (!mappedKey) {
         return 'Não mapeado';

@@ -31,7 +31,6 @@
                                 type="text"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-[10px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
                                 placeholder="000.000.000-00"
-                                @input="formatarCPF"
                             />
                         </div>
 
@@ -50,36 +49,6 @@
                             />
                         </div>
 
-                        <!-- Senha atual -->
-                        <div>
-                            <label class="block text-15 font-medium text-gray-700 mb-2">Senha Atual</label>
-                            <input v-model="formData.senhaAtual" type="password" class="w-full p-3 border rounded-[10px]" placeholder="Digite sua senha atual" />
-                        </div>
-
-                        <!-- Nova senha -->
-                        <div>
-                            <label class="block text-15 font-medium text-gray-700 mb-2">Nova Senha</label>
-                            <input v-model="formData.novaSenha" type="password" class="w-full p-3 border rounded-[10px]" placeholder="Digite sua nova senha" @input="validarSenhas" />
-                            <p v-if="formData.novaSenha && formData.novaSenha.length < 6" class="text-red-500 text-15 mt-1">
-                                A senha deve ter pelo menos 6 caracteres
-                            </p>
-                        </div>
-
-                        <!-- Confirmar nova senha -->
-                        <div>
-                            <label class="block text-15 font-medium text-gray-700 mb-2">Confirmar Nova Senha</label>
-                            <input v-model="formData.confirmarSenha" type="password" class="w-full p-3 border rounded-[10px]" placeholder="Confirme sua nova senha" :class="{ 'border-red-500': senhasNaoConferem }" @input="validarSenhas" />
-                            <p v-if="senhasNaoConferem" class="text-red-500 text-15 mt-1">
-                                As senhas não conferem
-                            </p>
-                        </div>
-
-                        <!-- Botão -->
-                        <div class="flex justify-end pt-6">
-                            <button type="submit" class="bg-[#3459a2] hover:bg-blue-700 text-white px-8 py-3 rounded-[10px]" :disabled="salvando">
-                                {{ salvando ? 'Salvando...' : 'Salvar' }}
-                            </button>
-                        </div>
                     </form>
                 </div>
             </div>
@@ -110,12 +79,12 @@ export default {
             confirmarSenha: ''
         })
 
-        const formatarCPF = (event) => {
-            let valor = event.target.value.replace(/\D/g, '')
+        const formatarCPF = (cpf) => {
+            let valor = cpf.replace(/\D/g, '')
             valor = valor.replace(/(\d{3})(\d)/, '$1.$2')
             valor = valor.replace(/(\d{3})(\d)/, '$1.$2')
             valor = valor.replace(/(\d{3})(\d{1,2})$/, '$1-$2')
-            formData.cpf = valor
+            return valor
         }
 
         const validarSenhas = () => {
@@ -148,6 +117,7 @@ export default {
 
                 formData.nomeCompleto = `${firstName} ${lastName}`.trim();
                 formData.cpf = data.cpf || 'Não disponível';
+                formData.cpf = formatarCPF(formData.cpf);
                 formData.email = data.email || 'Não disponível';
             }
             catch (error) {

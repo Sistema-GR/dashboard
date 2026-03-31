@@ -21,24 +21,10 @@ export default {
   },
   methods: {
     async fetchUserInfo() {
-        const token = localStorage.getItem("accessToken"); // ou "access_token", conforme necessário
-        if (!token) {
-            console.error("Token de autenticação não encontrado");
-            return;
-        }
-
         try {
-            const response = await apiClient.get("/auth/user-info/", {
-                headers: {
-                    Authorization: `Bearer ${token}`, // Inclui o token corretamente
-                },
-            });
+            const response = await apiClient.get("/auth/user-info/");
 
-            if (!response.ok) {
-                throw new Error("Erro ao buscar informações do usuário");
-            }
-
-            const data = await response.json();
+            const data = response.data;
 
             if (data && data.first_name && data.last_name) {
                 const capitalizeWords = (str) => {
@@ -55,6 +41,11 @@ export default {
             }
         } catch (error) {
             console.error("Erro ao buscar dados do usuário:", error);
+            // If user info fails, redirect to login
+            if (error.response?.status === 401) {
+                localStorage.clear();
+                this.$router.push('/auth/login');
+            }
         }
     },
   },
