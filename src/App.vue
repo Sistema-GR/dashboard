@@ -14,7 +14,7 @@ import { useRoute } from 'vue-router'
 const route = useRoute()
 const sidebar = useSidebarStore()
 const width = ref(window.innerWidth);
-const MOBILE_BREAKPOINT = 768;
+const MOBILE_BREAKPOINT = 1024;
 
 const isMobile = computed(() => width.value < MOBILE_BREAKPOINT);
 

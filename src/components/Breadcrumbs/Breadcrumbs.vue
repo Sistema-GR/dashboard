@@ -1,20 +1,27 @@
 <template>
-  <nav class="grid grid-cols-3 items-center bg-[#3459a2] py-3 px-4 shadow-md w-full z-50 md:py-5 md:px-6" aria-label="Breadcrumb">
-
-    <div class="flex justify-start">
-      <button @click="goBack" class="flex items-center gap-2 text-white font-medium hover:underline text-15 sm:text-base">
-        <img :src="voltarIcon" alt="Voltar" class="w-4 h-4" />Voltar
-      </button>
-    </div>
-
-    <div class="flex justify-center">
-      <h1 class="text-20 text-white text-center font-black uppercase tracking-wide leading-6 sm:text-25 sm:leading-7 lg:text-30 lg:leading-8 sm:whitespace-nowrap">{{ titlePag }}</h1>
-    </div>
-
-    <div class="flex justify-end">
-      <NotificationBell />
-    </div>
+  <nav class="sticky top-0 z-30 w-full bg-[#3459a2] shadow-md transition-all duration-300" aria-label="Breadcrumb">
+    <div class="grid grid-cols-3 items-center h-16 px-4 md:h-20 md:px-6">
     
+      <div class="flex justify-start">
+          <button 
+            @click="goBack" 
+            class="flex items-center gap-2 text-white font-medium hover:text-white/80 transition-colors text-sm md:text-base group"
+          >
+            <img :src="voltarIcon" alt="Voltar" class="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+            <span class="hidden sm:inline">Voltar</span>
+          </button>
+        </div>
+
+      <div class="flex justify-center min-w-0">
+        <h1 class="text-lg font-black uppercase tracking-wide text-white truncate text-center leading-tight sm:text-xl lg:text-2xl w-full px-2">
+          {{ titlePag }}
+        </h1>
+      </div>
+
+      <div class="flex justify-end items-center">
+        <NotificationBell />
+      </div>
+    </div>  
   </nav>
 </template>
 
@@ -34,6 +41,10 @@ const props = defineProps({
     default: '',
   },
 });
+
+const hoverTxt = (hoveredText) => {
+  return hoveredText;
+}
 
 const router = useRouter()
 function goBack() {

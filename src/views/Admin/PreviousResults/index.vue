@@ -93,6 +93,7 @@ export default {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (Object.keys(response.data).length === 0) {
+            alert('Nenhum cálculo encontrado para o usuário. Redirecionando para a página de criação de cálculos.');
             this.calculusGroupsByYear = {};
             return;
         }

@@ -1,15 +1,15 @@
 <template>
-  <main :class="['relative z-0 flex flex-col overflow-hidden transition-all bg-white', sidebarClass]">
+  <main :class="[
+      'relative z-0 flex flex-col min-h-screen overflow-x-hidden transition-all duration-300 ease-in-out bg-gray-50', 
+      sidebarClass
+    ]">
     <Breadcrumbs 
-      class="flex w-full" 
       v-if="showBreadcrumbs && !hideBreadcrumbs" 
       :pages="breadcrumbPages" 
       :titlePag="title"
     />
-    <div>
-      <div class="flex flex-row gap-8 items-center">
-      </div>
-      <div :class="['flex flex-col items-center w-full rounded-[10px]', customClass]">
+    <div >
+      <div :class="['w-full rounded-[10px]', customClass]">
         <slot></slot>
       </div>
     </div>
@@ -49,7 +49,7 @@ export default {
     const sidebarStore = useSidebarStore();
 
     const sidebarClass = computed(() =>
-      sidebarStore.isSidebarMinimized ? 'lg:pl-20' : 'lg:pl-60'
+      sidebarStore.isSidebarMinimized ? 'lg:pl-[72px]' : 'lg:pl-[240px]'
     );
 
     const generateBreadcrumbs = (path) => {
@@ -66,14 +66,18 @@ export default {
     };
 
     const breadcrumbPages = computed(() => {
-      const homeBreadcrumb = { name: 'Home', href: '/home/overview', current: false };
-      const breadcrumbs = generateBreadcrumbs(route.path);
-      return [homeBreadcrumb, ...breadcrumbs];
+      const segments = route.path.split('/').filter(Boolean);
+      let currentPath = '';
+      const crumbs = segments.map((s, i) => {
+        currentPath += `/${s}`;
+        return { name: s.charAt(0).toUpperCase() + s.slice(1), href: currentPath, current: i === segments.length - 1 };
+      });
+      return [{ name: 'Home', href: '/home/overview', current: false }, ...crumbs];
     });
 
     const showBreadcrumbs = computed(() => {
-      const hiddenRoutes = ['/user/rewards', '/admin/rewards', '/user/faqs'];
-      return !hiddenRoutes.includes(route.path);
+      const hidden = ['/user/rewards', '/admin/rewards', '/user/faqs'];
+      return !hidden.includes(route.path);
     });
 
     watch(
