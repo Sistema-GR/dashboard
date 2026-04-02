@@ -4,7 +4,16 @@
 
 <!-- Header com botão de relatórios -->
         <div class="flex justify-end items-center px-4 sm:px-10 py-4 margin-between-sections gap-3">
-          
+          <button 
+            @click="navigateToTemplateBuilder" 
+            class="bg-[#ff0000] hover:bg-[#800000] text-white px-4 py-2 rounded-[10px] transition-colors duration-200 flex items-center gap-2 font-medium shadow-md"
+          >
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"/>
+              <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"/>
+            </svg>
+            Criar template resposta
+          </button>
           <button 
             @click="navigateToAnnualReports" 
             class="bg-[#3459A2] hover:bg-[#2a4a8a] text-white px-4 py-2 rounded-[10px] transition-colors duration-200 flex items-center gap-2 font-medium shadow-md"
@@ -193,6 +202,10 @@ export default {
             router.push({ name: 'versionmanager-home' });
         }
 
+        function navigateToTemplateBuilder() {
+            router.push({ name: 'template-builder' });
+        }
+
         const countByStatus = (status) => {
             if (!recursos.value) return 0;
             return recursos.value.filter(r => r.status === status).length;
@@ -256,6 +269,7 @@ export default {
             STATUS_DEFINITIONS,
             activeStatusColorClass,
             navigateToVersionManager,
+            navigateToTemplateBuilder,
             MOTIVOS_RECURSO,
             filterMotivo,
             filterResponsavel,
