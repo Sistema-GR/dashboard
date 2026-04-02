@@ -1,130 +1,142 @@
 <template>
-    <TransitionRoot as="template" :show="mobileSidebarOpen">
-        <Dialog class="relative z-50 lg:hidden" @close="mobileSidebarOpen = false">
-            <TransitionChild as="template" enter="transition-opacity ease-linear" enter-from="opacity-0" enter-to="opacity-100" leave="transition-opacity ease-linear duration-300" leave-from="opacity-100" leave-to="opacity-0">
-                <div class="fixed inset-0 bg-gray-900/80"/>
-            </TransitionChild>
-
-            <div class="fixed inset-0 flex">
-                <TransitionChild as="template" enter="transition ease-in-out duration-300 transform" enter-from="-translate-x-full" enter-to="translate-x-0" leave="transition ease-in-out duration-300 transform" leave-from="translate-x-0" leave-to="-translate-x-full">
-                    <DialogPanel class="relative flex w-full max-w-xs flex-1 bg-[#003965]">
-                        <TransitionChild as="template" enter="ease-in-out duration-300" enter-from="opacity-0" enter-to="opacity-100" leave="ease-in-out duration-300" leave-from="opacity-100" leave-to="opacity-0">
-                            <div class="absolute left-full top-0 flex w-16 justify-center pt-5">
-                                <button type="button" class="-m-2.5 p-2.5" @click="mobileSidebarOpen = false">
-                                    <span class="sr-only">Close sidebar</span>
-                                    <XMarkIcon class="h-6 w-6 text-white" aria-hidden="true" />
-                                </button>
-                            </div>
-                        </TransitionChild>
-
-                        <div class="flex grow flex-col gap-y-4 overflow-y-auto px-5 pb-2 ring-1 ring-white/10 custom-scrollbar">
-                            <div class="flex h-14 shrink-0 mt-4 justify-center items-center">
-                                <img class="h-12 w-auto" src="../../assets/images/logo-horinzontal.png" alt="Your Company" />
-                            </div>
-
-                            <nav class="flex flex-1 flex-col">
-                                <ul role="list" class="flex flex-1 flex-col gap-y-5">
-                                    <li>
-                                        <ul role="list" class="-mx-2 grid gap-1">
-                                            <li v-for="item in filteredNavigation" :key="item.name" class="cursor-pointer">
-                                                <!-- Mobile - Se tem filhos, renderizar como expansível -->
-                                                <div v-if="item.children" class="relative">
-                                                <div
-                                                    class="group flex gap-x-3 rounded-[10px] p-1.5 text-15 font-semibold leading-6 text-white hover:bg-primary-900 cursor-pointer select-none"
-                                                    @click="isCalcMenuOpen = !isCalcMenuOpen"
-                                                >
-                                                    <component :is="item.icon" class="h-6 w-6 shrink-0" aria-hidden="true" />
-                                                    {{ item.name }}
-                                                    <ChevronDownIcon
-                                                    :class="['w-4 h-auto ml-auto transition-transform', isCalcMenuOpen ? 'rotate-180' : '']"
-                                                    />
-                                                </div>
-                                                <TransitionRoot as="template" :show="isCalcMenuOpen">
-                                                    <ul class="ml-3 mt-1 space-y-0.5">
-                                                    <li v-for="child in item.children" :key="child.name">
-                                                        <div
-                                                        @click="selectRoute(child)"
-                                                        class="group flex gap-x-2 rounded-[10px] p-1 text-13 font-medium leading-5 transition-all duration-200"
-                                                        :class="{ 'bg-gray-800 text-white': $route.path === child.route, 'hover:bg-primary-900 hover:text-white text-white': $route.path !== child.route }"
-                                                        >
-                                                        <component :is="child.icon" class="h-4 w-4 shrink-0" aria-hidden="true" />
-                                                        <span>{{ child.name }}</span>
-                                                    </div>
-                                                    </li>
-                                                    </ul>
-                                                </TransitionRoot>
-                                                </div>
-                                                <!-- Mobile - Caso contrário, renderizar como link normal -->
-                                                <router-link v-else :to="item.route" :class="[item.current ? 'bg-gray-800 text-white' : 'text-white hover:bg-primary-900 hover:text-white', 'group flex gap-x-3 rounded-[10px] p-1.5 text-15 font-semibold leading-6']">
-                                                    <component :is="item.icon" class="h-6 w-6 shrink-0" aria-hidden="true" />
-                                                    {{ item.name }}
-                                                </router-link>
-                                            </li>
-                                        </ul>
-                                    </li>
-
-                                    <!-- Menu do perfil no mobile -->
-                                    <li class="-mx-6 mt-auto" v-if="showConfigLink">
-                                    <div class="flex items-center gap-2 px-4 py-2.5 text-15 font-semibold leading-6 text-white cursor-pointer hover:bg-gray-800" @click="toggleProfileMenu">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-12 h-auto text-white">
-                                            <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" clip-rule="evenodd" />
-                                        </svg>  
-                                        <span>{{ userName || 'Carregando...' }}</span>
-                                        <ChevronUpIcon :class="isProfileMenuOpen ? 'rotate-180' : ''" class="w-5 h-auto transition-transform" />
-                                    </div>
-
-                                    <!-- Menu de opções do perfil no mobile -->
-                                    <TransitionRoot as="template" :show="isProfileMenuOpen">
-                                        <TransitionChild
-                                        as="div"
-                                        enter="transition ease-out duration-200"
-                                        enter-from="opacity-0 translate-y-4"
-                                        enter-to="opacity-100 translate-y-0"
-                                        leave="transition ease-in duration-150"
-                                        leave-from="opacity-100 translate-y-0"
-                                        leave-to="opacity-0 translate-y-4"
-                                        >
-                                        <div class="flex flex-col mt-2 space-y-2 bg-gray-800 rounded-[10px] shadow-lg text-white py-2 px-4 relative z-50">
-                                            <router-link to="/user/config" class="flex flex-row items-center gap-2 text-15 hover:text-gray-300 transition">
-                                            <PencilIcon class="w-4 h-auto" /> 
-                                            Acessar Perfil
-                                            </router-link>
-                                            <button class="flex flex-row items-center gap-2 text-15 w-full text-left hover:text-gray-300 transition" @click="logout">
-                                            <PowerIcon class="w-4 h-auto"/> 
-                                            Deslogar
-                                            </button>
-                                        </div>
-                                        </TransitionChild>
-                                    </TransitionRoot>
-                                    </li>
-                                </ul>
-                            </nav>
-
-                        </div>
-                    </DialogPanel>
-                </TransitionChild>
-            </div>
-        </Dialog>
-    </TransitionRoot>
-
-    <div class="sticky top-0 z-40 flex items-center gap-x-6 bg-[#003965] px-4 py-4 shadow-sm sm:px-6 lg:hidden">
-    <button type="button" class="-m-2.5 p-2.5 text-gray-400 lg:hidden" @click="mobileSidebarOpen = true">
-        <span class="sr-only">Open sidebar</span>
-        <Bars3Icon class="h-6 w-6 text-white" aria-hidden="true" />
-    </button>
-
-    <div class="flex-1 text-15 font-semibold leading-6 text-white"></div>
-
-    <a href="#" @click="mobileSidebarOpen = true">
-        <span class="sr-only">Your profile</span>
-        <div class="flex text-15 font-medium items-center gap-2 text-white">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-7 h-auto text-white">
-            <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" clip-rule="evenodd" />
-            </svg>
-            Perfil
-        </div>
-    </a>
+    <!-- ───────────────────────── MOBILE ───────────────────────── -->
+    <!-- Topbar mobile -->
+    <div class="lg:hidden sticky top-0 z-40 flex items-center justify-between bg-[#003965] px-4 py-3 shadow-md border-b border-white/10">
+      <button @click="mobileSidebarOpen = true" class="p-1.5 rounded-lg hover:bg-white/10 transition">
+        <Bars3Icon class="w-5 h-5 text-white" />
+      </button>
+      <img src="../../assets/images/logo-horinzontal.png" class="h-8 w-auto" alt="Logo" />
+      <button @click="mobileSidebarOpen = true" class="flex items-center gap-1.5 text-white/70 hover:text-white transition">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+          <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" clip-rule="evenodd" />
+        </svg>
+      </button>
     </div>
+
+    <!-- Drawer mobile -->
+    <TransitionRoot as="template" :show="mobileSidebarOpen">
+      <Dialog class="relative z-50 lg:hidden" @close="mobileSidebarOpen = false">
+        <TransitionChild
+          as="template"
+          enter="ease-out duration-300" enter-from="opacity-0" enter-to="opacity-100"
+          leave="ease-in duration-200" leave-from="opacity-100" leave-to="opacity-0"
+        >
+          <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" />
+        </TransitionChild>
+
+        <div class="fixed inset-0 flex">
+          <TransitionChild
+            as="template"
+            enter="ease-out duration-300" enter-from="-translate-x-full" enter-to="translate-x-0"
+            leave="ease-in duration-200" leave-from="translate-x-0" leave-to="-translate-x-full"
+          >
+            <DialogPanel class="relative flex w-72 flex-col bg-[#003965] shadow-2xl">
+
+              <!-- Fechar -->
+              <div class="absolute right-0 top-0 translate-x-full pt-4 pl-2">
+                <button @click="mobileSidebarOpen = false" class="flex items-center justify-center w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 transition">
+                  <XMarkIcon class="w-4 h-4 text-white" />
+                </button>
+              </div>
+
+              <div class="flex flex-col h-full overflow-y-auto custom-scrollbar">
+                <!-- Logo mobile -->
+                <div class="flex items-center justify-center px-5 py-5">
+                  <img src="../../assets/images/logo-horinzontal.png" class="h-11 w-auto" alt="Logo" />
+                </div>
+                <div class="mx-4 h-px bg-white/10 mb-3" />
+
+                <!-- Nav mobile -->
+                <nav class="flex-1 px-3">
+                  <ul class="space-y-0.5">
+                    <li v-for="item in filteredNavigation" :key="item.name">
+                      <div v-if="item.children">
+                        <button
+                          @click="isCalcMenuOpen = !isCalcMenuOpen"
+                          class="w-full group flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-semibold text-white/80 hover:text-white hover:bg-white/10 transition-all"
+                        >
+                          <component :is="item.icon" class="w-5 h-5 shrink-0 stroke-white/70 group-hover:stroke-white" />
+                          <span class="flex-1 text-left">{{ item.name }}</span>
+                          <ChevronDownIcon :class="['w-4 h-4 stroke-white/40 transition-transform', isCalcMenuOpen ? 'rotate-180' : '']" />
+                        </button>
+                        <Transition name="submenu">
+                          <ul v-if="isCalcMenuOpen" class="mt-0.5 ml-3 pl-3 border-l border-white/10 space-y-0.5">
+                            <li v-for="child in item.children" :key="child.name">
+                              <button
+                                @click="selectRoute(child); mobileSidebarOpen = false"
+                                :class="[
+                                  'w-full flex items-center gap-2 rounded-lg px-2.5 py-2 text-[12px] font-medium transition-all',
+                                  sidebarStore.reportPage === child.id ? 'bg-white/15 text-white' : 'text-white/60 hover:text-white hover:bg-white/8'
+                                ]"
+                              >
+                                <component :is="child.icon" class="w-3.5 h-3.5 shrink-0" />
+                                {{ child.name }}
+                              </button>
+                            </li>
+                          </ul>
+                        </Transition>
+                      </div>
+
+                      <router-link
+                        v-else
+                        :to="item.route"
+                        @click="mobileSidebarOpen = false"
+                        :class="[
+                          'flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-semibold transition-all',
+                          $route.path === item.route
+                            ? 'bg-white/15 text-white'
+                            : 'text-white/75 hover:text-white hover:bg-white/10'
+                        ]"
+                      >
+                        <component :is="item.icon" class="w-5 h-5 shrink-0 stroke-current" />
+                        {{ item.name }}
+                      </router-link>
+                    </li>
+                  </ul>
+                </nav>
+
+                <div class="flex-1" />
+                <div class="mx-4 h-px bg-white/10" />
+
+                <!-- Perfil mobile -->
+                <div v-if="showConfigLink" class="px-3 py-3">
+                  <Transition name="profile-menu">
+                    <div v-if="isProfileMenuOpen" class="mb-2 rounded-xl bg-[#002a4d] border border-white/10 overflow-hidden">
+                      <router-link to="/user/config" @click="mobileSidebarOpen = false" class="flex items-center gap-2.5 px-4 py-2.5 text-[13px] text-white/75 hover:text-white hover:bg-white/8 transition-all">
+                        <PencilIcon class="w-4 h-4" /> Acessar Perfil
+                      </router-link>
+                      <div class="mx-3 h-px bg-white/10" />
+                      <button @click="logout" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-[13px] text-white/75 hover:text-white hover:bg-white/8 transition-all">
+                        <PowerIcon class="w-4 h-4" /> Deslogar
+                      </button>
+                    </div>
+                  </Transition>
+
+                  <button
+                    @click="toggleProfileMenu"
+                    :class="['w-full flex items-center gap-2.5 rounded-xl p-2 transition-all', isProfileMenuOpen ? 'bg-white/15' : 'hover:bg-white/10']"
+                  >
+                    <div class="relative shrink-0">
+                      <div class="w-9 h-9 rounded-full bg-white/15 border border-white/20 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 text-white/80">
+                          <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" clip-rule="evenodd" />
+                        </svg>
+                      </div>
+                      <span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-[#003965]" />
+                    </div>
+                    <div class="flex-1 text-left overflow-hidden">
+                      <p class="text-[13px] font-semibold text-white truncate">{{ userName || 'Carregando...' }}</p>
+                      <p class="text-[11px] text-white/40">Online</p>
+                    </div>
+                    <ChevronUpIcon :class="['w-3.5 h-3.5 stroke-white/40 transition-transform', isProfileMenuOpen ? 'rotate-180' : '']" />
+                  </button>
+                </div>
+              </div>
+            </DialogPanel>
+          </TransitionChild>
+        </div>
+      </Dialog>
+  </TransitionRoot>
 </template>
 
 <script setup>

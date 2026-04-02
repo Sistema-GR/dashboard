@@ -8,7 +8,7 @@
       :pages="breadcrumbPages" 
       :titlePag="title"
     />
-    <div class="p-4 md:p-6 lg:p-8">
+    <div >
       <div :class="['w-full rounded-[10px]', customClass]">
         <slot></slot>
       </div>
