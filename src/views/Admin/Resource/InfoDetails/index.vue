@@ -192,7 +192,8 @@ export default {
 
         async function fetchTemplates() {
             try {
-                const response = await apiClient.get('/recursos/templates/', { headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` } });
+                const response = await apiClient.get('/recursos/templates/render/',
+                    { headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` } });
                 templates.value = response.data;
             } catch (err) { console.error("Erro ao buscar templates:", err); }
         }

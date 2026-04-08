@@ -8,9 +8,8 @@
             @click="navigateToTemplateBuilder" 
             class="bg-[#ff0000] hover:bg-[#800000] text-white px-4 py-2 rounded-[10px] transition-colors duration-200 flex items-center gap-2 font-medium shadow-md"
           >
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"/>
-              <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"/>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
             </svg>
             Criar template resposta
           </button>
