@@ -15,6 +15,7 @@
               :searchQuery="searchQuery"
               :searchCriteria="searchCriteria"
               @columns-loaded="handleColumnsLoaded"
+              :is-view-only="true"
             />
         </div>
     </Whiteboard>

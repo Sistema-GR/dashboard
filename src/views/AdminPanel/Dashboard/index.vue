@@ -248,6 +248,8 @@ export default {
                   { label: "Mais de um critério", value: motivoCounts.mais_de_um_criterio || 0 },
                   { label: "Mais de dois critérios", value: motivoCounts.mais_de_dois_criterios || 0 },
                   { label: "Secretário e Diretores Executivos", value: motivoCounts.diretor_executivo + motivoCounts.secretario || 0 },
+                  { label: "Outro", value: motivoCounts.outro || 0 },
+
                 ].sort((a, b) => b.value - a.value)
             },
             {

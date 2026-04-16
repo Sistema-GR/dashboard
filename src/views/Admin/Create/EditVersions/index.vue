@@ -35,32 +35,32 @@
             <PrimaryButton
               :value="isAppealsModeActive ? 'Sair do Modo Recurso' : 'Ativar Modo Recurso'"
               @click="toggleAppealsMode"
-              :customColor="isAppealsModeActive ? 'bg-[#fa8231] hover:bg-[#e17055] w-48 h-12 text-15 font-semibold text-white rounded-[10px]' : 'bg-[#3459a2] hover:bg-[#27477a] w-48 h-12 text-15 font-semibold text-white rounded-[10px]'"
+              :customColor="isAppealsModeActive ? 'bg-[#fa8231] hover:bg-[#e17055] w-48 h-12 text-15 font-semibold text-white rounded-[10px]' : 'bg-[#3459a2] hover:bg-[#27477a] w-48 h-12 text-13 font-semibold text-white rounded-[10px]'"
               title="Filtra a visualização para focar apenas em usuários com recursos abertos."
             />
             
             <PrimaryButton
               value="Substituir Arquivo"
               @click="showReplaceModal = true"
-              customColor="bg-[#f7b731] hover:bg-[#e0a800] w-48 h-12 text-15 font-semibold text-white rounded-[10px]"
+              customColor="bg-[#f7b731] hover:bg-[#e0a800] w-48 h-12 text-13 font-semibold text-white rounded-[10px]"
               title="Substituir um arquivo de entrada completo por uma nova versão."
             />
             <PrimaryButton 
               value="Visualizar Criterios"
               @click="showSummaryModal = true"
-              customColor="bg-[#5a67d8] hover:bg-[#434190] w-48 h-12 text-15 font-semibold text-white rounded-[10px]"
+              customColor="bg-[#5a67d8] hover:bg-[#434190] w-48 h-12 text-13 font-semibold text-white rounded-[10px]"
               title="Abre uma visualização dos resultados processados (critérios) com base nos dados atuais."
             />
             <PrimaryButton 
               value="Reprocessar Dados"
               @click="reprocessVersion"
-              customColor="bg-[#3459a2] hover:bg-[#27477a] w-48 h-12 text-15 font-semibold text-white rounded-[10px]"
+              customColor="bg-[#3459a2] hover:bg-[#27477a] w-48 h-12 text-13 font-semibold text-white rounded-[10px]"
               title="Executa novamente o cálculo com os dados atuais, sem publicar a versão."
             />
             <PrimaryButton 
               value="Finalizar Edição"
               @click="publishVersion"
-              customColor="bg-[#2d8f4b] hover:bg-[#23703a] w-48 h-12 text-15 font-semibold text-white rounded-[10px]"
+              customColor="bg-[#2d8f4b] hover:bg-[#23703a] w-48 h-12 text-13 font-semibold text-white rounded-[10px]"
               title="Marca esta versão como finalizada e a envia para a tela de promoção."
             />
           </div>
