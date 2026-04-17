@@ -33,10 +33,10 @@ router.beforeEach((to, from, next) => {
 
   const allowedRoles = to.meta?.roles
   if (allowedRoles && !allowedRoles.includes(userType)) {
-    //return next({ path: getDashboardRoute() })
+    return next({ name: 'not-found' })
   }
 
-  if (from.name === 'rewards' && (to.name !== 'rewards' || to.name !== 'form-home' || to.name !== 'criteria')) {
+  if (from.name === 'rewards' && (to.name !== 'rewards' && to.name !== 'form-home' && to.name !== 'criteria')) {
       localStorage.removeItem('tempTargetCpf');
   }
   next()

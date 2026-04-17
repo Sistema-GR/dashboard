@@ -20,6 +20,14 @@ export const isAdmin = () => {
 };
 
 /**
+ * Check if the current user is a staff user
+ * @returns {boolean} true if user is staff, false otherwise
+ */
+export const isStaffUser = () => {
+  return getUserType() === 'staff';
+};
+
+/**
  * Check if the current user is a regular user
  * @returns {boolean} true if user is user, false otherwise
  */
@@ -33,7 +41,7 @@ export const isRegularUser = () => {
  */
 export const getDashboardRoute = () => {
   const userType = getUserType();
-  return userType === 'admin' ? '/calculus/dashboard' : '/user/home';
+  return userType === 'user' ? '/user/home' : '/calculus/dashboard';
 };
 
 /**

@@ -257,6 +257,27 @@ const routes = {
       ]
     }
   ],
+  'staff': [
+    { name: 'Dashboard', route: '/calculus/dashboard', icon: Squares2X2Icon, current: false },
+    { name: 'Recursos', route: '/resource', icon: ExclamationCircleIcon, current: false },
+    {
+      name: 'Detalhes do Cálculo', icon: RectangleStackIcon,
+      children: [
+        { name: 'Resultados IDEM', id: 'Results', icon: CalculatorIcon },
+        { name: 'Calendário Escolar', id: 'Calendar', icon: CalendarIcon },
+        { name: 'Profissionais', id: 'Profissional', icon: UsersIcon },
+        { name: 'Turmas', id: 'Groups', icon: UserGroupIcon },
+        { name: 'Etapas Ues', id: 'Steps', icon: Square3Stack3DIcon },
+        { name: 'Etapas Por Grupo', id: 'StageGroup', icon: RectangleGroupIcon },
+        { name: 'Frequência', id: 'Frequency', icon: ChartBarSquareIcon },
+        { name: 'Demissão', id: 'Resignation', icon: BriefcaseIcon },
+        { name: 'Atividades', id: 'Activities', icon: DocumentCheckIcon },
+        { name: 'Tempo de Atuação', id: 'Service', icon: CalendarDaysIcon },
+        { name: 'Formação', id: 'Training', icon: AcademicCapIcon },
+        { name: 'Relatórios Finais', id: 'Report', icon: DocumentTextIcon },
+      ]
+    }
+  ],
   'user': [
     { name: 'Resultados', route: '/user/rewards', icon: ChartBarIcon, current: true },
     { name: 'Recurso', route: '/resource/form/status', icon: InboxIcon, current: false },
@@ -318,7 +339,9 @@ onMounted(fetchUserName)
 const filteredNavigation = computed(() => {
   const userType = getUserType()
   if (!userType) return routes['user'] || []
-  if (userType === 'admin') return [...(routes['admin'] || []), ...(routes['admin-panel'] || [])]
+  if (userType === 'admin') return [...(routes['admin'] || [])]
+  //,...(routes['admin-panel'] || [])]
+  if (userType === 'staff') return [...(routes['staff'] || [])]
   return routes['user'] || []
 })
 
