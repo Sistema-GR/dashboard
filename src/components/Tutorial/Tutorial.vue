@@ -2,7 +2,7 @@
   <!-- Botão fixo para iniciar tutorial -->
   <button
     @click="startTutorial"
-    class="fixed bottom-16 right-6 bg-azure-800 text-white p-3 rounded-full shadow-md hover:bg-azure-900 transition-colors z-50 sm:bottom-20 sm:right-8 md:p-4"
+    class="fixed bottom-16 right-6 bg-[#1a4a8a] text-white p-3 rounded-full shadow-md hover:bg-[#0c447c] transition-colors z-50 sm:bottom-20 sm:right-8 md:p-4"
     title="Iniciar Tutorial"
   >
     <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -14,245 +14,371 @@
       />
     </svg>
   </button>
- 
-  <!-- Botões dinâmicos animados -->
-  <transition-group
-    name="fade-slide"
-    tag="div"
-    class="fixed bottom-20 right-4 sm:bottom-28 sm:right-8 md:bottom-32 md:right-12 flex flex-col gap-2 z-50"
-  >
-    <button
-      v-for="(btn) in dynamicButtons"
-      :key="btn.label"
-      @click="btn.action"
-      class="tutorial-nav-btn px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-base md:px-6 md:py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors whitespace-nowrap"
+
+  <!-- Botões dinâmicos para navegação -->
+  <Teleport to="body">
+    <transition-group
+      name="fade-slide"
+      tag="div"
+      class="fixed bottom-24 right-4 sm:bottom-28 sm:right-8 md:bottom-32 md:right-12 flex flex-col gap-2 z-[10002]"
     >
-      {{ btn.label }}
-    </button>
-  </transition-group>
+      <button
+        v-for="(btn, idx) in dynamicButtons"
+        :key="idx"
+        @click="btn.action"
+        class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-lg font-medium whitespace-nowrap"
+      >
+        {{ btn.label }}
+      </button>
+    </transition-group>
+  </Teleport>
 </template>
 
 <script setup>
-// Função para abrir accordions durante o tutorial
-const openAccordion = (selector) => {
-  const accordion = document.querySelector(selector);
-  if (accordion && typeof accordion.click === 'function') {
-    accordion.click();
-  } else if (accordion) {
-    accordion.setAttribute('open', 'true');
-    accordion.dispatchEvent(new Event('change'));
+import { ref, nextTick, onUnmounted } from 'vue';
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
+
+const dynamicButtons = ref([]);
+let driverObj = null;
+let currentStepIndex = 0;
+
+// Função para abrir accordion e aguardar
+const openAccordionAndWait = async (index) => {
+  await nextTick();
+
+  const accordionButton = document.querySelector(`#tutorial-matricula-${index}`);
+
+  if (!accordionButton) {
+    console.warn(`Botão do accordion #tutorial-matricula-${index} não encontrado`);
+    return false;
+  }
+
+  const buttonParent = accordionButton.closest('.bg-white');
+  const panel = buttonParent?.querySelector('[data-headlessui-state]');
+  const isOpen = panel?.getAttribute('data-headlessui-state')?.includes('open');
+
+  if (!isOpen) {
+    accordionButton.click();
+    await new Promise(resolve => setTimeout(resolve, 500));
+    await nextTick();
+  }
+
+  return true;
+};
+
+// Aguarda o conteúdo do accordion carregar
+const waitForAccordionContent = async () => {
+  await nextTick();
+  await new Promise(resolve => setTimeout(resolve, 300));
+
+  const personalData = document.querySelector('.p-5:has(.text-\\[11px\\]) .grid');
+  if (!personalData) {
+    await new Promise(resolve => setTimeout(resolve, 500));
   }
 };
 
-import { driver } from "driver.js";
-import "driver.js/dist/driver.css";
-import { ref, onMounted } from "vue";
+// Criação da instância do driver
+const createDriver = () => {
+  return driver({
+    popoverClass: 'custom-tooltip-centered',
+    showProgress: true,
+    showButtons: ["next", "previous", "close"],
+    nextBtnText: "Próximo",
+    prevBtnText: "Anterior",
+    doneBtnText: "Concluir",
+    closeBtnText: "Fechar",
+    progressText: "{{current}} de {{total}}",
+    overlayColor: "rgba(0, 0, 0, 0.65)",
+    allowClose: false,
+    onDestroyed: () => {
+      dynamicButtons.value = [];
+    },
+    onStepChanged: (step) => {
+      currentStepIndex = step.index;
+    },
+    steps: [
+      // Passo 1 - Boas vindas
+      {
+        popover: {
+          title: '<div class="tutorial-title">👋 Bem-vindo ao Painel da Gratificação</div>',
+          description: '<div class="tutorial-description">Este tutorial vai te ajudar a entender todas as informações importantes sobre sua gratificação.<br><br><strong>⚠️ Após o tutorial, verifique seus dados com atenção!</strong></div>',
+          position: "center",
+        },
+        onNext: () => {
+          dynamicButtons.value = [
+            { label: "Pular Tutorial", action: () => driverObj.moveTo(16) }
+          ];
+        },
+      },
 
-const dynamicButtons = ref([]);
+      // Passo 2 - Nome do servidor
+      {
+        element: () => document.querySelector('.grid-cols-1.sm\\:grid-cols-2 > div:first-child'),
+        popover: {
+          title: '<div class="tutorial-title">👤 Nome do Servidor</div>',
+          description: '<div class="tutorial-description">Este é o nome do servidor ao qual as informações exibidas no painel pertencem.</div>',
+          position: "bottom",
+        },
+        onNext: () => { dynamicButtons.value = []; },
+      },
 
-const driverObj = driver({
-  popoverClass: 'custom-tooltip-centered',
-  showProgress: true,
-  showButtons: ["next", "previous", "close"],
-  nextBtnText: "Próximo",
-  prevBtnText: "Anterior",
-  doneBtnText: "Fim",
-  closeBtnText: "Voltar",
-  progressText: "Passo {{current}}/{{total}}",
-  overlayColor: "rgba(0, 0, 0, 0.6)",
-  allowClose: false,
-  onDestroyed: () => {
-    dynamicButtons.value = [];
-  },
-  steps: [
-    // Step 1
-    {
-      popover: {
-        title: '<div class="titulo-img"><img src="/src/assets/images/inicio-tutorial.png" class="responsive-img" />👋 Bem-vindo ao painel de gratificação</div>',
-        description: '<div class="descricao">Estamos felizes por você estar aqui! Este tutorial rápido vai te ajudar a entender todas as informações importantes sobre sua gratificação.<br><br><strong>Após o tutorial, verifique seus dados com atenção!</strong></div>',
-        position: "center",
+      // Passo 3 - Valor total
+      {
+        element: () => document.querySelector('.grid-cols-1.sm\\:grid-cols-2 > div:last-child'),
+        popover: {
+          title: '<div class="tutorial-title">💰 Valor Total a Receber</div>',
+          description: '<div class="tutorial-description">Aqui você visualiza o valor bruto da sua gratificação, somando todos os seus vínculos.<br><br><strong>Este valor ainda não considera descontos de impostos.</strong></div>',
+          position: "bottom",
+        },
       },
-      onNext: () => {
-        dynamicButtons.value = [
-          { label: "Pular Tutorial", action: () => driverObj.drive(16) }
-        ];
-      },
-    },
-    // Step 2
-    {
-      element: "#tutorial-server-name",
-      popover: {
-        title: '<div class="titulo-img">Nome do servidor</div>',
-        description: '<div class="descricao">Este é o nome do usuário a quem as informações exibidas no painel pertencem.</div>',
-        position: "bottom",
-      },
-      onNext: () => {
-        dynamicButtons.value = [];
-      },
-    },
-    // Step 3
-    {
-      element: "#tutorial-value",
-      popover: {
-        title: '<div class="titulo-img">Seu Valor de Gratificação</div>',
-        description: '<div class="descricao">Aqui você visualiza o valor bruto da sua gratificação, já avaliado conforme os critérios individuais e somando todos os vínculos que possuam valores a receber. Lembre-se de que este valor não inclui os descontos de impostos.</div>',
-        position: "bottom",
-      },
-      onNext: () => {
-        dynamicButtons.value = [
-          { label: "Ver Detalhes", action: () => driverObj.drive(4) }
-        ];
-      },
-    },
-    // Step 4
-    {
-      element: "#tutorial-warning",
-      popover: {
-        title: '',
-        description: '<div class="descricao">Os valores mostrados são brutos, sem os descontos de impostos que podem ser aplicados.</div>',
-        position: "top",
-      },
-    },
-    // Step 5
-    {
-      element: "#tutorial-details",
-      popover: {
-        title: '',
-        description: '<div class="descricao">Abaixo de "Detalhamento por matrícula" são exibidas separadamente as informações de cada um dos seus vínculos com a Secretaria de Educação, referentes ao ano de competência da gratificação.</div>',
-        position: "top",
-      },
-    },
-    // Step 6
-    {
-      element: "#tutorial-matricula-0",
-      popover: {
-        title: '<div class="titulo-img">Detalhamento por matrícula</div>',
-        description: '<div class="descricao">Visualize neste campo cada uma das suas matrículas ativas durante o ano de competência da gratificação. <br><br>Não se esqueça de clicar na matrícula desejada para expandir as informações!</div>',
-        position: "top",
-      },
-      onHighlightStarted: () => {
-        openAccordion("#tutorial-matricula-0");
-      }
-    },
-    // Step 7
-    {
-      element: "#painel-infos",
-      popover: {
-        title: '<div class="titulo-img">Matrícula</div>',
-        description: '<div class="descricao">Aqui está o resumo das informações pessoais e a receber da matrícula selecionada.</div>',
-        position: "top",
-      },
-    },
-    // Step 8
-    {
-      element: "#tutorial-table-dados",
-      popover: {
-        title: '<div class="titulo-img">Dados da Matrícula</div>',
-        description: '<div class="descricao">Nesse quadro mostra seus dados. Certifique que todos estão corretos!</div>',
-        position: "top",
-      },
-    },
-    // Step 9
-    {
-      element: "#tutorial-valor-rede",
-      popover: {
-        title: '',
-        description: '<div class="descricao">Aqui está o <strong>valor máximo</strong> que você <strong>poderá</strong> receber pelo resultado da rede como um todo.</div>',
-        position: "top",
-      },
-    },
-    // Step 10
-    {
-      element: "#tutorial-valor-unidade",
-      popover: {
-        title: '',
-        description: '<div class="descricao">Aqui está o <strong>valor máximo</strong> que você <strong>poderá</strong> receber pelo resultados das unidades e etapas em que atuou.</div>',
-        position: "top",
-      },
-    },
-    // Step 11
-    {
-      element: "#tutorial-desconto",
-      popover: {
-        title: '',
-        description: '<div class="descricao">Aqui está o <strong>valor descontado</strong> caso <strong>não tenha atingido</strong> 100% do critério individual de frequência.</div>',
-        position: "top",
-      },
-    },
-    // Step 12
-    {
-      element: "#tutorial-valor-total",
-      popover: {
-        title: '',
-        description: '<div class="descricao">Este é o valor total que você tem direito de receber nesta matrícula.</div>',
-        position: "top",
-      },
-    },
-    // Step 13
-    {
-      element: "#tutorial-criteria",
-      popover: {
-        title: '<div class="titulo-img">Critérios Individuais</div>',
-        description: `
-          <div class="descricao criterios-description">
-            <p>A tabela apresenta o resultado dos critérios individuais avaliados para o recebimento:</p>
-            <ul>
-              <li><strong>Frequência</strong> – exige no mínimo 96% de atuação, proporcionada conforme a Lei 90214/2022.</li>
-              <li><strong>Tempo de atuação</strong> – requer no mínimo 6 meses de atuação na Secretaria de educação para a matrícula avaliada.</li>
-              <li><strong>Formação</strong> – resultado da frequência da participação nas formações continuadas, paradas pedagógicas e outras atividades formativas obrigatórias.</li>
-              <li><strong>Atividades</strong> – avalia se todas as atividades previstas foram entregues conforme cronogramas.</li>
-            </ul>
-            <p>Para cada critério, a tabela indica se o participante está <strong>"Apto"</strong> (quando o requisito foi atendido), <strong>"Não Apto"</strong> (quando não alcançou o mínimo necessário), ou <strong>"Parcialmente Apto"</strong> quando atingido parcialmente.</p>
-            <p><strong>Atenção!</strong> Lembre-se que todos os critérios individuais levam em consideração apenas o ano da competência do cálculo e não os anos anteriores!</p>
-          </div>`,
-        position: "top",
-      },
-    },
-    // Step 14
-    {
-      element: "#tutorial-allocations",
-      popover: {
-        title: '<div class="titulo-img">Alocações</div>',
-        description: '<div class="descricao">Aqui está o registro de onde trabalhou durante o período, incluindo: unidade escolar, período (início/fim), função exercida, carga horária e grupo de gratificação. <br><br>Atenção! Lembre-se que todos os critérios individuais levam em consideração apenas o ano da competência do cálculo e não os anos anteriores!</div>',
-        position: "top",
-      },
-    },
-    // Step 15
-    {
-      element: "#tutorial-frequency",
-      popover: {
-        title: '<div class="titulo-img">Frequência</div>',
-        description: '<div class="descricao">Esta seção mostra todos os seus afastamentos registrados: licenças, faltas justificadas, etc. Mostra as datas, tipo de afastamento e se foram contabilizados para o cálculo.</div>',
-        position: "top",
-      },
-    },
-    // Step 16
-    {
-      element: "#tutorial-resource",
-      popover: {
-        title: '<div class="titulo-img">Recurso</div>',
-        description: '<div class="descricao">Caso tenha identificado algum erro no cálculo, você pode entrar com recurso administrativo clicando neste botão.<br><br>Mas antes, lembre-se de analisar com atenção todas as informações do painel!</div>',
-        position: "left",
-      },
-    },
-    // Step 17 - Final
-    {
-      popover: {
-        title: '<div class="titulo-img"><img src="/src/assets/images/tutorial-concluido.png" class="responsive-img" />Você concluiu o tutorial!</div>',
-        description: '<div class="descricao">Agora você está pronto para navegar pelo painel de gratificação e acompanhar as informações com facilidade.</div>',
-        position: "center",
-      }
-    },
-  ],
-});
 
-const startTutorial = () => {
-  driverObj.drive();
+      // Passo 4 - Aviso de impostos
+      {
+        element: () => document.querySelector('.bg-red-50'),
+        popover: {
+          title: '<div class="tutorial-title">⚠️ Aviso Importante</div>',
+          description: '<div class="tutorial-description">Os valores mostrados são <strong>brutos</strong>, sem os descontos de impostos que podem ser aplicados no contracheque.</div>',
+          position: "top",
+        },
+      },
+
+      // Passo 5 - Ilustração de dúvidas
+      {
+        element: () => document.querySelector('.bg-\\[\\#f0f6ff\\]'),
+        popover: {
+          title: '<div class="tutorial-title">❓ Dúvidas sobre os valores?</div>',
+          description: '<div class="tutorial-description">Se ficar com alguma dúvida, consulte o detalhamento abaixo para entender como o valor foi calculado.</div>',
+          position: "top",
+        },
+      },
+
+      // Passo 6 - Seção de matrículas
+      {
+        element: () => document.querySelector('.px-6.pt-6 > p:first-child'),
+        popover: {
+          title: '<div class="tutorial-title">📋 Matrículas</div>',
+          description: '<div class="tutorial-description">Aqui estão listadas todas as suas matrículas ativas durante o ano de competência.<br><br><strong>Clique em cada uma para expandir os detalhes!</strong></div>',
+          position: "bottom",
+        },
+        onNext: async () => {
+          await openAccordionAndWait(0);
+        },
+      },
+
+      // Passo 7 - Matrícula expandida (cabeçalho)
+      {
+        element: () => {
+          const openAccordion = document.querySelector('.bg-white.border-\\[\\#93b4dc\\]');
+          return openAccordion || document.querySelector('#tutorial-matricula-0');
+        },
+        popover: {
+          title: '<div class="tutorial-title">📌 Matrícula Expandida</div>',
+          description: '<div class="tutorial-description">Agora você vê os detalhes completos desta matrícula, incluindo dados pessoais, valores e critérios de avaliação.</div>',
+          position: "top",
+        },
+        onHighlightStarted: async () => {
+          await openAccordionAndWait(0);
+          await waitForAccordionContent();
+        },
+      },
+
+      // Passo 8 - Dados pessoais
+      {
+        element: () => {
+          const openAccordionDiv = document.querySelector('.bg-white.border-\\[\\#93b4dc\\]');
+          if (openAccordionDiv) {
+            return openAccordionDiv.querySelector('.grid-cols-1.sm\\:grid-cols-4');
+          }
+          return null;
+        },
+        popover: {
+          title: '<div class="tutorial-title">📋 Dados Pessoais</div>',
+          description: '<div class="tutorial-description">Verifique se seus dados cadastrais estão corretos: nome, CPF, matrícula e cargo.</div>',
+          position: "top",
+        },
+      },
+
+      // Passo 9 - Valor máximo rede
+      {
+        element: () => {
+          const openAccordionDiv = document.querySelector('.bg-white.border-\\[\\#93b4dc\\]');
+          if (openAccordionDiv) {
+            return openAccordionDiv.querySelector('#tutorial-valor-rede');
+          }
+          return null;
+        },
+        popover: {
+          title: '<div class="tutorial-title">🏫 Valor Máximo - Rede</div>',
+          description: '<div class="tutorial-description">Este é o <strong>valor máximo</strong> que você <strong>pode receber</strong> pelo resultado da rede como um todo.</div>',
+          position: "top",
+        },
+      },
+
+      // Passo 10 - Valor máximo unidades
+      {
+        element: () => {
+          const openAccordionDiv = document.querySelector('.bg-white.border-\\[\\#93b4dc\\]');
+          if (openAccordionDiv) {
+            return openAccordionDiv.querySelector('#tutorial-valor-unidade');
+          }
+          return null;
+        },
+        popover: {
+          title: '<div class="tutorial-title">🏢 Valor Máximo - Unidades</div>',
+          description: '<div class="tutorial-description">Este é o <strong>valor máximo</strong> que você <strong>pode receber</strong> pelo resultado das unidades e etapas em que atuou.</div>',
+          position: "top",
+        },
+      },
+
+      // Passo 11 - Desconto
+      {
+        element: () => {
+          const openAccordionDiv = document.querySelector('.bg-white.border-\\[\\#93b4dc\\]');
+          if (openAccordionDiv) {
+            return openAccordionDiv.querySelector('#tutorial-desconto');
+          }
+          return null;
+        },
+        popover: {
+          title: '<div class="tutorial-title">📉 Desconto Aplicado</div>',
+          description: '<div class="tutorial-description">Valor descontado caso você <strong>não tenha atingido 100%</strong> do critério individual de frequência.</div>',
+          position: "top",
+        },
+      },
+
+      // Passo 12 - Total a receber
+      {
+        element: () => {
+          const openAccordionDiv = document.querySelector('.bg-white.border-\\[\\#93b4dc\\]');
+          if (openAccordionDiv) {
+            return openAccordionDiv.querySelector('#tutorial-valor-total');
+          }
+          return null;
+        },
+        popover: {
+          title: '<div class="tutorial-title">✅ Total a Receber</div>',
+          description: '<div class="tutorial-description"><strong>Este é o valor final</strong> que você tem direito a receber nesta matrícula, após aplicação de todos os critérios.</div>',
+          position: "top",
+        },
+      },
+
+      // Passo 13 - Critérios de verificação
+      {
+        element: () => {
+          const openAccordionDiv = document.querySelector('.bg-white.border-\\[\\#93b4dc\\]');
+          if (openAccordionDiv) {
+            return openAccordionDiv.querySelector('#tutorial-criteria');
+          }
+          return null;
+        },
+        popover: {
+          title: '<div class="tutorial-title">📊 Critérios de Verificação</div>',
+          description: `
+            <div class="tutorial-description tutorial-criteria">
+              <p>A tabela apresenta o resultado dos critérios individuais avaliados:</p>
+              <ul>
+                <li><strong>📅 Frequência</strong> – mínimo de 96% de atuação</li>
+                <li><strong>⏰ Tempo de atuação</strong> – mínimo de 6 meses na Secretaria</li>
+                <li><strong>🎓 Formação</strong> – participação em formações continuadas</li>
+                <li><strong>📝 Atividades</strong> – entrega de atividades previstas</li>
+              </ul>
+              <p>Cada critério é classificado como <strong class="text-green-700">"Apto"</strong> ou <strong class="text-red-700">"Não apto"</strong>.</p>
+            </div>`,
+          position: "top",
+        },
+      },
+
+      // Passo 14 - Alocações
+      {
+        element: () => {
+          const openAccordionDiv = document.querySelector('.bg-white.border-\\[\\#93b4dc\\]');
+          if (openAccordionDiv) {
+            return openAccordionDiv.querySelector('#tutorial-allocations');
+          }
+          return null;
+        },
+        popover: {
+          title: '<div class="tutorial-title">🏫 Alocações</div>',
+          description: '<div class="tutorial-description">Registro de onde você trabalhou durante o período: unidade escolar, período, função, carga horária e grupo de gratificação.</div>',
+          position: "top",
+        },
+      },
+
+      // Passo 15 - Frequência/Afastamentos
+      {
+        element: () => {
+          const openAccordionDiv = document.querySelector('.bg-white.border-\\[\\#93b4dc\\]');
+          if (openAccordionDiv) {
+            return openAccordionDiv.querySelector('#tutorial-frequency');
+          }
+          return null;
+        },
+        popover: {
+          title: '<div class="tutorial-title">📆 Frequência e Afastamentos</div>',
+          description: '<div class="tutorial-description">Lista de todos os seus afastamentos registrados: licenças, faltas, etc., com datas e indicação se foram contabilizados para o cálculo.</div>',
+          position: "top",
+        },
+      },
+
+      // Passo 16 - Botão de recurso
+      {
+        element: () => document.querySelector('#tutorial-resource'),
+        popover: {
+          title: '<div class="tutorial-title">📝 Abrir Recurso</div>',
+          description: '<div class="tutorial-description">Se identificou algum erro no cálculo, você pode entrar com recurso administrativo clicando neste botão.<br><br><strong>Analise todas as informações com atenção antes!</strong></div>',
+          position: "left",
+        },
+      },
+
+      // Passo 17 - Conclusão
+      {
+        popover: {
+          title: '<div class="tutorial-title">🎉 Tutorial Concluído!</div>',
+          description: '<div class="tutorial-description">Agora você já sabe como navegar pelo Painel da Gratificação.<br><br>Confira seus dados e, se precisar, abra um recurso!</div>',
+          position: "center",
+        },
+        onNext: () => {
+          dynamicButtons.value = [];
+        },
+      },
+    ],
+  });
 };
 
-onMounted(() => {  
-  window.dispatchEvent(new Event('resize'));
-});
+// Aguarda os dados carregarem
+const waitForDataLoad = async () => {
+  await nextTick();
+
+  let retries = 0;
+  const maxRetries = 20;
+
+  while (retries < maxRetries) {
+    const hasData = document.querySelector('.grid-cols-1.sm\\:grid-cols-2');
+    if (hasData) {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      return true;
+    }
+    await new Promise(resolve => setTimeout(resolve, 500));
+    retries++;
+  }
+
+  return false;
+};
+
+const startTutorial = async () => {
+  const dataLoaded = await waitForDataLoad();
+
+  if (!dataLoaded) {
+    console.warn('Dados não carregaram completamente');
+  }
+
+  await nextTick();
+  await new Promise(resolve => setTimeout(resolve, 300));
+
+  driverObj = createDriver();
+  driverObj.drive();
+};
 
 defineExpose({
   startTutorial
@@ -260,20 +386,21 @@ defineExpose({
 </script>
 
 <style>
-/* Estilos limpos e focados apenas na correção dos bugs */
-.driver-popover.custom-tooltip-centered,
-.driver-popover[data-popover-class="custom-tooltip-centered"] {
+/* ==========================================
+   Driver.js — estilos do popover
+   ========================================== */
+
+.driver-popover.custom-tooltip-centered {
   background: white !important;
-  color: black !important;
-  border-radius: 10px !important;
+  color: #1f2937 !important;
+  border-radius: 16px !important;
   border: none !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3) !important;
-  max-width: 500px !important;
-  width: 95vw !important;
+  box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.3) !important;
+  max-width: 480px !important;
+  width: 90vw !important;
   z-index: 10001 !important;
 }
 
-/* Centralização forçada para cards center */
 .driver-popover[data-position="center"] {
   position: fixed !important;
   top: 50% !important;
@@ -281,53 +408,64 @@ defineExpose({
   transform: translate(-50%, -50%) !important;
 }
 
-/* Estrutura dos cards */
 .driver-popover-title {
   background: white !important;
-  color: black !important;
-  padding: 20px !important;
+  color: #1a4a8a !important;
+  padding: 20px 20px 8px 20px !important;
   margin: 0 !important;
-  border-radius: 10px 10px 0 0 !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  border-radius: 16px 16px 0 0 !important;
   border-bottom: none !important;
 }
 
 .driver-popover-description {
   background: white !important;
-  color: black !important;
+  color: #374151 !important;
   padding: 0 20px 20px 20px !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
 }
 
 .driver-popover-footer {
   background: white !important;
-  padding: 0 10px 10px 10px !important;
-  border-radius: 0 0 10px 10px !important;
+  padding: 12px 16px 16px 16px !important;
+  border-radius: 0 0 16px 16px !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
 }
 
-/* Botões */
 .driver-popover-next-btn {
-  background: linear-gradient(135deg, #152656 0%, #5cabfe 100%) !important;
+  background: #1a4a8a !important;
   color: white !important;
   border: none !important;
   border-radius: 10px !important;
-  font-size: 15px !important;
-  font-weight: 700 !important;
-  min-width: 120px !important;
-  min-height: 48px !important;
-  padding: 12px 32px !important;
-  margin-left: 8px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  padding: 8px 20px !important;
+  cursor: pointer !important;
+  transition: background 0.2s !important;
+}
+
+.driver-popover-next-btn:hover {
+  background: #0c447c !important;
 }
 
 .driver-popover-prev-btn {
-  background: linear-gradient(135deg, #222b44c2 0%, #92b5e7b0 100%) !important;
-  color: white !important;
+  background: #e5e7eb !important;
+  color: #374151 !important;
   border: none !important;
   border-radius: 10px !important;
-  font-size: 15px !important;
-  font-weight: 700 !important;
-  min-width: 120px !important;
-  min-height: 48px !important;
-  padding: 12px 32px !important;
-  margin-right: 8px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  padding: 8px 20px !important;
+  cursor: pointer !important;
+  transition: background 0.2s !important;
+}
+
+.driver-popover-prev-btn:hover {
+  background: #d1d5db !important;
 }
 
 .driver-popover-close-btn {
@@ -335,79 +473,139 @@ defineExpose({
   color: white !important;
   border: none !important;
   border-radius: 10px !important;
-  font-size: 15px !important;
-  font-weight: 700 !important;
-  min-width: 120px !important;
-  min-height: 48px !important;
-  padding: 12px 32px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  padding: 8px 20px !important;
+  cursor: pointer !important;
+  transition: background 0.2s !important;
 }
 
-/* Classes customizadas */
-.titulo-img {
-  display: grid;
-  justify-items: center;
-  gap: 20px;
-  font-size: 20px;
-  text-align: center;
-  color: black;
+.driver-popover-close-btn:hover {
+  background: #dc2626 !important;
 }
 
-.descricao {
-  font-size: 15px;
-  color: black;
-  text-align: center;
+/* ==========================================
+   Conteúdo interno dos popovers
+   ========================================== */
+
+.tutorial-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a4a8a;
+}
+
+.tutorial-description {
+  font-size: 14px;
   line-height: 1.6;
+  color: #374151;
+  text-align: left;
 }
 
-/* Estilo específico para critérios - alinhado à esquerda como na imagem */
-.criterios-description {
-  text-align: left !important;
+.tutorial-description strong {
+  color: #1a4a8a;
+  font-weight: 600;
 }
 
-.criterios-description ul {
-  margin: 15px 0;
+.tutorial-criteria ul {
+  margin: 12px 0;
   padding-left: 20px;
 }
 
-.criterios-description li {
-  margin-bottom: 8px;
+.tutorial-criteria li {
+  margin-bottom: 6px;
   line-height: 1.5;
 }
 
-.criterios-description p {
-  margin-bottom: 12px;
-  line-height: 1.5;
+.tutorial-criteria p {
+  margin-bottom: 10px;
 }
 
-.responsive-img {
-  max-width: 380px;
-  width: 100%;
-  height: auto;
+/* ==========================================
+   Overlay — sem backdrop-filter
+   O recorte nativo do Driver.js já expõe o
+   elemento destacado de forma nítida.
+   ========================================== */
+
+.driver-overlay {
+  background: rgba(0, 0, 0, 0.65) !important;
 }
 
-/* Highlight */
+/* ==========================================
+   Elemento destacado — apenas anel de foco
+   ========================================== */
+
+.driver-active-element,
 .driver-highlighted-element {
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.5) !important;
-  border-radius: 8px !important;
+  box-shadow: 0 0 0 4px rgba(26, 74, 138, 0.5) !important;
+  border-radius: 12px !important;
+  z-index: 10002 !important;
+  position: relative !important;
 }
 
-/* Responsividade */
+/* ==========================================
+   Animações dos botões dinâmicos
+   ========================================== */
+
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: all 0.3s ease;
+}
+
+.fade-slide-enter-from,
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+/* ==========================================
+   Responsividade
+   ========================================== */
+
 @media (max-width: 640px) {
-  .driver-popover.custom-tooltip-centered,
-  .driver-popover[data-popover-class="custom-tooltip-centered"] {
-    max-width: 95vw !important;
+  .driver-popover.custom-tooltip-centered {
+    max-width: 92vw !important;
+    border-radius: 14px !important;
   }
-  
-  .responsive-img {
-    max-width: 280px !important;
+
+  .driver-popover-title {
+    font-size: 16px !important;
+    padding: 16px 16px 6px 16px !important;
   }
-  
-  .titulo-img {
-    font-size: 18px !important;
+
+  .driver-popover-description {
+    font-size: 13px !important;
+    padding: 0 16px 16px 16px !important;
   }
-  
-  .descricao {
-    font-size: 14px !important;
+
+  .driver-popover-next-btn,
+  .driver-popover-prev-btn,
+  .driver-popover-close-btn {
+    padding: 6px 14px !important;
+    font-size: 13px !important;
+  }
+
+  .tutorial-title {
+    font-size: 16px;
+  }
+
+  .tutorial-description {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .driver-popover-footer {
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+  }
+
+  .driver-popover-next-btn,
+  .driver-popover-prev-btn,
+  .driver-popover-close-btn {
+    min-width: 100px !important;
   }
 }
 </style>

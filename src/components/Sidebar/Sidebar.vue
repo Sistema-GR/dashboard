@@ -137,6 +137,13 @@
               class="mb-2 rounded-xl bg-[#002a4d] border border-white/10 shadow-xl overflow-hidden"
             >
               <router-link
+                to="/user/rewards"
+                class="flex items-center gap-2.5 px-4 py-2.5 text-[13px] text-white/75 hover:text-white hover:bg-white/8 transition-all"
+              >
+                <DocumentCurrencyDollarIcon class="w-4 h-4 shrink-0" />
+                Painel de gratificação
+              </router-link>
+              <router-link
                 to="/user/config"
                 class="flex items-center gap-2.5 px-4 py-2.5 text-[13px] text-white/75 hover:text-white hover:bg-white/8 transition-all"
               >
@@ -212,6 +219,7 @@ import {
   Squares2X2Icon,
   UserGroupIcon,
   UsersIcon,
+  DocumentCurrencyDollarIcon,
   XMarkIcon
 } from '@heroicons/vue/24/outline'
 import { apiClient } from '@/service/apiService'
