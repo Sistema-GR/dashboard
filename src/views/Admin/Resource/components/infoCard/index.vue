@@ -69,6 +69,11 @@
                 <p class="text-15 font-medium text-black mb-1">Aberto em</p>
                 <p class="text-15 text-black">{{ new Date(recurso.created_at).toLocaleDateString() }}</p>
             </div>
+
+            <div class="flex flex-col items-center">
+                <p class="text-15 font-medium text-black mb-1">Status: </p>
+                <p class="text-15 text-black">{{ recurso.status }}</p>
+            </div>
         </div>
 
         <!-- Menu de 3 pontos (ação principal) -->

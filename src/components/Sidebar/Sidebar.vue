@@ -140,8 +140,15 @@
                 to="/user/rewards"
                 class="flex items-center gap-2.5 px-4 py-2.5 text-[13px] text-white/75 hover:text-white hover:bg-white/8 transition-all"
               >
-                <DocumentCurrencyDollarIcon class="w-4 h-4 shrink-0" />
+                <DocumentTextIcon class="w-4 h-4 shrink-0" />
                 Painel de gratificação
+              </router-link>
+              <router-link
+                to="/resource/form/status"
+                class="flex items-center gap-2.5 px-4 py-2.5 text-[13px] text-white/75 hover:text-white hover:bg-white/8 transition-all"
+              >
+              <CheckBadgeIcon class="w-4 h-4 shrink-0" />
+                Status do recurso
               </router-link>
               <router-link
                 to="/user/config"
@@ -203,6 +210,7 @@ import {
   CalendarDaysIcon, CalendarIcon,
   ChartBarIcon,
   ChartBarSquareIcon,
+  CheckBadgeIcon,
   ChevronDownIcon,
   ChevronLeftIcon,
   ChevronUpIcon,
@@ -219,7 +227,6 @@ import {
   Squares2X2Icon,
   UserGroupIcon,
   UsersIcon,
-  DocumentCurrencyDollarIcon,
   XMarkIcon
 } from '@heroicons/vue/24/outline'
 import { apiClient } from '@/service/apiService'

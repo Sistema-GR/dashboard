@@ -529,9 +529,7 @@ defineExpose({
    elemento destacado de forma nítida.
    ========================================== */
 
-.driver-overlay {
-  background: rgba(0, 0, 0, 0.65) !important;
-}
+
 
 /* ==========================================
    Elemento destacado — apenas anel de foco
