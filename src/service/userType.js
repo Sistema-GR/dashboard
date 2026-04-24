@@ -74,7 +74,6 @@ export const canAccessRoute = (route) => {
     '/home/previousresults',
     '/home/imports',
     '/home/config',
-    '/home/alloc',
     '/home/dataversions',
     '/home/create',
     '/resource/new',
