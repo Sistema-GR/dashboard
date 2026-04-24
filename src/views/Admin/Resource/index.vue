@@ -54,6 +54,17 @@
           </span>
           <span v-else>Sem lote pendente</span>
         </button>
+        <button
+            @click="openLimitConfig"
+            class="bg-gray-600 hover:bg-gray-700 text-white p-2 rounded-[10px] transition-colors duration-200 flex items-center justify-center shadow-md"
+            title="Configurações"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+          </button>
       </div>
 
       <!-- Blocos de status -->
@@ -239,6 +250,88 @@
             </div>
           </div>
         </Transition>
+        <Transition name="modal-fade">
+          <div
+            v-if="showLimitConfig"
+            class="fixed inset-0 z-50 flex items-center justify-center"
+            @click.self="closeLimitConfig"
+          >
+            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+
+            <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden">
+
+              <!-- Header -->
+              <div class="bg-gray-700 px-6 py-4 flex items-center gap-3">
+                <div class="bg-white/20 rounded-full p-2">
+                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  </svg>
+                </div>
+                <div>
+                  <p class="text-white font-bold text-lg leading-tight">Configurações do Sistema</p>
+                  <p class="text-gray-300 text-sm">Prazos de recurso</p>
+                </div>
+              </div>
+
+              <!-- Corpo -->
+              <div class="px-6 py-6 space-y-5">
+                <div v-if="isLoadingConfig" class="text-center py-4 text-gray-500 text-sm">
+                  Carregando configurações...
+                </div>
+
+                <template v-else>
+                  <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">
+                      Prazo para edição <span class="font-normal text-gray-400">(dias)</span>
+                    </label>
+                    <p class="text-xs text-gray-400 mb-2">Tempo máximo que o usuário tem para editar um recurso após a criação.</p>
+                    <input
+                      v-model.number="configForm.RESOURCE_EDIT_TIMELIMIT_DAYS"
+                      type="number" min="1"
+                      class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-gray-500 outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">
+                      Prazo para resposta <span class="font-normal text-gray-400">(dias)</span>
+                    </label>
+                    <p class="text-xs text-gray-400 mb-2">Após este prazo sem resposta, o recurso é marcado como atrasado.</p>
+                    <input
+                      v-model.number="configForm.RESOURCE_RESPONSE_DEADLINE_DAYS"
+                      type="number" min="1"
+                      class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-gray-500 outline-none"
+                    />
+                  </div>
+                </template>
+              </div>
+
+              <!-- Rodapé -->
+              <div class="px-6 pb-6 flex gap-3 justify-end">
+                <button
+                  @click="closeLimitConfig"
+                  :disabled="isSavingConfig"
+                  class="px-5 py-2 rounded-lg border border-gray-300 text-gray-700 font-medium text-sm hover:bg-gray-50 transition-colors disabled:opacity-50"
+                >
+                  Cancelar
+                </button>
+                <button
+                  @click="saveConfig"
+                  :disabled="isSavingConfig || isLoadingConfig"
+                  class="px-5 py-2 rounded-lg bg-gray-700 hover:bg-gray-800 text-white font-semibold text-sm transition-colors flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  <svg v-if="isSavingConfig" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+                  </svg>
+                  {{ isSavingConfig ? 'Salvando...' : 'Salvar' }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </Transition>
       </Teleport>
 
     </Whiteboard>
@@ -267,6 +360,56 @@ export default {
     const filterMotivo = ref('')
     const filterResponsavel = ref('')
     const staffList = ref([])
+
+    const showLimitConfig = ref(false)
+    const isSavingConfig = ref(false)
+    const isLoadingConfig = ref(false)
+    const configForm = ref({
+      RESOURCE_EDIT_TIMELIMIT_DAYS: '',
+      RESOURCE_RESPONSE_DEADLINE_DAYS: '',
+    })
+
+    async function openLimitConfig() {
+    showLimitConfig.value = true
+    isLoadingConfig.value = true
+    try {
+      const response = await apiClient.get('/recursos/config/', { headers: authHeader() })
+      // A API retorna lista de objetos [{chave, valor}, ...]
+      const configs = response.data
+      const edit = configs.find(c => c.chave === 'RESOURCE_EDIT_TIMELIMIT_DAYS')
+      const deadline = configs.find(c => c.chave === 'RESOURCE_RESPONSE_DEADLINE_DAYS')
+      configForm.value.RESOURCE_EDIT_TIMELIMIT_DAYS = edit?.valor ?? ''
+      configForm.value.RESOURCE_RESPONSE_DEADLINE_DAYS = deadline?.valor ?? ''
+      } catch (err) {
+        console.error('Erro ao carregar configurações:', err)
+      } finally {
+        isLoadingConfig.value = false
+      }
+    }
+
+    async function saveConfig() {
+      isSavingConfig.value = true
+      try {
+        await apiClient.patch(
+          '/recursos/config/',
+          {
+            RESOURCE_EDIT_TIMELIMIT_DAYS: String(configForm.value.RESOURCE_EDIT_TIMELIMIT_DAYS),
+            RESOURCE_RESPONSE_DEADLINE_DAYS: String(configForm.value.RESOURCE_RESPONSE_DEADLINE_DAYS),
+          },
+          { headers: authHeader() }
+        )
+        showLimitConfig.value = false
+      } catch (err) {
+        console.error('Erro ao salvar configurações:', err)
+        alert('Erro ao salvar. Tente novamente.')
+      } finally {
+        isSavingConfig.value = false
+      }
+    }
+    function closeLimitConfig() {
+      if (isSavingConfig.value) return
+      showLimitConfig.value = false
+    }
 
     // --- Lote ---
     const pendingLote = ref(null)
@@ -432,8 +575,10 @@ export default {
       STATUS_DEFINITIONS, MOTIVOS_RECURSO,
       filterMotivo, filterResponsavel, staffList,
       pendingLote, isLoadingLote, showBatchModal, isLaunching,
-      openBatchModal, closeBatchModal, confirmBatchRelease, formatDate,
-    }
+      openBatchModal, closeBatchModal, confirmBatchRelease, formatDate, showLimitConfig, 
+      isLoadingConfig, isSavingConfig, configForm,
+      openLimitConfig, closeLimitConfig, saveConfig,
+    }   
   }
 }
 </script>
