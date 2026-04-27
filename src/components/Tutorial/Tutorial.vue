@@ -14,32 +14,13 @@
       />
     </svg>
   </button>
-
-  <!-- Botões dinâmicos para navegação -->
-  <Teleport to="body">
-    <transition-group
-      name="fade-slide"
-      tag="div"
-      class="fixed bottom-24 right-4 sm:bottom-28 sm:right-8 md:bottom-32 md:right-12 flex flex-col gap-2 z-[10002]"
-    >
-      <button
-        v-for="(btn, idx) in dynamicButtons"
-        :key="idx"
-        @click="btn.action"
-        class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-lg font-medium whitespace-nowrap"
-      >
-        {{ btn.label }}
-      </button>
-    </transition-group>
-  </Teleport>
 </template>
 
 <script setup>
-import { ref, nextTick, onUnmounted } from 'vue';
+import { nextTick } from 'vue';
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
 
-const dynamicButtons = ref([]);
 let driverObj = null;
 let currentStepIndex = 0;
 
@@ -91,9 +72,7 @@ const createDriver = () => {
     progressText: "{{current}} de {{total}}",
     overlayColor: "rgba(0, 0, 0, 0.65)",
     allowClose: false,
-    onDestroyed: () => {
-      dynamicButtons.value = [];
-    },
+
     onStepChanged: (step) => {
       currentStepIndex = step.index;
     },
@@ -105,11 +84,6 @@ const createDriver = () => {
           description: '<div class="tutorial-description">Este tutorial vai te ajudar a entender todas as informações importantes sobre sua gratificação.<br><br><strong>⚠️ Após o tutorial, verifique seus dados com atenção!</strong></div>',
           position: "center",
         },
-        onNext: () => {
-          dynamicButtons.value = [
-            { label: "Pular Tutorial", action: () => driverObj.moveTo(16) }
-          ];
-        },
       },
 
       // Passo 2 - Nome do servidor
@@ -120,7 +94,6 @@ const createDriver = () => {
           description: '<div class="tutorial-description">Este é o nome do servidor ao qual as informações exibidas no painel pertencem.</div>',
           position: "bottom",
         },
-        onNext: () => { dynamicButtons.value = []; },
       },
 
       // Passo 3 - Valor total
@@ -338,9 +311,6 @@ const createDriver = () => {
           description: '<div class="tutorial-description">Agora você já sabe como navegar pelo Painel da Gratificação.<br><br>Confira seus dados e, se precisar, abra um recurso!</div>',
           position: "center",
         },
-        onNext: () => {
-          dynamicButtons.value = [];
-        },
       },
     ],
   });
@@ -521,16 +491,6 @@ defineExpose({
 
 .tutorial-criteria p {
   margin-bottom: 10px;
-}
-
-/* ==========================================
-   Overlay — sem backdrop-filter
-   O recorte nativo do Driver.js já expõe o
-   elemento destacado de forma nítida.
-   ========================================== */
-
-.driver-overlay {
-  background: rgba(0, 0, 0, 0.65) !important;
 }
 
 /* ==========================================

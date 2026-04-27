@@ -49,7 +49,7 @@ export default {
     const sidebarStore = useSidebarStore();
 
     const sidebarClass = computed(() =>
-      sidebarStore.isSidebarMinimized ? 'lg:pl-[72px]' : 'lg:pl-[240px]'
+      sidebarStore.isSidebarMinimized ? 'lg:pl-[72px]' : 'lg:pl-[245px]'
     );
 
     const generateBreadcrumbs = (path) => {

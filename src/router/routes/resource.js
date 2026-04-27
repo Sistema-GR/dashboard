@@ -1,12 +1,12 @@
 //Módulo de recursos
 export default [
-    { path: '/resource', name: 'resource', meta: { public: false, requiresAuth: true, roles: ['user','admin'] },
+    { path: '/resource', name: 'resource', meta: { public: false, requiresAuth: true,  roles: ['admin', 'staff']},
       children: [
-        { path: '', name: 'resource-home', component: () => import('@/views/Admin/Resource/index.vue') },
+        { path: '', name: 'resource-home', component: () => import('@/views/Admin/Resource/index.vue')},
         { path: 'info/:id', name: 'info', component: () => import('@/views/Admin/Resource/InfoDetails/index.vue'), props: true },   
-        { path: 'template-builder', name: 'template-builder', component: () => import('@/views/Admin/Resource/TemplateBuilder/index.vue') },      
+        { path: 'template-builder', name: 'template-builder', meta: { requiresAdmin: true }, component: () => import('@/views/Admin/Resource/TemplateBuilder/index.vue') },      
         { path: 'relatorios-anuais', name: 'annual-reports', component: () => import('@/views/Admin/Resource/AnnualResource/AnnualReportsDashboard.vue') },
-        { path: 'form', name: 'form',
+        { path: 'form', name: 'form', meta: { roles: ['user', 'admin', 'staff'] },
           children: [
             { path: '', name: 'form-home', component: () => import('@/views/User/ResourceForm/index.vue') },
             { path: 'criteria', name: 'criteria', component: () => import('@/views/User/Criteria/index.vue') },

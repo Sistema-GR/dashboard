@@ -35,7 +35,6 @@
                     </div>
                 </div>
 
-
                 <!-- CARD DE DADOS DO SERVIDOR -->
                 <div class="flex flex-col w-full p-4 bg-white border rounded-[10px] shadow-lg">
                     <p class="text-sm sm:text-15 font-bold mb-3">Dados do Servidor</p>
@@ -63,12 +62,8 @@
                 class="flex flex-col w-full mt-5 p-4 bg-white border rounded-[10px] shadow-lg">
                     <p class="text-15 font-bold mb-2">Documentos Anexados</p>
                     <ul class="space-y-2">
-
                         <li v-for="doc in recurso.documentos" :key="doc.id">
-
-                            <a @click.prevent="downloadAuthenticatedFile(doc)" 
-                            target="_blank" 
-                            rel="noopener noreferrer"
+                            <a @click.prevent="openDocumentPreview(doc)" 
                             class="flex items-center gap-2 text-blue-600 hover:text-blue-800 hover:underline transition-colors text-sm cursor-pointer">
                             <PaperClipIcon class="w-4 h-4" />
                             <span>{{ getFilename(doc.arquivo) }}</span>
@@ -102,8 +97,6 @@
                         </div>
                     </div>
                 </div>
-
-                
                 
                 <div v-if="recurso.respostas && recurso.respostas.length" class="flex flex-col w-full mt-5 p-4 bg-white border rounded-[10px] shadow-lg">
                     <p class="text-15 font-bold mb-2">Histórico de Respostas</p>
@@ -128,11 +121,81 @@
                     </ul>
                 </div>
             </div>
+        </div>
 
+        <!-- Modal de Visualização de Documento -->
+        <div v-if="isPreviewModalOpen" class="fixed inset-0 z-50 overflow-hidden bg-black bg-opacity-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-6xl h-[90vh] flex flex-col">
+                <!-- Cabeçalho do Modal -->
+                <div class="flex justify-between items-center p-4 border-b">
+                    <h3 class="text-lg font-semibold text-gray-900 truncate">
+                        {{ currentDocument?.nome || 'Visualizando Documento' }}
+                    </h3>
+                    <button @click="closePreviewModal" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- Conteúdo do Modal -->
+                <div class="flex-1 overflow-auto p-4 bg-gray-100">
+                    <div v-if="isDocumentLoading" class="flex items-center justify-center h-full">
+                        <div class="text-center">
+                            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+                            <p class="mt-4 text-gray-600">Carregando documento...</p>
+                        </div>
+                    </div>
+                    
+                    <div v-else-if="documentError" class="flex items-center justify-center h-full">
+                        <div class="text-center text-red-600">
+                            <ExclamationTriangleIcon class="w-12 h-12 mx-auto mb-2" />
+                            <p>{{ documentError }}</p>
+                        </div>
+                    </div>
+                    
+                    <div v-else class="h-full">
+                        <!-- Preview para PDF -->
+                        <iframe 
+                            v-if="documentType === 'pdf'"
+                            :src="documentUrl"
+                            class="w-full h-full rounded-lg"
+                            frameborder="0"
+                        ></iframe>
+                        
+                        <!-- Preview para Imagens -->
+                        <div v-else-if="documentType === 'image'" class="flex items-center justify-center h-full">
+                            <img :src="documentUrl" alt="Preview do documento" class="max-w-full max-h-full object-contain" />
+                        </div>
+                        
+                        <!-- Preview para Texto -->
+                        <div v-else-if="documentType === 'text'" class="bg-white rounded-lg p-6 h-full overflow-auto">
+                            <pre class="whitespace-pre-wrap font-mono text-sm">{{ documentText }}</pre>
+                        </div>
+                        
+                        <!-- Fallback para outros tipos -->
+                        <div v-else class="flex flex-col items-center justify-center h-full">
+                            <p class="text-gray-600 mb-4">Pré-visualização não disponível para este tipo de arquivo.</p>
+                            <button @click="downloadCurrentDocument" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                                Baixar Arquivo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Rodapé do Modal -->
+                <div class="flex justify-end gap-3 p-4 border-t bg-white">
+                    <button @click="closePreviewModal" class="px-4 py-2 border rounded-md hover:bg-gray-50">
+                        Fechar
+                    </button>
+                    <button @click="downloadCurrentDocument" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                        Baixar Arquivo
+                    </button>
+                </div>
+            </div>
         </div>
     </Whiteboard>
 </template>
-
 
 <script>
 import { ref, onMounted, computed } from 'vue';
@@ -171,6 +234,15 @@ export default {
         const templateForm = ref({});
         const isGenerating = ref(false);
 
+        // Modal states
+        const isPreviewModalOpen = ref(false);
+        const currentDocument = ref(null);
+        const documentUrl = ref('');
+        const documentType = ref('');
+        const documentText = ref('');
+        const isDocumentLoading = ref(false);
+        const documentError = ref('');
+
         const selectedTemplate = computed(() => templates.value.find(t => t.id === selectedTemplateId.value) || null);
 
         async function fetchData() {
@@ -179,7 +251,6 @@ export default {
                 const response = await apiClient.get(`/recursos/${resourceId}/`, {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
                 });
-
 
                 recurso.value = response.data;
             } catch (err) {
@@ -265,24 +336,20 @@ export default {
         }
         
         async function deleteResponse(responseId) {
-
             if (!window.confirm("Tem certeza que deseja deletar esta resposta? A ação não pode ser desfeita.")) {
                 return;
             }
 
             try {
-
                 await apiClient.delete(`/recursos/resposta/${responseId}/`, {
                     headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
                 });
-
 
                 if (recurso.value && recurso.value.respostas) {
                     recurso.value.respostas = recurso.value.respostas.filter(
                         resp => resp.id !== responseId
                     );
                 }
-
             } catch (err) {
                 console.error("Erro ao deletar a resposta:", err);
             
@@ -294,8 +361,97 @@ export default {
             }
         }
 
+        // Função para determinar o tipo do arquivo baseado na extensão ou MIME type
+        function getFileType(filename) {
+            const extension = filename.split('.').pop().toLowerCase();
+            
+            if (['pdf'].includes(extension)) return 'pdf';
+            if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'].includes(extension)) return 'image';
+            if (['txt', 'csv', 'json', 'xml', 'md'].includes(extension)) return 'text';
+            if (['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'].includes(extension)) return 'office';
+            
+            return 'other';
+        }
 
-        
+        // Função para fazer o fetch do documento e preparar para preview
+        async function openDocumentPreview(doc) {
+            currentDocument.value = doc;
+            isPreviewModalOpen.value = true;
+            isDocumentLoading.value = true;
+            documentError.value = '';
+            
+            try {
+                const accessToken = localStorage.getItem('accessToken');
+                if (!accessToken) {
+                    throw new Error("Token de acesso não encontrado.");
+                }
+
+                const filename = getFilename(doc.arquivo);
+                const fileType = getFileType(filename);
+                documentType.value = fileType;
+
+                const response = await axios({
+                    url: doc.download_url,
+                    method: 'GET',
+                    responseType: fileType === 'text' ? 'text' : 'blob',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+
+                if (fileType === 'pdf') {
+                    // Para PDF, criar URL do blob
+                    const blob = new Blob([response.data], { type: 'application/pdf' });
+                    documentUrl.value = URL.createObjectURL(blob);
+                } 
+                else if (fileType === 'image') {
+                    // Para imagens, criar URL do blob
+                    const blob = new Blob([response.data]);
+                    documentUrl.value = URL.createObjectURL(blob);
+                }
+                else if (fileType === 'text') {
+                    // Para texto, usar o conteúdo diretamente
+                    documentText.value = response.data;
+                }
+                else {
+                    // Para outros tipos, apenas criar blob para download
+                    const blob = new Blob([response.data]);
+                    documentUrl.value = URL.createObjectURL(blob);
+                }
+                
+            } catch (error) {
+                console.error("Erro ao carregar o documento:", error);
+                documentError.value = "Não foi possível carregar o documento para visualização.";
+            } finally {
+                isDocumentLoading.value = false;
+            }
+        }
+
+        // Função para baixar o documento atual
+        function downloadCurrentDocument() {
+            if (!documentUrl.value) return;
+            
+            const link = document.createElement('a');
+            link.href = documentUrl.value;
+            link.setAttribute('download', getFilename(currentDocument.value.arquivo));
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Função para fechar o modal e limpar recursos
+        function closePreviewModal() {
+            if (documentUrl.value) {
+                URL.revokeObjectURL(documentUrl.value);
+            }
+            isPreviewModalOpen.value = false;
+            currentDocument.value = null;
+            documentUrl.value = '';
+            documentType.value = '';
+            documentText.value = '';
+            documentError.value = '';
+        }
+
         const downloadAuthenticatedFile = async (doc) => {
             try {
                 const accessToken = localStorage.getItem('accessToken');
@@ -341,7 +497,6 @@ export default {
             fetchTemplates();
         });
 
-
         return {
             recurso,
             isLoading,
@@ -361,7 +516,17 @@ export default {
             selectedTemplate,
             generateAndSendResponse,
             deleteResponse,
-            resourceId
+            resourceId,
+            isPreviewModalOpen,
+            currentDocument,
+            documentUrl,
+            documentType,
+            documentText,
+            isDocumentLoading,
+            documentError,
+            openDocumentPreview,
+            closePreviewModal,
+            downloadCurrentDocument
         };
     }
 };

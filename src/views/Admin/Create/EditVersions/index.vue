@@ -441,8 +441,8 @@ async function publishVersion() {
       {},
       { headers: { Authorization: `Bearer ${token}` } }
     );
-    alert('Versão finalizada com sucesso! Redirecionando para a tela de promoção.');
-    router.push({name: 'alloc'});
+    alert('Versão finalizada com sucesso!');
+    router.push({name: 'previousresults'});
   } catch (err) {
     console.error("Erro ao publicar a versão:", err);
     alert(`Falha ao finalizar: ${err.response?.data?.error || 'Erro desconhecido'}`);
