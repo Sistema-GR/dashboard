@@ -21,6 +21,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const isPublic = to.meta?.public === true
   const requiresAuth = to.meta?.requiresAuth === true
+  const requiresAdmin = to.meta?.requiresAdmin === true
   const userType = getUserType()
   const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true'
 
@@ -30,6 +31,10 @@ router.beforeEach((to, from, next) => {
   }
 
   if (requiresAuth && !isAuthenticated) return next({ name: 'login' })
+
+  if (requiresAdmin && userType !== 'admin') {
+    return next({ name: 'not-found' })
+  }
 
   const allowedRoles = to.meta?.roles
   if (allowedRoles && !allowedRoles.includes(userType)) {

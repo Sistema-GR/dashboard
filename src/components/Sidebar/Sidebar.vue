@@ -215,6 +215,7 @@ import {
   ChevronLeftIcon,
   ChevronUpIcon,
   CircleStackIcon,
+  ClockIcon,
   DocumentCheckIcon,
   DocumentTextIcon,
   ExclamationCircleIcon, InboxIcon,
@@ -278,7 +279,7 @@ const routes = {
         { name: 'Frequência', id: 'Frequency', icon: ChartBarSquareIcon },
         { name: 'Demissão', id: 'Resignation', icon: BriefcaseIcon },
         { name: 'Atividades', id: 'Activities', icon: DocumentCheckIcon },
-        { name: 'Tempo de Atuação', id: 'Service', icon: CalendarDaysIcon },
+        { name: 'Tempo de Atuação', id: 'Service', icon: ClockIcon },
         { name: 'Formação', id: 'Training', icon: AcademicCapIcon },
         { name: 'Relatórios Finais', id: 'Report', icon: DocumentTextIcon },
       ]
