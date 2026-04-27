@@ -494,16 +494,6 @@ defineExpose({
 }
 
 /* ==========================================
-   Overlay — sem backdrop-filter
-   O recorte nativo do Driver.js já expõe o
-   elemento destacado de forma nítida.
-   ========================================== */
-
-.driver-overlay {
-  background: rgba(0, 0, 0, 0) !important;
-}
-
-/* ==========================================
    Elemento destacado — apenas anel de foco
    ========================================== */
 

@@ -90,6 +90,10 @@ export const STATUS_DEFINITIONS = {
         label: 'Respondido',
         colorKey: 'orange',
     },
+    'Todos os Recursos': {
+        label: 'Todos os Recursos',
+        colorKey: 'gray',
+    }
 };
 
 export const listaDeSetores = [
