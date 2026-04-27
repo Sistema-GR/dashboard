@@ -4,7 +4,7 @@
     <aside
       :class="[
         'fixed inset-y-0 left-0 z-50 hidden lg:flex flex-col transition-all duration-300 ease-in-out',
-        sidebarStore.isSidebarMinimized ? 'w-[72px]' : 'w-[240px]'
+        sidebarStore.isSidebarMinimized ? 'w-[72px]' : 'w-[245px]'
       ]"
     >
       <div class="relative flex flex-col h-full bg-[#003965] overflow-hidden custom-scrollbar overflow-y-auto">
@@ -242,10 +242,30 @@ const routes = {
     { name: 'Dashboard', route: '/calculus/dashboard', icon: Squares2X2Icon, current: false },
     { name: 'Novo Cálculo', route: '/calculus/create', icon: CalculatorIcon, current: false },
     { name: 'Listar Cálculos', route: '/calculus/previousresults', icon: ChartBarIcon, current: false },
-    { name: 'Publicar Cálculo', route: '/calculus/alloc', icon: RectangleStackIcon, current: false },
     { name: 'Versões Publicadas', route: '/calculus/dataversions', icon: CircleStackIcon, current: false },
     { name: 'Recursos', route: '/resource', icon: ExclamationCircleIcon, current: false },
     { name: 'Permissões de Acesso', route: '/user/permissionsaccess', icon: UsersIcon, current: false },
+    {
+      name: 'Detalhes do Cálculo', icon: RectangleStackIcon,
+      children: [
+        { name: 'Resultados IDEM', id: 'Results', icon: CalculatorIcon },
+        { name: 'Calendário Escolar', id: 'Calendar', icon: CalendarIcon },
+        { name: 'Profissionais', id: 'Profissional', icon: UsersIcon },
+        { name: 'Turmas', id: 'Groups', icon: UserGroupIcon },
+        { name: 'Etapas Ues', id: 'Steps', icon: Square3Stack3DIcon },
+        { name: 'Etapas Por Grupo', id: 'StageGroup', icon: RectangleGroupIcon },
+        { name: 'Frequência', id: 'Frequency', icon: ChartBarSquareIcon },
+        { name: 'Demissão', id: 'Resignation', icon: BriefcaseIcon },
+        { name: 'Atividades', id: 'Activities', icon: DocumentCheckIcon },
+        { name: 'Tempo de Atuação', id: 'Service', icon: CalendarDaysIcon },
+        { name: 'Formação', id: 'Training', icon: AcademicCapIcon },
+        { name: 'Relatórios Finais', id: 'Report', icon: DocumentTextIcon },
+      ]
+    }
+  ],
+  'staff': [
+    { name: 'Dashboard', route: '/calculus/dashboard', icon: Squares2X2Icon, current: false },
+    { name: 'Recursos', route: '/resource', icon: ExclamationCircleIcon, current: false },
     {
       name: 'Detalhes do Cálculo', icon: RectangleStackIcon,
       children: [
@@ -325,7 +345,9 @@ onMounted(fetchUserName)
 const filteredNavigation = computed(() => {
   const userType = getUserType()
   if (!userType) return routes['user'] || []
-  if (userType === 'admin') return [...(routes['admin'] || []), ...(routes['admin-panel'] || [])]
+  if (userType === 'admin') return [...(routes['admin'] || [])]
+  //,...(routes['admin-panel'] || [])]
+  if (userType === 'staff') return [...(routes['staff'] || [])]
   return routes['user'] || []
 })
 

@@ -178,7 +178,6 @@ const routes = {
     { name: 'Dashboard', route: '/calculus/dashboard', icon: Squares2X2Icon, current: false },
     { name: 'Novo Cálculo', route: '/calculus/create', icon: CalculatorIcon, current: false },
     { name: 'Listar Cálculos', route: '/calculus/previousresults', icon: ChartBarIcon, current: false },
-    { name: 'Publicar Cálculo', route: '/calculus/alloc', icon: RectangleStackIcon, current: false },
     { name: 'Versões Publicadas', route: '/calculus/dataversions', icon: CircleStackIcon, current: false },
     { name: 'Recursos', route: '/resource', icon: ExclamationCircleIcon, current: false },
     { name: 'Permissões de Acesso', route: '/user/permissionsaccess', icon: UsersIcon , current: false },

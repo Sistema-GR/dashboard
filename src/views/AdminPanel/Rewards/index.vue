@@ -2,84 +2,84 @@
     <Whiteboard title="Painel da Gratificação">
 
         <!-- Topo: Nome + Valor -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 px-6 pt-6" v-if="savedData.length > 0">
-            <div class="flex flex-col gap-1 bg-white border border-gray-300 rounded-xl overflow-hidden">
-                <span class="bg-[#1a4a8a] text-[#b5d4f4] text-xs font-medium px-3.5 py-2 tracking-wide">Nome do servidor</span>
-                <span class="text-base font-medium text-gray-900 px-3.5 py-2.5 capitalize">{{ savedData[0]?.dados?.nome || 'Nome não disponível' }}</span>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 px-8 pt-8" v-if="savedData.length > 0">
+            <div class="flex flex-col gap-0 bg-white border border-gray-300 rounded-xl overflow-hidden">
+                <span class="bg-[#1a4a8a] text-[#b5d4f4] text-base font-medium px-4 py-2.5 tracking-wide">Nome do servidor</span>
+                <span class="text-lg font-medium text-gray-900 px-4 py-3 capitalize">{{ savedData[0]?.dados?.nome || 'Nome não disponível' }}</span>
             </div>
-            <div class="flex flex-col gap-1 bg-white border border-gray-300 rounded-xl overflow-hidden">
-                <span class="bg-[#1a4a8a] text-[#b5d4f4] text-xs font-medium px-3.5 py-2 tracking-wide">Valor total a receber</span>
-                <span class="text-lg font-medium text-[#0c447c] px-3.5 py-2.5">
+            <div class="flex flex-col gap-0 bg-white border border-gray-300 rounded-xl overflow-hidden">
+                <span class="bg-[#1a4a8a] text-[#b5d4f4] text-base font-medium px-4 py-2.5 tracking-wide">Valor total a receber</span>
+                <span class="text-xl font-medium text-[#0c447c] px-5 py-3">
                     R${{ (savedData[0]?.dados?.valor_total || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }).replace('R$', '') }}
                 </span>
             </div>
         </div>
 
         <!-- Aviso de impostos -->
-        <div class="flex items-start gap-2.5 mx-6 mt-4 bg-red-50 border border-red-300 rounded-lg p-2.5">
-            <svg class="w-4 h-4 flex-shrink-0 text-red-700 mt-0.5" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <div class="flex items-start gap-3 mx-8 mt-5 bg-red-50 border border-red-300 rounded-lg p-3.5">
+            <svg class="w-5 h-5 flex-shrink-0 text-red-700 mt-0.5" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M10 2L18 17H2L10 2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
                 <path d="M10 8V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                 <circle cx="10" cy="14" r="0.75" fill="currentColor"/>
             </svg>
-            <p class="text-sm text-red-800 leading-relaxed">Os valores nesta página não consideram eventuais descontos de impostos.</p>
+            <p class="text-base text-red-800 leading-relaxed">Os valores nesta página não consideram eventuais descontos de impostos.</p>
         </div>
 
         <!-- Ilustração + chamada para o detalhamento -->
-        <div class="flex items-center gap-6 mx-6 mt-6 bg-[#f0f6ff] rounded-xl overflow-hidden pr-6">
-            <div class="flex-shrink-0 w-[140px]">
+        <div class="flex items-center gap-8 mx-8 mt-7 bg-[#f0f6ff] rounded-xl overflow-hidden pr-8">
+            <div class="flex-shrink-0 w-[225px]">
                 <img src="@/assets/images/ilustracao.png" class="w-full block" />
             </div>
-            <div class="flex flex-col gap-1.5">
-                <p class="text-[15px] text-[#1e3a5f] leading-relaxed">Ficou com alguma <strong class="font-semibold">dúvida</strong> sobre o <strong class="font-semibold">valor</strong>?</p>
-                <p class="text-[15px] text-[#1e3a5f] leading-relaxed">Consulte o <strong class="font-semibold">detalhamento</strong> abaixo.</p>
+            <div class="flex flex-col gap-2">
+                <p class="text-3xl text-[#1e3a5f] leading-relaxed">Ficou com alguma <strong class="font-semibold">dúvida</strong> sobre o <strong class="font-semibold">valor</strong>?</p>
+                <p class="text-3xl text-[#1e3a5f] leading-relaxed">Consulte o <strong class="font-semibold">detalhamento</strong> abaixo.</p>
             </div>
         </div>
 
         <!-- Seção de matrículas -->
-        <div class="px-6 pt-6">
-            <p class="text-[11px] font-semibold tracking-wider uppercase text-gray-500 mb-3">Clique sobre a matrícula desejada</p>
+        <div class="px-8 pt-7">
+            <p class="text-sm font-semibold tracking-wider uppercase text-gray-500 mb-4">Clique sobre a matrícula desejada</p>
 
-            <div class="flex flex-col gap-2">
+            <div class="flex flex-col gap-3">
                 <Disclosure v-for="(item, index) in savedData" :key="index">
                     <template #default="{ open }">
 
                         <div class="bg-white border border-gray-300 rounded-xl overflow-hidden transition-shadow duration-200" :class="{ 'border-[#93b4dc] shadow-md shadow-[#1a4a8a]/10': open }">
 
                             <!-- Trigger -->
-                            <DisclosureButton :id="`tutorial-matricula-${index}`" class="flex items-center justify-between w-full px-4 py-3.5 bg-transparent border-none cursor-pointer text-left transition-colors duration-150 hover:bg-[#f8faff]">
-                                <div class="flex items-center gap-2.5 flex-wrap">
-                                    <span class="bg-[#e6f1fb] text-[#0c447c] rounded-full px-3 py-0.5 text-xs font-semibold whitespace-nowrap">Matrícula {{ item?.dados?.matricula }}</span>
-                                    <span class="text-sm text-gray-600 capitalize">{{ item?.dados?.cargo }}</span>
+                            <DisclosureButton :id="`tutorial-matricula-${index}`" class="flex items-center justify-between w-full px-5 py-4 bg-transparent border-none cursor-pointer text-left transition-colors duration-150 hover:bg-[#f8faff]">
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <span class="bg-[#e6f1fb] text-[#0c447c] rounded-full px-3.5 py-1 text-base font-semibold whitespace-nowrap">Matrícula {{ item?.dados?.matricula }}</span>
+                                    <span class="text-lg text-gray-600 capitalize">{{ item?.dados?.cargo }}</span>
                                 </div>
-                                <div class="flex items-center gap-3 flex-shrink-0">
-                                    <span class="text-sm font-semibold text-[#0c447c] whitespace-nowrap">{{ formatCurrency(item?.dados?.valor_total) }}</span>
-                                    <ChevronDownIcon class="w-4 h-4 text-gray-400 transition-transform duration-200 flex-shrink-0" :class="{ 'rotate-180': open }" />
+                                <div class="flex items-center gap-4 flex-shrink-0">
+                                    <span class="text-xl font-semibold text-[#0c447c] whitespace-nowrap">{{ formatCurrency(item?.dados?.valor_total) }}</span>
+                                    <ChevronDownIcon class="w-5 h-5 text-gray-400 transition-transform duration-200 flex-shrink-0" :class="{ 'rotate-180': open }" />
                                 </div>
                             </DisclosureButton>
 
                             <!-- Painel expandido -->
                             <DisclosurePanel class="border-t border-gray-200">
 
-                                <!-- Dados pessoais + métricas financeiras -->
-                                <div class="p-5">
-                                    <p class="text-[11px] font-semibold tracking-wider uppercase text-gray-500 mb-3.5">Dados pessoais</p>
-                                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5">
-                                        <div class="flex flex-col gap-0.5 bg-gray-50 rounded-lg px-3 py-2">
-                                            <span class="text-[11px] text-gray-500">Nome</span>
-                                            <span class="text-[13px] font-medium text-gray-900 capitalize">{{ item?.dados?.nome }}</span>
+                                <!-- Dados pessoais -->
+                                <div class="p-6">
+                                    <p class="text-base font-semibold tracking-wider uppercase text-gray-500 mb-4">Dados pessoais</p>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div class="flex flex-col gap-1 bg-gray-50 rounded-lg px-4 py-3">
+                                            <span class="text-base text-gray-500">Nome</span>
+                                            <span class="text-xl font-medium text-gray-900 capitalize">{{ item?.dados?.nome }}</span>
                                         </div>
-                                        <div class="flex flex-col gap-0.5 bg-gray-50 rounded-lg px-3 py-2">
-                                            <span class="text-[11px] text-gray-500">CPF</span>
-                                            <span class="text-[13px] font-medium text-gray-900">{{ item?.dados?.cpf }}</span>
+                                        <div class="flex flex-col gap-1 bg-gray-50 rounded-lg px-4 py-3">
+                                            <span class="text-base text-gray-500">CPF</span>
+                                            <span class="text-xl font-medium text-gray-900">{{ item?.dados?.cpf }}</span>
                                         </div>
-                                        <div class="flex flex-col gap-0.5 bg-gray-50 rounded-lg px-3 py-2">
-                                            <span class="text-[11px] text-gray-500">Matrícula</span>
-                                            <span class="text-[13px] font-medium text-gray-900">{{ item?.dados?.matricula }}</span>
+                                        <div class="flex flex-col gap-1 bg-gray-50 rounded-lg px-4 py-3">
+                                            <span class="text-base text-gray-500">Matrícula</span>
+                                            <span class="text-xl font-medium text-gray-900">{{ item?.dados?.matricula }}</span>
                                         </div>
-                                        <div class="flex flex-col gap-0.5 bg-gray-50 rounded-lg px-3 py-2">
-                                            <span class="text-[11px] text-gray-500">Cargo</span>
-                                            <span class="text-[13px] font-medium text-gray-900 capitalize">{{ item?.dados?.cargo }}</span>
+                                        <div class="flex flex-col gap-1 bg-gray-50 rounded-lg px-4 py-3">
+                                            <span class="text-base text-gray-500">Cargo</span>
+                                            <span class="text-xl font-medium text-gray-900 capitalize">{{ item?.dados?.cargo }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -87,24 +87,24 @@
                                 <div class="h-px bg-gray-200"></div>
 
                                 <!-- Métricas financeiras -->
-                                <div class="p-5">
-                                    <p class="text-[11px] font-semibold tracking-wider uppercase text-gray-500 mb-3.5">Valores a receber</p>
-                                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                                        <div class="flex flex-col gap-1 bg-gray-50 rounded-lg px-3 py-2.5">
-                                            <span class="text-[11px] text-gray-500">Valor máx. rede</span>
-                                            <span class="text-sm font-semibold text-gray-900" id="tutorial-valor-rede">{{ formatCurrency(item?.profissionais[0]?.valor_gr_rede) }}</span>
+                                <div class="p-6">
+                                    <p class="text-base font-semibold tracking-wider uppercase text-gray-500 mb-4">Valores a receber</p>
+                                    <div class="grid grid-cols-2 sm:grid-cols-2 gap-3">
+                                        <div class="flex flex-col gap-1.5 bg-gray-50 rounded-lg px-4 py-3.5">
+                                            <span class="text-base text-gray-500">Valor máx. rede</span>
+                                            <span class="text-xl font-semibold text-gray-900" id="tutorial-valor-rede">{{ formatCurrency(item?.profissionais[0]?.valor_gr_rede) }}</span>
                                         </div>
-                                        <div class="flex flex-col gap-1 bg-gray-50 rounded-lg px-3 py-2.5">
-                                            <span class="text-[11px] text-gray-500">Valor máx. unidades</span>
-                                            <span class="text-sm font-semibold text-gray-900" id="tutorial-valor-unidade">{{ formatCurrency(totalUnidade) }}</span>
+                                        <div class="flex flex-col gap-1.5 bg-gray-50 rounded-lg px-4 py-3.5">
+                                            <span class="text-base text-gray-500">Valor máx. unidades</span>
+                                            <span class="text-xl font-semibold text-gray-900" id="tutorial-valor-unidade">{{ formatCurrency(totalUnidade) }}</span>
                                         </div>
-                                        <div class="flex flex-col gap-1 bg-gray-50 rounded-lg px-3 py-2.5">
-                                            <span class="text-[11px] text-gray-500">Desconto</span>
-                                            <span class="text-sm font-semibold text-red-700" id="tutorial-desconto">{{ formatCurrency(item?.dados?.desconto) }}</span>
+                                        <div class="flex flex-col gap-1.5 bg-gray-50 rounded-lg px-4 py-3.5">
+                                            <span class="text-base text-gray-500">Desconto</span>
+                                            <span class="text-xl font-semibold text-red-700" id="tutorial-desconto">{{ formatCurrency(item?.dados?.desconto) }}</span>
                                         </div>
-                                        <div class="flex flex-col gap-1 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2.5">
-                                            <span class="text-[11px] text-gray-500">Total a receber</span>
-                                            <span class="text-[15px] font-semibold text-[#0c447c]" id="tutorial-valor-total">{{ formatCurrency(item?.dados?.valor_total) }}</span>
+                                        <div class="flex flex-col gap-1.5 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3.5">
+                                            <span class="text-base text-gray-500">Total a receber</span>
+                                            <span class="text-xl font-semibold text-[#0c447c]" id="tutorial-valor-total">{{ formatCurrency(item?.dados?.valor_total) }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -112,53 +112,53 @@
                                 <div class="h-px bg-gray-200"></div>
 
                                 <!-- Critérios -->
-                                <div id="tutorial-criteria" class="p-5">
-                                    <p class="text-[11px] font-semibold tracking-wider uppercase text-gray-500 mb-3.5">Critérios de verificação para gratificação</p>
+                                <div id="tutorial-criteria" class="p-6">
+                                    <p class="text-base font-semibold tracking-wider uppercase text-gray-500 mb-4">Critérios de verificação para gratificação</p>
                                     <div class="flex flex-col border border-gray-200 rounded-lg overflow-hidden">
 
                                         <template v-if="item.dados.periodos_frequencia && item.dados.periodos_frequencia.length > 0">
-                                            <div v-for="(periodo, pIndex) in item.dados.periodos_frequencia" :key="pIndex" class="flex items-center justify-between gap-3 px-3.5 py-2.5 border-b border-gray-200 bg-white last:border-b-0 hover:bg-gray-50">
-                                                <span class="text-[13px] text-gray-700 flex-1">Frequência (Período {{ periodo.numero_periodo }})</span>
-                                                <span class="text-[13px] text-gray-500 whitespace-nowrap">{{ periodo.percentual ? Number(periodo.percentual).toFixed(2) + '%' : 'N/A' }}</span>
-                                                <span class="rounded-full px-2.5 py-0.5 text-[11px] font-semibold whitespace-nowrap flex-shrink-0" :class="periodo.apto ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'">
+                                            <div v-for="(periodo, pIndex) in item.dados.periodos_frequencia" :key="pIndex" class="flex items-center justify-between gap-3 px-4 py-3.5 border-b border-gray-200 bg-white last:border-b-0 hover:bg-gray-50">
+                                                <span class="text-base text-gray-700 flex-1">Frequência (Período {{ periodo.numero_periodo }})</span>
+                                                <span class="text-base text-gray-500 whitespace-nowrap">{{ periodo.percentual ? Number(periodo.percentual).toFixed(2) + '%' : 'N/A' }}</span>
+                                                <span class="rounded-full px-3 py-0.5 text-base font-semibold whitespace-nowrap flex-shrink-0" :class="periodo.apto ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'">
                                                     {{ periodo.apto ? 'Apto' : 'Não apto' }}
                                                 </span>
                                             </div>
                                         </template>
 
                                         <template v-else>
-                                            <div class="flex items-center justify-between gap-3 px-3.5 py-2.5 border-b border-gray-200 bg-white last:border-b-0 hover:bg-gray-50">
-                                                <span class="text-[13px] text-gray-700 flex-1">Frequência</span>
-                                                <span class="text-[13px] text-gray-500 whitespace-nowrap">
+                                            <div class="flex items-center justify-between gap-3 px-4 py-3.5 border-b border-gray-200 bg-white last:border-b-0 hover:bg-gray-50">
+                                                <span class="text-base text-gray-700 flex-1">Frequência</span>
+                                                <span class="text-base text-gray-500 whitespace-nowrap">
                                                     {{ item?.frequencia[0]?.percentual_frequencia ? Number(item.frequencia[0].percentual_frequencia).toFixed(2) + '%' : '100%' }}
                                                 </span>
-                                                <span class="rounded-full px-2.5 py-0.5 text-[11px] font-semibold whitespace-nowrap flex-shrink-0"
-                                                    :class="(!item?.frequencia[0]?.percentual_frequencia || Number(item.frequencia[0].percentual_frequencia) >= 96) ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'">
-                                                    {{ item?.frequencia[0]?.percentual_frequencia ? (Number(item.frequencia[0].percentual_frequencia) >= 96 ? 'Apto' : 'Não apto') : 'Apto' }}
+                                                <span class="rounded-full px-3 py-0.5 text-sm font-semibold whitespace-nowrap flex-shrink-0"
+                                                    :class="!item?.frequencia[0]?.percentual_frequencia || Number(item.frequencia[0].percentual_frequencia) === 100 ? 'bg-green-50 text-green-800' : Number(item.frequencia[0].percentual_frequencia) >= 96 ? 'bg-yellow-50 text-yellow-800' : 'bg-red-50 text-red-800'">
+                                                    {{ !item?.frequencia[0]?.percentual_frequencia || Number(item.frequencia[0].percentual_frequencia) === 100 ? 'Apto' : Number(item.frequencia[0].percentual_frequencia) >= 96 ? 'Parcialmente Apto' : 'Não apto' }}
                                                 </span>
                                             </div>
                                         </template>
 
-                                        <div class="flex items-center justify-between gap-3 px-3.5 py-2.5 border-b border-gray-200 bg-white last:border-b-0 hover:bg-gray-50">
-                                            <span class="text-[13px] text-gray-700 flex-1">Tempo de atuação</span>
-                                            <span class="text-[13px] text-gray-500 whitespace-nowrap">{{ item?.dados?.tempo_atuacao === true ? 'Atua há mais de 6 meses' : 'Não atua há mais de 6 meses' }}</span>
-                                            <span class="rounded-full px-2.5 py-0.5 text-[11px] font-semibold whitespace-nowrap flex-shrink-0" :class="item?.dados?.tempo_atuacao === true ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'">
+                                        <div class="flex items-center justify-between gap-3 px-4 py-3.5 border-b border-gray-200 bg-white last:border-b-0 hover:bg-gray-50">
+                                            <span class="text-base text-gray-700 flex-1">Tempo de atuação</span>
+                                            <span class="text-base text-gray-500 whitespace-nowrap">{{ item?.dados?.tempo_atuacao === true ? 'Atua há mais de 6 meses' : 'Não atua há mais de 6 meses' }}</span>
+                                            <span class="rounded-full px-3 py-0.5 text-sm font-semibold whitespace-nowrap flex-shrink-0" :class="item?.dados?.tempo_atuacao === true ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'">
                                                 {{ item?.dados?.tempo_atuacao === true ? 'Apto' : 'Não apto' }}
                                             </span>
                                         </div>
 
-                                        <div class="flex items-center justify-between gap-3 px-3.5 py-2.5 border-b border-gray-200 bg-white last:border-b-0 hover:bg-gray-50">
-                                            <span class="text-[13px] text-gray-700 flex-1">Formação</span>
-                                            <span class="text-[13px] text-gray-500 whitespace-nowrap">{{ item?.dados?.percentual_formacao === 100 ? '100,00%' : item?.dados?.percentual_formacao === 0 ? '0,00%' : 'Indefinido' }}</span>
-                                            <span class="rounded-full px-2.5 py-0.5 text-[11px] font-semibold whitespace-nowrap flex-shrink-0" :class="item?.dados?.formacoes === true ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'">
+                                        <div class="flex items-center justify-between gap-3 px-4 py-3.5 border-b border-gray-200 bg-white last:border-b-0 hover:bg-gray-50">
+                                            <span class="text-base text-gray-700 flex-1">Formação</span>
+                                            <span class="text-base text-gray-500 whitespace-nowrap">{{ item?.dados?.percentual_formacao === 100 ? '100,00%' : item?.dados?.percentual_formacao === 0 ? '0,00%' : 'Indefinido' }}</span>
+                                            <span class="rounded-full px-3 py-0.5 text-sm font-semibold whitespace-nowrap flex-shrink-0" :class="item?.dados?.formacoes === true ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'">
                                                 {{ item?.dados?.formacoes === true ? 'Apto' : 'Não apto' }}
                                             </span>
                                         </div>
 
-                                        <div class="flex items-center justify-between gap-3 px-3.5 py-2.5 border-b border-gray-200 bg-white last:border-b-0 hover:bg-gray-50">
-                                            <span class="text-[13px] text-gray-700 flex-1">Atividades</span>
-                                            <span class="text-[13px] text-gray-500 whitespace-nowrap">{{ item?.dados?.percentual_atividade === 100.0 ? '100,00%' : '0,00%' }}</span>
-                                            <span class="rounded-full px-2.5 py-0.5 text-[11px] font-semibold whitespace-nowrap flex-shrink-0" :class="item?.dados?.recebe_atividade ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'">
+                                        <div class="flex items-center justify-between gap-3 px-4 py-3.5 border-b border-gray-200 bg-white last:border-b-0 hover:bg-gray-50">
+                                            <span class="text-base text-gray-700 flex-1">Atividades</span>
+                                            <span class="text-base text-gray-500 whitespace-nowrap">{{ item?.dados?.percentual_atividade === 100.0 ? '100,00%' : '0,00%' }}</span>
+                                            <span class="rounded-full px-3 py-0.5 text-sm font-semibold whitespace-nowrap flex-shrink-0" :class="item?.dados?.recebe_atividade ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'">
                                                 {{ item?.dados?.recebe_atividade ? 'Apto' : 'Não apto' }}
                                             </span>
                                         </div>
@@ -169,33 +169,33 @@
                                 <div class="h-px bg-gray-200"></div>
 
                                 <!-- Alocações -->
-                                <div id="tutorial-allocations" class="p-5">
-                                    <p class="text-[11px] font-semibold tracking-wider uppercase text-gray-500 mb-3.5">Alocações em {{ referenceYear }}</p>
+                                <div id="tutorial-allocations" class="p-6">
+                                    <p class="text-base font-semibold tracking-wider uppercase text-gray-500 mb-4">Alocações em {{ referenceYear }}</p>
 
-                                    <div v-if="item.profissionais && item.profissionais.length > 0" class="flex flex-col gap-2">
+                                    <div v-if="item.profissionais && item.profissionais.length > 0" class="flex flex-col gap-3">
                                         <div v-for="(prof, profIndex) in item.profissionais" :key="profIndex" class="border border-gray-200 rounded-lg overflow-hidden">
-                                            <div class="flex items-center justify-between flex-wrap gap-2 bg-[#f0f6ff] px-3.5 py-2.5">
-                                                <span class="text-[13px] font-semibold text-[#1e3a5f]">{{ formatUnidade(prof?.nome_unidade) }}</span>
+                                            <div class="flex items-center justify-between flex-wrap gap-2 bg-[#f0f6ff] px-4 py-3">
+                                                <span class="text-lg font-semibold text-[#1e3a5f]">{{ formatUnidade(prof?.nome_unidade) }}</span>
                                                 <div class="flex gap-2.5 flex-wrap">
-                                                    <span class="text-xs text-gray-700 bg-white border border-gray-300 rounded-full px-2.5 py-0.5">Etapa 1: <strong class="font-semibold text-[#0c447c]">{{ prof?.percentual_idem_etapa_1 }}%</strong></span>
-                                                    <span class="text-xs text-gray-700 bg-white border border-gray-300 rounded-full px-2.5 py-0.5">Etapa 2: <strong class="font-semibold text-[#0c447c]">{{ prof?.percentual_idem_etapa_2 }}%</strong></span>
-                                                    <span class="text-xs text-gray-700 bg-white border border-gray-300 rounded-full px-2.5 py-0.5">Etapa 3: <strong class="font-semibold text-[#0c447c]">{{ prof?.percentual_idem_etapa_3 }}%</strong></span>
+                                                    <span class="text-base text-gray-700 bg-white border border-gray-300 rounded-full px-3 py-0.5">Etapa 1 <strong class="font-semibold text-[#0c447c]">{{ prof?.percentual_idem_etapa_1 }}%</strong></span>
+                                                    <span class="text-base text-gray-700 bg-white border border-gray-300 rounded-full px-3 py-0.5">Etapa 2 <strong class="font-semibold text-[#0c447c]">{{ prof?.percentual_idem_etapa_2 }}%</strong></span>
+                                                    <span class="text-base text-gray-700 bg-white border border-gray-300 rounded-full px-3 py-0.5">Etapa 3 <strong class="font-semibold text-[#0c447c]">{{ prof?.percentual_idem_etapa_3 }}%</strong></span>
                                                 </div>
                                             </div>
                                             <div class="overflow-x-auto">
-                                                <table class="w-full border-collapse text-[13px] min-w-[600px]">
+                                                <table class="w-full border-collapse text-base min-w-[600px]">
                                                     <thead class="bg-gray-100">
                                                         <tr>
-                                                            <th v-for="h in ['Início', 'Fim', 'Função', 'Carga horária', 'Grupo']" :key="h" class="px-3 py-2 text-left text-[11px] font-semibold tracking-wide uppercase text-gray-500 whitespace-nowrap border-b border-gray-200">{{ h }}</th>
+                                                            <th v-for="h in ['Início', 'Fim', 'Função', 'Carga horária', 'Grupo']" :key="h" class="px-4 py-2.5 text-left text-xs font-semibold tracking-wide uppercase text-gray-500 whitespace-nowrap border-b border-gray-200">{{ h }}</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         <tr class="hover:bg-gray-50">
-                                                            <td class="px-3 py-2.25 text-gray-700 whitespace-nowrap border-b border-gray-100">{{ new Date(prof.inicio_atividade_local).toLocaleDateString('pt-BR') }}</td>
-                                                            <td class="px-3 py-2.25 text-gray-700 whitespace-nowrap border-b border-gray-100">{{ new Date(prof.fim_atividade_local).toLocaleDateString('pt-BR') }}</td>
-                                                            <td class="px-3 py-2.25 text-gray-700 whitespace-nowrap border-b border-gray-100 capitalize">{{ prof.nome_disciplina.charAt(0).toUpperCase() + prof.nome_disciplina.slice(1) || 'N/A' }}</td>
-                                                            <td class="px-3 py-2.25 text-gray-700 whitespace-nowrap border-b border-gray-100">{{ prof.hora_aula || 'N/A' }}h</td>
-                                                            <td class="px-3 py-2.25 text-gray-700 whitespace-nowrap border-b border-gray-100">{{ formatGroups(prof.grupo_gr) || 'N/A' }}</td>
+                                                            <td class="px-4 py-3 text-gray-700 whitespace-nowrap border-b border-gray-100">{{ new Date(prof.inicio_atividade_local).toLocaleDateString('pt-BR') }}</td>
+                                                            <td class="px-4 py-3 text-gray-700 whitespace-nowrap border-b border-gray-100">{{ new Date(prof.fim_atividade_local).toLocaleDateString('pt-BR') }}</td>
+                                                            <td class="px-4 py-3 text-gray-700 whitespace-nowrap border-b border-gray-100 capitalize">{{ prof.nome_disciplina.charAt(0).toUpperCase() + prof.nome_disciplina.slice(1) || 'N/A' }}</td>
+                                                            <td class="px-4 py-3 text-gray-700 whitespace-nowrap border-b border-gray-100">{{ prof.hora_aula || 'N/A' }}h</td>
+                                                            <td class="px-4 py-3 text-gray-700 whitespace-nowrap border-b border-gray-100">{{ formatGroups(prof.grupo_gr) || 'N/A' }}</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -207,23 +207,23 @@
                                 <div class="h-px bg-gray-200"></div>
 
                                 <!-- Frequência / Afastamentos -->
-                                <div id="tutorial-frequency" class="p-5">
-                                    <p class="text-[11px] font-semibold tracking-wider uppercase text-gray-500 mb-3.5">Frequência (afastamentos)</p>
+                                <div id="tutorial-frequency" class="p-6">
+                                    <p class="text-base font-semibold tracking-wider uppercase text-gray-500 mb-4">Frequência (afastamentos)</p>
                                     <div class="overflow-x-auto">
-                                        <table class="w-full border-collapse text-[13px] min-w-[600px]">
+                                        <table class="w-full border-collapse text-base min-w-[600px]">
                                             <thead class="bg-gray-100">
                                                 <tr>
-                                                    <th v-for="h in ['Início', 'Fim', 'Tipo de afastamento', 'Total dias', 'Contabilizados']" :key="h" class="px-3 py-2 text-left text-[11px] font-semibold tracking-wide uppercase text-gray-500 whitespace-nowrap border-b border-gray-200">{{ h }}</th>
+                                                    <th v-for="h in ['Início', 'Fim', 'Tipo de afastamento', 'Total dias', 'Contabilizados']" :key="h" class="px-4 py-2.5 text-left text-xs font-semibold tracking-wide uppercase text-gray-500 whitespace-nowrap border-b border-gray-200">{{ h }}</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr v-for="(freq, freqIndex) in item.frequencia.filter(f => ![false].includes(f.contabiliza))" :key="freqIndex" class="capitalize hover:bg-gray-50">
-                                                    <td class="px-3 py-2.25 text-gray-700 whitespace-nowrap border-b border-gray-100">{{ new Date(freq.inicio_afastamento).toLocaleDateString('pt-BR') }}</td>
-                                                    <td class="px-3 py-2.25 text-gray-700 whitespace-nowrap border-b border-gray-100">{{ new Date(freq.fim_afastamento).toLocaleDateString('pt-BR') }}</td>
-                                                    <td class="px-3 py-2.25 text-gray-700 whitespace-nowrap border-b border-gray-100">{{ freq.motivo || 'N/A' }}</td>
-                                                    <td class="px-3 py-2.25 text-gray-700 whitespace-nowrap border-b border-gray-100">{{ freq.dias_afastado || '0' }}</td>
-                                                    <td class="px-3 py-2.25 text-gray-700 whitespace-nowrap border-b border-gray-100">
-                                                        <span class="rounded-full px-2.5 py-0.5 text-[11px] font-semibold whitespace-nowrap flex-shrink-0" :class="freq.contabiliza ? 'bg-green-50 text-green-800' : 'bg-gray-100 text-gray-600'">
+                                                    <td class="px-4 py-3 text-gray-700 whitespace-nowrap border-b border-gray-100">{{ new Date(freq.inicio_afastamento).toLocaleDateString('pt-BR') }}</td>
+                                                    <td class="px-4 py-3 text-gray-700 whitespace-nowrap border-b border-gray-100">{{ new Date(freq.fim_afastamento).toLocaleDateString('pt-BR') }}</td>
+                                                    <td class="px-4 py-3 text-gray-700 whitespace-nowrap border-b border-gray-100">{{ freq.motivo || 'N/A' }}</td>
+                                                    <td class="px-4 py-3 text-gray-700 whitespace-nowrap border-b border-gray-100">{{ freq.dias_afastado || '0' }}</td>
+                                                    <td class="px-4 py-3 text-gray-700 whitespace-nowrap border-b border-gray-100">
+                                                        <span class="rounded-full px-3 py-0.5 text-sm font-semibold whitespace-nowrap flex-shrink-0" :class="freq.contabiliza ? 'bg-green-50 text-green-800' : 'bg-gray-100 text-gray-600'">
                                                             {{ freq.contabiliza ? 'Sim' : 'Não' }}
                                                         </span>
                                                     </td>
@@ -242,13 +242,13 @@
         </div>
 
         <!-- Área de recurso -->
-        <div class="flex items-center justify-between gap-4 flex-wrap mx-6 my-6 bg-gray-50 border border-gray-200 rounded-xl px-6 py-5">
-            <div class="flex flex-col gap-1">
-                <p class="text-[15px] font-medium text-gray-900">Percebeu algum problema com o valor?</p>
-                <p class="text-[13px] text-gray-500">Abra um recurso para contestar o valor calculado.</p>
+        <div class="flex items-center justify-between gap-4 flex-wrap mx-8 my-8 bg-gray-50 border border-gray-200 rounded-xl px-7 py-6">
+            <div class="flex flex-col gap-1.5">
+                <p class="text-lg font-medium text-gray-900">Percebeu algum problema com o valor?</p>
+                <p class="text-base text-gray-500">Abra um recurso para contestar o valor calculado.</p>
             </div>
             <router-link to="/resource/form">
-                <button id="tutorial-resource" class="bg-[#1a4a8a] text-[#e6f1fb] border-none rounded-lg px-6 py-2.5 text-[13px] font-semibold cursor-pointer whitespace-nowrap tracking-wide transition-colors duration-150 hover:bg-[#0c447c]">Abrir recurso</button>
+                <button id="tutorial-resource" class="bg-[#1a4a8a] text-[#e6f1fb] border-none rounded-lg px-7 py-3 text-base font-semibold cursor-pointer whitespace-nowrap tracking-wide transition-colors duration-150 hover:bg-[#0c447c]">Abrir recurso</button>
             </router-link>
         </div>
 

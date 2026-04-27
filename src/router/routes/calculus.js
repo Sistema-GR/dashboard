@@ -1,6 +1,6 @@
 //Módulo de gerenciamento de cálculos
 export default [
-    { path: '/calculus', name: 'calculus', meta: { public: false, requiresAuth: true, roles: ['admin'] },
+    { path: '/calculus', name: 'calculus', meta: { public: false, requiresAuth: true, roles: ['admin', 'staff'] },
       children: [
         { path: 'dashboard', name: 'dash', component: () => import('@/views/AdminPanel/Dashboard/index.vue')},
         { path: 'dashboard/files-manager', name: 'files-manager', component: () => import('@/views/AdminPanel/FileManager/index.vue') },
