@@ -41,6 +41,7 @@ export default {
         nome: user.full_name,
         cpf: user.cpf,
         staff: user.is_staff,
+        admin: user.is_superuser,
         id: user.id,
         }))
 

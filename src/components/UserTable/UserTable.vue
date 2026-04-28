@@ -23,12 +23,14 @@
               <td class="px-5 py-3">
               <div class="relative inline-block w-full select-wrapper">
                 <select
-                :value="usuario.staff ? 'administrador' : 'usuario'"
+                :disabled="usuario.id === currentUserId"
+                :value="usuario.admin ? 'administrador' : usuario.staff ? 'analista' : 'usuario'"
                 @change="(e) => mudarStatusUsuario(usuario, e.target.value)"
                 class="custom-select w-full px-3 py-2 border border-gray-300 rounded-[10px] appearance-none"
                 >
                 <option value="usuario">Usuário</option>
                 <option value="administrador">Administrador</option>
+                <option value="analista">Analista</option>
                 </select>
                 <svg class="select-arrow" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
                 <path d="M6 8L10 12L14 8" stroke="#1F2937" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
@@ -74,26 +76,43 @@ const emit = defineEmits(['update']);
 
 const indexRemocao = ref(null)
 const modalAberto = ref(false)
+const currentUserId = ref(null)
 
-  // Função para mudar o status do usuário
-  const mudarStatusUsuario = async (usuario, novoStatus) => {
-    const isAdmin = novoStatus === 'administrador'
-    const url = isAdmin
-      ? `/auth/users/${usuario.id}/set-user-staff/`
-      : `/auth/users/${usuario.id}/unset-user-staff/`
-    
-    try {
-      const token = await getAccessToken()
-      await apiClient.post(url, {}, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      })
-      emit('update')
-    } catch (error) {
-      console.error('Erro ao alterar status:', error)
-    }
+// Função para mudar o status do usuário
+const mudarStatusUsuario = async (usuario, novoStatus) => {
+
+  const url = novoStatus === 'administrador' ? `/auth/users/${usuario.id}/set-user-admin/`
+    : novoStatus === 'analista' ?  `/auth/users/${usuario.id}/set-user-staff/`
+    : `/auth/users/${usuario.id}/set-user-regular/`
+
+
+  try {
+    const token = await getAccessToken()
+    await apiClient.post(url, {}, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    emit('update')
+  } catch (error) {
+    console.error('Erro ao alterar status:', error)
   }
+}
+
+const fetchCurrentUserId = async () => {
+  try {
+    const token = await getAccessToken()
+    const response = await apiClient.get('/auth/users/me/', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+    currentUserId.value = response.data.id
+  } catch (error) {
+    console.error('Erro ao buscar usuário atual:', error)
+  }
+}
+
 const confirmarRemocao = (usuario) => {
     indexRemocao.value = usuarios.findIndex(u => u.cpf === usuario.cpf)
     modalAberto.value = true
@@ -106,7 +125,7 @@ const removerUsuarioConfirmado = () => {
 
 
 onMounted(() => {
-    // Limpeza se necessária
+    fetchCurrentUserId()
 })
 
 onBeforeUnmount(() => {
