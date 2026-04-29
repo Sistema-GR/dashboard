@@ -128,7 +128,7 @@ const createDriver = () => {
 
       // Passo 6 - Seção de matrículas
       {
-        element: () => document.querySelector('.px-6.pt-6 > p:first-child'),
+        element: () => document.querySelector('.px-8.pt-7 > p:first-child'),
         popover: {
           title: '<div class="tutorial-title">📋 Matrículas</div>',
           description: '<div class="tutorial-description">Aqui estão listadas todas as suas matrículas ativas durante o ano de competência.<br><br><strong>Clique em cada uma para expandir os detalhes!</strong></div>',
@@ -161,7 +161,7 @@ const createDriver = () => {
         element: () => {
           const openAccordionDiv = document.querySelector('.bg-white.border-\\[\\#93b4dc\\]');
           if (openAccordionDiv) {
-            return openAccordionDiv.querySelector('.grid-cols-1.sm\\:grid-cols-4');
+            return openAccordionDiv.querySelector('.grid-cols-1.sm\\:grid-cols-2');
           }
           return null;
         },

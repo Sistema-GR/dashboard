@@ -1,340 +1,300 @@
 <template>
-    <Whiteboard title="Recurso" class="!overflow-visible overflow-y-auto z-40 relative">
+  <Whiteboard title="Recurso" class="!overflow-visible overflow-y-auto z-40 relative">
 
-      <!-- Header com botão de relatórios -->
-      <div class="flex justify-end items-center px-4 sm:px-10 py-4 margin-between-sections gap-3 flex-wrap">
-        <button
-          @click="navigateToTemplateBuilder"
-          class="bg-[#ff0000] hover:bg-[#800000] text-white px-4 py-2 rounded-[10px] transition-colors duration-200 flex items-center gap-2 font-medium shadow-md"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+    <!-- Header -->
+    <div class="flex items-center justify-between flex-wrap gap-3 py-6 px-10">
+      <div>
+        <h1 class="text-xl font-semibold text-[#1a1a1a] leading-tight">Recursos</h1>
+        <p class="text-xs text-gray-500 mt-0.5">Gestão de recursos e respostas</p>
+      </div>
+      <div class="flex items-center gap-2 flex-wrap">
+        <button @click="navigateToTemplateBuilder" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium border transition-opacity hover:opacity-80 bg-red-50/10 text-red-800 border-red-300/35">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
           </svg>
-          Criar template resposta
+          Criar template
         </button>
-        <button
-          @click="navigateToAnnualReports"
-          class="bg-[#3459A2] hover:bg-[#2a4a8a] text-white px-4 py-2 rounded-[10px] transition-colors duration-200 flex items-center gap-2 font-medium shadow-md"
-        >
-          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+        <button @click="navigateToAnnualReports" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium border transition-opacity hover:opacity-80 bg-blue-900/10 text-blue-800 border-blue-800/35">
+          <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
             <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"/>
             <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"/>
           </svg>
-          Relatórios Anuais
+          Relatórios anuais
         </button>
-        <button
-          @click="navigateToVersionManager"
-          class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-[10px] transition-colors duration-200 flex items-center gap-2 font-medium shadow-md"
-        >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button @click="navigateToVersionManager" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium border transition-opacity hover:opacity-80 bg-green-800/10 text-green-700 border-green-700/35">
+          <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/>
           </svg>
-          Gerenciar Versões do Cálculo
+          Versões
         </button>
-
-        <!-- Botão Lançar Lote -->
         <button
           @click="openBatchModal"
           :disabled="!pendingLote || isLoadingLote"
-          class="relative text-white px-4 py-2 rounded-[10px] transition-all duration-200 flex items-center gap-2 font-medium shadow-md"
-          :class="pendingLote && !isLoadingLote
-            ? 'bg-amber-500 hover:bg-amber-600 cursor-pointer'
-            : 'bg-gray-300 cursor-not-allowed'"
+          class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium border transition-opacity hover:opacity-80 bg-amber-500/10 text-amber-800 border-amber-400/40 disabled:opacity-40 disabled:cursor-not-allowed"
+          :class="{ 'opacity-40 cursor-not-allowed': !pendingLote || isLoadingLote }"
         >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+          <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
           </svg>
           <span v-if="isLoadingLote">Verificando...</span>
           <span v-else-if="pendingLote">
-            Lançar Lote
-            <span class="ml-1 bg-white text-amber-600 text-xs font-bold px-1.5 py-0.5 rounded-full">
-              {{ pendingLote.numero_recursos }}
-            </span>
+            Lançar lote
+            <span class="bg-amber-500 text-white text-[11px] font-semibold py-px px-1.5 rounded-full ml-0.5">{{ pendingLote.numero_recursos }}</span>
           </span>
           <span v-else>Sem lote pendente</span>
         </button>
-        <button
-            @click="openLimitConfig"
-            class="bg-gray-600 hover:bg-gray-700 text-white p-2 rounded-[10px] transition-colors duration-200 flex items-center justify-center shadow-md"
-            title="Configurações"
-          >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-            </svg>
-          </button>
+        <button @click="openLimitConfig" class="inline-flex items-center gap-1.5 px-1.5 py-1.5 rounded-lg text-xs font-medium border transition-opacity hover:opacity-80 bg-gray-100 text-gray-600 border-gray-300" title="Configurações">
+          <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+        </button>
       </div>
+    </div>
 
-      <!-- Blocos de status -->
-      <div class="w-full py-8 pt-2 px-6 sm:px-10">
-        <div class="grid grid-cols-1 gap-5 xl:gap-10 lg:grid-cols-2 xl:grid-cols-5">
-          <Block 
-            title="Todos os Recursos"
-            :number="recursos.length"
-            :isActive="selectedStatus === ''"
-            colorKey="gray"
-            @click="setStatusFilter('')"
-          />
-          <Block
-            title="Aguardando Resposta"
-            :number="countByStatus('aguardando_resposta')"
-            :isActive="selectedStatus === 'aguardando_resposta'"
-            :colorKey="STATUS_DEFINITIONS['aguardando_resposta'].colorKey"
-            @click="setStatusFilter('aguardando_resposta')"
-          />
-          <Block
-            title="Análise Pendente"
-            :number="countByStatus('analise_pendente')"
-            :isActive="selectedStatus === 'analise_pendente'"
-            :colorKey="STATUS_DEFINITIONS['analise_pendente'].colorKey"
-            @click="setStatusFilter('analise_pendente')"
-          />
-          <Block
-            title="Aguardando Envio"
-            :number="countByStatus('aguardando_envio')"
-            :isActive="selectedStatus === 'aguardando_envio'"
-            :colorKey="STATUS_DEFINITIONS['aguardando_envio'].colorKey"
-            @click="setStatusFilter('aguardando_envio')"
-          />
-          <Block
-            title="Respondido"
-            :number="countByStatus('respondido')"
-            :isActive="selectedStatus === 'respondido'"
-            :colorKey="STATUS_DEFINITIONS['respondido'].colorKey"
-            @click="setStatusFilter('respondido')"
-          />
+    <!-- Cards de status -->
+    <div class="pt-2 pb-4 px-10">
+      <div class="grid grid-cols-5 gap-2.5 max-[900px]:grid-cols-2">
+        <div
+          class="bg-white border border-gray-200 rounded-xl py-3.5 px-4 cursor-pointer transition-all hover:border-gray-300 hover:shadow-sm"
+          :class="['border-gray-400', selectedStatus === '' ? 'border-gray-400' : 'border-gray-200']"
+          @click="setStatusFilter('')"
+        >
+          <div class="text-[11px] font-medium text-gray-400 uppercase tracking-wide mb-1.5" :class="selectedStatus === '' ? 'text-gray-400' : ''">Todos</div>
+          <div class="text-2xl font-semibold leading-none" :class="selectedStatus === '' ? 'text-gray-500' : 'text-gray-800'">{{ recursos.length }}</div>
         </div>
-      </div>
-
-      <div v-if="activeStatusStyle.label" class="w-full">
-        <div class="flex items-center justify-center p-4 rounded-t-lg" :class="activeStatusColorClass">
-          <p class="text-20 font-bold text-white" :class="activeStatusStyle.textColor">
-            {{ activeStatusStyle.label }}
-          </p>
+        <div
+          class="bg-white border rounded-xl py-3.5 px-4 cursor-pointer transition-all hover:border-gray-300 hover:shadow-sm"
+          :class="selectedStatus === 'aguardando_resposta' ? 'border-blue-700/80' : 'border-gray-200'"
+          @click="setStatusFilter('aguardando_resposta')"
+        >
+          <div class="text-[11px] font-medium uppercase tracking-wide mb-1.5" :class="selectedStatus === 'aguardando_resposta' ? 'text-blue-400' : 'text-gray-400'">Aguardando resposta</div>
+          <div class="text-2xl font-semibold leading-none" :class="selectedStatus === 'aguardando_resposta' ? 'text-blue-700' : 'text-gray-800'">{{ countByStatus('aguardando_resposta') }}</div>
+        </div>
+        <div
+          class="bg-white border rounded-xl py-3.5 px-4 cursor-pointer transition-all hover:border-gray-300 hover:shadow-sm"
+          :class="selectedStatus === 'analise_pendente' ? 'border-amber-600' : 'border-gray-200'"
+          @click="setStatusFilter('analise_pendente')"
+        >
+          <div class="text-[11px] font-medium uppercase tracking-wide mb-1.5" :class="selectedStatus === 'analise_pendente' ? 'text-amber-400' : 'text-gray-400'">Análise pendente</div>
+          <div class="text-2xl font-semibold leading-none" :class="selectedStatus === 'analise_pendente' ? 'text-amber-600' : 'text-gray-800'">{{ countByStatus('analise_pendente') }}</div>
+        </div>
+        <div
+          class="bg-white border rounded-xl py-3.5 px-4 cursor-pointer transition-all hover:border-gray-300 hover:shadow-sm"
+          :class="selectedStatus === 'aguardando_envio' ? 'border-purple-600' : 'border-gray-200'"
+          @click="setStatusFilter('aguardando_envio')"
+        >
+          <div class="text-[11px] font-medium uppercase tracking-wide mb-1.5" :class="selectedStatus === 'aguardando_envio' ? 'text-purple-400' : 'text-gray-400'">Aguardando envio</div>
+          <div class="text-2xl font-semibold leading-none" :class="selectedStatus === 'aguardando_envio' ? 'text-purple-600' : 'text-gray-800'">{{ countByStatus('aguardando_envio') }}</div>
+        </div>
+        <div
+          class="bg-white border rounded-xl py-3.5 px-4 cursor-pointer transition-all hover:border-gray-300 hover:shadow-sm"
+          :class="selectedStatus === 'respondido' ? 'border-green-600' : 'border-gray-200'"
+          @click="setStatusFilter('respondido')"
+        >
+          <div class="text-[11px] font-medium uppercase tracking-wide mb-1.5" :class="selectedStatus === 'respondido' ? 'text-green-400' : 'text-gray-400'">Respondido</div>
+          <div class="text-2xl font-semibold leading-none" :class="selectedStatus === 'respondido' ? 'text-green-600' : 'text-gray-800'">{{ countByStatus('respondido') }}</div>
         </div>
       </div>
+    </div>
 
-      <!-- Filtros -->
-      <div class="px-4 sm:px-10 mb-5 mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="flex flex-col">
-          <label class="text-sm font-bold text-gray-700 mb-1">Filtrar por Motivo</label>
-          <select
-            v-model="filterMotivo"
-            class="border border-gray-300 rounded-[10px] px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none"
-          >
-            <option value="">Todos os Motivos</option>
-            <option v-for="motivo in MOTIVOS_RECURSO" :key="motivo.text" :value="motivo.text">
-              {{ motivo.text }}
-            </option>
-          </select>
-        </div>
-        <div class="relative">
-          <label class="text-sm font-bold text-gray-700 mb-1">Filtrar por Responsável</label>
-          <select
-            v-model="filterResponsavel"
-            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-blue-500 focus:border-blue-500"
-          >
-            <option value="">Todos os Responsáveis</option>
-            <option v-for="staff in staffList" :key="staff.id" :value="staff.id">
-              {{ staff.full_name }}
-            </option>
-          </select>
-        </div>
+    <!-- Filtros -->
+    <div class="grid grid-cols-2 gap-2.5 px-10 pb-4 max-[640px]:grid-cols-1">
+      <div class="bg-white border border-gray-200 rounded-lg py-2 px-3.5 flex items-center gap-2">
+        <svg class="w-3.5 h-3.5 text-gray-400 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
+        </svg>
+        <label class="text-xs text-gray-400 whitespace-nowrap">Motivo</label>
+        <select v-model="filterMotivo" class="flex-1 border-none bg-transparent text-xs text-gray-700 outline-none cursor-pointer">
+          <option value="">Todos os motivos</option>
+          <option v-for="motivo in MOTIVOS_RECURSO" :key="motivo.text" :value="motivo.text">
+            {{ motivo.text }}
+          </option>
+        </select>
       </div>
-
-      <!-- Lista de recursos -->
-      <div class="py-5 w-full space-y-4 px-4 sm:px-10">
-        <infoCard
-          v-for="recurso in filteredRecursos"
-          :key="recurso.id"
-          :recurso="recurso"
-          :staffList="staffList"
-          @status-updated="handleStatusUpdate"
-        />
-        <div v-if="!filteredRecursos.length && !isLoading" class="text-center text-gray-500 py-10">
-          Nenhum recurso encontrado.
-        </div>
-        <div v-if="isLoading" class="text-center text-gray-500 py-10">
-          Carregando recursos...
-        </div>
+      <div class="bg-white border border-gray-200 rounded-lg py-2 px-3.5 flex items-center gap-2">
+        <svg class="w-3.5 h-3.5 text-gray-400 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+        </svg>
+        <label class="text-xs text-gray-400 whitespace-nowrap">Responsável</label>
+        <select v-model="filterResponsavel" class="flex-1 border-none bg-transparent text-xs text-gray-700 outline-none cursor-pointer">
+          <option value="">Todos os responsáveis</option>
+          <option v-for="staff in staffList" :key="staff.id" :value="staff.id">
+            {{ staff.full_name }}
+          </option>
+        </select>
       </div>
+    </div>
 
-      <!-- ===== MODAL DE CONFIRMAÇÃO DO LOTE ===== -->
-      <Teleport to="body">
-        <Transition name="modal-fade">
-          <div
-            v-if="showBatchModal"
-            class="fixed inset-0 z-50 flex items-center justify-center"
-            @click.self="closeBatchModal"
-          >
-            <!-- Backdrop -->
-            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+    <!-- Cabeçalho da lista -->
+    <div v-if="activeStatusStyle.label" class="flex items-center gap-2.5 pt-0 pb-2.5 px-10">
+      <span class="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-xs font-medium border" :class="{
+        'bg-blue-900/10 text-blue-800 border-blue-800/25': activeStatusStyle.colorKey === 'blue',
+        'bg-orange-500/10 text-amber-800 border-amber-600/25': activeStatusStyle.colorKey === 'orange',
+        'bg-purple-500/10 text-purple-700 border-purple-600/25': activeStatusStyle.colorKey === 'purple',
+        'bg-pink-400/10 text-pink-800 border-pink-600/25': activeStatusStyle.colorKey === 'pink',
+        'bg-teal-400/10 text-teal-700 border-teal-600/25': activeStatusStyle.colorKey === 'teal',
+        'bg-gray-400/10 text-gray-700 border-gray-500/25': !activeStatusStyle.colorKey
+      }">
+        <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+        {{ activeStatusStyle.label }}
+      </span>
+      <span class="text-xs text-gray-400">{{ filteredRecursos.length }} recurso{{ filteredRecursos.length !== 1 ? 's' : '' }}</span>
+    </div>
 
-            <!-- Painel do modal -->
-            <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
+    <!-- Lista de recursos -->
+    <div class="flex flex-col gap-2 pb-10 px-10 max-[640px]:px-4">
+      <infoCard
+        v-for="recurso in filteredRecursos"
+        :key="recurso.id"
+        :recurso="recurso"
+        :staffList="staffList"
+        @status-updated="handleStatusUpdate"
+      />
+      <div v-if="!filteredRecursos.length && !isLoading" class="text-center py-12 px-6 text-gray-400 text-sm">
+        Nenhum recurso encontrado.
+      </div>
+      <div v-if="isLoading" class="text-center py-12 px-6 text-gray-400 text-sm">
+        Carregando recursos...
+      </div>
+    </div>
 
-              <!-- Faixa de alerta no topo -->
-              <div class="bg-amber-500 px-6 py-4 flex items-center gap-3">
-                <div class="bg-white/20 rounded-full p-2">
-                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-                  </svg>
-                </div>
+    <!-- Modais -->
+    <Teleport to="body">
+      <!-- Modal: Lançar Lote -->
+      <Transition name="modal-fade">
+        <div
+          v-if="showBatchModal"
+          class="fixed inset-0 z-50 flex items-center justify-center bg-black/45 backdrop-blur-sm"
+          @click.self="closeBatchModal"
+        >
+          <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
+            <div class="py-4.5 px-6 flex items-center gap-3 bg-amber-500">
+              <div class="bg-white/20 rounded-full p-2 flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-base font-semibold text-white leading-tight">Lançar Lote de Respostas</p>
+                <p class="text-xs text-white/70 mt-0.5">Esta ação não pode ser desfeita</p>
+              </div>
+            </div>
+            <div class="p-6 flex flex-col gap-3.5">
+              <div class="bg-amber-50 border border-amber-200 rounded-xl py-3.5 px-4 flex items-center justify-between">
                 <div>
-                  <p class="text-white font-bold text-lg leading-tight">Lançar Lote de Respostas</p>
-                  <p class="text-amber-100 text-sm">Esta ação não pode ser desfeita</p>
+                  <p class="text-[11px] font-semibold text-amber-700 uppercase tracking-wide mb-0.5">Respostas</p>
+                  <p class="text-2xl font-bold text-amber-800">{{ pendingLote?.numero_recursos }}</p>
+                </div>
+                <div class="text-right">
+                  <p class="text-[11px] font-semibold text-amber-700 uppercase tracking-wide mb-0.5">Criado em</p>
+                  <p class="text-sm font-semibold text-amber-800">{{ formatDate(pendingLote?.data_lancamento) }}</p>
                 </div>
               </div>
-
-              <!-- Corpo -->
-              <div class="px-6 py-6 space-y-4">
-
-                <!-- Card de resumo do lote -->
-                <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center justify-between">
-                  <div class="text-center">
-                    <p class="text-xs text-amber-600 font-semibold uppercase tracking-wide">Respostas</p>
-                    <p class="text-2xl font-bold text-amber-700">{{ pendingLote?.numero_recursos }}</p>
-                  </div>
-                  <div class="text-right">
-                    <p class="text-xs text-amber-600 font-semibold uppercase tracking-wide">Criado em</p>
-                    <p class="text-sm font-semibold text-amber-700">{{ formatDate(pendingLote?.data_lancamento) }}</p>
-                  </div>
-                </div>
-
-                <p class="text-gray-600 text-sm leading-relaxed">
-                  Ao confirmar, as respostas deste lote serão
-                  <strong class="text-gray-800">liberadas simultaneamente</strong>
-                  para todos os
-                  <strong class="text-gray-800">{{ pendingLote?.numero_recursos }} usuário(s)</strong>
-                  vinculados. Eles poderão visualizar e baixar o PDF da resposta imediatamente.
+              <p class="text-xs text-gray-600 leading-relaxed">
+                Ao confirmar, as respostas deste lote serão
+                <strong class="text-gray-800">liberadas simultaneamente</strong>
+                para todos os
+                <strong class="text-gray-800">{{ pendingLote?.numero_recursos }} usuário(s)</strong>
+                vinculados. Eles poderão visualizar e baixar o PDF da resposta imediatamente.
+              </p>
+              <div class="flex items-start gap-2 bg-red-50 border border-red-200 rounded-lg p-2.5">
+                <svg class="w-3.5 h-3.5 text-red-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                </svg>
+                <p class="text-xs text-red-700 leading-relaxed">
+                  Esta operação é <strong class="text-red-800">irreversível</strong>. Após o lançamento, não é possível revogar o acesso às respostas.
                 </p>
-
-                <!-- Aviso de irreversibilidade -->
-                <div class="flex items-start gap-2 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
-                  <svg class="w-4 h-4 text-red-500 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                  </svg>
-                  <p class="text-xs text-red-700">
-                    Esta operação é <strong>irreversível</strong>. Após o lançamento, não é possível revogar o acesso às respostas.
-                  </p>
-                </div>
-              </div>
-
-              <!-- Rodapé com ações -->
-              <div class="px-6 pb-6 flex gap-3 justify-end">
-                <button
-                  @click="closeBatchModal"
-                  :disabled="isLaunching"
-                  class="px-5 py-2 rounded-lg border border-gray-300 text-gray-700 font-medium text-sm hover:bg-gray-50 transition-colors disabled:opacity-50"
-                >
-                  Cancelar
-                </button>
-                <button
-                  @click="confirmBatchRelease"
-                  :disabled="isLaunching"
-                  class="px-5 py-2 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-semibold text-sm transition-colors flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
-                >
-                  <svg v-if="isLaunching" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
-                  </svg>
-                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                  </svg>
-                  {{ isLaunching ? 'Lançando...' : 'Confirmar Lançamento' }}
-                </button>
               </div>
             </div>
-          </div>
-        </Transition>
-        <Transition name="modal-fade">
-          <div
-            v-if="showLimitConfig"
-            class="fixed inset-0 z-50 flex items-center justify-center"
-            @click.self="closeLimitConfig"
-          >
-            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" />
-
-            <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden">
-
-              <!-- Header -->
-              <div class="bg-gray-700 px-6 py-4 flex items-center gap-3">
-                <div class="bg-white/20 rounded-full p-2">
-                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                  </svg>
-                </div>
-                <div>
-                  <p class="text-white font-bold text-lg leading-tight">Configurações do Sistema</p>
-                  <p class="text-gray-300 text-sm">Prazos de recurso</p>
-                </div>
-              </div>
-
-              <!-- Corpo -->
-              <div class="px-6 py-6 space-y-5">
-                <div v-if="isLoadingConfig" class="text-center py-4 text-gray-500 text-sm">
-                  Carregando configurações...
-                </div>
-
-                <template v-else>
-                  <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">
-                      Prazo para edição <span class="font-normal text-gray-400">(dias)</span>
-                    </label>
-                    <p class="text-xs text-gray-400 mb-2">Tempo máximo que o usuário tem para editar um recurso após a criação.</p>
-                    <input
-                      v-model.number="configForm.RESOURCE_EDIT_TIMELIMIT_DAYS"
-                      type="number" min="1"
-                      class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-gray-500 outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">
-                      Prazo para resposta <span class="font-normal text-gray-400">(dias)</span>
-                    </label>
-                    <p class="text-xs text-gray-400 mb-2">Após este prazo sem resposta, o recurso é marcado como atrasado.</p>
-                    <input
-                      v-model.number="configForm.RESOURCE_RESPONSE_DEADLINE_DAYS"
-                      type="number" min="1"
-                      class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-gray-500 outline-none"
-                    />
-                  </div>
-                </template>
-              </div>
-
-              <!-- Rodapé -->
-              <div class="px-6 pb-6 flex gap-3 justify-end">
-                <button
-                  @click="closeLimitConfig"
-                  :disabled="isSavingConfig"
-                  class="px-5 py-2 rounded-lg border border-gray-300 text-gray-700 font-medium text-sm hover:bg-gray-50 transition-colors disabled:opacity-50"
-                >
-                  Cancelar
-                </button>
-                <button
-                  @click="saveConfig"
-                  :disabled="isSavingConfig || isLoadingConfig"
-                  class="px-5 py-2 rounded-lg bg-gray-700 hover:bg-gray-800 text-white font-semibold text-sm transition-colors flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
-                >
-                  <svg v-if="isSavingConfig" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
-                  </svg>
-                  {{ isSavingConfig ? 'Salvando...' : 'Salvar' }}
-                </button>
-              </div>
+            <div class="px-6 pb-5 flex gap-2 justify-end">
+              <button @click="closeBatchModal" :disabled="isLaunching" class="py-2 px-4.5 rounded-lg border border-gray-300 bg-white text-gray-700 text-xs font-medium hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                Cancelar
+              </button>
+              <button @click="confirmBatchRelease" :disabled="isLaunching" class="py-2 px-4.5 rounded-lg border-none bg-amber-500 text-white text-xs font-semibold flex items-center gap-1.5 hover:opacity-90 transition disabled:opacity-55 disabled:cursor-not-allowed">
+                <svg v-if="isLaunching" class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+                </svg>
+                <svg v-else class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                </svg>
+                {{ isLaunching ? 'Lançando...' : 'Confirmar lançamento' }}
+              </button>
             </div>
           </div>
-        </Transition>
-      </Teleport>
+        </div>
+      </Transition>
 
-    </Whiteboard>
+      <!-- Modal: Configurações -->
+      <Transition name="modal-fade">
+        <div
+          v-if="showLimitConfig"
+          class="fixed inset-0 z-50 flex items-center justify-center bg-black/45 backdrop-blur-sm"
+          @click.self="closeLimitConfig"
+        >
+          <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-sm mx-4 overflow-hidden">
+            <div class="py-4.5 px-6 flex items-center gap-3 bg-gray-600">
+              <div class="bg-white/20 rounded-full p-2 flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-base font-semibold text-white leading-tight">Configurações do sistema</p>
+                <p class="text-xs text-white/70 mt-0.5">Prazos de recurso</p>
+              </div>
+            </div>
+            <div class="p-6 flex flex-col gap-3.5">
+              <div v-if="isLoadingConfig" class="text-center py-12 px-6 text-gray-400 text-sm">
+                Carregando configurações...
+              </div>
+              <template v-else>
+                <div class="flex flex-col gap-1">
+                  <label class="text-sm font-semibold text-gray-700">
+                    Prazo para edição
+                    <span class="text-xs font-normal text-gray-400 ml-0.5">dias</span>
+                  </label>
+                  <p class="text-[11px] text-gray-400 -mt-0.5">Tempo máximo que o usuário tem para editar um recurso após a criação.</p>
+                  <input
+                    v-model.number="configForm.RESOURCE_EDIT_TIMELIMIT_DAYS"
+                    type="number" min="1"
+                    class="mt-1.5 px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                  />
+                </div>
+                <div class="flex flex-col gap-1">
+                  <label class="text-sm font-semibold text-gray-700">
+                    Prazo para resposta
+                    <span class="text-xs font-normal text-gray-400 ml-0.5">dias</span>
+                  </label>
+                  <p class="text-[11px] text-gray-400 -mt-0.5">Após este prazo sem resposta, o recurso é marcado como atrasado.</p>
+                  <input
+                    v-model.number="configForm.RESOURCE_RESPONSE_DEADLINE_DAYS"
+                    type="number" min="1"
+                    class="mt-1.5 px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                  />
+                </div>
+              </template>
+            </div>
+            <div class="px-6 pb-5 flex gap-2 justify-end">
+              <button @click="closeLimitConfig" :disabled="isSavingConfig" class="py-2 px-4.5 rounded-lg border border-gray-300 bg-white text-gray-700 text-xs font-medium hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                Cancelar
+              </button>
+              <button @click="saveConfig" :disabled="isSavingConfig || isLoadingConfig" class="py-2 px-4.5 rounded-lg border-none bg-gray-600 text-white text-xs font-semibold flex items-center gap-1.5 hover:opacity-90 transition disabled:opacity-55 disabled:cursor-not-allowed">
+                <svg v-if="isSavingConfig" class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+                </svg>
+                {{ isSavingConfig ? 'Salvando...' : 'Salvar' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
+  </Whiteboard>
 </template>
 
 <script>
@@ -370,16 +330,15 @@ export default {
     })
 
     async function openLimitConfig() {
-    showLimitConfig.value = true
-    isLoadingConfig.value = true
-    try {
-      const response = await apiClient.get('/recursos/config/', { headers: authHeader() })
-      // A API retorna lista de objetos [{chave, valor}, ...]
-      const configs = response.data
-      const edit = configs.find(c => c.chave === 'RESOURCE_EDIT_TIMELIMIT_DAYS')
-      const deadline = configs.find(c => c.chave === 'RESOURCE_RESPONSE_DEADLINE_DAYS')
-      configForm.value.RESOURCE_EDIT_TIMELIMIT_DAYS = edit?.valor ?? ''
-      configForm.value.RESOURCE_RESPONSE_DEADLINE_DAYS = deadline?.valor ?? ''
+      showLimitConfig.value = true
+      isLoadingConfig.value = true
+      try {
+        const response = await apiClient.get('/recursos/config/', { headers: authHeader() })
+        const configs = response.data
+        const edit = configs.find(c => c.chave === 'RESOURCE_EDIT_TIMELIMIT_DAYS')
+        const deadline = configs.find(c => c.chave === 'RESOURCE_RESPONSE_DEADLINE_DAYS')
+        configForm.value.RESOURCE_EDIT_TIMELIMIT_DAYS = edit?.valor ?? ''
+        configForm.value.RESOURCE_RESPONSE_DEADLINE_DAYS = deadline?.valor ?? ''
       } catch (err) {
         console.error('Erro ao carregar configurações:', err)
       } finally {
@@ -406,6 +365,7 @@ export default {
         isSavingConfig.value = false
       }
     }
+
     function closeLimitConfig() {
       if (isSavingConfig.value) return
       showLimitConfig.value = false
@@ -421,14 +381,10 @@ export default {
       Authorization: `Bearer ${localStorage.getItem('accessToken')}`
     })
 
-    // Busca o lote pendente (status_lancamento=false) do cálculo ativo
     async function fetchPendingLote() {
       isLoadingLote.value = true
       try {
-        const response = await apiClient.get('/recursos/lotes/', {
-          headers: authHeader()
-        })
-        // Pega o primeiro lote ainda não lançado
+        const response = await apiClient.get('/recursos/lotes/', { headers: authHeader() })
         pendingLote.value = response.data.find(l => l.status_lancamento === false) || null
       } catch (err) {
         console.error('Erro ao buscar lote pendente:', err)
@@ -457,7 +413,6 @@ export default {
           { status_lancamento: true },
           { headers: authHeader() }
         )
-        // Atualiza localmente os recursos afetados para 'respondido'
         recursos.value = recursos.value.map(r => {
           const temResposta = r.respostas && r.respostas.some(
             resp => resp.lote_resposta === pendingLote.value.id
@@ -466,7 +421,6 @@ export default {
         })
         pendingLote.value = null
         showBatchModal.value = false
-        // Refetch completo para garantir consistência
         await fetchRecursos()
       } catch (err) {
         console.error('Erro ao lançar lote:', err)
@@ -480,9 +434,7 @@ export default {
     async function fetchRecursos() {
       isLoading.value = true
       try {
-        const response = await apiClient.get('/recursos/admin/todos/', {
-          headers: authHeader()
-        })
+        const response = await apiClient.get('/recursos/admin/todos/', { headers: authHeader() })
         recursos.value = response.data
       } catch (error) {
         console.error('Erro ao buscar recursos:', error)
@@ -496,9 +448,7 @@ export default {
 
     async function fetchStaffUsers() {
       try {
-        const response = await apiClient.get('/auth/staff-users/', {
-          headers: authHeader()
-        })
+        const response = await apiClient.get('/auth/staff-users/', { headers: authHeader() })
         staffList.value = response.data
       } catch (err) {
         console.error("Erro ao buscar staff:", err)
@@ -558,32 +508,24 @@ export default {
 
     const activeStatusStyle = computed(() => STATUS_DEFINITIONS[selectedStatus.value] || {})
 
-    const activeStatusColorClass = computed(() => {
-      const colorMap = {
-        blue: 'bg-[#6fa3ef]', purple: 'bg-[#6668d4]',
-        pink: 'bg-[#f16d91]', orange: 'bg-[#ff8051]',
-        teal: 'bg-[#6cc69d]', gray: 'bg-gray-500'
-      }
-      return colorMap[activeStatusStyle.value.colorKey] || colorMap['gray']
-    })
-
     return {
       recursos, isLoading, selectedStatus, filteredRecursos,
       countByStatus, setStatusFilter, handleStatusUpdate,
       navigateToAnnualReports, navigateToVersionManager, navigateToTemplateBuilder,
-      activeStatusStyle, activeStatusColorClass,
+      activeStatusStyle,
       STATUS_DEFINITIONS, MOTIVOS_RECURSO,
       filterMotivo, filterResponsavel, staffList,
       pendingLote, isLoadingLote, showBatchModal, isLaunching,
-      openBatchModal, closeBatchModal, confirmBatchRelease, formatDate, showLimitConfig, 
-      isLoadingConfig, isSavingConfig, configForm,
+      openBatchModal, closeBatchModal, confirmBatchRelease, formatDate,
+      showLimitConfig, isLoadingConfig, isSavingConfig, configForm,
       openLimitConfig, closeLimitConfig, saveConfig,
-    }   
+    }
   }
 }
 </script>
 
-<style scoped>
+<style>
+/* Animações globais (não scoped) */
 .modal-fade-enter-active,
 .modal-fade-leave-active {
   transition: opacity 0.2s ease;
@@ -592,11 +534,18 @@ export default {
 .modal-fade-leave-to {
   opacity: 0;
 }
-.modal-fade-enter-active .relative,
-.modal-fade-leave-active .relative {
+.modal-fade-enter-active .modal-panel,
+.modal-fade-leave-active .modal-panel {
   transition: transform 0.2s ease;
 }
-.modal-fade-enter-from .relative {
-  transform: scale(0.95) translateY(-8px);
+.modal-fade-enter-from .modal-panel {
+  transform: scale(0.96) translateY(-6px);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.animate-spin {
+  animation: spin 0.8s linear infinite;
 }
 </style>
