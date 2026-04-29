@@ -1,6 +1,6 @@
 <template>
     <!-- Seção do título -->
-    <div class="flex flex-row items-center shadow-ms w-full mb-5 bg-[#e3f0ff] text-black px-4 lg:px-10 p-4">
+    <div class="flex flex-row items-center shadow-ms w-full mb-5 text-black px-4 lg:px-10 p-4">
       <label class="text-20 font-semibold">{{titulo}}</label>
     </div>
     

@@ -1,5 +1,5 @@
 <template>
-    <div :class="['relative flex items-center w-full bg-[#e3f0ff] border rounded-[10px] p-4 shadow-sm hover:shadow-md transition-shadow duration-200', { 'z-10': isMenuOpen }]">
+    <div :class="['relative flex items-center w-full bg-[#e8f2ff] border rounded-[10px] p-4 shadow-sm hover:shadow-md transition-shadow duration-200', { 'z-10': isMenuOpen }]">
         
         <!-- Ícone de Alerta de Prazo -->
         <div v-if="recurso.is_overdue" class="absolute top-2 left-2" title="Este recurso está com o prazo de resposta vencido!">

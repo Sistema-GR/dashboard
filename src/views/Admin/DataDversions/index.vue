@@ -10,7 +10,7 @@
       <!-- Loop sobre as "Famílias" de Cálculos -->
       <div v-for="family in processedFamilies" :key="family.parent_id" class="border rounded-lg bg-white shadow-sm overflow-hidden">
         <!-- Cabeçalho da Família -->
-        <div class="bg-[#c2ddfd] px-6 py-4 rounded-t-lg border-b">
+        <div class="bg-[#e8f2ff] px-6 py-4 rounded-t-lg border-b">
           <h2 class="text-lg font-semibold text-gray-800">{{ family.description }}</h2>
         </div>
         
