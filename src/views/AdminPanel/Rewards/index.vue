@@ -17,11 +17,7 @@
 
         <!-- Aviso de impostos -->
         <div class="flex items-start gap-3 mx-8 mt-5 bg-red-50 border border-red-300 rounded-lg p-3.5">
-            <svg class="w-5 h-5 flex-shrink-0 text-red-700 mt-0.5" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M10 2L18 17H2L10 2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-                <path d="M10 8V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                <circle cx="10" cy="14" r="0.75" fill="currentColor"/>
-            </svg>
+            <ExclamationTriangleIcon class="w-6 h-6 pt-1 text-red-400" />
             <p class="text-base text-red-800 leading-relaxed">Os valores nesta página não consideram eventuais descontos de impostos.</p>
         </div>
 
@@ -266,7 +262,7 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue';
-import { ChevronDownIcon, ArrowDownIcon } from "@heroicons/vue/24/outline";
+import { ChevronDownIcon, ArrowDownIcon, ExclamationTriangleIcon } from "@heroicons/vue/24/outline";
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import Tutorial from '@/components/Tutorial/Tutorial.vue';

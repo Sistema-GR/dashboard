@@ -1,42 +1,77 @@
 <template>
-  <li class="relative">
-    
-    <div class="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between bg-white border border-gray-200 rounded-lg shadow-sm">
-    
+  <li class="relative group">
+    <!-- Indicador de Ponto na Timeline -->
+    <div 
+      class="absolute left-[-29px] top-6 w-4 h-4 rounded-full border-4 border-white z-10 transition-transform group-hover:scale-125"
+      :class="version.is_finalized ? 'bg-[#3459a2] shadow-[0_0_0_2px_rgba(37,99,235,0.2)]' : 'bg-amber-500 shadow-[0_0_0_2px_rgba(245,158,11,0.2)]'"
+    ></div>
+
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between p-5 bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-200">
+      
       <div class="flex-grow">
         <div class="flex items-center gap-3">
-          <h3 class="text-lg font-bold text-gray-800">Versão {{ version.version_number }}</h3>
-          <span :class="getStatusClass(version.is_finalized)" class="text-xs font-semibold px-2.5 py-0.5 rounded-full">
-            {{ version.is_finalized ? 'Finalizado' : 'Em Edição' }}
+          <span class="text-sm font-mono font-bold text-[#3459a2] bg-blue-50 px-2 py-0.5 rounded">
+            v{{ version.version_number }}
+          </span>
+          <h3 class="text-base font-bold text-gray-800">
+            {{ version.is_finalized ? 'Versão Oficial' : 'Rascunho em Edição' }}
+          </h3>
+          <span 
+            :class="version.is_finalized ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'" 
+            class="text-[10px] uppercase font-black px-2 py-0.5 rounded-md tracking-wider"
+          >
+            {{ version.is_finalized ? 'Finalizado' : 'Draft' }}
           </span>
         </div>
-        <p class="text-sm text-gray-500 mt-1">Criado em: {{ version.created_at }}</p>
+        
+        <div class="flex items-center gap-4 mt-2 text-gray-400">
+          <div class="flex items-center gap-1 text-xs">
+            <CalendarIcon class="h-3.5 w-3.5" />
+            {{ version.created_at }}
+          </div>
+          <div v-if="version.children?.length" class="flex items-center gap-1 text-xs">
+            <ArrowsRightLeftIcon class="h-3.5 w-3.5" />
+            {{ version.children.length }} ramificações
+          </div>
+        </div>
       </div>
 
-      <div class="mt-4 sm:mt-0 sm:ml-4 flex-shrink-0 flex items-center gap-2">
-        <PrimaryButton
+      <!-- Ações -->
+      <div class="mt-4 sm:mt-0 flex items-center gap-2">
+        <!-- Visualizar -->
+        <button
           v-if="version.is_finalized"
-          value="Criar Versão a partir Daqui"
-          @click="$emit('create-new-version', version.id)"
-          customColor="bg-blue-600 hover:bg-blue-700"
-        />
-        <template v-if="!version.is_finalized">
-          <PrimaryButton
-            value="Editar Edição"
-            @click="$emit('go-to-edit', version.id)"
-            customColor="bg-green-600 hover:bg-green-700"
-          />
-        </template>
-        <PrimaryButton
-          v-if="version.is_finalized"
-          value="Visualizar Versão"
           @click="$emit('go-to-view', version.id)"
-          customColor="bg-gray-500 hover:bg-gray-600"
-        />
+          class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors border border-gray-100"
+        >
+          <EyeIcon class="h-4 w-4" />
+          Visualizar
+        </button>
+
+        <!-- Criar Nova (A partir de uma finalizada) -->
+        <button
+          v-if="version.is_finalized"
+          @click="$emit('create-new-version', version.id)"
+          class="flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-[#3459a2] hover:bg-[#002a4d] rounded-xl transition-all shadow-sm hover:shadow-blue-200"
+        >
+          <PlusIcon class="h-4 w-4" />
+          Novo Rascunho
+        </button>
+
+        <!-- Editar (Se for rascunho) -->
+        <button
+          v-if="!version.is_finalized"
+          @click="$emit('go-to-edit', version.id)"
+          class="flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-amber-500 hover:bg-amber-600 rounded-xl transition-all shadow-sm shadow-amber-100"
+        >
+          <PencilSquareIcon class="h-4 w-4" />
+          Continuar Edição
+        </button>
       </div>
     </div>
     
-    <ul v-if="version.children && version.children.length > 0" class="version-tree pl-8 pt-4">
+    <!-- Ramificações (Recursivo) -->
+    <ul v-if="version.children && version.children.length > 0" class="version-tree-branch ml-10 mt-6 space-y-6">
       <VersionItem
         v-for="child in version.children"
         :key="child.id"
@@ -50,61 +85,50 @@
 </template>
 
 <script setup>
-import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
+import { 
+  CalendarIcon, 
+  EyeIcon, 
+  PlusIcon, 
+  PencilSquareIcon,
+  ArrowsRightLeftIcon
+} from '@heroicons/vue/24/outline';
 
 defineProps({
   version: Object,
 });
 
 defineEmits(['create-new-version', 'go-to-edit', 'go-to-view']);
-
-const getStatusClass = (isFinalized) => {
-  if (isFinalized) return 'bg-green-100 text-green-800';
-  return 'bg-yellow-100 text-yellow-800';
-};
 </script>
 
-<style>
-.version-tree {
-  list-style: none;
-  padding-left: 2rem;
-}
-
-.version-tree li {
+<style scoped>
+/* Conector curvo para ramificações */
+.version-tree-branch {
   position: relative;
-  padding-bottom: 1rem;
 }
 
-.version-tree li:last-child {
-  padding-bottom: 0;
-}
-
-.version-tree li::before {
+.version-tree-branch::before {
   content: '';
   position: absolute;
-  top: 1.5rem;
-  left: -1rem;
-  width: 1rem;
-  height: 2px;
-  background-color: #cbd5e1; 
-}
-
-.version-tree li::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -1rem; 
+  left: -25px;
+  top: -24px;
   width: 2px;
-  height: 100%;
-  background-color: #cbd5e1;
+  height: calc(100% + 24px);
+  background-color: #e5e7eb; /* cor da linha vertical (gray-200) */
 }
 
-.version-tree li:last-child::after {
-  height: 1.5rem;
+/* Esconde a linha que sobra no último item do nível */
+li:last-child > .version-tree-branch::before {
+  height: 24px; 
 }
 
-.version-tree-root > li::before,
-.version-tree-root > li::after {
-  display: none;
+/* O "braço" horizontal que liga a linha vertical ao nodo do filho */
+.version-tree-branch > li::after {
+  content: '';
+  position: absolute;
+  left: -25px;
+  top: 24px;
+  width: 15px;
+  height: 2px;
+  background-color: #e5e7eb;
 }
 </style>

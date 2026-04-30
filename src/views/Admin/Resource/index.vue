@@ -8,34 +8,25 @@
         <p class="text-xs text-gray-500 mt-0.5">Gestão de recursos e respostas</p>
       </div>
       <div class="flex items-center gap-2 flex-wrap">
-        <button @click="navigateToTemplateBuilder" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium border transition-opacity hover:opacity-80 bg-red-50/10 text-red-800 border-red-300/35">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-          </svg>
+        <button @click="navigateToTemplateBuilder" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium border transition-opacity hover:opacity-80 bg-red-400/10 text-red-600 border-red-500/35">
+          <PlusIcon class="w-3.5 h-3.5" />
           Criar template
         </button>
-        <button @click="navigateToAnnualReports" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium border transition-opacity hover:opacity-80 bg-blue-900/10 text-blue-800 border-blue-800/35">
-          <svg class="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"/>
-            <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"/>
-          </svg>
+        <button @click="navigateToAnnualReports" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium border transition-opacity hover:opacity-80 bg-blue-400/10 text-[#3459a2] border-blue-500/35">
+          <ChartPieIcon class="w-3.5 h-3.5" />
           Relatórios anuais
         </button>
-        <button @click="navigateToVersionManager" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium border transition-opacity hover:opacity-80 bg-green-800/10 text-green-700 border-green-700/35">
-          <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/>
-          </svg>
-          Versões
+        <button @click="navigateToVersionManager" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium border transition-opacity hover:opacity-80 bg-green-400/10 text-green-600 border-green-500/35">
+          <DocumentDuplicateIcon class="w-3.5 h-3.5" />
+          Gerenciar Vesões
         </button>
         <button
           @click="openBatchModal"
           :disabled="!pendingLote || isLoadingLote"
-          class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium border transition-opacity hover:opacity-80 bg-amber-500/10 text-amber-800 border-amber-400/40 disabled:opacity-40 disabled:cursor-not-allowed"
+          class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium border transition-opacity hover:opacity-80 bg-amber-400/10 text-amber-600 border-amber-500/35 disabled:opacity-40 disabled:cursor-not-allowed"
           :class="{ 'opacity-40 cursor-not-allowed': !pendingLote || isLoadingLote }"
         >
-          <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-          </svg>
+          <PaperAirplaneIcon class="w-3.5 h-3.5" />
           <span v-if="isLoadingLote">Verificando...</span>
           <span v-else-if="pendingLote">
             Lançar lote
@@ -44,10 +35,7 @@
           <span v-else>Sem lote pendente</span>
         </button>
         <button @click="openLimitConfig" class="inline-flex items-center gap-1.5 px-1.5 py-1.5 rounded-lg text-xs font-medium border transition-opacity hover:opacity-80 bg-gray-100 text-gray-600 border-gray-300" title="Configurações">
-          <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-          </svg>
+          <Cog6ToothIcon class="w-3.5 h-3.5" />
         </button>
       </div>
     </div>
@@ -55,45 +43,54 @@
     <!-- Cards de status -->
     <div class="pt-2 pb-4 px-10">
       <div class="grid grid-cols-5 gap-2.5 max-[900px]:grid-cols-2">
+        <!-- Todos -->
         <div
-          class="bg-white border border-gray-200 rounded-xl py-3.5 px-4 cursor-pointer transition-all hover:border-gray-300 hover:shadow-sm"
-          :class="['border-gray-400', selectedStatus === '' ? 'border-gray-400' : 'border-gray-200']"
+          class="bg-white border rounded-xl py-3.5 px-4 cursor-pointer transition-all hover:border-gray-300 hover:shadow-sm"
+          :class="selectedStatus === '' ? 'border-gray-500' : 'border-gray-200'"
           @click="setStatusFilter('')"
         >
-          <div class="text-[11px] font-medium text-gray-400 uppercase tracking-wide mb-1.5" :class="selectedStatus === '' ? 'text-gray-400' : ''">Todos</div>
-          <div class="text-2xl font-semibold leading-none" :class="selectedStatus === '' ? 'text-gray-500' : 'text-gray-800'">{{ recursos.length }}</div>
+          <div class="text-[11px] font-medium uppercase tracking-wide mb-1.5" :class="selectedStatus === '' ? 'text-gray-500' : 'text-gray-400'">Todos</div>
+          <div class="text-2xl font-semibold leading-none" :class="selectedStatus === '' ? 'text-gray-700' : 'text-gray-500'">{{ recursos.length }}</div>
         </div>
+
+        <!-- Aguardando resposta (Azul) -->
         <div
-          class="bg-white border rounded-xl py-3.5 px-4 cursor-pointer transition-all hover:border-gray-300 hover:shadow-sm"
-          :class="selectedStatus === 'aguardando_resposta' ? 'border-blue-700/80' : 'border-gray-200'"
+          class="bg-white border rounded-xl py-3.5 px-4 cursor-pointer transition-all hover:border-blue-300 hover:shadow-sm"
+          :class="selectedStatus === 'aguardando_resposta' ? 'border-blue-600' : 'border-blue-200'"
           @click="setStatusFilter('aguardando_resposta')"
         >
-          <div class="text-[11px] font-medium uppercase tracking-wide mb-1.5" :class="selectedStatus === 'aguardando_resposta' ? 'text-blue-400' : 'text-gray-400'">Aguardando resposta</div>
-          <div class="text-2xl font-semibold leading-none" :class="selectedStatus === 'aguardando_resposta' ? 'text-blue-700' : 'text-gray-800'">{{ countByStatus('aguardando_resposta') }}</div>
+          <div class="text-[11px] font-medium uppercase tracking-wide mb-1.5" :class="selectedStatus === 'aguardando_resposta' ? 'text-blue-600' : 'text-blue-400'">Aguardando resposta</div>
+          <div class="text-2xl font-semibold leading-none" :class="selectedStatus === 'aguardando_resposta' ? 'text-blue-700' : 'text-blue-500'">{{ countByStatus('aguardando_resposta') }}</div>
         </div>
+
+        <!-- Análise pendente (Âmbar/Amarelo) -->
         <div
-          class="bg-white border rounded-xl py-3.5 px-4 cursor-pointer transition-all hover:border-gray-300 hover:shadow-sm"
-          :class="selectedStatus === 'analise_pendente' ? 'border-amber-600' : 'border-gray-200'"
+          class="bg-white border rounded-xl py-3.5 px-4 cursor-pointer transition-all hover:border-amber-300 hover:shadow-sm"
+          :class="selectedStatus === 'analise_pendente' ? 'border-amber-600' : 'border-amber-200'"
           @click="setStatusFilter('analise_pendente')"
         >
-          <div class="text-[11px] font-medium uppercase tracking-wide mb-1.5" :class="selectedStatus === 'analise_pendente' ? 'text-amber-400' : 'text-gray-400'">Análise pendente</div>
-          <div class="text-2xl font-semibold leading-none" :class="selectedStatus === 'analise_pendente' ? 'text-amber-600' : 'text-gray-800'">{{ countByStatus('analise_pendente') }}</div>
+          <div class="text-[11px] font-medium uppercase tracking-wide mb-1.5" :class="selectedStatus === 'analise_pendente' ? 'text-amber-600' : 'text-amber-400'">Análise pendente</div>
+          <div class="text-2xl font-semibold leading-none" :class="selectedStatus === 'analise_pendente' ? 'text-amber-700' : 'text-amber-500'">{{ countByStatus('analise_pendente') }}</div>
         </div>
+
+        <!-- Aguardando envio (Roxo) -->
         <div
-          class="bg-white border rounded-xl py-3.5 px-4 cursor-pointer transition-all hover:border-gray-300 hover:shadow-sm"
-          :class="selectedStatus === 'aguardando_envio' ? 'border-purple-600' : 'border-gray-200'"
+          class="bg-white border rounded-xl py-3.5 px-4 cursor-pointer transition-all hover:border-purple-300 hover:shadow-sm"
+          :class="selectedStatus === 'aguardando_envio' ? 'border-purple-600' : 'border-purple-200'"
           @click="setStatusFilter('aguardando_envio')"
         >
-          <div class="text-[11px] font-medium uppercase tracking-wide mb-1.5" :class="selectedStatus === 'aguardando_envio' ? 'text-purple-400' : 'text-gray-400'">Aguardando envio</div>
-          <div class="text-2xl font-semibold leading-none" :class="selectedStatus === 'aguardando_envio' ? 'text-purple-600' : 'text-gray-800'">{{ countByStatus('aguardando_envio') }}</div>
+          <div class="text-[11px] font-medium uppercase tracking-wide mb-1.5" :class="selectedStatus === 'aguardando_envio' ? 'text-purple-600' : 'text-purple-400'">Aguardando envio</div>
+          <div class="text-2xl font-semibold leading-none" :class="selectedStatus === 'aguardando_envio' ? 'text-purple-700' : 'text-purple-500'">{{ countByStatus('aguardando_envio') }}</div>
         </div>
+
+        <!-- Respondido (Laranja) -->
         <div
-          class="bg-white border rounded-xl py-3.5 px-4 cursor-pointer transition-all hover:border-gray-300 hover:shadow-sm"
-          :class="selectedStatus === 'respondido' ? 'border-green-600' : 'border-gray-200'"
+          class="bg-white border rounded-xl py-3.5 px-4 cursor-pointer transition-all hover:border-orange-300 hover:shadow-sm"
+          :class="selectedStatus === 'respondido' ? 'border-orange-600' : 'border-orange-200'"
           @click="setStatusFilter('respondido')"
         >
-          <div class="text-[11px] font-medium uppercase tracking-wide mb-1.5" :class="selectedStatus === 'respondido' ? 'text-green-400' : 'text-gray-400'">Respondido</div>
-          <div class="text-2xl font-semibold leading-none" :class="selectedStatus === 'respondido' ? 'text-green-600' : 'text-gray-800'">{{ countByStatus('respondido') }}</div>
+          <div class="text-[11px] font-medium uppercase tracking-wide mb-1.5" :class="selectedStatus === 'respondido' ? 'text-orange-600' : 'text-orange-400'">Respondido</div>
+          <div class="text-2xl font-semibold leading-none" :class="selectedStatus === 'respondido' ? 'text-orange-700' : 'text-orange-500'">{{ countByStatus('respondido') }}</div>
         </div>
       </div>
     </div>
@@ -101,9 +98,7 @@
     <!-- Filtros -->
     <div class="grid grid-cols-2 gap-2.5 px-10 pb-4 max-[640px]:grid-cols-1">
       <div class="bg-white border border-gray-200 rounded-lg py-2 px-3.5 flex items-center gap-2">
-        <svg class="w-3.5 h-3.5 text-gray-400 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
-        </svg>
+        <FilterIcon class="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
         <label class="text-xs text-gray-400 whitespace-nowrap">Motivo</label>
         <select v-model="filterMotivo" class="flex-1 border-none bg-transparent text-xs text-gray-700 outline-none cursor-pointer">
           <option value="">Todos os motivos</option>
@@ -113,9 +108,7 @@
         </select>
       </div>
       <div class="bg-white border border-gray-200 rounded-lg py-2 px-3.5 flex items-center gap-2">
-        <svg class="w-3.5 h-3.5 text-gray-400 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-        </svg>
+        <UserIcon class="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
         <label class="text-xs text-gray-400 whitespace-nowrap">Responsável</label>
         <select v-model="filterResponsavel" class="flex-1 border-none bg-transparent text-xs text-gray-700 outline-none cursor-pointer">
           <option value="">Todos os responsáveis</option>
@@ -171,9 +164,7 @@
           <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
             <div class="py-4.5 px-6 flex items-center gap-3 bg-amber-500">
               <div class="bg-white/20 rounded-full p-2 flex items-center justify-center">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-                </svg>
+                <ExclamationTriangleIcon class="w-5 h-5 text-white" />
               </div>
               <div>
                 <p class="text-base font-semibold text-white leading-tight">Lançar Lote de Respostas</p>
@@ -199,9 +190,7 @@
                 vinculados. Eles poderão visualizar e baixar o PDF da resposta imediatamente.
               </p>
               <div class="flex items-start gap-2 bg-red-50 border border-red-200 rounded-lg p-2.5">
-                <svg class="w-3.5 h-3.5 text-red-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                </svg>
+                <ExclamationCircleIcon class="w-4 h-4 text-red-500 flex-shrink-0 " />
                 <p class="text-xs text-red-700 leading-relaxed">
                   Esta operação é <strong class="text-red-800">irreversível</strong>. Após o lançamento, não é possível revogar o acesso às respostas.
                 </p>
@@ -216,9 +205,7 @@
                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                   <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
                 </svg>
-                <svg v-else class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                </svg>
+                <PaperAirplaneIcon v-else class="w-3.5 h-3.5" />
                 {{ isLaunching ? 'Lançando...' : 'Confirmar lançamento' }}
               </button>
             </div>
@@ -236,10 +223,7 @@
           <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-sm mx-4 overflow-hidden">
             <div class="py-4.5 px-6 flex items-center gap-3 bg-gray-600">
               <div class="bg-white/20 rounded-full p-2 flex items-center justify-center">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                </svg>
+                <Cog6ToothIcon class="w-5 h-5 text-white" />
               </div>
               <div>
                 <p class="text-base font-semibold text-white leading-tight">Configurações do sistema</p>
@@ -304,13 +288,15 @@ import Whiteboard from '@/components/Whiteboard/Whiteboard.vue'
 import Block from '@/views/Admin/Resource/components/Block/index.vue'
 import infoCard from '@/views/Admin/Resource/components/infoCard/index.vue'
 import AnnualReportsDashboard from '@/views/Admin/Resource/AnnualResource/AnnualReportsDashboard.vue'
-import { FunnelIcon } from "@heroicons/vue/24/outline"
+import { FunnelIcon, PlusIcon, ChartPieIcon, DocumentDuplicateIcon, UserIcon, Cog6ToothIcon, ExclamationTriangleIcon, ExclamationCircleIcon, PaperAirplaneIcon } from "@heroicons/vue/24/outline"
 import { apiClient } from '@/service/apiService'
 import { STATUS_DEFINITIONS, MOTIVOS_RECURSO } from '@/config/resourceConstants.js'
+import { Document } from 'postcss'
 
 export default {
   name: "Recurso",
-  components: { Whiteboard, Block, infoCard, FunnelIcon, AnnualReportsDashboard },
+  components: { Whiteboard, Block, infoCard, FunnelIcon, PlusIcon, 
+                ChartPieIcon, DocumentDuplicateIcon, UserIcon, Cog6ToothIcon, ExclamationTriangleIcon, ExclamationCircleIcon, PaperAirplaneIcon, AnnualReportsDashboard },
 
   setup() {
     const router = useRouter()

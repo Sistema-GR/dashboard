@@ -1,21 +1,35 @@
 <template>
   <Whiteboard title="Ativação de Versão para Usuários" :hideBreadcrumbs="false">
-    <div class="flex w-full p-8">
-      <h1 class="text-center w-full font-semibold text-15 text-gray-800">
-        Selecione a versão que será exibida no painel para todos os usuários. Apenas uma versão pode estar ativa.
-      </h1>
+
+    <!-- Header -->
+    <div class="flex items-start justify-between flex-wrap gap-3 px-10 pt-6 pb-4">
+      <div>
+        <h1 class="text-xl font-semibold text-gray-900 leading-tight">Versões de cálculo</h1>
+        <p class="text-sm text-gray-400 mt-1 max-w-xl">
+          Apenas uma versão pode estar ativa por família. A versão ativa é exibida no painel de todos os usuários.
+        </p>
+      </div>
     </div>
 
-    <div class="flex flex-col gap-8 w-full pb-10 px-4 sm:px-10">
-      <!-- Loop sobre as "Famílias" de Cálculos -->
-      <div v-for="family in processedFamilies" :key="family.parent_id" class="border rounded-lg bg-white shadow-sm overflow-hidden">
-        <!-- Cabeçalho da Família -->
-        <div class="bg-[#e8f2ff] px-6 py-4 rounded-t-lg border-b">
-          <h2 class="text-lg font-semibold text-gray-800">{{ family.description }}</h2>
+    <!-- Famílias -->
+    <div class="flex flex-col gap-3 px-10 pb-10 pt-2">
+      <div
+        v-for="family in processedFamilies"
+        :key="family.parent_id"
+        class="bg-white border border-gray-200 rounded-xl overflow-hidden"
+      >
+        <!-- Cabeçalho da família -->
+        <div class="flex items-center gap-3 px-5 py-3.5 bg-[#e8f2ff] border-b border-[#d0e4fa]">
+          <div class="flex items-center justify-center w-7 h-7 rounded-lg bg-[#3459A2]/10 text-[#3459A2] shrink-0">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 11h.01M12 11h.01M15 11h.01M4 19h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <span class="text-sm font-semibold text-[#1e3a6e]">{{ family.description }}</span>
         </div>
-        
-        <!-- Renderização da Árvore de Versões -->
-        <div>
+
+        <!-- Lista de versões -->
+        <div class="flex flex-col divide-y divide-gray-100">
           <ActivationItem
             v-for="rootVersion in family.versionTree"
             :key="rootVersion.id"
@@ -26,21 +40,54 @@
       </div>
     </div>
 
-    <!-- Modal de Confirmação -->
-    <div v-if="showConfirmation" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center z-50">
-      <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
-        <h3 class="text-lg font-semibold mb-4">Deseja realmente alterar a versão ativa?</h3>
-        <p class="text-sm text-gray-600 mb-6">A versão atualmente ativa será desativada.</p>
-        <div class="flex justify-center gap-4">
-          <button @click="confirmToggle" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-            Sim, Ativar
-          </button>
-          <button @click="cancelToggle" class="px-6 py-2 bg-gray-200 rounded-md hover:bg-gray-300">
-            Não
-          </button>
+    <!-- Modal de confirmação -->
+    <Teleport to="body">
+      <Transition name="modal-fade">
+        <div
+          v-if="showConfirmation"
+          class="fixed inset-0 z-50 flex items-center justify-center bg-black/45 backdrop-blur-sm"
+          @click.self="cancelToggle"
+        >
+          <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden">
+
+            <!-- Header do modal -->
+            <div class="flex items-center gap-3 px-6 py-4 bg-[#3459A2]">
+              <div class="flex items-center justify-center bg-white/20 rounded-full p-2 shrink-0 text-white">
+                <ArrowPathIcon class="w-5 h-5" />
+              </div>
+              <div>
+                <p class="text-white font-semibold text-base leading-tight">Alterar versão ativa?</p>
+                <p class="text-white/60 text-xs mt-0.5">A versão atual será desativada</p>
+              </div>
+            </div>
+
+            <!-- Corpo -->
+            <div class="px-6 py-5">
+              <p class="text-sm text-gray-500 leading-relaxed">
+                A versão selecionada será ativada e passará a ser exibida no painel de todos os usuários imediatamente.
+              </p>
+            </div>
+
+            <!-- Rodapé -->
+            <div class="flex justify-end gap-2 px-6 pb-5">
+              <button
+                @click="cancelToggle"
+                class="px-5 py-2 rounded-lg border border-gray-200 bg-white text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                @click="confirmToggle"
+                class="px-5 py-2 rounded-lg bg-[#3459A2] hover:bg-[#2a4a8a] text-white text-sm font-semibold transition-colors"
+              >
+                Sim, ativar versão
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      </Transition>
+    </Teleport>
+
   </Whiteboard>
 </template>
 
@@ -51,22 +98,21 @@ import Toggle from '@/components/Toggle/Toggle.vue';
 import ActivationItem from '@/components/ActivationItem/ActivationItem.vue';
 import { apiClient } from '@/service/apiService';
 import { getAccessToken } from '@/service/token';
+import { ArrowPathIcon } from '@heroicons/vue/24/outline';
 
 export default {
   name: 'DataVersions',
-  components: { Whiteboard, Toggle, ActivationItem },
+  components: { Whiteboard, Toggle, ActivationItem, ArrowPathIcon },
   setup() {
     const calculusFamilies = ref([]);
     const showConfirmation = ref(false);
     const pendingVersion = ref(null);
 
-     const processedFamilies = computed(() => {
+    const processedFamilies = computed(() => {
       return calculusFamilies.value.map(family => {
         const versions = family.versions;
-        
         const versionMap = new Map(versions.map(v => [v.calculus_id, { ...v, children: [] }]));
         const tree = [];
-
         for (const version of versionMap.values()) {
           if (version.created_from_id && versionMap.has(version.created_from_id)) {
             versionMap.get(version.created_from_id).children.push(version);
@@ -74,7 +120,7 @@ export default {
             tree.push(version);
           }
         }
-        tree.sort((a,b) => a.version_number - b.version_number);
+        tree.sort((a, b) => a.version_number - b.version_number);
         return { ...family, versionTree: tree };
       });
     });
@@ -100,26 +146,23 @@ export default {
 
     const confirmToggle = async () => {
       if (!pendingVersion.value) return;
-
       const idParaAtivar = pendingVersion.value.calculus_id;
-       try {
+      try {
         const token = await getAccessToken();
-        
-        const response = await apiClient.post('/csv/opencalc/activate-opencalc/',
+        const response = await apiClient.post(
+          '/csv/opencalc/activate-opencalc/',
           { calc_id: idParaAtivar },
           { headers: { Authorization: `Bearer ${token}` } }
         );
-
         if (response.status === 200) {
           calculusFamilies.value.forEach(family => {
             family.versions.forEach(version => {
               version.ativa = (version.calculus_id === idParaAtivar);
             });
           });
-
         }
       } catch (error) {
-        console.error("Erro detalhado ao ativar a versão:", error.response || error);
+        console.error("Erro ao ativar a versão:", error.response || error);
         alert("Falha ao ativar a versão.");
       } finally {
         showConfirmation.value = false;
@@ -132,17 +175,26 @@ export default {
       pendingVersion.value = null;
     };
 
-
     onMounted(fetchData);
 
-    return { 
-      calculusFamilies, 
+    return {
+      calculusFamilies,
       processedFamilies,
-      showConfirmation, 
-      handleToggle, 
-      confirmToggle, 
+      showConfirmation,
+      handleToggle,
+      confirmToggle,
       cancelToggle,
     };
   }
 }
 </script>
+
+<style scoped>
+.modal-fade-enter-active,
+.modal-fade-leave-active { transition: opacity 0.2s ease; }
+.modal-fade-enter-from,
+.modal-fade-leave-to { opacity: 0; }
+.modal-fade-enter-active .relative,
+.modal-fade-leave-active .relative { transition: transform 0.2s ease; }
+.modal-fade-enter-from .relative { transform: scale(0.96) translateY(-6px); }
+</style>

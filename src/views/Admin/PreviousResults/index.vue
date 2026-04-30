@@ -12,7 +12,7 @@
       >
         <!-- Cabeçalho do Ano -->
         <div class="flex items-center gap-3.5 mb-5">
-          <span class="bg-[#003965] text-white text-xs font-semibold py-1.5 px-3.5 rounded-full whitespace-nowrap tracking-wide">
+          <span class="bg-[#3459a2] text-white text-xs font-semibold py-1.5 px-3.5 rounded-full whitespace-nowrap tracking-wide">
             Ano de referência: {{ year }}
           </span>
           <div class="flex-1 h-px bg-[#e3f0ff]"></div>
@@ -32,7 +32,7 @@
                 <p class="text-xs text-[#4a7aa8] mt-0.5 mb-0">Iniciado em: {{ parent.createdAt }}</p>
               </div>
               <button
-                class="bg-[#003965] text-white border-none rounded-lg px-4 py-2 text-xs font-semibold cursor-pointer transition-all hover:bg-[#00294a] whitespace-nowrap"
+                class="bg-[#3459a2] text-white border-none rounded-lg px-4 py-2 text-xs font-semibold cursor-pointer transition-all hover:bg-[#00294a] whitespace-nowrap"
                 @click="goToVersionManager(parent.id)"
               >
                 Gerenciar versões
@@ -51,8 +51,8 @@
                 <div class="flex items-center gap-3 flex-wrap">
                   <!-- Checkbox customizado -->
                   <div
-                    class="w-4 h-4 border border-[#003965] rounded flex items-center justify-center shrink-0"
-                    :class="{ 'bg-[#003965]': selectedIds.includes(item.id) }"
+                    class="w-4 h-4 border border-[#3459a2] rounded flex items-center justify-center shrink-0"
+                    :class="{ 'bg-[#3459a2]': selectedIds.includes(item.id) }"
                   >
                     <span v-if="selectedIds.includes(item.id)" class="text-white text-xs">✓</span>
                   </div>
@@ -82,7 +82,7 @@
                     Publicar
                   </button>
                   <button
-                    class="bg-transparent text-[#003965] border border-[#003965] rounded-lg px-3 py-1.5 text-xs font-semibold cursor-pointer hover:opacity-80 whitespace-nowrap"
+                    class="bg-transparent text-[#3459a2] border border-[#3459a2] rounded-lg px-3 py-1.5 text-xs font-semibold cursor-pointer hover:opacity-80 whitespace-nowrap"
                     @click="openPreviewModal(item.id)"
                   >
                     Visualizar relatório

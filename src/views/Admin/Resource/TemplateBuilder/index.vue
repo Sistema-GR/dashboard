@@ -5,12 +5,7 @@
     <div class="flex items-center justify-between px-4 sm:px-10 pt-8 pb-4">
       <div class="flex items-center gap-3">
         <div class="w-11 h-11 rounded-[10px] bg-[#EEF3FD] text-[#3459A2] flex items-center justify-center flex-shrink-0">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-            <polyline points="14,2 14,8 20,8"/>
-            <line x1="16" y1="13" x2="8" y2="13"/>
-            <line x1="16" y1="17" x2="8" y2="17"/>
-          </svg>
+          <DocumentIcon class="w-5 h-5" />
         </div>
         <div>
           <h1 class="text-xl font-bold text-gray-900 tracking-tight">Templates de Resposta</h1>
@@ -22,9 +17,7 @@
         @click="openCreateModal"
         class="flex items-center gap-2 bg-[#3459A2] hover:bg-[#2a4a8a] text-white text-sm font-semibold px-4 py-2 rounded-[10px] shadow-md transition-colors duration-200"
       >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-        </svg>
+        <PlusIcon class="w-4 h-4" />
         Novo Template
       </button>
     </div>
@@ -76,22 +69,14 @@
                 title="Editar"
                 class="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition-colors duration-150"
               >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                </svg>
+                <PencilSquareIcon class="w-4 h-4"/>
               </button>
               <button
                 @click="confirmDelete(template)"
                 title="Excluir"
                 class="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors duration-150"
               >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="3,6 5,6 21,6"/>
-                  <path d="M19,6l-1,14a2,2,0,0,1-2,2H8a2,2,0,0,1-2-2L5,6"/>
-                  <path d="M10,11v6"/><path d="M14,11v6"/>
-                  <path d="M9,6V4a1,1,0,0,1,1-1h4a1,1,0,0,1,1,1V6"/>
-                </svg>
+                <TrashIcon class="w-4 h-4"/>
               </button>
             </div>
           </div>
@@ -120,9 +105,7 @@
               @click="closeModal"
               class="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-400 hover:bg-gray-50 transition-colors duration-150"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-              </svg>
+              <XMarkIcon class="w-4 h-4" />
             </button>
           </div>
 
@@ -218,9 +201,7 @@
                       :class="editor.isActive({ textAlign: 'left' }) ? 'bg-[#EEF3FD] text-[#3459A2] border-[#3459A2]/25' : 'bg-transparent text-gray-500 border-transparent hover:bg-white hover:border-gray-200 hover:text-gray-800'"
                       class="w-[30px] h-7 flex items-center justify-center rounded-md border cursor-pointer transition-all duration-100"
                     >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/>
-                      </svg>
+                      <Bars3BottomLeftIcon class="w-4 h-4" />
                     </button>
 
                     <!-- Align center -->
@@ -230,9 +211,7 @@
                       :class="editor.isActive({ textAlign: 'center' }) ? 'bg-[#EEF3FD] text-[#3459A2] border-[#3459A2]/25' : 'bg-transparent text-gray-500 border-transparent hover:bg-white hover:border-gray-200 hover:text-gray-800'"
                       class="w-[30px] h-7 flex items-center justify-center rounded-md border cursor-pointer transition-all duration-100"
                     >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="3" y1="6" x2="21" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/>
-                      </svg>
+                      <Bars3Icon class="w-4 h-4" />
                     </button>
 
                     <!-- Align right -->
@@ -242,9 +221,7 @@
                       :class="editor.isActive({ textAlign: 'right' }) ? 'bg-[#EEF3FD] text-[#3459A2] border-[#3459A2]/25' : 'bg-transparent text-gray-500 border-transparent hover:bg-white hover:border-gray-200 hover:text-gray-800'"
                       class="w-[30px] h-7 flex items-center justify-center rounded-md border cursor-pointer transition-all duration-100"
                     >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="3" y1="6" x2="21" y2="6"/><line x1="9" y1="12" x2="21" y2="12"/><line x1="6" y1="18" x2="21" y2="18"/>
-                      </svg>
+                      <Bars3BottomRightIcon class="w-4 h-4" />
                     </button>
 
                     <div class="w-px h-5 bg-gray-200 mx-1"></div>
@@ -256,10 +233,7 @@
                       :class="editor.isActive('bulletList') ? 'bg-[#EEF3FD] text-[#3459A2] border-[#3459A2]/25' : 'bg-transparent text-gray-500 border-transparent hover:bg-white hover:border-gray-200 hover:text-gray-800'"
                       class="w-[30px] h-7 flex items-center justify-center rounded-md border cursor-pointer transition-all duration-100"
                     >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/>
-                        <circle cx="4" cy="6" r="1" fill="currentColor"/><circle cx="4" cy="12" r="1" fill="currentColor"/><circle cx="4" cy="18" r="1" fill="currentColor"/>
-                      </svg>
+                      <ListBulletIcon class="w-4 h-4" />
                     </button>
 
                     <!-- Ordered list -->
@@ -269,10 +243,7 @@
                       :class="editor.isActive('orderedList') ? 'bg-[#EEF3FD] text-[#3459A2] border-[#3459A2]/25' : 'bg-transparent text-gray-500 border-transparent hover:bg-white hover:border-gray-200 hover:text-gray-800'"
                       class="w-[30px] h-7 flex items-center justify-center rounded-md border cursor-pointer transition-all duration-100"
                     >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/>
-                        <path d="M4 6h1v4"/><path d="M4 10h2"/><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/>
-                      </svg>
+                      <NumberedListIcon class="w-4 h-4" />
                     </button>
                   </div>
 
@@ -284,9 +255,7 @@
               <!-- Variables sidebar -->
               <div class="sm:order-none order-first bg-gray-50 border border-gray-200 rounded-[10px] p-3.5 flex flex-col gap-2.5">
                 <div class="flex items-center gap-1.5 font-bold text-gray-500 uppercase tracking-widest text-[11px]">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-                  </svg>
+                  <InformationCircleIcon class="w-3.5 h-3.5 text-gray-400" />
                   Variáveis
                 </div>
                 <p class="text-gray-400 text-[11px] leading-snug -mt-1">Clique para inserir no texto:</p>
@@ -386,9 +355,7 @@
             : 'bg-red-50 text-red-700 border-red-200'"
           class="flex items-center gap-2.5 px-4 py-3 rounded-[10px] text-sm font-medium shadow-lg max-w-sm border"
         >
-          <svg v-if="toast.type === 'success'" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <polyline points="20,6 9,17 4,12"/>
-          </svg>
+          <CheckIcon v-if="toast.type === 'success'" class="w-4 h-4 text-green-500" />
           <svg v-else width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
           </svg>
@@ -410,6 +377,9 @@ import TextAlign from '@tiptap/extension-text-align'
 import { Mark, Extension, mergeAttributes } from '@tiptap/core'
 import { apiClient } from '@/service/apiService'
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue'
+import {  Bars3BottomLeftIcon, Bars3Icon, Bars3BottomRightIcon, CheckIcon, DocumentIcon, InformationCircleIcon, 
+          ListBulletIcon, NumberedListIcon, PencilSquareIcon, PlusIcon, TrashIcon, 
+          XMarkIcon } from '@heroicons/vue/24/outline'
 
 // ─── Font Size Extension ──────────────────────────────────────────────────
 const FontSize = Extension.create({
@@ -456,7 +426,9 @@ const TemplateVar = Mark.create({
 
 export default {
   name: 'TemplateRespostaView',
-  components: { Whiteboard, EditorContent },
+  components: { Whiteboard, EditorContent, DocumentIcon, PlusIcon, PencilSquareIcon, TrashIcon, XMarkIcon, 
+                Bars3BottomLeftIcon, Bars3Icon, Bars3BottomRightIcon, ListBulletIcon, NumberedListIcon, 
+                InformationCircleIcon, CheckIcon },
 
   setup() {
     // ─── State ────────────────────────────────────────────────────────────

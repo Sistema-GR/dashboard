@@ -5,14 +5,7 @@
     class="fixed bottom-16 right-6 bg-[#1a4a8a] text-white p-3 rounded-full shadow-md hover:bg-[#0c447c] transition-colors z-50 sm:bottom-20 sm:right-8 md:p-4"
     title="Iniciar Tutorial"
   >
-    <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        stroke-width="2"
-        d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-      />
-    </svg>
+    <QuestionMarkCircleIcon class="w-5 h-5 sm:w-6 sm:h-6" />
   </button>
 </template>
 
@@ -20,6 +13,7 @@
 import { nextTick } from 'vue';
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
+import { QuestionMarkCircleIcon } from '@heroicons/vue/24/outline';
 
 let driverObj = null;
 let currentStepIndex = 0;

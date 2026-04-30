@@ -92,7 +92,7 @@ export const STATUS_DEFINITIONS = {
     },
     'Todos os Recursos': {
         label: 'Todos os Recursos',
-        colorKey: 'gray',
+        colorKey: 'gray-400',
     }
 };
 

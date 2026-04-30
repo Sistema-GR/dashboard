@@ -85,9 +85,7 @@
                             <div class="space-y-2">
                                 <div v-for="(file, index) in newFiles" :key="index" class="flex items-center justify-between p-3 bg-gray-50 rounded-[10px] border">
                                     <div class="flex items-center">
-                                        <svg class="w-5 h-5 text-blue-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" />
-                                        </svg>
+                                        <DocumentIcon class="w-5 h-5 text-gray-400 mr-2" />
                                         <span class="text-15 text-gray-700">{{ file.name }}</span>
                                         <span class="text-13 text-gray-500 ml-2">({{ (file.size / 1024 / 1024).toFixed(2) }}MB)</span>
                                     </div>
@@ -96,9 +94,7 @@
                                         type="button" 
                                         class="text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-50 transition-colors"
                                     >
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                        </svg>
+                                        <XMarkIcon class="w-4 h-4" />
                                     </button>
                                 </div>
                             </div>
@@ -133,10 +129,11 @@ import { apiClient } from '@/service/apiService';
 
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
+import { DocumentIcon, XMarkIcon } from '@heroicons/vue/24/outline';
 
 export default {
     name: "ResourceEdit",
-    components: { Whiteboard, PrimaryButton },
+    components: { Whiteboard, PrimaryButton, DocumentIcon, XMarkIcon },
     
     setup() {
         const route = useRoute();

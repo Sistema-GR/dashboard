@@ -132,9 +132,7 @@
                         {{ currentDocument?.nome || 'Visualizando Documento' }}
                     </h3>
                     <button @click="closePreviewModal" class="text-gray-400 hover:text-gray-600 transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
+                        <XMarkIcon class="w-6 h-6" />
                     </button>
                 </div>
                 
@@ -203,13 +201,13 @@ import axios from 'axios';
 import { apiClient } from '@/service/apiService';
 import Badges from '@/components/Badges/Badges.vue';
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
-import { UserIcon, ChevronDownIcon, TrashIcon, ExclamationTriangleIcon, PaperClipIcon  } from "@heroicons/vue/24/outline";
+import { UserIcon, ChevronDownIcon, TrashIcon, ExclamationTriangleIcon, PaperClipIcon, XMarkIcon  } from "@heroicons/vue/24/outline";
 import { MOTIVOS_RECURSO } from '@/config/resourceConstants.js';
 import RenderedTemplate from '@/views/Admin/Resource/components/RenderedTemplate/index.vue';
 
 export default {
     name: "InfoDetails",
-    components: { Whiteboard, UserIcon, Badges, ChevronDownIcon, TrashIcon, ExclamationTriangleIcon, PaperClipIcon, RenderedTemplate },
+    components: { Whiteboard, UserIcon, Badges, ChevronDownIcon, TrashIcon, ExclamationTriangleIcon, PaperClipIcon, XMarkIcon, RenderedTemplate },
     props: {
       id: {
         type: [String, Number],

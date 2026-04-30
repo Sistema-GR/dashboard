@@ -6,11 +6,7 @@
         <Bars3Icon class="w-5 h-5 text-white" />
       </button>
       <img src="../../assets/images/logo-horinzontal.png" class="h-8 w-auto" alt="Logo" />
-      <button @click="mobileSidebarOpen = true" class="flex items-center gap-1.5 text-white/70 hover:text-white transition">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-          <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" clip-rule="evenodd" />
-        </svg>
-      </button>
+      <div></div>
     </div>
 
     <!-- Drawer mobile -->
@@ -102,6 +98,20 @@
                 <div v-if="showConfigLink" class="px-3 py-3">
                   <Transition name="profile-menu">
                     <div v-if="isProfileMenuOpen" class="mb-2 rounded-xl bg-[#002a4d] border border-white/10 overflow-hidden">
+                      <router-link
+                        to="/user/rewards"
+                        class="flex items-center gap-2.5 px-4 py-2.5 text-[13px] text-white/75 hover:text-white hover:bg-white/8 transition-all"
+                      >
+                      <DocumentTextIcon class="w-4 h-4 shrink-0" />
+                        Painel de gratificação
+                      </router-link>
+                      <router-link
+                        to="/resource/form/status"
+                        class="flex items-center gap-2.5 px-4 py-2.5 text-[13px] text-white/75 hover:text-white hover:bg-white/8 transition-all"
+                      >
+                      <CheckBadgeIcon class="w-4 h-4 shrink-0" />
+                        Status do recurso
+                      </router-link>
                       <router-link to="/user/config" @click="mobileSidebarOpen = false" class="flex items-center gap-2.5 px-4 py-2.5 text-[13px] text-white/75 hover:text-white hover:bg-white/8 transition-all">
                         <PencilIcon class="w-4 h-4" /> Acessar Perfil
                       </router-link>
@@ -118,9 +128,7 @@
                   >
                     <div class="relative shrink-0">
                       <div class="w-9 h-9 rounded-full bg-white/15 border border-white/20 flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 text-white/80">
-                          <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" clip-rule="evenodd" />
-                        </svg>
+                        <UserCircleIcon class="w-6 h-6"/>
                       </div>
                       <span class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-[#003965]" />
                     </div>
@@ -149,6 +157,7 @@ import {
   CalendarDaysIcon, CalendarIcon,
   ChartBarIcon,
   ChartBarSquareIcon,
+  CheckBadgeIcon,
   ChevronDownIcon,
   ChevronUpIcon,
   CircleStackIcon,
@@ -162,6 +171,7 @@ import {
   RectangleStackIcon,
   Square3Stack3DIcon,
   Squares2X2Icon,
+  UserCircleIcon,
   UserGroupIcon,
   UsersIcon,
   XMarkIcon

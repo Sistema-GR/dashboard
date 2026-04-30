@@ -1,175 +1,223 @@
 <template>
-    <div :class="['relative flex items-center w-full bg-[#e8f2ff] border rounded-[10px] p-4 shadow-sm hover:shadow-md transition-shadow duration-200', { 'z-10': isMenuOpen }]">
-        
-        <!-- Ícone de Alerta de Prazo -->
-        <div v-if="recurso.is_overdue" class="absolute top-2 left-2" title="Este recurso está com o prazo de resposta vencido!">
-            <ExclamationTriangleIcon class="w-6 h-6 text-yellow-500" />
+  <div 
+    :class="[
+      'relative flex flex-col md:flex-row items-center w-full bg-white border border-gray-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-300 group',
+      { 'ring-2 ring-blue-500/20 border-blue-200': isMenuOpen }
+    ]"
+  >
+    <!-- Barra lateral de Status/Urgência -->
+    <div 
+      :class="recurso.is_overdue ? 'bg-red-500' : 'bg-blue-500'" 
+      class="absolute left-0 top-4 bottom-4 w-1.5 rounded-r-full"
+    ></div>
+    
+    <!-- Link Principal: Identificação -->
+    <router-link :to="`/resource/info/${recurso.id}`" class="flex flex-1 items-center gap-4 w-full md:w-auto">
+      <div class="relative">
+        <div class="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
+          <UserIcon class="w-8 h-8" />
         </div>
-        
-        <!-- Link clicável principal (ocupa espaço flexível) -->
-        <router-link class="flex-grow flex items-center gap-4" :to="`/resource/info/${recurso.id}`">
-            <!-- Coluna 1: Avatar -->
-            <div class="flex-shrink-0">
-                <UserIcon class="w-14 h-14 text-[#003965]"/>
-            </div>
-            
-            <!-- Coluna 2: Nome e Matrícula -->
-            <div class="flex flex-col">
-                <h3 class="text-15 font-bold text-black mb-1">{{ recurso.nome_completo }}</h3>
-                <p class="text-15 text-black">Matrícula:{{ recurso.matriculas.join(', ') }}</p>
-            </div>
-        </router-link>
+        <div v-if="recurso.is_overdue" class="absolute -top-1 -right-1 bg-white rounded-full p-0.5">
+          <ExclamationTriangleIcon class="w-6 h-6 text-red-500" />
+        </div>
+      </div>
 
-        <!-- Container para as colunas de informação e ações (à direita) -->
-        <div class="flex-grow flex justify-end items-center gap-8 pl-4">
-            
-            <!-- Coluna 3: Motivo com Popover -->
-            <div class="flex flex-col items-center">
-                <p class="text-15 font-bold text-black mb-1">Motivo</p>
-                <div v-if="recurso.criterios_selecionados && recurso.criterios_selecionados.length"
-                     class="relative flex items-center gap-2"
-                     @mouseenter="isHoveringBadges = true" @mouseleave="isHoveringBadges = false">
-                    <Badges :text="recurso.criterios_selecionados[0]" />
-                    <div v-if="remainingBadgesCount > 0" class="flex items-center justify-center h-5 w-5 bg-gray-300 text-gray-700 text-xs font-bold rounded-full">
-                        +{{ remainingBadgesCount }}
-                    </div>
-                    <Transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
-                        <div v-if="isHoveringBadges" class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-xs p-2 bg-gray-800 text-white rounded-md shadow-lg z-30">
-                            <ul class="space-y-1"><li v-for="criterio in recurso.criterios_selecionados" :key="criterio"><span class="text-sm">{{ criterio }}</span></li></ul>
-                            <div class="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-x-8 border-x-transparent border-t-8 border-t-gray-800"></div>
-                        </div>
-                    </Transition>
-                </div>
-                <span v-else class="text-15 text-gray-500">-</span>
-            </div>
+      <div class="flex flex-col">
+        <h3 class="text-base font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+          {{ recurso.nome_completo.toLowerCase() }}
+        </h3>
+        <div class="flex items-center gap-2 text-xs text-gray-500 mt-0.5">
+          <span class="bg-gray-100 px-2 py-0.5 rounded font-mono font-medium">Mat: {{ recurso.matriculas[0] }}</span>
+          <span v-if="recurso.matriculas.length > 1" class="text-[10px] text-blue-500 font-bold">+{{ recurso.matriculas.length - 1 }}</span>
+        </div>
+      </div>
+    </router-link>
 
-           <div class="flex justify-between items-start gap-4">
-                <div class="flex-grow">
-                    <div class="flex flex-col items-center ml-auto">
-                        <p class="text-15 font-bold text-black mb-1">Responsável</p>
-                        <span v-if="recurso.responsavel_nome" class="text-15 text-gray-700 font-semibold">
-                            {{ recurso.responsavel_nome }}
-                        </span>
-                        <span v-else="recurso.responsavel_email" class="text-15 text-gray-700 font-semibold">
-                            {{ recurso.responsavel_email }}
-                        </span>
-   
-                        <select v-model="selectedResponsavelId"  @change="updateResponsavel" class="w-36 text-xs border rounded px-1 py-0.5"  @click.stop>
-                            <option :value="null">Selecione...</option>
-                            <option v-for="staff in staffList" :key="staff.id" :value="staff.id">
-                                {{ staff.full_name }}
-                            </option>
-                        </select>
-                    </div>
-                </div>
+    <!-- Info Grid -->
+    <div class="flex-grow flex flex-wrap md:flex-nowrap items-center justify-between gap-6 mt-6 md:mt-0 w-full md:w-auto px-2">
+      
+      <!-- Motivo -->
+      <div class="flex flex-col min-w-[120px]">
+        <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-1">Motivo</span>
+        <div 
+          v-if="recurso.criterios_selecionados?.length"
+          class="relative flex items-center gap-2 cursor-help"
+          @mouseenter="isHoveringBadges = true" 
+          @mouseleave="isHoveringBadges = false"
+        >
+          <div class="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-lg border border-blue-100 truncate max-w-[140px]">
+            {{ recurso.criterios_selecionados[0] }}
+          </div>
+          <div v-if="remainingBadgesCount > 0" class="flex items-center justify-center h-6 w-6 bg-gray-100 text-gray-600 text-[10px] font-black rounded-full border border-white">
+            +{{ remainingBadgesCount }}
+          </div>
+          
+          <!-- Tooltip Moderno -->
+          <Transition name="fade">
+            <div v-if="isHoveringBadges" class="absolute bottom-full left-0 mb-2 w-64 p-3 bg-gray-900 text-white rounded-xl shadow-xl z-50 text-xs">
+              <p class="font-bold mb-2 border-b border-gray-700 pb-1 italic text-blue-300">Critérios Selecionados:</p>
+              <ul class="space-y-1">
+                <li v-for="criterio in recurso.criterios_selecionados" :key="criterio" class="flex items-center gap-2">
+                  <div class="w-1 h-1 bg-blue-400 rounded-full"></div> {{ criterio }}
+                </li>
+              </ul>
             </div>
+          </Transition>
+        </div>
+      </div>
 
-            <!-- Coluna 5: Aberto em -->
-            <div class="flex flex-col items-center">
-                <p class="text-15 font-medium text-black mb-1">Aberto em</p>
-                <p class="text-15 text-black">{{ new Date(recurso.created_at).toLocaleDateString() }}</p>
-            </div>
+      <!-- Responsável (Select Estilizado) -->
+      <div class="flex flex-col min-w-[160px]">
+        <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-1">Responsável</span>
+        <div class="relative group/select">
+          <select 
+            v-model="selectedResponsavelId" 
+            @change="updateResponsavel" 
+            @click.stop
+            class="w-full pl-3 pr-8 py-1.5 bg-gray-50 border border-transparent hover:border-blue-300 hover:bg-white text-gray-700 text-xs font-semibold rounded-lg appearance-none transition-all cursor-pointer focus:ring-2 focus:ring-blue-100 outline-none"
+          >
+            <option :value="null">Não atribuído</option>
+            <option v-for="staff in staffList" :key="staff.id" :value="staff.id">
+              {{ staff.full_name }}
+            </option>
+          </select>
+          <ChevronDownIcon class="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+        </div>
+      </div>
 
-            <div class="flex flex-col items-center">
-                <p class="text-15 font-medium text-black mb-1">Status: </p>
-                <p class="text-15 text-black">{{ recurso.status }}</p>
-            </div>
+      <!-- Datas e Status -->
+      <div class="flex items-center gap-6">
+        <div class="flex flex-col items-center">
+          <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-1">Abertura</span>
+          <span class="text-sm text-gray-700 font-medium">{{ new Date(recurso.created_at).toLocaleDateString() }}</span>
         </div>
 
-        <!-- Menu de 3 pontos (ação principal) -->
-        <div class="relative ml-4 flex-shrink-0">
-            <button @click="isMenuOpen = !isMenuOpen" class="p-2 rounded-full hover:bg-black/10 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" /></svg>
-            </button>
-            <Transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
-                <div v-if="isMenuOpen" class="absolute right-0 mt-2 w-56 transform-origin-top-right bg-white rounded-md shadow-lg z-20 border">
-                    <p class="px-4 py-2 text-sm text-gray-500 border-b">Alterar status para:</p>
-                    <ul>
-                        <li v-for="status in possibleStatuses" :key="status.key" @click="changeStatus(status.key)" class="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm">{{ status.label }}</li>
-                    </ul>
-                </div>
-            </Transition>
+        <div class="flex flex-col items-end">
+          <span class="text-[10px] uppercase font-bold text-gray-400 tracking-wider mb-1">Status</span>
+          <div 
+            :class="statusStyle.bg + ' ' + statusStyle.text"
+            class="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-tight shadow-sm border border-black/5"
+          >
+            {{ recurso.status }}
+          </div>
         </div>
+      </div>
     </div>
+
+    <!-- Menu de Ações -->
+    <div class="relative ml-4 flex-shrink-0">
+      <button 
+        @click="isMenuOpen = !isMenuOpen" 
+        class="p-2.5 rounded-xl text-gray-400 hover:text-gray-900 hover:bg-gray-100 transition-all"
+        :class="{ 'bg-gray-100 text-gray-900': isMenuOpen }"
+      >
+        <EllipsisVerticalIcon class="w-6 h-6" />
+      </button>
+      
+      <Transition name="pop">
+        <div v-if="isMenuOpen" class="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl z-[60] border border-gray-100 overflow-hidden">
+          <div class="px-4 py-3 bg-gray-50 border-b">
+            <p class="text-[10px] font-black uppercase text-gray-400 tracking-widest">Alterar Status</p>
+          </div>
+          <ul class="py-1">
+            <li 
+              v-for="status in possibleStatuses" 
+              :key="status.key" 
+              @click="changeStatus(status.key)" 
+              class="px-4 py-2.5 hover:bg-blue-50 hover:text-blue-700 cursor-pointer text-sm font-medium transition-colors flex items-center gap-2"
+            >
+              <div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
+              {{ status.label }}
+            </li>
+          </ul>
+        </div>
+      </Transition>
+    </div>
+  </div>
 </template>
 
 <script>
-import { ref, computed, onMounted, watch  } from 'vue';
-import { UserIcon, ExclamationTriangleIcon } from "@heroicons/vue/24/outline";
-import Badges from '@/components/Badges/Badges.vue';
+import { ref, computed, watch } from 'vue';
+import { 
+  UserIcon, 
+  ExclamationTriangleIcon, 
+  EllipsisVerticalIcon,
+  ChevronDownIcon 
+} from "@heroicons/vue/24/outline";
 import { STATUS_DEFINITIONS } from '@/config/resourceConstants.js';
 import { apiClient } from '@/service/apiService';
 
 export default {
-    name: "infoCard",
-    components: { UserIcon, Badges, ExclamationTriangleIcon },
-    props: {
-        recurso: { type: Object, required: true },
-        staffList: { type: Array, required: true }
-    },
-    emits: ['status-updated', 'responsavel-updated'],
-setup(props, { emit }) {
+  name: "infoCard",
+  components: { UserIcon, ExclamationTriangleIcon, EllipsisVerticalIcon, ChevronDownIcon },
+  props: {
+    recurso: { type: Object, required: true },
+    staffList: { type: Array, required: true }
+  },
+  emits: ['status-updated'],
+  setup(props, { emit }) {
     const isMenuOpen = ref(false);
     const isHoveringBadges = ref(false);
-
-    const remainingBadgesCount = computed(() => {
-        if (!props.recurso?.criterios_selecionados || props.recurso.criterios_selecionados.length <= 1) {
-            return 0;
-        }
-        return props.recurso.criterios_selecionados.length - 1;
-    });
-
-    const allStatusesList = Object.entries(STATUS_DEFINITIONS).map(([key, value]) => ({
-        key: key,
-        label: value.label
-    }));
-
-    const possibleStatuses = computed(() => {
-        const currentStatus = props.recurso?.status;
-        if (!currentStatus) {
-            return [];
-        }
-        const result = allStatusesList.filter(s => s.key !== currentStatus);
-        return result;
-    });
-
     const selectedResponsavelId = ref(props.recurso.responsavel);
 
+    const remainingBadgesCount = computed(() => {
+      return (props.recurso.criterios_selecionados?.length || 0) > 1 
+        ? props.recurso.criterios_selecionados.length - 1 
+        : 0;
+    });
+
+    const statusStyle = computed(() => {
+        // Estilização dinâmica baseada no status
+        const s = props.recurso.status?.toLowerCase();
+        if (s.includes('pendente')) return { bg: 'bg-amber-100', text: 'text-amber-700' };
+        if (s.includes('concluido') || s.includes('deferido')) return { bg: 'bg-emerald-100', text: 'text-emerald-700' };
+        return { bg: 'bg-gray-100', text: 'text-gray-600' };
+    });
+
+    const possibleStatuses = computed(() => {
+      const all = Object.entries(STATUS_DEFINITIONS).map(([key, value]) => ({ key, label: value.label }));
+      return all.filter(s => s.label !== props.recurso.status && s.label !== 'Todos os Recursos');
+    });
+
     watch(() => props.recurso.responsavel, (newId) => {
-        selectedResponsavelId.value = newId;
+      selectedResponsavelId.value = newId;
     });
 
     async function updateResponsavel() {
-        const userId = selectedResponsavelId.value;
-        const dataToSend = { responsavel: userId };
-        
-        try {
-            const response = await apiClient.patch(`/recursos/${props.recurso.id}/`, dataToSend, {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-            });
-            props.recurso.responsavel = response.data.responsavel;
-            props.recurso.responsavel_nome = response.data.responsavel_nome;
-        } catch (err) {
-            console.error("Erro ao atribuir responsável:", err);
-            alert("Não foi possível atualizar o responsável.");
-            selectedResponsavelId.value = props.recurso.responsavel;
-        }
+      try {
+        const response = await apiClient.patch(`/recursos/${props.recurso.id}/`, 
+          { responsavel: selectedResponsavelId.value },
+          { headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` } }
+        );
+        props.recurso.responsavel = response.data.responsavel;
+        props.recurso.responsavel_nome = response.data.responsavel_nome;
+      } catch (err) {
+        selectedResponsavelId.value = props.recurso.responsavel;
+      }
     }
 
     function changeStatus(newStatus) {
-        emit('status-updated', { recursoId: props.recurso.id, newStatus: newStatus });
-        isMenuOpen.value = false;
+      emit('status-updated', { recursoId: props.recurso.id, newStatus });
+      isMenuOpen.value = false;
     }
 
     return {
-        isMenuOpen,
-        possibleStatuses,
-        changeStatus,
-        isHoveringBadges,
-        remainingBadgesCount,
-        selectedResponsavelId,
-        updateResponsavel,
+      isMenuOpen, possibleStatuses, changeStatus,
+      isHoveringBadges, remainingBadgesCount,
+      selectedResponsavelId, updateResponsavel,
+      statusStyle
     };
-}
+  }
 }
 </script>
+
+<style scoped>
+.fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
+
+.pop-enter-active { transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.pop-leave-active { transition: all 0.1s ease; }
+.pop-enter-from { opacity: 0; transform: translateY(-10px) scale(0.95); }
+
+.capitalize { text-transform: capitalize; }
+</style>
