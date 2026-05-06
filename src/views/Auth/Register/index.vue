@@ -166,7 +166,7 @@ export default {
           const resp = await apiClient.post('/auth/google-complete/', payload);
           const data = resp.data;
           if (!data.access || !data.refresh) {
-            this.errors.global = 'Erro ao completar cadastro. Resposta inválida do servidor.';
+            this.errors.global = error.response?.data?.message || 'Erro ao completar cadastro. Resposta inválida do servidor.';
             return;
           }
 
@@ -185,7 +185,7 @@ export default {
           this.$router.push("/");
           return;
       } catch (error) {
-        this.errors.global = error.message || error.response?.data?.error || 'Erro ao registrar.';
+        this.errors.global =  error.response?.data?.error || 'Erro ao registrar.';
       } finally {
         this.loading = false;
       }

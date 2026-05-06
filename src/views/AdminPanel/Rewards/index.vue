@@ -159,8 +159,8 @@
                                             </span>
                                         </div>
 
-                                        <div class="flex items-center justify-between gap-3 px-4 py-3.5 border-b border-gray-200 bg-white last:border-b-0 hover:bg-gray-50">
-                                            <span class="text-base text-gray-700 flex-1">Outro</span>
+                                        <div v-if="motivosOutros.includes(item?.dados?.motivo_nao_recebimento)" class="flex items-center justify-between gap-3 px-4 py-3.5 border-b border-gray-200 bg-white last:border-b-0 hover:bg-gray-50">
+                                            <span class="text-base text-gray-700 flex-1">Outro Motivo (Cargo)</span>
                                             <span class="text-base text-gray-500 whitespace-nowrap">{{ item?.dados?.motivo_nao_recebimento || 'Não se aplica' }}</span>
                                             <span class="rounded-full px-3 py-0.5 text-sm font-semibold whitespace-nowrap flex-shrink-0" :class="item?.dados?.recebe_gratificacao ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'">
                                                 {{ item?.dados?.recebe_gratificacao ? 'Apto' : 'Não apto' }}
@@ -278,6 +278,7 @@ const errorMessage = ref(null);
 const route = useRoute();
 const tutorialComponent = ref(null);
 const referenceYear = ref(null);
+const motivosOutros = ['Secretário', 'Estagiário', 'Diretor Executivo', 'Outro'];
 
 const fetchRewardsData = async () => {
     const targetCpfFromStorage = localStorage.getItem('tempTargetCpf');

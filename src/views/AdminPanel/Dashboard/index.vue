@@ -267,6 +267,10 @@ export default {
         { label: 'Carga Horária Máxima', value: version_info.max_workload ? `${version_info.max_workload}h` : "N/D" },
         { label: 'Início', value: version_info.start_date ? new Date(version_info.start_date + 'T00:00:00').toLocaleDateString('pt-BR') : 'N/D' },
         { label: 'Fim', value: version_info.end_date ? new Date(version_info.end_date + 'T00:00:00').toLocaleDateString('pt-BR') : 'N/D' },
+        { label: 'Etapa 1', value: version_info.idem_network_step_1 ? version_info.idem_network_step_1 : 'N/D' },
+        { label: 'Etapa 2', value: version_info.idem_network_step_2 ? version_info.idem_network_step_2 : 'N/D' },
+        { label: 'Etapa 3', value: version_info.idem_network_step_3 ? version_info.idem_network_step_3 : 'N/D' },
+        { label: 'Ano', value: version_info.year_value || 'N/D' },
       ];
       return fields;
     });
