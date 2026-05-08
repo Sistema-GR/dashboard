@@ -8,7 +8,7 @@
         <p class="text-xs text-gray-500 mt-0.5">Gestão de recursos e respostas</p>
       </div>
       <div class="flex items-center gap-2 flex-wrap">
-        <button @click="navigateToTemplateBuilder" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium border transition-opacity hover:opacity-80 bg-red-400/10 text-red-600 border-red-500/35">
+        <button v-if="isAdmin" @click="navigateToTemplateBuilder" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium border transition-opacity hover:opacity-80 bg-red-400/10 text-red-600 border-red-500/35">
           <PlusIcon class="w-3.5 h-3.5" />
           Criar template
         </button>
@@ -16,9 +16,9 @@
           <ChartPieIcon class="w-3.5 h-3.5" />
           Relatórios anuais
         </button>
-        <button @click="navigateToVersionManager" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium border transition-opacity hover:opacity-80 bg-green-400/10 text-green-600 border-green-500/35">
+        <button v-if="isAdmin"@click="navigateToVersionManager" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium border transition-opacity hover:opacity-80 bg-green-400/10 text-green-600 border-green-500/35">
           <DocumentDuplicateIcon class="w-3.5 h-3.5" />
-          Gerenciar Vesões
+          Gerenciar Versões
         </button>
         <button
           @click="openBatchModal"
@@ -34,7 +34,7 @@
           </span>
           <span v-else>Sem lote pendente</span>
         </button>
-        <button @click="openLimitConfig" class="inline-flex items-center gap-1.5 px-1.5 py-1.5 rounded-lg text-xs font-medium border transition-opacity hover:opacity-80 bg-gray-100 text-gray-600 border-gray-300" title="Configurações">
+        <button v-if="isAdmin" @click="openLimitConfig" class="inline-flex items-center gap-1.5 px-1.5 py-1.5 rounded-lg text-xs font-medium border transition-opacity hover:opacity-80 bg-gray-100 text-gray-600 border-gray-300" title="Configurações">
           <Cog6ToothIcon class="w-3.5 h-3.5" />
         </button>
       </div>
@@ -291,7 +291,7 @@ import AnnualReportsDashboard from '@/views/Admin/Resource/AnnualResource/Annual
 import { FunnelIcon, PlusIcon, ChartPieIcon, DocumentDuplicateIcon, UserIcon, Cog6ToothIcon, ExclamationTriangleIcon, ExclamationCircleIcon, PaperAirplaneIcon } from "@heroicons/vue/24/outline"
 import { apiClient } from '@/service/apiService'
 import { STATUS_DEFINITIONS, MOTIVOS_RECURSO } from '@/config/resourceConstants.js'
-import { Document } from 'postcss'
+import { getUserType } from '@/service/userType'
 
 export default {
   name: "Recurso",
@@ -306,6 +306,7 @@ export default {
     const filterMotivo = ref('')
     const filterResponsavel = ref('')
     const staffList = ref([])
+    const isAdmin = ref(getUserType() === 'admin')
 
     const showLimitConfig = ref(false)
     const isSavingConfig = ref(false)
@@ -356,6 +357,7 @@ export default {
       if (isSavingConfig.value) return
       showLimitConfig.value = false
     }
+
 
     // --- Lote ---
     const pendingLote = ref(null)
@@ -504,7 +506,7 @@ export default {
       pendingLote, isLoadingLote, showBatchModal, isLaunching,
       openBatchModal, closeBatchModal, confirmBatchRelease, formatDate,
       showLimitConfig, isLoadingConfig, isSavingConfig, configForm,
-      openLimitConfig, closeLimitConfig, saveConfig,
+      openLimitConfig, closeLimitConfig, saveConfig, isAdmin
     }
   }
 }

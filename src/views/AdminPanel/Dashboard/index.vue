@@ -22,7 +22,7 @@
     </div>
 
     <!-- Botão de Ação -->
-    <div class="flex justify-end items-center px-4 sm:px-10 py-3">
+    <div v-if="isAdmin" class="flex justify-end items-center px-4 sm:px-10 py-3">
       <button 
         @click="navigateToPaymentAnalysis"
         class="bg-[#3459A2] hover:bg-slate-800 text-white px-6 py-2.5 rounded-xl transition-all shadow-lg shadow-indigo-100 flex items-center gap-2 font-bold text-sm"
@@ -148,6 +148,7 @@ import { apiClient } from '@/service/apiService';
 import { computed, onMounted, ref } from 'vue';
 import { getAccessToken } from '../../../service/token';
 import { useRouter } from 'vue-router';
+import { getUserType } from '@/service/userType';
 
 export default {
   name: "AdminPanel",
@@ -242,6 +243,8 @@ export default {
         ];
     });
 
+    const isAdmin = computed(() => getUserType() === 'admin');
+
     const calculatePercentages = (sections) => {
       return sections.map(section => {
         const total = section.data.reduce((acc, curr) => acc + curr.value, 0);        
@@ -278,7 +281,7 @@ export default {
     const navigateToPaymentAnalysis = () => router.push({name: 'payment-analysis'});
 
     return {
-      updatedChartSections, files, version, cards, downloadCriteriosCSV, formattedDashboardData, navigateToPaymentAnalysis,
+      updatedChartSections, files, version, cards, downloadCriteriosCSV, formattedDashboardData, navigateToPaymentAnalysis, isAdmin
     };
   }
 };

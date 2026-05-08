@@ -9,16 +9,6 @@
 
           <TextInput
             type="text"
-            label="Matrícula"
-            placeholder="00000"
-            v-model="matricula"
-            @keydown.enter="handleSubmit"
-            :aria-label="'Campo de matrícula'"
-            :error="errors.matricula"
-          />
-
-          <TextInput
-            type="text"
             label="Email"
             placeholder="E-mail"
             v-model="email"
@@ -75,7 +65,6 @@ export default {
 
   data() {
     return {
-      matricula: '',
       email: '',
       cpf: '',
       senha: '',
@@ -85,7 +74,6 @@ export default {
       prefilledLastName: '',
       loading: false,
       errors: {
-        matricula: null,
         email: null,
         cpf: null,
         senha: null,
@@ -112,7 +100,6 @@ export default {
   methods: {
     validateForm() {
       this.errors = {
-        matricula: null,
         email: null,
         cpf: null,
         global: null,
@@ -128,11 +115,6 @@ export default {
         this.errors.cpf = 'Formato de CPF inválido.';
         valid = false;
       }    
-
-      if (!this.matricula) {
-        this.errors.matricula = 'Matrícula é obrigatória.';
-        valid = false;
-      }
 
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!this.email) {
@@ -162,7 +144,7 @@ export default {
 
       try {
           // Complete Google registration
-          const payload = { token: this.pendingGoogleToken, cpf: this.cpf, matricula: this.matricula };
+          const payload = { token: this.pendingGoogleToken, cpf: this.cpf };
           const resp = await apiClient.post('/auth/google-complete/', payload);
           const data = resp.data;
           if (!data.access || !data.refresh) {
