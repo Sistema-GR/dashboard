@@ -17,7 +17,58 @@
 
         <!-- Conteúdo do formulário -->
         <div class="max-w-2xl mx-auto p-6">
-            <div v-if="isLoadingUserData" class="text-center p-10">
+            <!-- Período bloqueado -->
+            <div v-if="isPeriodBlocked && periodStatus" class="max-w-2xl mx-auto p-6">
+                <div class="flex flex-col items-center gap-4 py-12 text-center">
+
+                    <!-- Ícone muda conforme o estado -->
+                    <div
+                    class="rounded-full p-4"
+                    :class="periodStatus.status === 'pending' ? 'bg-blue-50' : 'bg-red-50'"
+                    >
+                    <ClockIcon
+                        v-if="periodStatus.status === 'pending'"
+                        class="w-10 h-10 text-blue-400"
+                    />
+                    <LockClosedIcon
+                        v-else
+                        class="w-10 h-10 text-red-400"
+                    />
+                    </div>
+
+                    <div>
+                    <p class="text-lg font-semibold text-gray-800">
+                        {{ periodStatus.status === 'pending' ? 'Período ainda não aberto' : 'Período encerrado' }}
+                    </p>
+                    <p class="text-sm text-gray-500 mt-1">{{ periodStatus.message }}</p>
+
+                    <!-- Exibe as datas quando disponíveis -->
+                    <div
+                        v-if="periodStatus.open_date && periodStatus.close_date"
+                        class="mt-4 inline-flex gap-6 bg-gray-50 border border-gray-200
+                            rounded-xl px-6 py-3 text-sm"
+                    >
+                        <div>
+                        <p class="text-[11px] text-gray-400 uppercase tracking-wide">Abertura</p>
+                        <p class="font-semibold text-gray-700">
+                            {{ new Date(periodStatus.open_date + 'T12:00:00').toLocaleDateString('pt-BR') }}
+                        </p>
+                        </div>
+                        <div class="w-px bg-gray-200"></div>
+                        <div>
+                        <p class="text-[11px] text-gray-400 uppercase tracking-wide">Encerramento</p>
+                        <p class="font-semibold text-gray-700">
+                            {{ new Date(periodStatus.close_date + 'T12:00:00').toLocaleDateString('pt-BR') }}
+                        </p>
+                        </div>
+                    </div>
+                    </div>
+
+                </div>
+                </div>
+
+                <!-- Carregando dados do usuário -->
+                <div v-else-if="isLoadingUserData" class="max-w-2xl mx-auto p-6 text-center py-10">
                 <p class="text-gray-600">Carregando seus dados...</p>
             </div>
             <div v-else class="space-y-6">
@@ -192,7 +243,8 @@
 
 <script>
 import { ref, reactive, onMounted } from 'vue';
-import { ArrowDownTrayIcon, PaperClipIcon, XMarkIcon, InformationCircleIcon } from "@heroicons/vue/24/outline";
+import { ArrowDownTrayIcon, PaperClipIcon, XMarkIcon, InformationCircleIcon, ClockIcon,
+  LockClosedIcon, } from "@heroicons/vue/24/outline";
 import Whiteboard from '@/components/Whiteboard/Whiteboard.vue';
 import PrimaryButton from '@/components/Buttons/PrimaryButton.vue';
 import { useRouter } from 'vue-router';
@@ -210,6 +262,8 @@ export default {
         PaperClipIcon, 
         XMarkIcon,
         InformationCircleIcon,
+        ClockIcon,
+        LockClosedIcon,
         TutorialRecurso
     },
 
@@ -218,7 +272,23 @@ export default {
         const { getMatriculasPorCPF } = usePersonService();
         const matriculasDisponiveis = ref([]);
         const isLoadingMatriculas = ref(false);
+        const periodStatus = ref(null)
+        const isPeriodBlocked = ref(false)
 
+        const checkPeriod = async () => {
+            try {
+                const response = await apiClient.get('/recursos/periodo-status/', {
+                headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
+                })
+                periodStatus.value = response.data
+                isPeriodBlocked.value = response.data.status !== 'open'
+            } catch (e) {
+                console.error('Erro ao verificar período:', e)
+                // Em caso de erro, bloqueia por precaução
+                isPeriodBlocked.value = true
+                periodStatus.value = { status: 'not_configured', message: 'Não foi possível verificar o período.' }
+            }
+        }   
 
         const form = reactive({
             nome_completo: '',
@@ -277,18 +347,18 @@ export default {
             }
         };
 
-        onMounted(() => {
-            fetchUserData();
-            
-            // Verificar se é a primeira vez que o usuário acessa esta página
-            const hasSeenTutorial = localStorage.getItem('hasSeenResourceTutorial');
+        onMounted(async () => {
+            await checkPeriod()
+            if (!isPeriodBlocked.value) {
+                fetchUserData()
+            }
+            // tutorial permanece inalterado
+            const hasSeenTutorial = localStorage.getItem('hasSeenResourceTutorial')
             if (!hasSeenTutorial) {
                 setTimeout(() => {
-                    if (tutorialComponent.value) {
-                        tutorialComponent.value.startTutorial();
-                    }
-                    localStorage.setItem('hasSeenResourceTutorial', 'true');
-                }, 1000);
+                if (tutorialComponent.value) tutorialComponent.value.startTutorial()
+                localStorage.setItem('hasSeenResourceTutorial', 'true')
+                }, 1000)
             }
         });
 
@@ -377,6 +447,8 @@ export default {
             isLoadingMatriculas,
             matriculasDisponiveis,
             listaDeSetores, 
+            periodStatus,
+             isPeriodBlocked,
         };
     }
 };

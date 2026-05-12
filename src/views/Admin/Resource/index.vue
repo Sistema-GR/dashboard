@@ -16,7 +16,7 @@
           <ChartPieIcon class="w-3.5 h-3.5" />
           Relatórios anuais
         </button>
-        <button v-if="isAdmin"@click="navigateToVersionManager" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium border transition-opacity hover:opacity-80 bg-green-400/10 text-green-600 border-green-500/35">
+        <button v-if="isAdmin" @click="navigateToVersionManager" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium border transition-opacity hover:opacity-80 bg-green-400/10 text-green-600 border-green-500/35">
           <DocumentDuplicateIcon class="w-3.5 h-3.5" />
           Gerenciar Versões
         </button>
@@ -43,7 +43,6 @@
     <!-- Cards de status -->
     <div class="pt-2 pb-4 px-10">
       <div class="grid grid-cols-5 gap-2.5 max-[900px]:grid-cols-2">
-        <!-- Todos -->
         <div
           class="bg-white border rounded-xl py-3.5 px-4 cursor-pointer transition-all hover:border-gray-300 hover:shadow-sm"
           :class="selectedStatus === '' ? 'border-gray-500' : 'border-gray-200'"
@@ -52,8 +51,6 @@
           <div class="text-[11px] font-medium uppercase tracking-wide mb-1.5" :class="selectedStatus === '' ? 'text-gray-500' : 'text-gray-400'">Todos</div>
           <div class="text-2xl font-semibold leading-none" :class="selectedStatus === '' ? 'text-gray-700' : 'text-gray-500'">{{ recursos.length }}</div>
         </div>
-
-        <!-- Aguardando resposta (Azul) -->
         <div
           class="bg-white border rounded-xl py-3.5 px-4 cursor-pointer transition-all hover:border-blue-300 hover:shadow-sm"
           :class="selectedStatus === 'aguardando_resposta' ? 'border-blue-600' : 'border-blue-200'"
@@ -62,8 +59,6 @@
           <div class="text-[11px] font-medium uppercase tracking-wide mb-1.5" :class="selectedStatus === 'aguardando_resposta' ? 'text-blue-600' : 'text-blue-400'">Aguardando resposta</div>
           <div class="text-2xl font-semibold leading-none" :class="selectedStatus === 'aguardando_resposta' ? 'text-blue-700' : 'text-blue-500'">{{ countByStatus('aguardando_resposta') }}</div>
         </div>
-
-        <!-- Análise pendente (Âmbar/Amarelo) -->
         <div
           class="bg-white border rounded-xl py-3.5 px-4 cursor-pointer transition-all hover:border-amber-300 hover:shadow-sm"
           :class="selectedStatus === 'analise_pendente' ? 'border-amber-600' : 'border-amber-200'"
@@ -72,8 +67,6 @@
           <div class="text-[11px] font-medium uppercase tracking-wide mb-1.5" :class="selectedStatus === 'analise_pendente' ? 'text-amber-600' : 'text-amber-400'">Análise pendente</div>
           <div class="text-2xl font-semibold leading-none" :class="selectedStatus === 'analise_pendente' ? 'text-amber-700' : 'text-amber-500'">{{ countByStatus('analise_pendente') }}</div>
         </div>
-
-        <!-- Aguardando envio (Roxo) -->
         <div
           class="bg-white border rounded-xl py-3.5 px-4 cursor-pointer transition-all hover:border-purple-300 hover:shadow-sm"
           :class="selectedStatus === 'aguardando_envio' ? 'border-purple-600' : 'border-purple-200'"
@@ -82,8 +75,6 @@
           <div class="text-[11px] font-medium uppercase tracking-wide mb-1.5" :class="selectedStatus === 'aguardando_envio' ? 'text-purple-600' : 'text-purple-400'">Aguardando envio</div>
           <div class="text-2xl font-semibold leading-none" :class="selectedStatus === 'aguardando_envio' ? 'text-purple-700' : 'text-purple-500'">{{ countByStatus('aguardando_envio') }}</div>
         </div>
-
-        <!-- Respondido (Laranja) -->
         <div
           class="bg-white border rounded-xl py-3.5 px-4 cursor-pointer transition-all hover:border-orange-300 hover:shadow-sm"
           :class="selectedStatus === 'respondido' ? 'border-orange-600' : 'border-orange-200'"
@@ -98,7 +89,7 @@
     <!-- Filtros -->
     <div class="grid grid-cols-2 gap-2.5 px-10 pb-4 max-[640px]:grid-cols-1">
       <div class="bg-white border border-gray-200 rounded-lg py-2 px-3.5 flex items-center gap-2">
-        <FilterIcon class="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+        <FunnelIcon class="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
         <label class="text-xs text-gray-400 whitespace-nowrap">Motivo</label>
         <select v-model="filterMotivo" class="flex-1 border-none bg-transparent text-xs text-gray-700 outline-none cursor-pointer">
           <option value="">Todos os motivos</option>
@@ -154,6 +145,7 @@
 
     <!-- Modais -->
     <Teleport to="body">
+
       <!-- Modal: Lançar Lote -->
       <Transition name="modal-fade">
         <div
@@ -190,7 +182,7 @@
                 vinculados. Eles poderão visualizar e baixar o PDF da resposta imediatamente.
               </p>
               <div class="flex items-start gap-2 bg-red-50 border border-red-200 rounded-lg p-2.5">
-                <ExclamationCircleIcon class="w-4 h-4 text-red-500 flex-shrink-0 " />
+                <ExclamationCircleIcon class="w-4 h-4 text-red-500 flex-shrink-0" />
                 <p class="text-xs text-red-700 leading-relaxed">
                   Esta operação é <strong class="text-red-800">irreversível</strong>. Após o lançamento, não é possível revogar o acesso às respostas.
                 </p>
@@ -227,7 +219,11 @@
               </div>
               <div>
                 <p class="text-base font-semibold text-white leading-tight">Configurações do sistema</p>
-                <p class="text-xs text-white/70 mt-0.5">Prazos de recurso</p>
+                <!-- Exibe o cálculo ativo para o admin ter contexto ao configurar a data -->
+                <p class="text-xs text-white/70 mt-0.5">
+                  <span v-if="activeCalculusId">Cálculo ativo: #{{ activeCalculusId }}</span>
+                  <span v-else>Nenhum cálculo ativo</span>
+                </p>
               </div>
             </div>
             <div class="p-6 flex flex-col gap-3.5">
@@ -235,18 +231,63 @@
                 Carregando configurações...
               </div>
               <template v-else>
+
+                <!-- Data de abertura dos recursos -->
+                <!-- Vinculada ao GeneralData do cálculo ativo via /recursos/config/open-date/ -->
+                <!-- Muda automaticamente quando o cálculo ativo é trocado -->
+                <div class="flex flex-col gap-1">
+                  <label class="text-sm font-semibold text-gray-700">
+                    Data de abertura
+                  </label>
+                  <p class="text-[11px] text-gray-400 -mt-0.5">
+                    A partir desta data os usuários poderão enviar recursos.
+                    O prazo de envio é definido pelo campo "Prazo para edição" abaixo.
+                    Esta data está vinculada ao cálculo ativo.
+                  </p>
+                  <input
+                    v-model="configForm.RESOURCE_OPEN_DATE"
+                    type="date"
+                    :disabled="!activeCalculusId"
+                    class="mt-1.5 px-3 py-1.5 border border-gray-300 rounded-lg text-sm
+                           focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent
+                           disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+                  />
+                  <p v-if="!activeCalculusId" class="text-[11px] text-amber-600 mt-0.5">
+                    Nenhum cálculo ativo. Ative um cálculo para configurar a data.
+                  </p>
+                  <!-- Preview do período calculado em tempo real -->
+                  <div
+                    v-if="configForm.RESOURCE_OPEN_DATE && configForm.RESOURCE_EDIT_TIMELIMIT_DAYS && activeCalculusId"
+                    class="mt-1.5 flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2"
+                  >
+                    <CalendarDaysIcon class="w-3.5 h-3.5 text-gray-400 flex-shrink-0" />
+                    <span class="text-[11px] text-gray-500">
+                      Período:
+                      <strong class="text-gray-700">{{ formatDateDisplay(configForm.RESOURCE_OPEN_DATE) }}</strong>
+                      até
+                      <strong class="text-gray-700">{{ computedCloseDate }}</strong>
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Prazo para edição -->
                 <div class="flex flex-col gap-1">
                   <label class="text-sm font-semibold text-gray-700">
                     Prazo para edição
                     <span class="text-xs font-normal text-gray-400 ml-0.5">dias</span>
                   </label>
-                  <p class="text-[11px] text-gray-400 -mt-0.5">Tempo máximo que o usuário tem para editar um recurso após a criação.</p>
+                  <p class="text-[11px] text-gray-400 -mt-0.5">
+                    Tempo máximo que o usuário tem para editar um recurso após a criação.
+                    Também define o período total de envio a partir da data de abertura.
+                  </p>
                   <input
                     v-model.number="configForm.RESOURCE_EDIT_TIMELIMIT_DAYS"
                     type="number" min="1"
                     class="mt-1.5 px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
                   />
                 </div>
+
+                <!-- Prazo para resposta -->
                 <div class="flex flex-col gap-1">
                   <label class="text-sm font-semibold text-gray-700">
                     Prazo para resposta
@@ -259,6 +300,7 @@
                     class="mt-1.5 px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent"
                   />
                 </div>
+
               </template>
             </div>
             <div class="px-6 pb-5 flex gap-2 justify-end">
@@ -276,6 +318,7 @@
           </div>
         </div>
       </Transition>
+
     </Teleport>
 
   </Whiteboard>
@@ -288,15 +331,40 @@ import Whiteboard from '@/components/Whiteboard/Whiteboard.vue'
 import Block from '@/views/Admin/Resource/components/Block/index.vue'
 import infoCard from '@/views/Admin/Resource/components/infoCard/index.vue'
 import AnnualReportsDashboard from '@/views/Admin/Resource/AnnualResource/AnnualReportsDashboard.vue'
-import { FunnelIcon, PlusIcon, ChartPieIcon, DocumentDuplicateIcon, UserIcon, Cog6ToothIcon, ExclamationTriangleIcon, ExclamationCircleIcon, PaperAirplaneIcon } from "@heroicons/vue/24/outline"
+import {
+  FunnelIcon,
+  PlusIcon,
+  ChartPieIcon,
+  DocumentDuplicateIcon,
+  UserIcon,
+  Cog6ToothIcon,
+  ExclamationTriangleIcon,
+  ExclamationCircleIcon,
+  PaperAirplaneIcon,
+  CalendarDaysIcon,
+} from '@heroicons/vue/24/outline'
 import { apiClient } from '@/service/apiService'
 import { STATUS_DEFINITIONS, MOTIVOS_RECURSO } from '@/config/resourceConstants.js'
 import { getUserType } from '@/service/userType'
 
 export default {
-  name: "Recurso",
-  components: { Whiteboard, Block, infoCard, FunnelIcon, PlusIcon, 
-                ChartPieIcon, DocumentDuplicateIcon, UserIcon, Cog6ToothIcon, ExclamationTriangleIcon, ExclamationCircleIcon, PaperAirplaneIcon, AnnualReportsDashboard },
+  name: 'Recurso',
+  components: {
+    Whiteboard,
+    Block,
+    infoCard,
+    FunnelIcon,
+    PlusIcon,
+    ChartPieIcon,
+    DocumentDuplicateIcon,
+    UserIcon,
+    Cog6ToothIcon,
+    ExclamationTriangleIcon,
+    ExclamationCircleIcon,
+    PaperAirplaneIcon,
+    AnnualReportsDashboard,
+    CalendarDaysIcon,
+  },
 
   setup() {
     const router = useRouter()
@@ -308,24 +376,58 @@ export default {
     const staffList = ref([])
     const isAdmin = ref(getUserType() === 'admin')
 
+    // ─── Configurações ────────────────────────────────────────────────────────
     const showLimitConfig = ref(false)
     const isSavingConfig = ref(false)
     const isLoadingConfig = ref(false)
+
+    // activeCalculusId é exibido no header da modal para dar contexto ao admin:
+    // a data de abertura está sempre amarrada ao GeneralData do cálculo ativo,
+    // então trocar o cálculo ativo invalida/substitui automaticamente a data aqui.
+    const activeCalculusId = ref(null)
+
     const configForm = ref({
-      RESOURCE_EDIT_TIMELIMIT_DAYS: '',
-      RESOURCE_RESPONSE_DEADLINE_DAYS: '',
+      RESOURCE_OPEN_DATE: '',               // salvo em GeneralData.resource_open_date do cálculo ativo
+      RESOURCE_EDIT_TIMELIMIT_DAYS: '',     // salvo em ResourceConfig (genérico)
+      RESOURCE_RESPONSE_DEADLINE_DAYS: '', // salvo em ResourceConfig (genérico)
     })
+
+    // Preview em tempo real do período de envio calculado no frontend
+    const computedCloseDate = computed(() => {
+      if (!configForm.value.RESOURCE_OPEN_DATE || !configForm.value.RESOURCE_EDIT_TIMELIMIT_DAYS) return ''
+      const open = new Date(configForm.value.RESOURCE_OPEN_DATE + 'T12:00:00')
+      open.setDate(open.getDate() + Number(configForm.value.RESOURCE_EDIT_TIMELIMIT_DAYS))
+      return open.toLocaleDateString('pt-BR')
+    })
+
+    const formatDateDisplay = (isoDate) => {
+      if (!isoDate) return ''
+      return new Date(isoDate + 'T12:00:00').toLocaleDateString('pt-BR')
+    }
 
     async function openLimitConfig() {
       showLimitConfig.value = true
       isLoadingConfig.value = true
       try {
-        const response = await apiClient.get('/recursos/config/', { headers: authHeader() })
-        const configs = response.data
-        const edit = configs.find(c => c.chave === 'RESOURCE_EDIT_TIMELIMIT_DAYS')
+        // Carrega em paralelo:
+        //   - configs genéricas (ResourceConfig)
+        //   - data de abertura do cálculo ativo (GeneralData.resource_open_date)
+        const [configRes, openDateRes] = await Promise.all([
+          apiClient.get('/recursos/config/', { headers: authHeader() }),
+          apiClient.get('/recursos/config/open-date/', { headers: authHeader() }),
+        ])
+
+        const configs = configRes.data
+        const edit     = configs.find(c => c.chave === 'RESOURCE_EDIT_TIMELIMIT_DAYS')
         const deadline = configs.find(c => c.chave === 'RESOURCE_RESPONSE_DEADLINE_DAYS')
-        configForm.value.RESOURCE_EDIT_TIMELIMIT_DAYS = edit?.valor ?? ''
+
+        configForm.value.RESOURCE_EDIT_TIMELIMIT_DAYS    = edit?.valor     ?? ''
         configForm.value.RESOURCE_RESPONSE_DEADLINE_DAYS = deadline?.valor ?? ''
+
+        // A data vem do GeneralData do cálculo ativo — se trocar o cálculo ativo,
+        // esta chamada retornará a data do novo cálculo automaticamente.
+        configForm.value.RESOURCE_OPEN_DATE = openDateRes.data.resource_open_date ?? ''
+        activeCalculusId.value              = openDateRes.data.calculus_id ?? null
       } catch (err) {
         console.error('Erro ao carregar configurações:', err)
       } finally {
@@ -336,14 +438,24 @@ export default {
     async function saveConfig() {
       isSavingConfig.value = true
       try {
-        await apiClient.patch(
-          '/recursos/config/',
-          {
-            RESOURCE_EDIT_TIMELIMIT_DAYS: String(configForm.value.RESOURCE_EDIT_TIMELIMIT_DAYS),
-            RESOURCE_RESPONSE_DEADLINE_DAYS: String(configForm.value.RESOURCE_RESPONSE_DEADLINE_DAYS),
-          },
-          { headers: authHeader() }
-        )
+        // Salva em paralelo:
+        //   - configs genéricas → ResourceConfig (independentes do cálculo)
+        //   - data de abertura  → GeneralData.resource_open_date do cálculo ativo
+        await Promise.all([
+          apiClient.patch(
+            '/recursos/config/',
+            {
+              RESOURCE_EDIT_TIMELIMIT_DAYS:    String(configForm.value.RESOURCE_EDIT_TIMELIMIT_DAYS),
+              RESOURCE_RESPONSE_DEADLINE_DAYS: String(configForm.value.RESOURCE_RESPONSE_DEADLINE_DAYS),
+            },
+            { headers: authHeader() }
+          ),
+          apiClient.patch(
+            '/recursos/config/open-date/',
+            { resource_open_date: configForm.value.RESOURCE_OPEN_DATE || null },
+            { headers: authHeader() }
+          ),
+        ])
         showLimitConfig.value = false
       } catch (err) {
         console.error('Erro ao salvar configurações:', err)
@@ -358,15 +470,14 @@ export default {
       showLimitConfig.value = false
     }
 
-
-    // --- Lote ---
-    const pendingLote = ref(null)
-    const isLoadingLote = ref(false)
+    // ─── Lote ─────────────────────────────────────────────────────────────────
+    const pendingLote    = ref(null)
+    const isLoadingLote  = ref(false)
     const showBatchModal = ref(false)
-    const isLaunching = ref(false)
+    const isLaunching    = ref(false)
 
     const authHeader = () => ({
-      Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+      Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
     })
 
     async function fetchPendingLote() {
@@ -407,7 +518,7 @@ export default {
           )
           return temResposta ? { ...r, status: 'respondido' } : r
         })
-        pendingLote.value = null
+        pendingLote.value    = null
         showBatchModal.value = false
         await fetchRecursos()
       } catch (err) {
@@ -418,7 +529,7 @@ export default {
       }
     }
 
-    // --- Recursos ---
+    // ─── Recursos ─────────────────────────────────────────────────────────────
     async function fetchRecursos() {
       isLoading.value = true
       try {
@@ -427,7 +538,7 @@ export default {
       } catch (error) {
         console.error('Erro ao buscar recursos:', error)
         if (error.response?.status === 403) {
-          alert("Você não tem permissão para visualizar esta página.")
+          alert('Você não tem permissão para visualizar esta página.')
         }
       } finally {
         isLoading.value = false
@@ -439,15 +550,15 @@ export default {
         const response = await apiClient.get('/auth/staff-users/', { headers: authHeader() })
         staffList.value = response.data
       } catch (err) {
-        console.error("Erro ao buscar staff:", err)
+        console.error('Erro ao buscar staff:', err)
       }
     }
 
     const filteredRecursos = computed(() => {
       if (!recursos.value) return []
       return recursos.value.filter(r => {
-        const matchesStatus = selectedStatus.value === '' || r.status === selectedStatus.value
-        const matchesMotivo = filterMotivo.value === '' ||
+        const matchesStatus      = selectedStatus.value === '' || r.status === selectedStatus.value
+        const matchesMotivo      = filterMotivo.value === '' ||
           (r.criterios_selecionados && r.criterios_selecionados.includes(filterMotivo.value))
         const matchesResponsavel = filterResponsavel.value === '' ||
           r.responsavel === Number(filterResponsavel.value)
@@ -461,10 +572,12 @@ export default {
       fetchPendingLote()
     })
 
-    function navigateToVersionManager() { router.push({ name: 'versionmanager-home' }) }
+    // ─── Navegação ────────────────────────────────────────────────────────────
+    function navigateToVersionManager()  { router.push({ name: 'versionmanager-home' }) }
     function navigateToTemplateBuilder() { router.push({ name: 'template-builder' }) }
-    function navigateToAnnualReports() { router.push({ name: 'annual-reports' }) }
+    function navigateToAnnualReports()   { router.push({ name: 'annual-reports' }) }
 
+    // ─── Utilitários ──────────────────────────────────────────────────────────
     const countByStatus = (status) => {
       if (!recursos.value) return 0
       return recursos.value.filter(r => r.status === status).length
@@ -485,7 +598,7 @@ export default {
         )
         recursos.value[index] = response.data
       } catch (error) {
-        console.error("Erro ao atualizar o status:", error)
+        console.error('Erro ao atualizar o status:', error)
       }
     }
 
@@ -497,23 +610,53 @@ export default {
     const activeStatusStyle = computed(() => STATUS_DEFINITIONS[selectedStatus.value] || {})
 
     return {
-      recursos, isLoading, selectedStatus, filteredRecursos,
-      countByStatus, setStatusFilter, handleStatusUpdate,
-      navigateToAnnualReports, navigateToVersionManager, navigateToTemplateBuilder,
+      // lista
+      recursos,
+      isLoading,
+      selectedStatus,
+      filteredRecursos,
+      countByStatus,
+      setStatusFilter,
+      handleStatusUpdate,
+      // navegação
+      navigateToAnnualReports,
+      navigateToVersionManager,
+      navigateToTemplateBuilder,
+      // status
       activeStatusStyle,
-      STATUS_DEFINITIONS, MOTIVOS_RECURSO,
-      filterMotivo, filterResponsavel, staffList,
-      pendingLote, isLoadingLote, showBatchModal, isLaunching,
-      openBatchModal, closeBatchModal, confirmBatchRelease, formatDate,
-      showLimitConfig, isLoadingConfig, isSavingConfig, configForm,
-      openLimitConfig, closeLimitConfig, saveConfig, isAdmin
+      STATUS_DEFINITIONS,
+      MOTIVOS_RECURSO,
+      // filtros
+      filterMotivo,
+      filterResponsavel,
+      staffList,
+      // lote
+      pendingLote,
+      isLoadingLote,
+      showBatchModal,
+      isLaunching,
+      openBatchModal,
+      closeBatchModal,
+      confirmBatchRelease,
+      formatDate,
+      // configurações
+      showLimitConfig,
+      isLoadingConfig,
+      isSavingConfig,
+      configForm,
+      activeCalculusId,
+      computedCloseDate,
+      formatDateDisplay,
+      openLimitConfig,
+      closeLimitConfig,
+      saveConfig,
+      isAdmin,
     }
-  }
+  },
 }
 </script>
 
 <style>
-/* Animações globais (não scoped) */
 .modal-fade-enter-active,
 .modal-fade-leave-active {
   transition: opacity 0.2s ease;
