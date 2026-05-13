@@ -2,10 +2,10 @@
   <!-- Botão fixo para iniciar tutorial -->
   <button
     @click="startTutorial"
-    class="fixed bottom-16 right-6 bg-[#1a4a8a] text-white p-3 rounded-full shadow-md hover:bg-[#0c447c] transition-colors z-50 sm:bottom-20 sm:right-8 md:p-4"
+    class="fixed bottom-16 right-6 bg-[#1a4a8a] text-white p-4 rounded-full shadow-md hover:bg-[#0c447c] transition-colors z-50 sm:bottom-20 sm:right-8 md:p-4"
     title="Iniciar Tutorial"
   >
-    <QuestionMarkCircleIcon class="w-5 h-5 sm:w-6 sm:h-6" />
+    <QuestionMarkCircleIcon class="w-9 h-9 sm:w-9 sm:h-9" />
   </button>
 </template>
 

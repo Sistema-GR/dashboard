@@ -3,7 +3,39 @@
     <!-- Seção do título integrada -->
     <div class="flex items-center justify-between px-6 py-5 bg-white">
       <h2 class="text-lg font-bold text-gray-800">{{ titulo }}</h2>
-      <span class="text-xs font-medium text-gray-400 uppercase tracking-widest">{{ usuarios.length }} Usuários</span>
+      <span class="text-xs font-medium text-gray-400 uppercase tracking-widest">{{ filteredUsuarios.length }} de {{ usuarios.length }} Usuários</span>
+    </div>
+    
+    <!-- Barra de Pesquisa e Filtros -->
+    <div class="px-6 pt-6 pb-4">
+      <div class="flex flex-col sm:flex-row gap-3">
+        <!-- Search Bar -->
+        <div class="flex-1 relative">
+          <input
+            v-model="searchTerm"
+            type="text"
+            placeholder="Buscar por nome..."
+            class="w-full pl-10 pr-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+          />
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+
+        <!-- Filter Dropdown -->
+        <div class="relative select-wrapper">
+          <select
+            v-model="selectedRole"
+            class="px-4 py-2.5 text-sm border border-gray-200 rounded-lg appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all cursor-pointer hover:border-gray-300 min-w-[180px]"
+          >
+            <option value="">Todos os Papéis</option>
+            <option value="usuario">Usuário Comum</option>
+            <option value="analista">Analista (Staff)</option>
+            <option value="administrador">Administrador</option>
+          </select>
+          <ChevronDownIcon class="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none text-gray-400" />
+        </div>
+      </div>
     </div>
     
     <!-- Tabela de perfis -->
@@ -20,7 +52,7 @@
           </thead>
           <tbody class="divide-y divide-gray-50">
             <tr 
-              v-for="(usuario) in [...usuarios].sort((a, b) => a.nome.localeCompare(b.nome))" 
+              v-for="(usuario) in [...filteredUsuarios].sort((a, b) => a.nome.localeCompare(b.nome))" 
               :key="usuario.cpf" 
               class="hover:bg-blue-50/30 transition-colors group"
             >
@@ -106,7 +138,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { apiClient } from '@/service/apiService'
 import { getAccessToken } from '@/service/token'
 import { TrashIcon, ChevronDownIcon } from '@heroicons/vue/24/outline'
@@ -121,6 +153,23 @@ const emit = defineEmits(['update']);
 const indexRemocao = ref(null)
 const modalAberto = ref(false)
 const currentUserId = ref(null)
+const searchTerm = ref('')
+const selectedRole = ref('')
+
+// Computed property para filtrar usuários baseado em busca e papel
+const filteredUsuarios = computed(() => {
+  return usuarios.filter(usuario => {
+    const matchesSearch = usuario.nome.toLowerCase().includes(searchTerm.value.toLowerCase())
+    
+    let matchesRole = true
+    if (selectedRole.value) {
+      const userRole = usuario.admin ? 'administrador' : usuario.staff ? 'analista' : 'usuario'
+      matchesRole = userRole === selectedRole.value
+    }
+    
+    return matchesSearch && matchesRole
+  })
+})
 
 const mudarStatusUsuario = async (usuario, novoStatus) => {
   const url = novoStatus === 'administrador' ? `/auth/users/${usuario.id}/set-user-admin/`
@@ -173,7 +222,16 @@ onMounted(() => {
   opacity: 0;
 }
 
-/* Custom scrollbar para a tabela se necessário */
+/* Custom select styling */
+.select-wrapper select {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 1.25em 1.25em;
+  padding-right: 2.5rem;
+}
+
+/* Custom scrollbar untuk tabel jika diperlukan */
 .overflow-x-auto::-webkit-scrollbar {
   height: 6px;
 }

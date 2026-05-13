@@ -83,7 +83,6 @@ export const downloadAtividadesCSV = () => {
   downloadCSV('csv/process/atividades/', 'atividades.csv');
 };
 
-
 export const downloadEtapasMetasCSV = () => {
   downloadCSV('csv/process/etapas-metas/', 'etapas-metas.csv');
 };

@@ -79,8 +79,10 @@ async function handleSubmit() {
     );
     emit('file-replaced');
   } catch (err) {
-    console.error("Erro ao substituir o arquivo:", err);
-    alert(`Falha na substituição: ${err.response?.data?.error || 'Erro desconhecido'}`);
+      const apiError = err.response?.data;
+      // const errorMessage = apiError?.detail || apiError?.error || (typeof apiError === 'string' ? apiError : null) || err.message || 'Erro desconhecido';
+      const errorMessage = err.response.data.error 
+      alert(`Falha na substituição: ${errorMessage}`);
   } finally {
     isLoading.value = false;
     resetForm();
