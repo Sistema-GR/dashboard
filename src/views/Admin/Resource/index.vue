@@ -219,22 +219,19 @@
               </div>
               <div>
                 <p class="text-base font-semibold text-white leading-tight">Configurações do sistema</p>
-                <!-- Exibe o cálculo ativo para o admin ter contexto ao configurar a data -->
                 <p class="text-xs text-white/70 mt-0.5">
                   <span v-if="activeCalculusId">Cálculo ativo: #{{ activeCalculusId }}</span>
                   <span v-else>Nenhum cálculo ativo</span>
                 </p>
               </div>
             </div>
-            <div class="p-6 flex flex-col gap-3.5">
+            <div class="p-6 flex flex-col gap-3.5 max-h-[80vh] overflow-y-auto">
               <div v-if="isLoadingConfig" class="text-center py-12 px-6 text-gray-400 text-sm">
                 Carregando configurações...
               </div>
               <template v-else>
 
                 <!-- Data de abertura dos recursos -->
-                <!-- Vinculada ao GeneralData do cálculo ativo via /recursos/config/open-date/ -->
-                <!-- Muda automaticamente quando o cálculo ativo é trocado -->
                 <div class="flex flex-col gap-1">
                   <label class="text-sm font-semibold text-gray-700">
                     Data de abertura
@@ -255,7 +252,6 @@
                   <p v-if="!activeCalculusId" class="text-[11px] text-amber-600 mt-0.5">
                     Nenhum cálculo ativo. Ative um cálculo para configurar a data.
                   </p>
-                  <!-- Preview do período calculado em tempo real -->
                   <div
                     v-if="configForm.RESOURCE_OPEN_DATE && configForm.RESOURCE_EDIT_TIMELIMIT_DAYS && activeCalculusId"
                     class="mt-1.5 flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2"
@@ -301,6 +297,112 @@
                   />
                 </div>
 
+                <!-- ── Importar Recursos ─────────────────────────────────── -->
+                <div class="flex flex-col gap-1 pt-3 border-t border-gray-100">
+                  <label class="text-sm font-semibold text-gray-700">
+                    Importar recursos
+                  </label>
+                  <p class="text-[11px] text-gray-400 -mt-0.5">
+                    Transfere todos os recursos de um cálculo de origem para um de destino.
+                    O cálculo de origem ficará vazio após a operação.
+                  </p>
+
+                  <!-- Feedback da operação -->
+                  <div
+                    v-if="importResult"
+                    class="mt-1.5 flex items-start gap-2 rounded-lg p-2.5"
+                    :class="importResult.success
+                      ? 'bg-green-50 border border-green-200'
+                      : 'bg-red-50 border border-red-200'"
+                  >
+                    <ExclamationCircleIcon
+                      class="w-4 h-4 flex-shrink-0 mt-px"
+                      :class="importResult.success ? 'text-green-500' : 'text-red-500'"
+                    />
+                    <p
+                      class="text-xs leading-relaxed"
+                      :class="importResult.success ? 'text-green-700' : 'text-red-700'"
+                    >
+                      {{ importResult.message }}
+                    </p>
+                  </div>
+
+                  <!-- Dropdowns -->
+                  <div class="mt-1.5 flex flex-col gap-2">
+                    <div class="flex flex-col gap-1">
+                      <span class="text-[11px] text-gray-500 font-medium">Origem</span>
+                      <select
+                        v-model="importOrigem"
+                        :disabled="isImporting || isLoadingCalculusList"
+                        class="px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-700
+                               focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent
+                               disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      >
+                        <option value="">
+                          {{ isLoadingCalculusList ? 'Carregando cálculos...' : 'Selecione o cálculo de origem' }}
+                        </option>
+                        <option
+                          v-for="calc in calculusList"
+                          :key="calc.id"
+                          :value="calc.id"
+                          :disabled="calc.id === importDestino"
+                        >
+                          - {{ calc.name }}
+                        </option>
+                      </select>
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                      <span class="text-[11px] text-gray-500 font-medium">Destino</span>
+                      <select
+                        v-model="importDestino"
+                        :disabled="isImporting || isLoadingCalculusList"
+                        class="px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-700
+                               focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent
+                               disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      >
+                        <option value="">
+                          {{ isLoadingCalculusList ? 'Carregando cálculos...' : 'Selecione o cálculo de destino' }}
+                        </option>
+                        <option
+                          v-for="calc in calculusList"
+                          :key="calc.id"
+                          :value="calc.id"
+                          :disabled="calc.id === importOrigem"
+                        >
+                          {{ calc.name }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Aviso de irreversibilidade -->
+                  <div v-if="importOrigem && importDestino && importOrigem !== importDestino" class="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg p-2.5 mt-1">
+                    <ExclamationTriangleIcon class="w-4 h-4 text-amber-500 flex-shrink-0 mt-px" />
+                    <p class="text-xs text-amber-700 leading-relaxed">
+                      Os recursos serão <strong class="text-amber-800">movidos permanentemente</strong>.
+                      O cálculo de origem ficará sem recursos após a transferência.
+                    </p>
+                  </div>
+
+                  <!-- Botão de importar -->
+                  <button
+                    @click="importarRecursos"
+                    :disabled="!importOrigem || !importDestino || importOrigem === importDestino || isImporting || isLoadingCalculusList"
+                    class="mt-2 w-full py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5
+                           bg-gray-700 text-white hover:opacity-90 transition
+                           disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    <svg v-if="isImporting" class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+                    </svg>
+                    <ArrowsRightLeftIcon v-else class="w-3.5 h-3.5" />
+                    {{ isImporting ? 'Transferindo...' : 'Transferir recursos' }}
+                  </button>
+                </div>
+                <!-- ── fim Importar Recursos ─────────────────────────────── -->
+
               </template>
             </div>
             <div class="px-6 pb-5 flex gap-2 justify-end">
@@ -342,6 +444,7 @@ import {
   ExclamationCircleIcon,
   PaperAirplaneIcon,
   CalendarDaysIcon,
+  ArrowsRightLeftIcon,
 } from '@heroicons/vue/24/outline'
 import { apiClient } from '@/service/apiService'
 import { STATUS_DEFINITIONS, MOTIVOS_RECURSO } from '@/config/resourceConstants.js'
@@ -364,6 +467,7 @@ export default {
     PaperAirplaneIcon,
     AnnualReportsDashboard,
     CalendarDaysIcon,
+    ArrowsRightLeftIcon,
   },
 
   setup() {
@@ -380,19 +484,14 @@ export default {
     const showLimitConfig = ref(false)
     const isSavingConfig = ref(false)
     const isLoadingConfig = ref(false)
-
-    // activeCalculusId é exibido no header da modal para dar contexto ao admin:
-    // a data de abertura está sempre amarrada ao GeneralData do cálculo ativo,
-    // então trocar o cálculo ativo invalida/substitui automaticamente a data aqui.
     const activeCalculusId = ref(null)
 
     const configForm = ref({
-      RESOURCE_OPEN_DATE: '',               // salvo em GeneralData.resource_open_date do cálculo ativo
-      RESOURCE_EDIT_TIMELIMIT_DAYS: '',     // salvo em ResourceConfig (genérico)
-      RESOURCE_RESPONSE_DEADLINE_DAYS: '', // salvo em ResourceConfig (genérico)
+      RESOURCE_OPEN_DATE: '',
+      RESOURCE_EDIT_TIMELIMIT_DAYS: '',
+      RESOURCE_RESPONSE_DEADLINE_DAYS: '',
     })
 
-    // Preview em tempo real do período de envio calculado no frontend
     const computedCloseDate = computed(() => {
       if (!configForm.value.RESOURCE_OPEN_DATE || !configForm.value.RESOURCE_EDIT_TIMELIMIT_DAYS) return ''
       const open = new Date(configForm.value.RESOURCE_OPEN_DATE + 'T12:00:00')
@@ -408,13 +507,15 @@ export default {
     async function openLimitConfig() {
       showLimitConfig.value = true
       isLoadingConfig.value = true
+      // Limpa estado de importação ao abrir o modal
+      importResult.value  = null
+      importOrigem.value  = ''
+      importDestino.value = ''
       try {
-        // Carrega em paralelo:
-        //   - configs genéricas (ResourceConfig)
-        //   - data de abertura do cálculo ativo (GeneralData.resource_open_date)
         const [configRes, openDateRes] = await Promise.all([
           apiClient.get('/recursos/config/', { headers: authHeader() }),
           apiClient.get('/recursos/config/open-date/', { headers: authHeader() }),
+          fetchCalculusList(),
         ])
 
         const configs = configRes.data
@@ -423,11 +524,8 @@ export default {
 
         configForm.value.RESOURCE_EDIT_TIMELIMIT_DAYS    = edit?.valor     ?? ''
         configForm.value.RESOURCE_RESPONSE_DEADLINE_DAYS = deadline?.valor ?? ''
-
-        // A data vem do GeneralData do cálculo ativo — se trocar o cálculo ativo,
-        // esta chamada retornará a data do novo cálculo automaticamente.
-        configForm.value.RESOURCE_OPEN_DATE = openDateRes.data.resource_open_date ?? ''
-        activeCalculusId.value              = openDateRes.data.calculus_id ?? null
+        configForm.value.RESOURCE_OPEN_DATE              = openDateRes.data.resource_open_date ?? ''
+        activeCalculusId.value                           = openDateRes.data.calculus_id ?? null
       } catch (err) {
         console.error('Erro ao carregar configurações:', err)
       } finally {
@@ -438,9 +536,6 @@ export default {
     async function saveConfig() {
       isSavingConfig.value = true
       try {
-        // Salva em paralelo:
-        //   - configs genéricas → ResourceConfig (independentes do cálculo)
-        //   - data de abertura  → GeneralData.resource_open_date do cálculo ativo
         await Promise.all([
           apiClient.patch(
             '/recursos/config/',
@@ -466,8 +561,59 @@ export default {
     }
 
     function closeLimitConfig() {
-      if (isSavingConfig.value) return
+      if (isSavingConfig.value || isImporting.value) return
       showLimitConfig.value = false
+    }
+
+    // ─── Importação de Recursos ───────────────────────────────────────────────
+    const calculusList          = ref([])
+    const isLoadingCalculusList = ref(false)
+    const importOrigem          = ref('')
+    const importDestino         = ref('')
+    const isImporting           = ref(false)
+    const importResult          = ref(null) // { success: bool, message: string }
+
+    async function fetchCalculusList() {
+      isLoadingCalculusList.value = true
+      try {
+        const response = await apiClient.get('/csv/get-list-calculus-import/', { headers: authHeader() })
+        const grouped = response.data
+        calculusList.value = Object.values(grouped).flat()
+      } catch (err) {
+        console.error('Erro ao buscar cálculos:', err)
+        calculusList.value = []
+      } finally {
+        isLoadingCalculusList.value = false
+      }
+    }
+
+    async function importarRecursos() {
+      if (!importOrigem.value || !importDestino.value) return
+      if (importOrigem.value === importDestino.value) {
+        importResult.value = { success: false, message: 'Origem e destino não podem ser iguais.' }
+        return
+      }
+      isImporting.value  = true
+      importResult.value = null
+      try {
+        const response = await apiClient.post(
+          `/recursos/calculus/${importDestino.value}/importar-recursos/`,
+          { calculus_origem_id: importOrigem.value },
+          { headers: authHeader() }
+        )
+        importResult.value = {
+          success: true,
+          message: `${response.data.recursos_transferidos} recurso(s) transferido(s) com sucesso.`,
+        }
+        importOrigem.value  = ''
+        importDestino.value = ''
+        await fetchRecursos()
+      } catch (err) {
+        const detail = err.response?.data?.error || 'Erro ao importar recursos. Tente novamente.'
+        importResult.value = { success: false, message: detail }
+      } finally {
+        isImporting.value = false
+      }
     }
 
     // ─── Lote ─────────────────────────────────────────────────────────────────
@@ -651,6 +797,14 @@ export default {
       closeLimitConfig,
       saveConfig,
       isAdmin,
+      // importação
+      calculusList,
+      isLoadingCalculusList,
+      importOrigem,
+      importDestino,
+      isImporting,
+      importResult,
+      importarRecursos,
     }
   },
 }
