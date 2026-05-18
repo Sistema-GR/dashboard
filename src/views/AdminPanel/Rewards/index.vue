@@ -126,11 +126,11 @@
                                             <div class="flex items-center justify-between gap-3 px-4 py-3.5 border-b border-gray-200 bg-white last:border-b-0 hover:bg-gray-50">
                                                 <span class="text-base text-gray-700 flex-1">Frequência</span>
                                                 <span class="text-base text-gray-500 whitespace-nowrap">
-                                                    {{ item?.frequencia[0]?.percentual_frequencia ? Number(item.frequencia[0].percentual_frequencia).toFixed(2) + '%' : '100%' }}
+                                                    {{  Number(item.frequencia[0].percentual_frequencia).toFixed(2) + '%' }}
                                                 </span>
                                                 <span class="rounded-full px-3 py-0.5 text-sm font-semibold whitespace-nowrap flex-shrink-0"
-                                                    :class="!item?.frequencia[0]?.percentual_frequencia || Number(item.frequencia[0].percentual_frequencia) === 100 ? 'bg-green-50 text-green-800' : Number(item.frequencia[0].percentual_frequencia) >= 96 ? 'bg-yellow-50 text-yellow-800' : 'bg-red-50 text-red-800'">
-                                                    {{ !item?.frequencia[0]?.percentual_frequencia || Number(item.frequencia[0].percentual_frequencia) === 100 ? 'Apto' : Number(item.frequencia[0].percentual_frequencia) >= 96 ? 'Parcialmente Apto' : 'Não apto' }}
+                                                    :class=" Number(item.frequencia[0].percentual_frequencia) === 100 ? 'bg-green-50 text-green-800' : Number(item.frequencia[0].percentual_frequencia) >= 96 ? 'bg-yellow-50 text-yellow-800' : 'bg-red-50 text-red-800'">
+                                                    {{ Number(item.frequencia[0].percentual_frequencia) === 100 ? 'Apto' : Number(item.frequencia[0].percentual_frequencia) >= 96 ? 'Parcialmente Apto' : 'Não apto' }}
                                                 </span>
                                             </div>
                                         </template>
@@ -195,8 +195,8 @@
                                                     </thead>
                                                     <tbody>
                                                         <tr class="hover:bg-gray-50">
-                                                            <td class="px-4 py-3 text-gray-700 whitespace-nowrap border-b border-gray-100">{{ new Date(prof.inicio_atividade_local).toLocaleDateString('pt-BR') }}</td>
-                                                            <td class="px-4 py-3 text-gray-700 whitespace-nowrap border-b border-gray-100">{{ new Date(prof.fim_atividade_local).toLocaleDateString('pt-BR') }}</td>
+                                                            <td class="px-4 py-3 text-gray-700 whitespace-nowrap border-b border-gray-100">{{ formatDate(prof.inicio_atividade_local) }}</td>
+                                                            <td class="px-4 py-3 text-gray-700 whitespace-nowrap border-b border-gray-100">{{ formatDate(prof.fim_atividade_local) }}</td>
                                                             <td class="px-4 py-3 text-gray-700 whitespace-nowrap border-b border-gray-100 capitalize">{{ prof.nome_disciplina.charAt(0).toUpperCase() + prof.nome_disciplina.slice(1) || 'N/A' }}</td>
                                                             <td class="px-4 py-3 text-gray-700 whitespace-nowrap border-b border-gray-100">{{ prof.hora_aula || 'N/A' }}h</td>
                                                             <td class="px-4 py-3 text-gray-700 whitespace-nowrap border-b border-gray-100">{{ formatGroups(prof.grupo_gr) || 'N/A' }}</td>
@@ -222,8 +222,8 @@
                                             </thead>
                                             <tbody>
                                                 <tr v-for="(freq, freqIndex) in item.frequencia.filter(f => ![false].includes(f.contabiliza))" :key="freqIndex" class="capitalize hover:bg-gray-50">
-                                                    <td class="px-4 py-3 text-gray-700 whitespace-nowrap border-b border-gray-100">{{ new Date(freq.inicio_afastamento).toLocaleDateString('pt-BR') }}</td>
-                                                    <td class="px-4 py-3 text-gray-700 whitespace-nowrap border-b border-gray-100">{{ new Date(freq.fim_afastamento).toLocaleDateString('pt-BR') }}</td>
+                                                    <td class="px-4 py-3 text-gray-700 whitespace-nowrap border-b border-gray-100">{{ formatDate(freq.inicio_afastamento) }}</td>
+                                                    <td class="px-4 py-3 text-gray-700 whitespace-nowrap border-b border-gray-100">{{ formatDate(freq.fim_afastamento) }}</td>
                                                     <td class="px-4 py-3 text-gray-700 whitespace-nowrap border-b border-gray-100">{{ freq.motivo || 'N/A' }}</td>
                                                     <td class="px-4 py-3 text-gray-700 whitespace-nowrap border-b border-gray-100">{{ freq.dias_afastado || '0' }}</td>
                                                     <td class="px-4 py-3 text-gray-700 whitespace-nowrap border-b border-gray-100">
@@ -331,6 +331,22 @@ const formatCurrency = (value) => {
     return parseFloat(value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 };
 
+const parseLocalDate = (value) => {
+    if (!value) return null;
+    if (typeof value !== 'string') return new Date(value);
+    const match = /^\s*(\d{4})-(\d{2})-(\d{2})\s*$/.exec(value);
+    if (match) {
+        const [, year, month, day] = match;
+        return new Date(Number(year), Number(month) - 1, Number(day));
+    }
+    return new Date(value);
+};
+
+const formatDate = (value) => {
+    const date = parseLocalDate(value);
+    return date instanceof Date && !Number.isNaN(date.getTime()) ? date.toLocaleDateString('pt-BR') : 'N/A';
+};
+
 const formatGroups = (value) => {
     if (value === null || value === undefined) return 'N/A';
     const romanMap = [
@@ -343,7 +359,7 @@ const formatGroups = (value) => {
     ];
     const found = romanMap.find(r => r.value === value.toLowerCase());
     return found ? found.numeral : value;
-    };
+};
 
 
 onMounted(() => {
