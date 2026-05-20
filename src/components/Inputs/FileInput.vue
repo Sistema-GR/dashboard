@@ -30,13 +30,13 @@
         class="flex items-center justify-between bg-gray-100 p-2 rounded"
       >
         <span>
-          {{ file.name }} ({{ formatSize(file.size) }}) -
           <span
             :class="file.mappedKey ? 'text-blue-700' : 'text-orange-600'"
             class="font-semibold"
           >
             {{ getMappedLabel(file.mappedKey) }}
           </span>
+           - {{ file.name }} ({{ formatSize(file.size) }})
         </span>
         <button
           class="text-red-500 hover:text-red-700 text-xs font-bold ml-2"
