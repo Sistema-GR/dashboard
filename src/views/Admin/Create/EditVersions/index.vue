@@ -192,6 +192,57 @@ const handleSummarySearch = (c) => summarySearchCriteria.value = c;
 const handleColumnsLoaded = (cols) => filterableColumns.value = cols;
 const handleSummaryColumnsLoaded = (cols) => summaryTableColumns.value = cols;
 
+const downloadSummaryFile = async () => {
+  isDownloading.value = true;
+  try {
+    const token = await getAccessToken();
+
+    const infoResponse = await apiClient.get(
+      `/csv/calculus/${calculusId.value}/file-info/criterios/`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    const fileId = infoResponse.data.file_id;
+    if (!fileId) {
+      throw new Error("ID do arquivo não foi encontrado.");
+    }
+
+    const downloadResponse = await apiClient.get(
+        `/csv/data-files/${fileId}/download/`,
+        {
+            headers: { Authorization: `Bearer ${token}` },
+            responseType: 'blob', 
+        }
+    );
+
+    const url = window.URL.createObjectURL(new Blob([downloadResponse.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    
+    const contentDisposition = downloadResponse.headers['content-disposition'];
+    let filename = 'criterios_processados.csv'; // Nome padrão
+    if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+        if (filenameMatch && filenameMatch.length === 2) {
+            filename = filenameMatch[1];
+        }
+    }
+
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+
+  } catch (err) {
+    console.error("Erro ao baixar o arquivo:", err);
+    alert("Não foi possível baixar o arquivo de resumo. Verifique o console para mais detalhes.");
+  } finally {
+    isDownloading.value = false;
+  }
+};
+
 async function reprocessVersion() {
   if (!confirm('Deseja reprocessar os dados?')) return;
   loadingMessage.value = 'Reprocessando...';
